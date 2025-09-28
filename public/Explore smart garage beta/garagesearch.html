@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Garage – VeloValue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: url('/Multimedia/welcome_to_smart_garage.png')
+        no-repeat center center fixed;
+      background-size: cover;
+      overflow-x: hidden;
+    }
+    body::before {
+      /* Dark overlay for readability */
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: -1;
+    }
+
+      /* Header */
+  header {
+    position: fixed;
+    top: 0; left: 0; width: 100%;
+    padding: 1rem 2rem;
+    background: rgba(0,0,0,0.6);
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+  header h1 { font-size: 24px; font-weight: 800; margin: 0; }
+  header nav { display: flex; align-items: center; gap: 20px; }
+  header nav a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; }
+  header nav a:hover { text-decoration: underline; }
+
+  /* Language select */
+  .language-select select {
+    background: #111;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* Auth button */
+  #authSection button {
+    background: #fff;
+    color: #111;
+    border: 1px solid #333;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  #authSection button:hover {
+    background: #444;
+    color: #fff;
+  }
+
+    .garage-container {
+      max-width: 600px;
+      margin: 140px auto 0;
+      text-align: center;
+    }
+    #welcomeText {
+      font-weight: 800;
+      font-size: 26px;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+    .instruction {
+      font-size: 18px;
+      color: #ddd;
+      margin-bottom: 30px;
+    }
+
+    /* ===== Plate ===== */
+    .italian-plate {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      height: 90px;
+      margin: 0 auto 25px;
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      box-shadow: inset 0 0 10px rgba(91, 81, 81, 0.2), 0 8px 20px rgba(0,0,0,0.6);
+      font-family: 'OCR A Std', monospace;
+    }
+    .plate-left, .plate-right {
+      background: #003399;
+      color: #fff;
+      font-weight: 900;
+      font-size: 22px;
+      width: 70px;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .italian-plate input {
+      flex: 1;
+      border: none;
+      outline: none;
+      height: 100%;
+      font-size: 36px;
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: 8px;
+      color: #000;
+      background: transparent;
+      text-transform: uppercase;
+      min-width: 0;
+    }
+
+    /* Proceed Button */
+    .proceed-btn {
+      display: block;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      height: 90px;
+      border-radius: 10px;
+      font-size: 22px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #f2c94c, #f39c12);
+      color: #000;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .proceed-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+  <h1><a href="/homepage.html" style="color:white; text-decoration:none;">VeloValue</a></h1>
+  <nav>
+    <a href="/homepage.html">HOME</a>
+    <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+    <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+    <a href="#about">ABOUT US</a>
+
+    <div class="language-select">
+      <select id="languageSelect">
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+
+    <div id="authSection">
+      <button onclick="window.location.href='login.html'">Login / Register</button>
+    </div>
+  </nav>
+</header>
+
+  <main class="garage-container">
+    <h2 id="welcomeText">Hello username,<br>Welcome to Smart Garage</h2>
+    <p class="instruction">Please enter your vehicle number to proceed...</p>
+
+    <div class="italian-plate">
+      <div class="plate-left">I</div>
+      <input type="text" id="numberPlateInput" placeholder="AA 123 AA" maxlength="10">
+      <div class="plate-right">EU</div>
+    </div>
+
+    <button class="proceed-btn" id="proceedBtn">Proceed →</button>
+  </main>
+
+  <script>
+    
+    // Grab user name from login system (simulated here with api user)
+
+async function loadWelcome() {
+  try {
+    // 👇 Call your backend API
+    const res = await fetch("/api/user", { credentials: "include" });
+    const data = await res.json();
+
+    if (data.loggedIn) {
+      document.getElementById("welcomeText").innerHTML =
+        `Hello <span style="color:#f2c94c;">${data.username}</span>,<br>Welcome to Smart Garage`;
+    } else {
+      document.getElementById("welcomeText").innerHTML =
+        "Hello Guest,<br>Welcome to Smart Garage";
+    }
+  } catch (err) {
+    console.error("Error fetching user info:", err);
+    document.getElementById("welcomeText").innerHTML =
+      "Hello Guest,<br>Welcome to Smart Garage";
+  }
+}
+
+loadWelcome(); // execute when page loads
+</script>
+
+<script>
+const proceedBtn = document.getElementById("proceedBtn");
+const plateInput = document.getElementById("numberPlateInput");
+
+proceedBtn.addEventListener("click", async () => {
+  const plate = plateInput.value.trim().toUpperCase();
+  if (!plate) {
+    alert("Please enter your number plate.");
+    return;
+  }
+
+  try {
+    const res = await fetch("/garage/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plate })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      // ✅ Car details found → redirect to garage view
+      window.location.href = "/Explore smart garage beta/garageview.html";
+    } else {
+      // ❌ Car not found → show message on this page
+      const container = document.querySelector(".garage-container");
+
+      // Make sure we don’t duplicate error
+      let msgEl = document.getElementById("errorMsg");
+      if (!msgEl) {
+        msgEl = document.createElement("p");
+        msgEl.id = "errorMsg";
+        msgEl.style.color = "#ff6b6b";
+        msgEl.style.fontSize = "18px";
+        msgEl.style.marginTop = "20px";
+        container.appendChild(msgEl);
+      }
+
+      msgEl.innerHTML = `Car details not found. 
+        <a href="/Explore smart garage beta/manual-upload.html" style="color:#f2c94c; text-decoration:underline;">
+          Enter details manually
+        </a>`;
+    }
+  } catch (err) {
+    console.error("Error contacting backend:", err);
+    alert("Server error, please try again.");
+  }
+});
+</script>
+
+  <script src="/js/auth.js"></script>
+
+</body>
+</html>

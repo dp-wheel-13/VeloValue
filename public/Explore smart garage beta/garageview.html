@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VeloValue - Garage</title>
+<style>
+/* ===== Global ===== */
+* { box-sizing: border-box; margin:0; padding:0; }
+html, body {
+  height: 100%; background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
+  font-family: "Poppins", sans-serif; color: #fff;
+}
+
+/* ===== Header ===== */
+  header {
+    position: fixed;
+    top: 0; left: 0; width: 100%;
+    padding: 1rem 2rem;
+    background: rgba(0,0,0,0.6);
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 1000;
+  }
+  header h1 { font-size: 24px; font-weight: 800; margin: 0; }
+  header nav { display: flex; align-items: center; gap: 20px; }
+  header nav a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; }
+  header nav a:hover { text-decoration: underline; }
+
+  /* Language select */
+  .language-select select {
+    background: #111;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* Auth button */
+  #authSection button {
+    background: #fff;
+    color: #111;
+    border: 1px solid #333;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  #authSection button:hover {
+    background: #444;
+    color: #fff;
+  }
+
+/* ===== Garage Header ===== */
+.garage-header {
+  display:grid; grid-template-columns: 1fr 500px 1fr;
+  gap:20px; align-items:start; padding:80px 40px 20px;
+  width:100%; z-index:2;
+}
+.garage-left,.garage-right { display:flex; flex-direction:column; gap:12px; }
+.garage-left{align-items:flex-start;} .garage-right{align-items:flex-end;}
+
+/* Capsules */
+.capsule-search {
+  background:rgba(255,255,255,0.04); color:#fff; font-size:15px;
+  padding:10px 18px; border-radius:50px; border:1px solid rgba(255,255,255,0.06);
+}
+.add-car-pill {
+  background:rgba(76,242,160,0.08); color:#4cf2a0; font-weight:700;
+  font-size:16px; padding:10px 18px; border-radius:50px; border:1px solid rgba(76,242,160,0.2);
+  cursor:pointer;
+}
+.add-car-pill:hover{background:rgba(76,242,160,0.18);}
+.garage-level-pill {
+  background:rgba(242,201,76,0.15); color:#f2c94c; font-weight:700;
+  padding:10px 20px; border-radius:50px; border:1px solid rgba(242,201,76,0.5);
+}
+.view-toggle select {
+  font-size:16px; padding:8px 12px; border-radius:8px; color:#fff;
+  border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.05);
+}
+
+/* ===== Container ===== */
+.slider-container { position:relative; display:flex; justify-content:center; width:100%; min-height:60vh; padding-bottom:40px; }
+
+/* Card view */
+.card-slider.right-panel {
+  border-radius:20px; backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+  padding:24px 28px; width:500px; height:600px;
+  transition:0.45s ease; opacity:0; transform:translateY(18px); margin-top:-80px;
+}
+.card-slider.show { opacity:1; transform:translateY(0); }
+
+/* Car Info in Card */
+.car-header { display:flex; align-items:flex-start; gap:20px; margin-bottom:18px; }
+.car-info { display:flex; flex-direction:column; gap:4px; }
+.car-logo { width:100px; height:auto; }
+.car-name { font-size:24px; font-weight:900; color:#f2c94c; }
+.car-model { font-size:18px; font-weight:600; color:#ccc; }
+.fuel-pill {
+  display:inline-block; padding:4px 12px; border-radius:20px;
+  background:rgba(242,201,76,0.15); border:1px solid rgba(242,201,76,0.4);
+  color:#f2c94c; font-size:13px; font-weight:600; margin-top:4px;
+}
+
+/* Car image */
+.car-image-box {
+  width:100%; height:340px; border-radius:18px; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,0.02); border:2px solid rgba(255,255,255,0.08);
+}
+.car-image { max-width:100%; max-height:100%; object-fit:contain; }
+
+/* Plate */
+.italian-plate {
+  margin:28px auto 0; width:360px; height:60px; background:#fff; border-radius:8px;
+  border:1px solid #ccc; font-family:'OCR A Std',monospace; position:relative;
+  display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:900; color:#000; letter-spacing:6px;
+}
+.italian-plate::before {
+  content:'I'; position:absolute; left:0; width:40px; height:100%;
+  background:#003399; color:#fff; display:flex; align-items:center; justify-content:center;
+  border-top-left-radius:8px; border-bottom-left-radius:8px;
+}
+.italian-plate::after {
+  content:'RM'; position:absolute; right:0; width:40px; height:100%;
+  background:#003399; color:#fff; display:flex; align-items:center; justify-content:center;
+  border-top-right-radius:8px; border-bottom-right-radius:8px;
+}
+
+/* Arrows outside */
+.slider-arrow {
+  position:absolute; top:50%; transform:translateY(-50%);
+  font-size:44px; font-weight:bold; color:#f2c94c;
+  background:rgba(0,0,0,0.45); border-radius:50%; width:56px; height:56px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:background 0.25s;
+}
+.slider-arrow.left { left:10%; }
+.slider-arrow.right { right:10%; }
+
+/* ===== Tiles ===== */
+.tiles-view { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; padding:20px; }
+.tile-card {
+  width:250px; padding:15px;
+  border-radius:20px; backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+}
+.tile-card img { width:100%; height:150px; object-fit:contain; border-radius:10px; margin-bottom:10px; }
+.tile-info { display:flex; gap:10px; align-items:flex-start; }
+.tile-info .car-logo { width:50px; height:auto; }
+.tile-info .car-meta { display:flex; flex-direction:column; gap:4px; }
+
+/* ===== List ===== */
+.list-view { display:flex; flex-direction:column; gap:15px; width:80%; margin:0 auto; padding:20px 0; }
+.list-card {
+  display:flex; align-items:center; gap:20px;
+  padding:15px; border-radius:20px; backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+}
+.list-card .car-logo { width:60px; height:auto; }
+.list-card .car-meta { display:flex; align-items:center; gap:15px; }
+
+/* Responsive */
+@media(max-width:900px){
+  .garage-header{grid-template-columns:1fr; padding:120px 20px 20px;}
+  .card-slider{width:90%;height:auto;}
+  .slider-arrow.left{left:4%;} .slider-arrow.right{right:4%;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><a href="/homepage.html" style="color:white; text-decoration:none;">VeloValue</a></h1>
+  <nav>
+    <a href="/homepage.html">HOME</a>
+    <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+    <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+    <a href="#about">ABOUT US</a>
+
+    <div class="language-select">
+      <select id="languageSelect">
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+
+    <div id="authSection">
+      <button onclick="window.location.href='login.html'">Login / Register</button>
+    </div>
+  </nav>
+</header>
+
+<div class="garage-header">
+  <div class="garage-left">
+    <input type="text" placeholder="Search for your car…" class="capsule-search" id="searchBox"/>
+    <div class="add-car-pill" id="addCarBtn">+ Add a new car</div>
+  </div>
+  <div></div>
+  <div class="garage-right">
+    <div id="garage-level" class="garage-level-pill"></div>
+    <div class="view-toggle">
+      <select id="viewMode">
+        <option value="card">Card View</option>
+        <option value="tiles">Tiles View</option>
+        <option value="list">List View</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div id="garageDisplay" class="slider-container"></div>
+
+<script>
+let cars = [
+  { brand:"Hyundai", model:"i20", fuel:"Petrol", img:"hyundai_i20.jpg", logo:"hyundai_logo.png" },
+  { brand:"Fiat", model:"500", fuel:"Hybrid", img:"abarth_500.jpg", logo:"fiat_logo.png" },
+  { brand:"BMW", model:"X5", fuel:"Diesel", img:"bmw_x5.jpg", logo:"bmw_logo.png" },
+  { name:"Add a new car", img:"", logo:"", isAddNew:true }
+];
+
+const garageDisplay=document.getElementById("garageDisplay");
+const viewModeSelect=document.getElementById("viewMode");
+const garageLevel=document.getElementById("garage-level");
+const addCarBtn=document.getElementById("addCarBtn");
+const searchBox=document.getElementById("searchBox");
+
+let currentIndex=0;
+let filteredCars=[...cars];
+
+addCarBtn.addEventListener("click",()=>alert("Open form to add a new car!"));
+
+function renderCarCard(car){
+  return `
+    <div class="car-header">
+      ${car.logo?`<img src="${car.logo}" class="car-logo">`:""}
+      <div class="car-info">
+        <div class="car-name">${car.brand||car.name}</div>
+        ${car.model?`<div class="car-model">${car.model}</div>`:""}
+        ${car.fuel?`<div class="fuel-pill">${car.fuel}</div>`:""}
+      </div>
+    </div>
+    <div class="car-image-box">
+      ${car.img?`<img src="${car.img}" class="car-image">`:`<div style="color:#bbb;">No image</div>`}
+    </div>
+    <div class="italian-plate">AA 111AA</div>`;
+}
+
+function renderCardSlider(list=filteredCars){
+  garageDisplay.className="slider-container"; garageDisplay.innerHTML="";
+  if(list.length===0||(list.length===1 && list[0].isAddNew)){
+    garageDisplay.innerHTML="<div style='text-align:center;color:#ccc;padding:40px;'>No cars found</div>";
+    garageLevel.textContent="Garage Level - 0"; return;
+  }
+  const card=document.createElement("div"); card.className="card-slider right-panel";
+  const car=list[currentIndex];
+  if(car.isAddNew){
+    card.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;">
+                      <div style="text-align:center;">
+                        <div style="font-size:32px;font-weight:900;color:#f2c94c;margin-bottom:10px;">+ Add a new car</div>
+                        <div style="font-size:14px;color:#ccc;">Click to add car details</div>
+                      </div>
+                    </div>`;
+    card.addEventListener("click",()=>alert("Open form to add a new car!"));
+  } else {
+    card.innerHTML=renderCarCard(car);
+  }
+  garageDisplay.appendChild(card);
+
+  // arrows
+  const prev=document.createElement("button");
+  prev.className="slider-arrow left"; prev.innerHTML="&lt;";
+  prev.style.display=currentIndex===0?"none":"flex";
+  prev.addEventListener("click",()=>{ if(currentIndex>0){ currentIndex--; animateCardChange(list);} });
+
+  const next=document.createElement("button");
+  next.className="slider-arrow right"; next.innerHTML="&gt;";
+  next.style.display=currentIndex===list.length-1?"none":"flex";
+  next.addEventListener("click",()=>{ if(currentIndex<list.length-1){ currentIndex++; animateCardChange(list);} });
+
+  garageDisplay.appendChild(prev); garageDisplay.appendChild(next);
+  requestAnimationFrame(()=>card.classList.add("show"));
+  garageLevel.textContent=`Garage Level - ${list.length-1}`;
+}
+
+function animateCardChange(list){
+  const card=document.querySelector(".card-slider");
+  if(!card) return;
+  card.classList.remove("show");
+  setTimeout(()=>renderCardSlider(list),260);
+}
+
+function renderTiles(list=filteredCars){
+  garageDisplay.className="tiles-view"; garageDisplay.innerHTML="";
+  list.forEach(car=>{
+    const tile=document.createElement("div"); tile.className="tile-card";
+    if(car.isAddNew){
+      tile.innerHTML=`<div class="car-name">+ Add a new car</div>`;
+      tile.addEventListener("click",()=>alert("Open form to add a new car!"));
+    } else {
+      tile.innerHTML=`
+        ${car.img?`<img src="${car.img}" alt="${car.name}">`:`<div style="height:150px;display:flex;align-items:center;justify-content:center;color:#bbb">No image</div>`}
+        <div class="tile-info">
+          ${car.logo?`<img src="${car.logo}" class="car-logo">`:""}
+          <div class="car-meta">
+            <span class="car-name">${car.brand}</span>
+            ${car.model?`<span class="car-model">${car.model}</span>`:""}
+            ${car.fuel?`<span class="fuel-pill">${car.fuel}</span>`:""}
+          </div>
+        </div>`;
+    }
+    garageDisplay.appendChild(tile);
+  });
+  garageLevel.textContent=`Garage Level - ${list.length-1}`;
+}
+
+function renderList(list=filteredCars){
+  garageDisplay.className="list-view"; garageDisplay.innerHTML="";
+  list.forEach(car=>{
+    const item=document.createElement("div"); item.className="list-card";
+    if(car.isAddNew){
+      item.innerHTML=`<div class="car-name">+ Add a new car</div>`;
+      item.addEventListener("click",()=>alert("Open form to add a new car!"));
+    } else {
+      item.innerHTML=`
+        ${car.logo?`<img src="${car.logo}" class="car-logo">`:""}
+        <div class="car-meta">
+          <span class="car-name">${car.brand}</span>
+          ${car.model?`<span class="car-model">${car.model}</span>`:""}
+          ${car.fuel?`<span class="fuel-pill">${car.fuel}</span>`:""}
+        </div>`;
+    }
+    garageDisplay.appendChild(item);
+  });
+  garageLevel.textContent=`Garage Level - ${list.length-1}`;
+}
+
+function renderView(mode){
+  if(mode==="card") renderCardSlider();
+  if(mode==="tiles") renderTiles();
+  if(mode==="list") renderList();
+}
+
+searchBox.addEventListener("input",e=>{
+  const q=e.target.value.toLowerCase();
+  filteredCars=cars.filter(c=>c.isAddNew||(c.brand||c.name).toLowerCase().includes(q));
+  currentIndex=0; renderView(viewModeSelect.value);
+});
+
+viewModeSelect.addEventListener("change",()=>renderView(viewModeSelect.value));
+renderView("card");
+</script>
+
+<script src="/js/auth.js"></script>
+
+</body>
+</html>

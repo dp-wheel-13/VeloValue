@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeloValue – Explore Cars</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg: #000;
+      --panel:#151515;
+      --panel-2:#1c1c1c;
+      --ink:#ffffff;
+      --muted:#a1a1a1;
+      --brand:#8b5cf6;
+      --brand-2:#1db954;
+      --card:#1a1a1a;
+      --ring: rgba(139,92,246,.35);
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow-1: 0 8px 24px rgba(0,0,0,.45);
+      --shadow-2: 0 18px 50px rgba(0,0,0,.55);
+    }
+
+    *{ box-sizing: border-box; }
+    html,body{ height:100%; margin:0; padding:0; font-family: 'Inter', sans-serif; line-height:1.35; background: var(--bg); color: var(--ink); }
+
+   /* Header */
+  header {
+    position: sticky;
+    top: 0; left: 0; width: 100%;
+    padding: 1rem 2rem;
+    background-color: #000;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 1000;
+    border-bottom: 1px solid #1f1f1f;
+  }
+  header h1 { font-size: 24px; font-weight: 800; margin: 0; }
+  header nav { display: flex; align-items: center; gap: 20px; }
+  header nav a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; }
+  header nav a:hover { text-decoration: underline; }
+
+  /* Language select */
+  .language-select select {
+    background: #111;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* Auth button */
+  #authSection button {
+    background: #fff;
+    color: #111;
+    border: 1px solid #333;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  #authSection button:hover {
+    background: #444;
+    color: #fff;
+  }
+
+     /* ---------------- Hero Search ---------------- */
+    .hero{
+      position: relative; overflow: hidden;
+      min-height: clamp(350px, 70vh, 900px);
+      display: grid; place-items: center;
+      padding: 48px 16px 70px;
+      border-bottom: 1px solid #1f1f1f;
+      isolation: isolate; /* keep z-index layers sane */
+    }
+
+    /* Gradient glow overlay (like your old CSS) */
+    .hero::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(1200px 300px at 10% 0%, rgba(139,92,246,.25), transparent 60%),
+        radial-gradient(1200px 300px at 90% 100%, rgba(34,211,238,.18), transparent 60%);
+      z-index: 0;
+      pointer-events:none;
+    }
+
+    /* Background video */
+    .hero video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      z-index: -1;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+    }
+
+    .search-wrap{
+      width: min(1100px, 92vw);
+      background: rgba(12,12,12,.75);
+      border: 1px solid #2a2a2a;
+      border-radius: 999px;
+      padding: 10px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 14px 40px rgba(0,0,0,.5);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .search-wrap input{
+      flex: 1;
+      background: transparent;
+      border: 0;
+      outline: none;
+      color: var(--ink, white);
+      font-size: 16px;
+      padding: 12px 2px;
+    }
+
+    .search-btn{
+      background: linear-gradient(135deg,var(--brand, #8b5cf6),var(--brand-2, #22d3ee));
+      border: 0;
+      color: #0a0a0a;
+      font-weight: 800;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    /* Mobile niceties */
+    @media (max-width: 600px){
+      .search-wrap { border-radius: 16px; padding: 8px 10px; }
+      .search-btn { padding: 10px 14px; font-weight: 700; }
+    }
+    /* ---------------- Popular Cars – continuous slider ---------------- */
+    .section{
+      width:min(1200px, 94vw); margin:0 auto; padding:26px 0;
+    }
+    .section h2{ font-size:22px; margin:0 0 14px; letter-spacing:.2px; }
+    .marquee{
+      position:relative; overflow:hidden; border-radius:var(--radius-xl);
+      background:linear-gradient(180deg,#111,#0f0f0f); border:1px solid #222; padding:14px;
+      box-shadow: var(--shadow-1);
+    }
+    .marquee .track{
+      display:flex; gap:14px; align-items:stretch; width:max-content;
+      animation: scroll-left 28s linear infinite;
+    }
+    .marquee:hover .track{ animation-play-state: paused; }
+    @keyframes scroll-left{ from{ transform:translateX(0);} to{ transform: translateX(-50%);} }
+
+    .car-card{
+      min-width:260px; max-width:260px; background:var(--card); border:1px solid #222;
+      border-radius:16px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer;
+      transition: transform .25s ease, box-shadow .25s ease; box-shadow: 0 8px 20px rgba(0,0,0,.35);
+    }
+    .car-card:hover{ transform: translateY(-4px); box-shadow: 0 16px 36px rgba(0,0,0,.55); }
+    .car-card .thumb{ aspect-ratio:16/10; width:100%; object-fit:cover; }
+    .car-card .meta{ padding:12px 12px 14px; display:flex; justify-content:space-between; align-items:center; }
+    .car-card .name{ font-weight:700; }
+    .car-card .pill{ font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid #2b2b2b; color:var(--muted); }
+
+    /* ---------------- Filters + Results (same as before) ---------------- */
+    .filters-wrap{ display:grid; grid-template-columns: 260px 1fr 280px; gap:16px; }
+    @media (max-width: 1060px){ .filters-wrap{ grid-template-columns: 1fr; } }
+    .panel{ background:var(--panel); border:1px solid #222; border-radius:var(--radius-xl); box-shadow:var(--shadow-1); }
+    .left-filters{ padding:16px; position:sticky; top:78px; height:max-content; }
+    .left-filters h3{ margin:4px 0 12px; font-size:18px; }
+    .f-group{ margin:14px 0; }
+    .f-label{ display:block; font-size:12px; letter-spacing:.2px; color:var(--muted); margin-bottom:8px; text-transform:uppercase; }
+    .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+    .chip{ padding:8px 12px; border-radius:999px; border:1px solid #2a2a2a; cursor:pointer; font-weight:600; color:var(--ink); background:#121212; }
+    .chip.active{ border-color:transparent; background:linear-gradient(135deg, rgba(139,92,246,.25), rgba(34,211,238,.25)); box-shadow: inset 0 0 0 1px #2b2b2b; }
+    .check-row{ display:grid; grid-template-columns: 1fr auto; gap:6px; align-items:center; margin:6px 0; }
+    .range{ display:flex; gap:8px; align-items:center; }
+    .range input[type="range"]{ width:100%; }
+    .apply-btn{ width:100%; margin-top:10px; padding:12px 14px; border:0; border-radius:12px; cursor:pointer; font-weight:800; color:#0b0b0b; background:linear-gradient(135deg,var(--brand),var(--brand-2)); }
+    .results{ padding:14px; }
+    .toolbar{ display:flex; justify-content:space-between; align-items:center; padding:8px 6px 14px; }
+    .toolbar .count{ color:var(--muted); font-weight:600; }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
+    .brand-panel{ padding:14px; }
+    .brand-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; }
+    .brand-tile{ background: #121212; border:1px solid #262626; border-radius:14px; padding:12px; display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer; transition: transform .2s ease, border-color .25s ease; }
+    .brand-tile .brand-logo{ font-size:22px; font-weight:700; color:var(--muted); }
+    .brand-tile .brand-name{ font-size:14px; font-weight:600; text-align:center; }
+    .alpha-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .alpha{ cursor:pointer; padding:6px 10px; border-radius:6px; background:#121212; color:var(--muted); font-size:12px; font-weight:600; }
+    .alpha.active{ background:linear-gradient(135deg, rgba(139,92,246,.25), rgba(34,211,238,.25)); color:#fff; }
+  </style>
+</head>
+<body>
+
+  <!-- ---------------- HEADER ---------------- -->
+  <header>
+  <h1><a href="/homepage.html" style="color:white; text-decoration:none;">VeloValue</a></h1>
+  <nav>
+    <a href="/homepage.html">HOME</a>
+    <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+    <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+    <a href="#about">ABOUT US</a>
+
+    <div class="language-select">
+      <select id="languageSelect">
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+
+    <div id="authSection">
+      <button onclick="window.location.href='login.html'">Login / Register</button>
+    </div>
+  </nav>
+</header>
+
+  <!-- Hero search -->
+  <section class="hero" id="home">
+     <!-- Replace video.mp4 with your actual file path -->
+    <video autoplay muted loop playsinline>
+      <source src="/Multimedia/videoplayback.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="search-wrap">
+      <input id="searchInput" type="text" placeholder="Search for your next dream car..." aria-label="Search cars"/>
+      <button class="search-btn" id="searchBtn">Search</button>
+    </div>
+  </section>
+
+  <!-- Popular in Italy (auto-scrolling) -->
+  <section class="section" id="popular">
+    <h2>Popular Cars in Italy</h2>
+    <div class="marquee">
+      <div class="track" id="popularTrack"><!-- slides injected by JS --></div>
+    </div>
+  </section>
+
+  <!-- Filters + Results -->
+  <section class="section" id="filters">
+    <div class="filters-wrap">
+      <!-- Left: filters -->
+      <aside class="panel left-filters">
+        <h3>Filter By</h3>
+        <div class="f-group">
+          <span class="f-label">Body Style</span>
+          <div class="chip-row" id="bodyChips"></div>
+        </div>
+        <div class="f-group">
+          <span class="f-label">Fuel</span>
+          <div class="chip-row" id="fuelChips"></div>
+        </div>
+        <div class="f-group">
+          <span class="f-label">Transmission</span>
+          <div class="chip-row" id="gearChips"></div>
+        </div>
+        <div class="f-group">
+          <span class="f-label">Price (EUR)</span>
+          <div class="range">
+            <input type="range" id="priceRange" min="10000" max="120000" value="120000" step="1000"/>
+            <span id="priceOut" class="muted">≤ €120,000</span>
+          </div>
+        </div>
+        <button class="apply-btn" id="applyFilters">Done</button>
+      </aside>
+
+      <!-- Center: results grid -->
+      <main class="panel results">
+        <div class="toolbar">
+          <div class="count" id="resultCount">0 results</div>
+          <div>
+            <label class="sr-only" for="sortSel">Sort</label>
+            <select id="sortSel">
+              <option value="relevance">Sort: Relevance</option>
+              <option value="price_asc">Price: Low → High</option>
+              <option value="price_desc">Price: High → Low</option>
+              <option value="rating_desc">Rating</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid" id="resultsGrid"><!-- cards injected --></div>
+      </main>
+
+      <!-- Right: brand tiles -->
+      <aside class="panel brand-panel">
+        <h3 style="margin:4px 0 10px">Brands</h3>
+        <div class="brand-grid" id="brandGrid"><!-- tiles injected --></div>
+        <div class="alpha-row" id="alphaRow"><!-- A..Z --></div>
+      </aside>
+    </div>
+  </section>
+
+  <script>
+    /* ---------------- Data & JS (same as your 500+ code) ---------------- */
+    const cars = [
+      {brand:'Fiat', model:'500', body:'Hatchback', fuel:'Petrol', gear:'Manual', price:16500, rating:4.5, popularIn:['IT'], img:'https://images.unsplash.com/photo-1615089000191-3b82ba9fb3a5?q=80&w=1400&auto=format&fit=crop'},
+      {brand:'Fiat', model:'Panda', body:'Hatchback', fuel:'Petrol', gear:'Manual', price:14500, rating:4.2, popularIn:['IT'], img:'https://images.unsplash.com/photo-1658580776761-19e3f3323cf8?q=80&w=1400&auto=format&fit=crop'},
+      {brand:'Alfa Romeo', model:'Giulia', body:'Sedan', fuel:'Petrol', gear:'Auto', price:45900, rating:4.7, popularIn:['IT'], img:'https://images.unsplash.com/photo-1616008042387-0a44a0a24e69?q=80&w=1400&auto=format&fit=crop'},
+      {brand:'Alfa Romeo', model:'Tonale', body:'SUV', fuel:'Hybrid', gear:'Auto', price:39900, rating:4.4, popularIn:['IT'], img:'https://images.unsplash.com/photo-1683707664244-1e5924c4ea02?q=80&w=1400&auto=format&fit=crop'},
+      {brand:'Ferrari', model:'Roma', body:'Coupe', fuel:'Petrol', gear:'Auto', price:210000, rating:4.9, popularIn:['IT'], img:'https://images.unsplash.com/photo-1603386329225-868f9b1ee4fd?q=80&w=1400&auto=format&fit=crop'},
+      {brand:'Maserati', model:'Grecale', body:'SUV', fuel:'Hybrid', gear:'Auto', price:76000, rating:4.6, popularIn:['IT'], img:'https://images.unsplash.com/photo-1707345520629-83d6e1bb4be1?q=80&w=1400&auto=format&fit=crop'},
+      {brand:'Lancia', model:'Ypsilon', body:'Hatchback', fuel:'Hybrid', gear:'Manual', price:18900, rating:4.1, popularIn:['IT'], img:'https://images.unsplash.com/photo-1550355291-bbee04a92027?q=80&w=1400&auto=format&fit=crop'},
+      {brand:'Dacia', model:'Sandero', body:'Hatchback', fuel:'Petrol', gear:'Manual', price:12900, rating:3.9, popularIn:['IT'], img:'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=1400&auto=format&fit=crop'},
+      {brand:'Volkswagen', model:'Golf', body:'Hatchback', fuel:'Hybrid', gear:'Auto', price:29900, rating:4.5, popularIn:['IT'], img:'https://images.unsplash.com/photo-1622551247632-3f2b2df10dea?q=80&w=1400&auto=format&fit=crop'},
+      {brand:'BMW', model:'X1', body:'SUV', fuel:'Diesel', gear:'Auto', price:42900, rating:4.4, popularIn:['IT'], img:'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1400&auto=format&fit=crop'},
+      {brand:'Audi', model:'A3', body:'Hatchback', fuel:'Petrol', gear:'Auto', price:30900, rating:4.3, popularIn:['IT'], img:'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1400&auto=format&fit=crop'}
+    ];
+
+    /* ---------------- Populate Popular slider ---------------- */
+    const popularCars = cars.filter(c=>c.popularIn.includes('IT'));
+    const track = document.getElementById('popularTrack');
+    function carSlide(c){
+      return `<article class="car-card">
+        <img class="thumb" src="${c.img}" alt="${c.brand} ${c.model}">
+        <div class="meta">
+          <div>
+            <div class="name">${c.brand} ${c.model}</div>
+            <div class="muted" style="font-size:12px">${c.body} • €${c.price.toLocaleString()}</div>
+          </div>
+          <div class="pill">★ ${c.rating}</div>
+        </div>
+      </article>`;
+    }
+    const slides = popularCars.map(carSlide).join('');
+    track.innerHTML = slides + slides;
+
+    /* ---------------- Filters UI ---------------- */
+    const bodyChips = document.getElementById('bodyChips');
+    const fuelChips = document.getElementById('fuelChips');
+    const gearChips = document.getElementById('gearChips');
+    const selected = { brands:new Set(), body:new Set(), fuel:new Set(), gear:new Set(), maxPrice:120000 };
+    const bodies = [...new Set(cars.map(c=>c.body))];
+    const fuels  = [...new Set(cars.map(c=>c.fuel))];
+    const gears  = [...new Set(cars.map(c=>c.gear))];
+    const brands = [...new Set(cars.map(c=>c.brand))].sort();
+
+    function chip(label, group){
+      const el = document.createElement('button');
+      el.className='chip'; el.textContent=label; el.dataset.group=group; el.dataset.value=label;
+      el.addEventListener('click',()=>{ el.classList.toggle('active'); 
+        const set = selected[group]; 
+        if(el.classList.contains('active')) set.add(label); else set.delete(label);
+      });
+      return el;
+    }
+    bodies.forEach(b=>bodyChips.appendChild(chip(b,'body')));
+    fuels.forEach(f=>fuelChips.appendChild(chip(f,'fuel')));
+    gears.forEach(g=>gearChips.appendChild(chip(g,'gear')));
+
+    const priceRange = document.getElementById('priceRange');
+    const priceOut = document.getElementById('priceOut');
+    priceRange.addEventListener('input', e=>{ selected.maxPrice=Number(e.target.value); priceOut.textContent=`≤ €${Number(e.target.value).toLocaleString()}`; });
+
+    /* ---------------- Brand Tiles ---------------- */
+    const brandGrid = document.getElementById('brandGrid');
+    function makeBrandTile(name){
+      const tile = document.createElement('div'); tile.className='brand-tile'; tile.tabIndex=0;
+      const logo = document.createElement('div'); logo.className='brand-logo'; logo.textContent=name.split(' ').map(s=>s[0]).join('').slice(0,3).toUpperCase();
+      const label = document.createElement('div'); label.className='brand-name'; label.textContent=name;
+      tile.append(logo,label);
+      tile.addEventListener('click',()=>toggleBrand(name,tile));
+      tile.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleBrand(name,tile);} });
+      return tile;
+    }
+    function toggleBrand(name,tile){
+      const active = tile.classList.toggle('active');
+      tile.style.borderColor = active ? '#4b4b4b' : '#262626';
+      tile.style.background = active ? 'linear-gradient(135deg, rgba(139,92,246,.18), rgba(34,211,238,.18))' : '#121212';
+      if(active) selected.brands.add(name); else selected.brands.delete(name);
+    }
+    brands.forEach(b=>brandGrid.appendChild(makeBrandTile(b)));
+
+    const alphaRow = document.getElementById('alphaRow');
+    const AZ = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    AZ.forEach(letter=>{
+      const span = document.createElement('span'); span.className='alpha'; span.textContent=letter;
+      span.addEventListener('click',()=>{
+        document.querySelectorAll('#brandGrid .brand-tile').forEach(tile=>{
+          const show = tile.querySelector('.brand-name').textContent.startsWith(letter);
+          tile.style.display = show? 'flex':'none';
+        });
+        document.querySelectorAll('.alpha').forEach(a=>a.classList.remove('active'));
+        span.classList.add('active');
+      });
+      alphaRow.appendChild(span);
+    });
+
+    /* ---------------- Results Rendering ---------------- */
+    const grid = document.getElementById('resultsGrid');
+    const resultCount = document.getElementById('resultCount');
+    const sortSel = document.getElementById('sortSel');
+
+    function renderCards(list){
+      grid.innerHTML = list.map(c=>`
+        <article class="car-card" title="${c.brand} ${c.model}">
+          <img class="thumb" loading="lazy" src="${c.img}" alt="${c.brand} ${c.model}">
+          <div class="meta">
+            <div>
+              <div class="name">${c.brand} ${c.model}</div>
+              <div class="muted" style="font-size:12px">${c.body} • €${c.price.toLocaleString()}</div>
+            </div>
+            <div class="pill">★ ${c.rating}</div>
+          </div>
+        </article>`).join('');
+      resultCount.textContent = `${list.length} result${list.length!==1?'s':''}`;
+    }
+
+    function applyFiltersNow(){
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      let list = cars.filter(c=> c.price <= selected.maxPrice);
+      if(selected.brands.size) list = list.filter(c=> selected.brands.has(c.brand));
+      if(selected.body.size) list = list.filter(c=> selected.body.has(c.body));
+      if(selected.fuel.size) list = list.filter(c=> selected.fuel.has(c.fuel));
+      if(selected.gear.size) list = list.filter(c=> selected.gear.has(c.gear));
+      if(q) list = list.filter(c=> `${c.brand} ${c.model} ${c.body}`.toLowerCase().includes(q));
+
+      switch(sortSel.value){
+        case 'price_asc':  list.sort((a,b)=>a.price-b.price); break;
+        case 'price_desc': list.sort((a,b)=>b.price-a.price); break;
+        case 'rating_desc': list.sort((a,b)=>b.rating-a.rating); break;
+      }
+      renderCards(list);
+    }
+
+    document.getElementById('applyFilters').addEventListener('click', applyFiltersNow);
+    document.getElementById('searchBtn').addEventListener('click', applyFiltersNow);
+    document.getElementById('searchInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') applyFiltersNow(); });
+    sortSel.addEventListener('change', applyFiltersNow);
+
+    // initial render
+    renderCards(cars);
+  </script>
+
+  <script src="/js/auth.js"></script>
+
+</body>
+</html> 

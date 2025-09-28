@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Details – Smart Garage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/garagedetails.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+  <h1><a href="/homepage.html" style="color:white; text-decoration:none;">VeloValue</a></h1>
+  <nav>
+    <a href="/homepage.html">HOME</a>
+    <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+    <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+    <a href="#about">ABOUT US</a>
+
+    <div class="language-select">
+      <select id="languageSelect">
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+
+    <div id="authSection">
+      <button onclick="window.location.href='login.html'">Login / Register</button>
+    </div>
+  </nav>
+</header>
+
+  <!-- Main Content -->
+  <main class="garage-container">
+    <h2>Car Details</h2>
+
+    <!-- Car Card -->
+    <div id="carCardContainer"></div>
+
+    <!-- Document Upload -->
+    <div class="upload-section">
+      <h3>Upload Additional Documents</h3>
+      <form id="uploadForm">
+        <label>Insurance</label>
+        <input type="file" id="insuranceUpload">
+
+        <label>PUC</label>
+        <input type="file" id="pucUpload">
+
+        <label>Driving License</label>
+        <input type="file" id="licenseUpload">
+
+        <label>Other Documents</label>
+        <input type="file" id="otherDocsUpload" multiple>
+
+        <button type="submit">Upload Documents</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    // Get vehicle number from query param
+    const urlParams = new URLSearchParams(window.location.search);
+    const plate = urlParams.get('plate') || 'UNKNOWN';
+
+    const carCardContainer = document.getElementById('carCardContainer');
+
+    // Mock car data (replace with backend fetch later)
+    const mockCar = {
+      numberPlate: plate,
+      brand: 'Fiat',
+      model: '500X',
+      year: 2023,
+      documents: {
+        insurance: 'Valid',
+        PUC: 'Uploaded',
+        fines: 'Pending'
+      },
+      image: 'https://cdn.pixabay.com/photo/2017/03/27/14/56/car-2179228_1280.jpg'
+    };
+
+    // Function to render car card
+    function renderCarCard(car) {
+      const cardHTML = `
+        <div class="car-card">
+          <img src="${car.image}" alt="${car.brand} ${car.model}">
+          <div class="car-info">
+            <h3>${car.brand} ${car.model} (${car.year})</h3>
+            <p>Number Plate: <strong>${car.numberPlate}</strong></p>
+          </div>
+          <div class="status-section">
+            <div class="status-badge ${car.documents.insurance.toLowerCase()}">Insurance: ${car.documents.insurance}</div>
+            <div class="status-badge ${car.documents.PUC.toLowerCase()}">PUC: ${car.documents.PUC}</div>
+            <div class="status-badge ${car.documents.fines.toLowerCase()}">Fines: ${car.documents.fines}</div>
+          </div>
+        </div>
+      `;
+      carCardContainer.innerHTML = cardHTML;
+    }
+
+    renderCarCard(mockCar);
+
+    // Handle upload form
+    const uploadForm = document.getElementById('uploadForm');
+    uploadForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Documents uploaded successfully (mock)!');
+
+      // Later: send files to backend via fetch()
+    });
+  </script>
+
+  <script src="/js/auth.js"></script>
+
+</body>
+</html>

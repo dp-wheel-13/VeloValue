@@ -1,0 +1,164 @@
+/* Body & Font */
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #121212;
+  color: #fff;
+}
+
+/* Header */
+header {
+  background: #1f1f1f;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header h1 a {
+  color: white;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 22px;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+header nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.language-select select {
+  padding: 5px;
+  border-radius: 6px;
+  border: none;
+  background: #2a2a2a;
+  color: #fff;
+}
+
+#authSection button {
+  background: #f39c12;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Main Garage Container */
+.garage-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+h2 {
+  font-weight: 800;
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+/* Search Section */
+.search-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+  gap: 10px;
+}
+
+.italian-plate {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 6px;
+  border: 2px solid #000;
+  padding: 5px 10px;
+  width: 250px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.italian-plate .eu-band {
+  background: #0055a4; /* blue band */
+  color: #fff;
+  font-weight: bold;
+  padding: 0 5px;
+  border-radius: 3px;
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.italian-plate input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 700;
+  color: #000;
+  background: transparent;
+}
+
+
+
+.search-section button {
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background: #f39c12;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Car Card */
+#carCardContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.car-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 20px;
+  width: 350px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+  transition: transform 0.3s;
+}
+
+.car-card:hover {
+  transform: translateY(-5px);
+}
+
+.car-card img {
+  width: 100%;
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+.car-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.status-badge {
+  background: #27ae60;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-right: 5px;
+}

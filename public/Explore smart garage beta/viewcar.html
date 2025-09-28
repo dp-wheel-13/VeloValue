@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeloValue - Lamborghini Revuelto</title>
+<style>
+
+/* ===== Global ===== */
+* { box-sizing: border-box; margin:0; padding:0; }
+
+html, body { 
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* ensures full viewport */
+}
+
+/* ===== Full viewport background fix ===== */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
+  z-index: -1;
+}
+
+
+/* ===== Header ===== */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px);
+  padding: 15px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #f2c94c;
+  letter-spacing: 1px;
+}
+header nav a {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 24px;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+header nav a:hover { color: #f2c94c; }
+header nav a:last-child { margin-right: 0; }
+
+/* ===== Container Grid ===== */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* only left & right panels */
+  gap: 40px;
+  padding: 110px 0 50px;
+  max-width: 1200px; /* center content */
+  margin: 0 auto;    /* horizontally center */
+  min-height: calc(100vh - 140px); /* height minus top padding */
+}
+
+/* ===== Panels ===== */
+.left-panel, .right-panel {
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 28px 32px;
+  transition: all 0.4s ease;
+}
+.left-panel:hover, .right-panel:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 70px rgba(0,0,0,0.7);
+}
+
+/* ===== Left Panel ===== */
+.left-panel { grid-column: 1; }
+
+/* Logo + Brand/Model/Fuel horizontal layout */
+.car-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.car-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* align text at top */
+  gap: 4px; /* standard line spacing between name, model, fuel */
+}
+
+.car-logo {
+  width: 130px;
+  height: auto;
+  flex-shrink: 0; 
+}
+
+/* Brand Name */
+.car-name {
+  font-size: 36px;
+  font-weight: 900;
+  color: #f2c94c;
+  letter-spacing: 1px;
+  margin: 0; /* remove extra spacing */
+  line-height: 1.2; /* natural line spacing */
+}
+
+/* Model */
+.car-model {
+  font-size: 24px;
+  font-weight: 600;
+  color: #ccc;
+  margin: 0; /* remove extra spacing */
+  line-height: 1.2;
+}
+
+/* Fuel Type */
+.fuel-type {
+  font-size: 20px;
+  font-weight: 700;
+  display: inline-block;
+  padding: 4px 12px; /* smaller padding to match line spacing */
+  border-radius: 16px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  margin: 0; /* remove top margin */
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Accordion ===== */
+.accordion {
+  margin-bottom: 20px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.4s ease;
+}
+
+/* Header with rotating arrow */
+.accordion-header {
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.accordion-header:hover {
+  background: rgba(242, 201, 76, 0.08);
+}
+
+/* Arrow */
+.accordion-arrow {
+  display: inline-block;
+  margin-left: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  padding: 5px;
+  transform: rotate(0deg); /* pointing right */
+  transition: transform 0.3s ease;
+}
+
+/* Rotate arrow when open */
+.accordion.open .accordion-arrow {
+  transform: rotate(90deg); /* pointing down */
+}
+
+/* Content */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 24px;
+  font-size: 16px;
+  color: #ddd;
+  transition: max-height 0.5s ease, padding 0.3s ease;
+}
+
+/* Open content */
+.accordion.open .accordion-content {
+  max-height: 600px;
+  padding: 14px 24px;
+}
+
+
+/* ===== Right Panel ===== */
+.right-panel {
+  grid-column: 2;
+  text-align: center;
+  height: auto;      /* let content define height */
+  max-height: fit-content;  /* prevents it from stretching */
+}
+
+/* ===== Italian Number Plate ===== */
+.italian-plate {
+  position: relative;
+  width: 360px;
+  height: 60px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'OCR A Std', monospace; /* mimics FE-Schrift */
+  font-weight: 900;
+  font-size: 28px;
+  color: #000;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 #aaa;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.2);
+  margin: 0 auto 28px;
+}
+
+/* Left Blue Band */
+.italian-plate::before {
+  content: 'I';
+  position: absolute;
+  left: 0;
+  width: 40px;
+  height: 100%;
+  background: #003399;
+  color: #fff;
+  font-weight: 900;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  font-family: 'OCR A Std', monospace;
+}
+
+/* Right Blue Band (Province code) */
+.italian-plate::after {
+  content: 'RM'; /* rome province example */
+  position: absolute;
+  right: 0;
+  width: 40px;
+  height: 100%;
+  background: #003399;
+  color: #fff;
+  font-weight: 900;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  font-family: 'OCR A Std', monospace;
+}
+
+/* Car Image */
+.car-image {
+  width: 100%;
+  max-width: 720px;
+  height: auto;
+  border-radius: 24px;
+  margin-bottom: 28px;
+  border: 2px solid rgba(255,255,255,0.08);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(16px);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  transition: transform 0.4s, box-shadow 0.4s;
+}
+.car-image:hover { transform: scale(1.03); box-shadow: 0 30px 80px rgba(0,0,0,0.85); }
+
+/* Insurance Box */
+.insurance-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 28px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  width: 380px;
+  margin: 0 auto 28px;
+  transition: all 0.3s;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  color: #fff; /* default white font */
+  border: none;
+}
+.insurance-active {
+  background-color: #28a745; /* vibrant green */
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 128, 0, 0.5);
+}
+.insurance-inactive {
+  background-color: #dc3545; /* vibrant red */
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(128, 0, 0, 0.5);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .container { display: block; padding: 20px; }
+  .left-panel, .right-panel { grid-column: auto; width: 100%; margin-bottom: 28px; }
+  .car-header { flex-direction: row; gap: 16px; }
+  .car-info { flex-direction: column; }
+  .italian-plate {
+    width: 280px;
+    height: 50px;
+    font-size: 22px;
+    letter-spacing: 4px;
+  }
+  .italian-plate::before, .italian-plate::after {
+    width: 32px;
+    font-size: 16px;
+  }
+  .insurance-box { width: 100%; justify-content: space-between; }
+  header { padding: 12px 18px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><a href="/homepage.html" style="color:white; text-decoration:none;">VeloValue</a></h1>
+  <nav>
+    <a href="/homepage.html">HOME</a>
+    <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+    <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+    <a href="#about">ABOUT US</a>
+
+    <div class="language-select">
+      <select id="languageSelect">
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+
+    <div id="authSection">
+      <button onclick="window.location.href='login.html'">Login / Register</button>
+    </div>
+  </nav>
+</header>
+
+<div class="container">
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="car-header">
+      <img src="lambo_logo.png" alt="Lamborghini Logo" class="car-logo">
+      <div class="car-info">
+        <div class="car-name">Lamborghini</div>
+        <div class="car-model">Revuelto</div>
+        <div class="fuel-type">Petrol</div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header">
+        Registration Details <span class="accordion-arrow"></span>
+      </div>
+      <div class="accordion-content">
+        <p>• Name: John Doe</p>
+        <p>• Fiscal Code: ABC123XYZ</p>
+        <p>• Issue Date: 01 Jan 2022</p>
+        <p>• Expiry Date: 01 Jan 2032</p>
+        <p>• Authority: Rome DMV</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header">
+        Documents & Compliance <span class="accordion-arrow"></span>
+      </div>
+      <div class="accordion-content">
+        <p>• Insurance Policy</p>
+        <p>• Pollution Certificate</p>
+        <p>• Road Tax</p>
+        <p>• Fitness Certificate</p>
+        <p>• Others</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header">Finance & Services <span class="accordion-arrow"></span></div>
+      <div class="accordion-content">
+        <p>• EMI Status</p>
+        <p>• Bank Details</p>
+        <p>• Service Package</p>
+        <p>• Warranty</p>
+        <p>• Roadside Assistance</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header">Specifications <span class="accordion-arrow"></span></div>
+      <div class="accordion-content">
+        <p>• Engine: V12 Hybrid</p>
+        <p>• Horsepower: 1015hp</p>
+        <p>• Top Speed: 350 km/h</p>
+        <p>• 0-100: 2.5s</p>
+        <p>• Drive: AWD</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header">Under the Hood <span class="accordion-arrow"></span></div>
+      <div class="accordion-content">
+        <p>• Engine Oil</p>
+        <p>• Coolant</p>
+        <p>• Battery</p>
+        <p>• Transmission</p>
+        <p>• Exhaust System</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="italian-plate">AA 111AA</div>
+    <img src="Lamborghini_Revuelto_8k_Wallpaper_HD_Car.jpg" alt="Car Image" class="car-image">
+    <div class="insurance-box insurance-active">
+      <span>Insurance: Active</span>
+      <span>30 Mar 2026</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// Accordion Toggle
+document.querySelectorAll(".accordion-header").forEach(header => {
+  header.addEventListener("click", () => {
+    const accordion = header.parentElement;
+    accordion.classList.toggle("open");
+  });
+});
+
+// Insurance Check
+const expiryDate = new Date("2026-03-30");
+const today = new Date();
+const box = document.querySelector(".insurance-box");
+if (expiryDate >= today) {
+  box.classList.add("insurance-active");
+  box.classList.remove("insurance-inactive");
+  box.innerHTML = `<span>Insurance: Active</span> <span>${formattedDate}</span>`;
+} else {
+  box.classList.add("insurance-inactive");
+  box.classList.remove("insurance-active");
+  box.innerHTML = `<span>Insurance: Inactive</span> <span>${formattedDate}</span>`;
+}
+</script>
+
+<script src="/js/auth.js"></script>
+
+</body>
+</html>

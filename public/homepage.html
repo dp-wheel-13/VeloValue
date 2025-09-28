@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VeloValue – Discover Your Drive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="homepage.css">
+</head>
+<body>
+
+  <header>
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <h1 class="center-title">VeloValue</h1>
+    <div class="right-section">
+      <div class="language-select">
+        <select id="languageSelect">
+          <option value="en">🇬🇧 English</option>
+          <option value="it">🇮🇹 Italiano</option>
+          <option value="de">🇩🇪 Deutsch</option>
+        </select>
+      </div>
+      <div id="authSection">
+        <button id="loginBtn" onclick="window.location.href='login.html'">Login / Register</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="menu" id="hamburgerMenu" aria-hidden="true">
+    <a href="homepage.html">HOME</a>
+    <a href="Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+    <a href="Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+    <a href="Velocharge beta/velocharge.html">DISCOVER VELOCHARGE</a>
+    <a href="#careers">WORK WITH US</a>
+    <a href="#about">ABOUT US</a>
+  </nav>
+  <div class="menu-overlay"></div>
+
+  <section id="explore" class="hero">
+    <h2>DISCOVER THE VALUE OF EVERY DRIVE</h2>
+    <p>Search for your next car with elegance and precision.</p>
+    <button onclick="window.location.href='Explore new cars beta/explorenewcars.html'">EXPLORE NEW CARS</button>
+  </section>
+
+  <section id="garage" class="hero">
+    <h2>INTRODUCING THE SMART GARAGE</h2>
+    <p>Keep all your car details, Driving License, documents, and records safe in one smart garage.</p>
+    <button onclick="window.location.href='Explore smart garage beta/smartgarage.html'">EXPLORE SMART GARAGE</button>
+  </section>
+
+  <section id="velocharge" class="hero">
+    <h2>EMPOWER YOUR DRIVE WITH VELOCHARGE</h2>
+    <p>Seamlessly locate, reserve, and track EV charging stations wherever your journey takes you.</p>
+    <button onclick="window.location.href='Velocharge beta/velocharge.html'">DISCOVER VELOCHARGE</button>
+  </section>
+
+  <section id="features" class="features">
+    <div class="feature">
+      <h3>🔍 Smart Search</h3>
+      <p>Locate vehicles by license plate number or photograph using advanced AI technology.</p>
+    </div>
+    <div class="feature">
+      <h3>⌚ Reminders</h3>
+      <p>Get notified before your PUC, insurance, or servicing expires.</p>
+    </div>
+  </section>
+
+  <section id="about" class="join-community">
+    <h2>JOIN OUR COMMUNITY</h2>
+    <div class="social-icons">
+      <a href="#" aria-label="Facebook" class="icon fb" title="Facebook"><img src="Multimedia/facebook.svg" alt="Facebook" /></a>
+      <a href="#" aria-label="X (Twitter)" class="icon x" title="X (Twitter)"><img src="Multimedia/x.svg" alt="X" /></a>
+      <a href="#" aria-label="Instagram" class="icon insta" title="Instagram"><img src="Multimedia/instagram.svg" alt="Instagram" /></a>
+      <a href="#" aria-label="YouTube" class="icon yt" title="YouTube"><img src="Multimedia/youtube.svg" alt="YouTube" /></a>
+      <a href="#" aria-label="LinkedIn" class="icon linkedin" title="LinkedIn"><img src="Multimedia/linkedin.svg" alt="LinkedIn" /></a>
+      <a href="#" aria-label="TikTok" class="icon tiktok" title="TikTok"><img src="Multimedia/tiktok.svg" alt="TikTok" /></a>
+    </div>
+
+    <div class="cars">
+      <img src="Multimedia/join-our-community-5-cars.png" alt="Collection of 5 cars" />
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.<br>
+    Contact - debanjan.pal@community.unipa.it
+  </footer>
+
+  <script>
+    // ====== Hamburger menu toggle ======
+    const hamburger = document.querySelector('.hamburger');
+    const menu = document.getElementById('hamburgerMenu');
+    const overlay = document.querySelector('.menu-overlay');
+
+    function toggleMenu() {
+      const expanded = hamburger.getAttribute('aria-expanded') === 'true' || false;
+      hamburger.setAttribute('aria-expanded', !expanded);
+      menu.classList.toggle('active');
+      overlay.classList.toggle('active');
+      menu.setAttribute('aria-hidden', !menu.classList.contains('active'));
+      hamburger.textContent = '☰';
+    }
+
+    hamburger.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
+
+    const menuLinks = document.querySelectorAll('.menu a');
+    menuLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        if (href.startsWith('#')) {
+          e.preventDefault();
+          const targetId = href.substring(1);
+          const targetSection = document.getElementById(targetId);
+          if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth' });
+          toggleMenu();
+        }
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768 && menu.classList.contains('active')) toggleMenu();
+    });
+
+    // ====== User login handling ======
+    const authSection = document.getElementById('authSection');
+
+    function showLoggedIn(username) {
+      authSection.innerHTML = `
+        <span>👋 Hello, <strong>${username}</strong></span>
+        <button id="logoutBtn">Logout</button>
+      `;
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        // redirect to login page on logout
+        window.location.href = '/login';
+      });
+    }
+
+    function showLoggedOut() {
+      authSection.innerHTML = `<button id="loginBtn" onclick="window.location.href='login.html'">Login / Register</button>`;
+    }
+
+    // Check query string for username
+    const params = new URLSearchParams(window.location.search);
+    const userName = params.get('user');
+
+    if (userName) {
+      showLoggedIn(userName);
+    } else {
+      showLoggedOut();
+    }
+  </script>
+  <script src="js/auth.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeloCharge - Find Charging Stations</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+    #map {
+      height: 100vh; /* full screen map */
+      width: 100%;
+    }
+    .leaflet-popup-content b {
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Initialize map (centered on Rome for now)
+    const map = L.map('map').setView([41.9028, 12.4964], 12);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Fetch stations from backend
+    fetch('/api/stations')
+      .then(res => res.json())
+      .then(stations => {
+        stations.forEach(station => {
+          L.marker([station.lat, station.lng]).addTo(map)
+            .bindPopup(`<b>${station.name}</b>`);
+        });
+      })
+      .catch(err => console.error("Error fetching stations:", err));
+  </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login – VeloValue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+  <!-- Background video -->
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="Multimedia/login video.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Header -->
+  <div class="velovalue-header" onclick="window.location.href='/'">VeloValue</div>
+
+  <div class="login-container">
+    <form id="loginForm" class="login-form">
+      <h2>Welcome Back</h2>
+
+      <!-- Social login buttons -->
+      <button type="button" class="social-btn">Continue with Google</button>
+      <button type="button" class="social-btn">Continue with Facebook</button>
+      <button type="button" class="social-btn">Continue with Apple</button>
+
+      <div class="divider"><span>or</span></div>
+
+      <!-- Email & Password -->
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Your Password" required />
+
+      <button type="submit">Login</button>
+
+      <p class="signup-link">
+        Don't have an account? <a href="/">Sign Up</a>
+      </p>
+
+      <p id="errorMsg" style="color:red;"></p>
+    </form>
+  </div>
+
+  <script>
+const loginForm = document.getElementById('loginForm');
+const errorMsg = document.getElementById('errorMsg');
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault(); // prevent default form submission
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  try {
+    const res = await fetch('/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json(); // parse JSON response
+
+    if (data.success) {
+      // ✅ Redirect to homepage after successful login
+      window.location.href = `/homepage.html?user=${encodeURIComponent(data.username)}`;
+    } else {
+      errorMsg.textContent = data.message || '❌ Login failed';
+    }
+  } catch (err) {
+    console.error(err);
+    errorMsg.textContent = '❌ Something went wrong. Please try again.';
+  }
+});
+</script>
+
+</body>
+</html>
