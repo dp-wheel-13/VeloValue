@@ -1,3 +1,10 @@
+<p align="center">
+  <img src="https://img.shields.io/badge/VeloValue-🚗⚡-brightgreen?style=for-the-badge&logo=car&logoColor=white" alt="VeloValue Logo" />
+</p>
+
+<h1 align="center">VeloValue</h1>
+<p align="center">🚗⚡ Your One-Stop Car Companion (Garage, Reminders & EV Charging Stations)</p>
+
 # 🚗⚡ VeloValue
 
 VeloValue is a **one-stop solution for car users**.  
