@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VeloValue – Car Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --bg:#000; --text:#fff; --accent:#1db954; --radius-xl:18px; --radius-lg:14px; --shadow-1:0 8px 24px rgba(0,0,0,.45); --shadow-2:0 18px 50px rgba(0,0,0,.55); }
+
+    *{ margin:0; padding:0; box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    html,body{ height:100%; }
+    body{ font-family:'Inter',sans-serif; line-height:1.35; background: var(--bg); color: var(--text); }
+    a{ color: var(--text); }
+
+    /* Header */
+    header{ position:sticky; top:0; left:0; width:100%; padding:1rem 2rem; background:var(--bg); display:flex; justify-content:space-between; align-items:center; z-index:1000; border-bottom:1px solid rgba(255,255,255,.1); }
+    header h1{ font-size:24px; font-weight:800; }
+    header nav{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+    header nav a{ text-decoration:none; font-size:16px; font-weight:600; }
+    header nav a:hover{ text-decoration:underline; }
+    .language-select select{ background:var(--bg); color:var(--text); border:1px solid rgba(255,255,255,.5); border-radius:6px; padding:4px 8px; font-size:14px; cursor:pointer; }
+    #authSection button{ background:var(--text); color:var(--bg); border:1px solid var(--text); border-radius:20px; padding:6px 12px; font-weight:600; cursor:pointer; transition:all .25s; }
+    #authSection button:hover{ background:transparent; color:var(--text); border-color:var(--accent); }
+
+    /* Wishlist in header */
+    .wishlist{ position:relative; }
+    .icon-btn{ position:relative; background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.25); width:40px; height:40px; border-radius:50%; display:grid; place-items:center; cursor:pointer; transition:border-color .2s; }
+    .icon-btn:hover{ border-color:var(--accent); } .icon-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+    .icon-btn svg{ width:18px; height:18px; stroke:currentColor; fill:transparent; stroke-width:1.8; }
+    .icon-btn .badge{ position:absolute; top:-6px; right:-6px; min-width:18px; height:18px; padding:0 5px; display:none; align-items:center; justify-content:center; background:var(--accent); color:var(--bg); border-radius:999px; font-size:11px; font-weight:800; }
+    .wishlist .dropdown{ position:absolute; right:0; top:calc(100% + 10px); width:320px; max-height:420px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:14px; box-shadow:var(--shadow-2); display:none; overflow:hidden; }
+    .wishlist.open .dropdown{ display:block; }
+    .dropdown-head{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.1); }
+    .dropdown-head strong{ font-size:14px; }
+    .text-btn{ background:transparent; border:0; color:var(--accent); font-weight:700; cursor:pointer; }
+    .dropdown-list{ padding:10px; display:grid; gap:10px; max-height:360px; overflow:auto; }
+    .wish-item{ display:grid; grid-template-columns:44px 1fr auto; gap:10px; align-items:center; padding:8px; border-radius:10px; background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.08); }
+    .wish-item img{ width:44px; height:44px; object-fit:cover; border-radius:8px; }
+    .wish-title{ font-weight:700; font-size:13px; } .wish-sub{ font-size:12px; opacity:.75; }
+    .remove-btn{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:12px; padding:6px 8px; cursor:pointer; }
+
+    /* Layout */
+    .container{ width:min(1200px,94vw); margin:0 auto; padding:24px 0 40px; display:grid; grid-template-columns: 1fr 1fr; gap:24px; }
+    @media (max-width:980px){ .container{ grid-template-columns: 1fr; padding:18px 0 28px; } }
+    .panel{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-xl); box-shadow:var(--shadow-1); padding:22px; }
+
+    /* LEFT: Image + brand/model/fuel/price */
+    .left .car-header{ display:flex; align-items:center; gap:18px; margin-bottom:14px; }
+    .car-logo{ width:90px; height:90px; border-radius:12px; object-fit:contain; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); padding:8px; }
+    .title-stack{ display:flex; flex-direction:column; gap:4px; }
+    .brand{ font-size:28px; font-weight:900; color: var(--accent); }
+    .model{ font-size:22px; font-weight:700; opacity:.95; }
+    .pill{ display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border:1px solid rgba(255,255,255,.2); border-radius:999px; background:transparent; font-weight:700; width:max-content; }
+    .price{ margin-top:8px; font-size:18px; font-weight:800; }
+
+    .hero-wrap{ position:relative; width:100%; max-width:720px; margin:10px auto 0; }
+    .hero{ width:100%; border-radius:16px; display:block; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.02); box-shadow:var(--shadow-1); }
+    .img-heart{ position:absolute; top:10px; right:10px; width:40px; height:40px; border-radius:999px; display:grid; place-items:center; background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.25); color:var(--text); cursor:pointer; transition:transform .12s, border-color .2s, color .2s, background .2s; }
+    .img-heart:hover{ border-color:var(--accent); }
+    .img-heart svg{ width:20px; height:20px; stroke:currentColor; fill:transparent; stroke-width:1.8; }
+    .img-heart.active{ border-color:var(--accent); color:var(--accent); background:rgba(29,185,84,.1); }
+    @keyframes pop{ 0%{transform:scale(1);} 50%{transform:scale(1.12);} 100%{transform:scale(1);} }
+    .img-heart.pop{ animation:pop .22s ease; }
+
+    .price-box{ margin:14px auto 4px; width:min(380px,100%); background:var(--accent); color:var(--bg); border-radius:12px; padding:10px 12px; font-weight:800; box-shadow:var(--shadow-2); text-align:center; }
+
+    /* RIGHT: Specs + accordions */
+    .spec-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:10px 16px; margin:6px 0 14px; }
+    .spec-grid .row{ display:flex; justify-content:space-between; gap:12px; padding:8px 10px; border:1px solid rgba(255,255,255,.08); border-radius:12px; background:rgba(255,255,255,.02); }
+    .spec-grid .k{ opacity:.8; }
+    .spec-grid .v{ font-weight:700; }
+    @media (max-width:700px){ .spec-grid{ grid-template-columns:1fr; } }
+
+    .accordion{ margin-top:10px; border:1px solid rgba(255,255,255,.08); border-radius:14px; overflow:hidden; background:rgba(255,255,255,.02); }
+    .acc-header{ width:100%; text-align:left; padding:14px 16px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,.08); cursor:pointer; background:rgba(255,255,255,.03); color:var(--text); font-weight:800; }
+    .acc-header:hover{ border-color: rgba(255,255,255,.18); }
+    .acc-header .arrow{ width:18px; height:18px; border:2px solid currentColor; border-top-color:transparent; border-left-color:transparent; transform: rotate(-45deg); transition: transform .2s ease; }
+    .accordion.open .acc-header .arrow{ transform: rotate(45deg); }
+    .acc-content[hidden]{ display:none; }
+    .acc-content{ padding:12px 14px 16px; }
+    .kv{ display:grid; grid-template-columns: 1fr 1fr; gap:10px 14px; }
+    .kv .item{ display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border:1px solid rgba(255,255,255,.08); border-radius:10px; background:rgba(255,255,255,.02); }
+    .kv .k{ opacity:.8; } .kv .v{ font-weight:700; }
+    @media (max-width:700px){ .kv{ grid-template-columns:1fr; } }
+
+    /* Toasts */
+    .toast-wrap{ position:fixed; right:16px; bottom:16px; display:grid; gap:10px; z-index:2000; }
+    .toast{ background:var(--accent); color:var(--bg); border-radius:12px; padding:10px 12px; box-shadow:var(--shadow-2); transform:translateY(10px); opacity:0; animation:toast-in .2s ease forwards; font-weight:800; }
+    @keyframes toast-in{ to{ transform:translateY(0); opacity:1; } }
+
+    .sr-only{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1><a href="/homepage.html" style="color:inherit; text-decoration:none;">VeloValue</a></h1>
+    <nav>
+      <a href="/homepage.html">HOME</a>
+      <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+      <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+      <a href="#about">ABOUT US</a>
+
+      <div class="language-select">
+        <select id="languageSelect">
+          <option value="en">🇬🇧 English</option>
+          <option value="it">🇮🇹 Italiano</option>
+          <option value="de">🇩🇪 Deutsch</option>
+        </select>
+      </div>
+
+      <div id="authSection">
+        <button onclick="window.location.href='login.html'">Login / Register</button>
+      </div>
+
+      <!-- Wishlist dropdown -->
+      <div class="wishlist" id="wishlist">
+        <button id="wishlistBtn" class="icon-btn" aria-label="Wishlist" aria-expanded="false" aria-controls="wishlistMenu">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span class="badge" id="wishlistBadge">0</span>
+        </button>
+        <div id="wishlistMenu" class="dropdown" role="menu" aria-label="Wishlist">
+          <div class="dropdown-head">
+            <strong>Wishlist</strong>
+            <button id="clearWishlist" class="text-btn">Clear all</button>
+          </div>
+          <div id="wishlistItems" class="dropdown-list">
+            <div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Your wishlist is empty.</div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Content -->
+  <main class="container">
+    <!-- LEFT: image + brand/model/fuel/price -->
+    <section class="panel left">
+      <div class="car-header">
+        <img class="car-logo" id="carLogo" alt="Brand logo" onerror="this.style.display='none'"/>
+        <div class="title-stack">
+          <div class="brand" id="brand">—</div>
+          <div class="model" id="model">—</div>
+          <div class="pill" id="fuelPill">Fuel: —</div>
+          <div class="price" id="priceFrom">Price from: —</div>
+        </div>
+      </div>
+
+      <div class="hero-wrap">
+        <img id="heroImg" class="hero" alt="Car image" src="" />
+        <button id="imgHeart" class="img-heart" aria-label="Add to wishlist" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="price-box" id="priceBadge">Price from: —</div>
+    </section>
+
+    <!-- RIGHT: specs only -->
+    <aside class="panel right">
+      <div class="spec-grid" id="summaryGrid"></div>
+
+      <div class="accordion" id="acc-tech">
+        <button class="acc-header" aria-expanded="false" aria-controls="panel-tech">
+          Technical specifications <span class="arrow"></span>
+        </button>
+        <div id="panel-tech" class="acc-content" hidden></div>
+      </div>
+
+      <div class="accordion" id="acc-perf">
+        <button class="acc-header" aria-expanded="false" aria-controls="panel-perf">
+          Performance & efficiency <span class="arrow"></span>
+        </button>
+        <div id="panel-perf" class="acc-content" hidden></div>
+      </div>
+
+      <div class="accordion" id="acc-dim">
+        <button class="acc-header" aria-expanded="false" aria-controls="panel-dim">
+          Dimensions & capacity <span class="arrow"></span>
+        </button>
+        <div id="panel-dim" class="acc-content" hidden></div>
+      </div>
+
+      <div class="accordion" id="acc-charge">
+        <button class="acc-header" aria-expanded="false" aria-controls="panel-charge">
+          Charging (EV/PHEV) <span class="arrow"></span>
+        </button>
+        <div id="panel-charge" class="acc-content" hidden></div>
+      </div>
+
+      <div class="accordion" id="acc-warranty">
+        <button class="acc-header" aria-expanded="false" aria-controls="panel-warranty">
+          Warranty & safety <span class="arrow"></span>
+        </button>
+        <div id="panel-warranty" class="acc-content" hidden></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Toast container -->
+  <div id="toastWrap" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    // ---------- Inline fallback data (only used if sessionStorage is empty) ----------
+    const cars = [
+      { id:'lamborghini-revuelto-2024', brand:'Lamborghini', model:'Revuelto', year:2024, body:'Coupé', doors:2, seats:2, fuel:'PHEV', transmission:'Automatic', drivetrain:'AWD', powerKw:747, powerPs:1015, torqueNm:725, zeroTo100KmhS:2.5, topSpeedKmh:350, energyConsumptionKwhPer100km:null, fuelConsumptionLPer100km:null, co2GPerKm:null, euroStandard:null, lengthMm:4947, widthMm:2033, heightMm:1160, wheelbaseMm:2779, bootVolumeSeatsUpL:132, kerbWeightKg:1772, rangeWltpKm:null, batteryCapacityNetKwh:3.8, chargeAcMaxKw:7, chargeDcMaxKw:null, chargeDc10To80Min:null, connector:'Type 2', ncapStars:null, ncapYear:null, warrantyYears:3, warrantyKm:100000, priceFromEur:500000, image:'https://images.unsplash.com/photo-1606663301623-c7e98de94e02?q=80&w=1400&auto=format&fit=crop', logo:'https://upload.wikimedia.org/wikipedia/commons/0/0c/Lamborghini_Logo.svg' },
+      { id:'tesla-model-3-2024', brand:'Tesla', model:'Model 3', year:2024, body:'Sedan', doors:4, seats:5, fuel:'BEV', transmission:'Single-speed', drivetrain:'RWD', powerKw:208, powerPs:283, torqueNm:340, zeroTo100KmhS:6.1, topSpeedKmh:201, energyConsumptionKwhPer100km:14.5, fuelConsumptionLPer100km:null, co2GPerKm:0, euroStandard:null, lengthMm:4720, widthMm:1849, heightMm:1441, wheelbaseMm:2875, bootVolumeSeatsUpL:594, kerbWeightKg:1760, rangeWltpKm:513, batteryCapacityNetKwh:57, chargeAcMaxKw:11, chargeDcMaxKw:170, chargeDc10To80Min:27, connector:'Type 2 / CCS2', ncapStars:5, ncapYear:2019, warrantyYears:4, warrantyKm:80000, priceFromEur:38990, image:'https://images.unsplash.com/photo-1553440569-bcc63803a83d?q=80&w=1400&auto=format&fit=crop', logo:'https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg' },
+      { id:'fiat-500-2024', brand:'Fiat', model:'500', year:2024, body:'Hatchback', doors:3, seats:4, fuel:'BEV', transmission:'Single-speed', drivetrain:'FWD', powerKw:87, powerPs:118, torqueNm:220, zeroTo100KmhS:9.0, topSpeedKmh:150, energyConsumptionKwhPer100km:14.8, fuelConsumptionLPer100km:null, co2GPerKm:0, euroStandard:null, lengthMm:3632, widthMm:1683, heightMm:1527, wheelbaseMm:2322, bootVolumeSeatsUpL:185, kerbWeightKg:1290, rangeWltpKm:320, batteryCapacityNetKwh:37.3, chargeAcMaxKw:11, chargeDcMaxKw:85, chargeDc10To80Min:30, connector:'Type 2 / CCS2', ncapStars:4, ncapYear:2021, warrantyYears:3, warrantyKm:100000, priceFromEur:16500, image:'https://images.unsplash.com/photo-1615089000191-3b82ba9fb3a5?q=80&w=1400&auto=format&fit=crop', logo:'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logo_FIAT_2020.svg' }
+    ];
+    const carsById = new Map(cars.map(c=>[c.id,c]));
+    const resolveByIdLike = id => carsById.get(id) || [...carsById.values()].find(x => x.id.startsWith(id));
+
+    // ---------- Helpers ----------
+    const $ = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+    const nd = v => (v===null || v===undefined || v==='') ? '—' : v;
+    const toEUR = n => n==null ? '—' : `€${Number(n).toLocaleString()}`;
+    const mm = n => n==null ? '—' : `${n} mm`;
+    const ltr = n => n==null ? '—' : `${n} L`;
+    const kwps = (kw, ps) => (kw||ps) ? `${kw?kw+' kW':''}${kw&&ps?' / ':''}${ps?ps+' PS':''}` : '—';
+    const kmh = n => n==null ? '—' : `${n} km/h`;
+    const sec = n => n==null ? '—' : `${n} s`;
+    const showToast = msg => { const wrap = $('#toastWrap'); const el = document.createElement('div'); el.className='toast'; el.textContent=msg; wrap.appendChild(el); setTimeout(()=>{ el.style.transition='opacity .2s, transform .2s'; el.style.opacity='0'; el.style.transform='translateY(8px)'; },1600); setTimeout(()=> wrap.contains(el) && wrap.removeChild(el), 1850); };
+
+    // ---------- Wishlist ----------
+    const WISHLIST_KEY = 'velovalue_wishlist_v1';
+    function getWishlist(){ try { return new Set(JSON.parse(localStorage.getItem(WISHLIST_KEY)||'[]')); } catch { return new Set(); } }
+    function saveWishlist(set){ localStorage.setItem(WISHLIST_KEY, JSON.stringify([...set])); }
+    function updateWishlistBadge(){ const set = getWishlist(); const n = set.size; const b = $('#wishlistBadge'); b.style.display = n ? 'grid' : 'none'; if(n) b.textContent = n; }
+    function buildWishlistMenu(){
+      const set = getWishlist(); const list = $('#wishlistItems');
+      if(!set.size){ list.innerHTML = '<div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Your wishlist is empty.</div>'; return; }
+      list.innerHTML = [...set].map(id=>{
+        const c = resolveByIdLike(id);
+        if(!c) return `<div class="wish-item" data-id="${id}">
+          <div class="wish-meta"><div class="wish-title">${id}</div><div class="wish-sub">—</div></div>
+          <button class="remove-btn" data-remove="${id}">Remove</button>
+        </div>`;
+        return `<div class="wish-item" data-id="${id}">
+          <img src="${c.image}" alt="${c.brand} ${c.model}">
+          <div class="wish-meta">
+            <div class="wish-title">${c.brand} ${c.model}</div>
+            <div class="wish-sub">${c.body} • ${toEUR(c.priceFromEur)}</div>
+          </div>
+          <button class="remove-btn" data-remove="${id}">Remove</button>
+        </div>`;
+      }).join('');
+    }
+    function setHeartActive(active){
+      const btn = $('#imgHeart');
+      if (!btn) return;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      btn.setAttribute('aria-label', active ? 'Remove from wishlist' : 'Add to wishlist');
+    }
+    function toggleWishlist(id, title=''){
+      const set = getWishlist();
+      const had = set.has(id);
+      if(had){ set.delete(id); showToast(`Removed: ${title || id}`); }
+      else { set.add(id); showToast(`Added: ${title || id}`); }
+      saveWishlist(set); updateWishlistBadge(); buildWishlistMenu(); setHeartActive(set.has(id));
+      const btn = $('#imgHeart'); if(btn){ btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); }
+    }
+
+    // ---------- Accordions (accessible) ----------
+    function toggleAccordion(btn){
+      const panel = document.getElementById(btn.getAttribute('aria-controls'));
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      panel.hidden = expanded;
+      btn.closest('.accordion').classList.toggle('open', !expanded);
+    }
+    document.addEventListener('DOMContentLoaded', ()=>{
+      $$('.acc-header').forEach(btn=>{
+        btn.addEventListener('click', ()=> toggleAccordion(btn));
+        btn.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleAccordion(btn); }});
+      });
+    });
+
+    // ---------- Page init: get car from sessionStorage or URL id ----------
+    (function init(){
+      const WIRE_KEY = 'vv_selected_car';
+      let car = null;
+      let idParam = new URLSearchParams(location.search).get('id');
+
+      // 1) Try sessionStorage (best: coming from list)
+      try {
+        const raw = sessionStorage.getItem(WIRE_KEY);
+        if (raw) {
+          const passed = JSON.parse(raw);
+          car = { ...passed };
+          if (!idParam && passed.id) idParam = passed.id;
+        }
+      } catch {}
+
+      // 2) Fallback to inline dataset by id/prefix
+      if (!car) {
+        if (!idParam) idParam = 'lamborghini-revuelto-2024';
+        if (!new URLSearchParams(location.search).get('id')) {
+          history.replaceState(null,'',`${location.pathname}?id=${encodeURIComponent(idParam)}`);
+        }
+        car = resolveByIdLike(idParam) || null;
+      }
+
+      if (!car) {
+        document.body.innerHTML = '<div style="padding:40px; color:#fff">Car not found. <a href="/homepage.html" style="color:#1db954">Back to Explore</a></div>';
+        return;
+      }
+
+      // ----- Fill header/left panel -----
+      document.title = `VeloValue – ${[car.brand, car.model, car.year].filter(Boolean).join(' ')}`;
+      $('#brand').textContent = car.brand || '—';
+      $('#model').textContent = [car.model, car.year].filter(Boolean).join(' ') || '—';
+      $('#fuelPill').textContent = `Fuel: ${nd(car.fuel)}`;
+      $('#priceFrom').textContent = `Price from: ${toEUR(car.priceFromEur)}`;
+      if (car.logo) $('#carLogo').src = car.logo;
+      if (car.image) $('#heroImg').src = car.image;
+      $('#priceBadge').textContent = `Price from: ${toEUR(car.priceFromEur)}`;
+
+      // ----- Summary grid (right) -----
+      const summary = [
+        ['Body', nd(car.body)],
+        ['Drivetrain', nd(car.drivetrain)],
+        ['Transmission', nd(car.transmission)],
+        ['Power', kwps(car.powerKw, car.powerPs)],
+        ['Torque', car.torqueNm ? `${car.torqueNm} Nm` : '—'],
+        ['0–100 km/h', sec(car.zeroTo100KmhS)],
+        ['Top speed', kmh(car.topSpeedKmh)],
+        ['Seats / Doors', `${nd(car.seats)} / ${nd(car.doors)}`]
+      ];
+      $('#summaryGrid').innerHTML = summary.map(([k,v])=>`<div class="row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+
+      // ----- Accordions -----
+      const tech = [
+        ['Fuel', nd(car.fuel)],
+        ['Transmission', nd(car.transmission)],
+        ['Drivetrain', nd(car.drivetrain)],
+        ['Power', kwps(car.powerKw, car.powerPs)],
+        ['Torque', car.torqueNm ? `${car.torqueNm} Nm` : '—']
+      ];
+      $('#panel-tech').innerHTML = `<div class="kv">${tech.map(([k,v])=>`<div class="item"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>`;
+
+      const perf = [
+        ['0–100 km/h', sec(car.zeroTo100KmhS)],
+        ['Top speed', kmh(car.topSpeedKmh)],
+        ['Fuel cons. WLTP', car.fuelConsumptionLPer100km ? `${car.fuelConsumptionLPer100km} L/100 km` : '—'],
+        ['Energy cons. WLTP', car.energyConsumptionKwhPer100km ? `${car.energyConsumptionKwhPer100km} kWh/100 km` : '—'],
+        ['CO₂ WLTP', car.co2GPerKm!=null ? `${car.co2GPerKm} g/km` : '—'],
+        ['Euro standard', nd(car.euroStandard)]
+      ];
+      $('#panel-perf').innerHTML = `<div class="kv">${perf.map(([k,v])=>`<div class="item"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>`;
+
+      const dim = [
+        ['Length', mm(car.lengthMm)],
+        ['Width', mm(car.widthMm)],
+        ['Height', mm(car.heightMm)],
+        ['Wheelbase', mm(car.wheelbaseMm)],
+        ['Boot volume', ltr(car.bootVolumeSeatsUpL)],
+        ['Kerb weight', car.kerbWeightKg ? `${car.kerbWeightKg} kg` : '—']
+      ];
+      $('#panel-dim').innerHTML = `<div class="kv">${dim.map(([k,v])=>`<div class="item"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>`;
+
+      const chg = [
+        ['WLTP range', car.rangeWltpKm ? `${car.rangeWltpKm} km` : '—'],
+        ['Battery (net)', car.batteryCapacityNetKwh ? `${car.batteryCapacityNetKwh} kWh` : '—'],
+        ['AC max', car.chargeAcMaxKw ? `${car.chargeAcMaxKw} kW` : '—'],
+        ['DC max', car.chargeDcMaxKw ? `${car.chargeDcMaxKw} kW` : '—'],
+        ['DC 10–80%', car.chargeDc10To80Min ? `${car.chargeDc10To80Min} min` : '—'],
+        ['Connector', nd(car.connector)]
+      ];
+      $('#panel-charge').innerHTML = `<div class="kv">${chg.map(([k,v])=>`<div class="item"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>`;
+
+      const war = [
+        ['Warranty', (car.warrantyYears||car.warrantyKm) ? `${nd(car.warrantyYears)} yrs / ${car.warrantyKm? car.warrantyKm.toLocaleString()+' km':'—'}` : '—'],
+        ['Euro NCAP', (car.ncapStars||car.ncapYear) ? `${nd(car.ncapStars)} ★ (${nd(car.ncapYear)})` : '—']
+      ];
+      $('#panel-warranty').innerHTML = `<div class="kv">${war.map(([k,v])=>`<div class="item"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>`;
+
+      // Open first accordion by default
+      toggleAccordion($('#acc-tech').querySelector('.acc-header'));
+
+      // ----- Wishlist hooks -----
+      updateWishlistBadge();
+      buildWishlistMenu();
+      const currentId = car.id || (car.brand && car.model ? `${car.brand}-${car.model}`.toLowerCase().replace(/\s+/g,'-') : 'car');
+      const currentTitle = `${car.brand || ''} ${car.model || ''}`.trim();
+      setHeartActive(getWishlist().has(currentId));
+      $('#imgHeart').addEventListener('click', ()=> toggleWishlist(currentId, currentTitle));
+
+      // Header dropdown events
+      $('#wishlistBtn').addEventListener('click', ()=>{
+        const open = $('#wishlist').classList.toggle('open');
+        $('#wishlistBtn').setAttribute('aria-expanded', open?'true':'false');
+      });
+      document.addEventListener('click', (e)=>{
+        if(!$('#wishlist').contains(e.target)){ $('#wishlist').classList.remove('open'); $('#wishlistBtn').setAttribute('aria-expanded','false'); }
+      });
+      document.addEventListener('keydown', (e)=>{
+        if(e.key==='Escape'){ $('#wishlist').classList.remove('open'); $('#wishlistBtn').setAttribute('aria-expanded','false'); }
+      });
+      $('#wishlistItems').addEventListener('click', (e)=>{
+        const btn = e.target.closest('[data-remove]'); if(!btn) return;
+        toggleWishlist(btn.getAttribute('data-remove'));
+      });
+      $('#clearWishlist').addEventListener('click', ()=>{
+        localStorage.setItem(WISHLIST_KEY, '[]');
+        updateWishlistBadge(); buildWishlistMenu(); setHeartActive(false); showToast('Wishlist cleared');
+      });
+    })();
+  </script>
+
+  <!-- Remove this if you don’t have auth.js -->
+  <script src="/js/auth.js"></script>
+</body>
+</html>
