@@ -2,232 +2,175 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VeloValue – Explore Cars</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
-    :root{
-      --bg: #000;
-      --panel:#151515;
-      --panel-2:#1c1c1c;
-      --ink:#ffffff;
-      --muted:#a1a1a1;
-      --brand:#8b5cf6;
-      --brand-2:#1db954;
-      --card:#1a1a1a;
-      --ring: rgba(139,92,246,.35);
-      --radius-xl: 18px;
-      --radius-lg: 14px;
-      --radius-md: 10px;
-      --shadow-1: 0 8px 24px rgba(0,0,0,.45);
-      --shadow-2: 0 18px 50px rgba(0,0,0,.55);
-    }
+    :root { --bg:#000; --text:#fff; --accent:#1db954; --radius-xl:18px; --radius-lg:14px; --radius-md:10px; --shadow-1:0 8px 24px rgba(0,0,0,.45); --shadow-2:0 18px 50px rgba(0,0,0,.55); }
+    *{ margin:0; padding:0; box-sizing:border-box; }
+    html{ scroll-behavior:smooth; } html,body{ height:100%; }
+    body{ font-family:'Inter',sans-serif; line-height:1.35; background:var(--bg); color:var(--text); }
+    a{ color:var(--text); }
 
-    *{ box-sizing: border-box; }
-    html,body{ height:100%; margin:0; padding:0; font-family: 'Inter', sans-serif; line-height:1.35; background: var(--bg); color: var(--ink); }
+    /* Header */
+    header{ position:sticky; top:0; left:0; width:100%; padding:1rem 2rem; background:var(--bg); display:flex; justify-content:space-between; align-items:center; z-index:1000; border-bottom:1px solid rgba(255,255,255,.1); }
+    header h1{ font-size:24px; font-weight:800; }
+    header nav{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+    header nav a{ text-decoration:none; font-size:16px; font-weight:600; }
+    header nav a:hover{ text-decoration:underline; }
+    .language-select select{ background:var(--bg); color:var(--text); border:1px solid rgba(255,255,255,.5); border-radius:6px; padding:4px 8px; font-size:14px; cursor:pointer; }
+    #authSection button{ background:var(--text); color:var(--bg); border:1px solid var(--text); border-radius:20px; padding:6px 12px; font-weight:600; cursor:pointer; transition:all .25s ease; }
+    #authSection button:hover{ background:transparent; color:var(--text); border-color:var(--accent); }
 
-   /* Header */
-  header {
-    position: sticky;
-    top: 0; left: 0; width: 100%;
-    padding: 1rem 2rem;
-    background-color: #000;
-    display: flex; justify-content: space-between; align-items: center;
-    z-index: 1000;
-    border-bottom: 1px solid #1f1f1f;
-  }
-  header h1 { font-size: 24px; font-weight: 800; margin: 0; }
-  header nav { display: flex; align-items: center; gap: 20px; }
-  header nav a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; }
-  header nav a:hover { text-decoration: underline; }
+    /* Wishlist in header */
+    .wishlist{ position:relative; }
+    .icon-btn{ position:relative; background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.25); width:40px; height:40px; border-radius:50%; display:grid; place-items:center; cursor:pointer; transition:border-color .2s; }
+    .icon-btn:hover{ border-color:var(--accent); } .icon-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+    .icon-btn svg{ width:18px; height:18px; stroke:currentColor; fill:transparent; stroke-width:1.8; }
+    .icon-btn .badge{ position:absolute; top:-6px; right:-6px; min-width:18px; height:18px; padding:0 5px; display:none; align-items:center; justify-content:center; background:var(--accent); color:var(--bg); border-radius:999px; font-size:11px; font-weight:800; }
+    .wishlist .dropdown{ position:absolute; right:0; top:calc(100% + 10px); width:320px; max-height:420px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:14px; box-shadow:var(--shadow-2); display:none; overflow:hidden; }
+    .wishlist.open .dropdown{ display:block; }
+    .dropdown-head{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.1); }
+    .dropdown-head strong{ font-size:14px; }
+    .text-btn{ background:transparent; border:0; color:var(--accent); font-weight:700; cursor:pointer; }
+    .dropdown-list{ padding:10px; display:grid; gap:10px; max-height:360px; overflow:auto; }
+    .wish-item{ display:grid; grid-template-columns:44px 1fr auto; gap:10px; align-items:center; padding:8px; border-radius:10px; background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.08); }
+    .wish-item img{ width:44px; height:44px; object-fit:cover; border-radius:8px; }
+    .wish-title{ font-weight:700; font-size:13px; } .wish-sub{ font-size:12px; opacity:.75; }
+    .remove-btn{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:12px; padding:6px 8px; cursor:pointer; }
 
-  /* Language select */
-  .language-select select {
-    background: #111;
-    color: #fff;
-    border: 1px solid #fff;
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 14px;
-    cursor: pointer;
-  }
+    /* Hero */
+    .hero{ position:relative; overflow:hidden; min-height:clamp(350px,70vh,900px); display:grid; place-items:center; padding:48px 16px 70px; border-bottom:1px solid rgba(255,255,255,.1); isolation:isolate; }
+    .hero::before{ content:""; position:absolute; inset:0; background:radial-gradient(1200px 300px at 50% 0%, rgba(255,255,255,.06), transparent 60%); z-index:0; pointer-events:none; }
+    .hero video{ position:absolute; top:50%; left:50%; min-width:100%; min-height:100%; width:auto; height:auto; z-index:-1; transform:translate(-50%,-50%); object-fit:cover; filter:brightness(.6); }
+    .search-wrap{ width:min(1100px,92vw); background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:10px; backdrop-filter:blur(6px); box-shadow:0 14px 40px rgba(0,0,0,.5); display:flex; align-items:center; gap:10px; position:relative; z-index:1; }
+    .search-wrap input{ flex:1; background:transparent; border:0; outline:none; color:var(--text); font-size:16px; padding:12px 2px; }
+    .search-btn{ background:var(--accent); border:0; color:var(--bg); font-weight:800; padding:12px 18px; border-radius:999px; cursor:pointer; transition:filter .2s, transform .05s; }
+    .search-btn:hover{ filter:brightness(1.05); } .search-btn:active{ transform:translateY(1px); }
+    @media (max-width:600px){ .search-wrap{ border-radius:16px; padding:8px 10px; } .search-btn{ padding:10px 14px; font-weight:700; } }
 
-  /* Auth button */
-  #authSection button {
-    background: #fff;
-    color: #111;
-    border: 1px solid #333;
-    border-radius: 20px;
-    padding: 6px 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  #authSection button:hover {
-    background: #444;
-    color: #fff;
-  }
+    /* Popular slider */
+    .section{ width:min(1200px,94vw); margin:0 auto; padding:26px 0; } .section h2{ font-size:22px; margin:0 0 14px; letter-spacing:.2px; }
+    .marquee{ position:relative; overflow:hidden; border-radius:var(--radius-xl); background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); padding:14px; box-shadow:var(--shadow-1); }
+    .marquee .track{ display:flex; gap:14px; align-items:stretch; width:max-content; animation:scroll-left 28s linear infinite; }
+    .marquee:hover .track{ animation-play-state:paused; }
+    @keyframes scroll-left{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+    @media (prefers-reduced-motion:reduce){ .marquee .track{ animation:none; } }
 
-     /* ---------------- Hero Search ---------------- */
-    .hero{
-      position: relative; overflow: hidden;
-      min-height: clamp(350px, 70vh, 900px);
-      display: grid; place-items: center;
-      padding: 48px 16px 70px;
-      border-bottom: 1px solid #1f1f1f;
-      isolation: isolate; /* keep z-index layers sane */
-    }
-
-    /* Gradient glow overlay (like your old CSS) */
-    .hero::before{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        radial-gradient(1200px 300px at 10% 0%, rgba(139,92,246,.25), transparent 60%),
-        radial-gradient(1200px 300px at 90% 100%, rgba(34,211,238,.18), transparent 60%);
-      z-index: 0;
-      pointer-events:none;
-    }
-
-    /* Background video */
-    .hero video {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      min-width: 100%;
-      min-height: 100%;
-      width: auto;
-      height: auto;
-      z-index: -1;
-      transform: translate(-50%, -50%);
-      object-fit: cover;
-    }
-
-    .search-wrap{
-      width: min(1100px, 92vw);
-      background: rgba(12,12,12,.75);
-      border: 1px solid #2a2a2a;
-      border-radius: 999px;
-      padding: 10px;
-      backdrop-filter: blur(6px);
-      box-shadow: 0 14px 40px rgba(0,0,0,.5);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .search-wrap input{
-      flex: 1;
-      background: transparent;
-      border: 0;
-      outline: none;
-      color: var(--ink, white);
-      font-size: 16px;
-      padding: 12px 2px;
-    }
-
-    .search-btn{
-      background: linear-gradient(135deg,var(--brand, #8b5cf6),var(--brand-2, #22d3ee));
-      border: 0;
-      color: #0a0a0a;
-      font-weight: 800;
-      padding: 12px 18px;
-      border-radius: 999px;
-      cursor: pointer;
-    }
-
-    /* Mobile niceties */
-    @media (max-width: 600px){
-      .search-wrap { border-radius: 16px; padding: 8px 10px; }
-      .search-btn { padding: 10px 14px; font-weight: 700; }
-    }
-    /* ---------------- Popular Cars – continuous slider ---------------- */
-    .section{
-      width:min(1200px, 94vw); margin:0 auto; padding:26px 0;
-    }
-    .section h2{ font-size:22px; margin:0 0 14px; letter-spacing:.2px; }
-    .marquee{
-      position:relative; overflow:hidden; border-radius:var(--radius-xl);
-      background:linear-gradient(180deg,#111,#0f0f0f); border:1px solid #222; padding:14px;
-      box-shadow: var(--shadow-1);
-    }
-    .marquee .track{
-      display:flex; gap:14px; align-items:stretch; width:max-content;
-      animation: scroll-left 28s linear infinite;
-    }
-    .marquee:hover .track{ animation-play-state: paused; }
-    @keyframes scroll-left{ from{ transform:translateX(0);} to{ transform: translateX(-50%);} }
-
-    .car-card{
-      min-width:260px; max-width:260px; background:var(--card); border:1px solid #222;
-      border-radius:16px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer;
-      transition: transform .25s ease, box-shadow .25s ease; box-shadow: 0 8px 20px rgba(0,0,0,.35);
-    }
-    .car-card:hover{ transform: translateY(-4px); box-shadow: 0 16px 36px rgba(0,0,0,.55); }
+    /* Cards */
+    .car-card{ position:relative; min-width:260px; max-width:260px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:transform .25s, box-shadow .25s; box-shadow:0 8px 20px rgba(0,0,0,.35); }
+    .car-card:hover{ transform:translateY(-4px); box-shadow:0 16px 36px rgba(0,0,0,.55); }
     .car-card .thumb{ aspect-ratio:16/10; width:100%; object-fit:cover; }
     .car-card .meta{ padding:12px 12px 14px; display:flex; justify-content:space-between; align-items:center; }
     .car-card .name{ font-weight:700; }
-    .car-card .pill{ font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid #2b2b2b; color:var(--muted); }
+    .car-card .pill{ font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.18); color:var(--text); opacity:.8; }
 
-    /* ---------------- Filters + Results (same as before) ---------------- */
-    .filters-wrap{ display:grid; grid-template-columns: 260px 1fr 280px; gap:16px; }
-    @media (max-width: 1060px){ .filters-wrap{ grid-template-columns: 1fr; } }
-    .panel{ background:var(--panel); border:1px solid #222; border-radius:var(--radius-xl); box-shadow:var(--shadow-1); }
+    /* Heart button */
+    .heart-btn{ position:absolute; top:10px; right:10px; width:36px; height:36px; border-radius:999px; display:grid; place-items:center; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.25); backdrop-filter:blur(4px); color:var(--text); cursor:pointer; transition:transform .12s, border-color .2s, background .2s, color .2s; z-index:2; }
+    .heart-btn:hover{ border-color:var(--accent); } .heart-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+    .heart-btn svg{ width:18px; height:18px; stroke:currentColor; fill:transparent; stroke-width:1.8; }
+    .heart-btn.active{ border-color:var(--accent); color:var(--accent); background:transparent; }
+    @keyframes pop{ 0%{ transform:scale(1);} 50%{ transform:scale(1.15);} 100%{ transform:scale(1);} }
+    .heart-btn.pop{ animation:pop .22s ease; }
+
+    /* Filters + Results */
+    .filters-wrap{ display:grid; grid-template-columns:260px 1fr 280px; gap:16px; }
+    @media (max-width:1060px){ .filters-wrap{ grid-template-columns:1fr; } }
+    .panel{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-xl); box-shadow:var(--shadow-1); }
     .left-filters{ padding:16px; position:sticky; top:78px; height:max-content; }
     .left-filters h3{ margin:4px 0 12px; font-size:18px; }
     .f-group{ margin:14px 0; }
-    .f-label{ display:block; font-size:12px; letter-spacing:.2px; color:var(--muted); margin-bottom:8px; text-transform:uppercase; }
+    .f-label{ display:block; font-size:12px; letter-spacing:.2px; color:var(--text); opacity:.7; margin-bottom:8px; text-transform:uppercase; }
+
     .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
-    .chip{ padding:8px 12px; border-radius:999px; border:1px solid #2a2a2a; cursor:pointer; font-weight:600; color:var(--ink); background:#121212; }
-    .chip.active{ border-color:transparent; background:linear-gradient(135deg, rgba(139,92,246,.25), rgba(34,211,238,.25)); box-shadow: inset 0 0 0 1px #2b2b2b; }
-    .check-row{ display:grid; grid-template-columns: 1fr auto; gap:6px; align-items:center; margin:6px 0; }
-    .range{ display:flex; gap:8px; align-items:center; }
-    .range input[type="range"]{ width:100%; }
-    .apply-btn{ width:100%; margin-top:10px; padding:12px 14px; border:0; border-radius:12px; cursor:pointer; font-weight:800; color:#0b0b0b; background:linear-gradient(135deg,var(--brand),var(--brand-2)); }
+    .chip{ padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.2); cursor:pointer; font-weight:600; color:var(--text); background:transparent; transition:border-color .15s, color .15s, background .15s; }
+    .chip:hover{ border-color:rgba(255,255,255,.35); } .chip:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+    .chip.active{ border-color:var(--accent); color:var(--accent); background:transparent; }
+
+    .range{ display:flex; gap:8px; align-items:center; } .range input[type="range"]{ width:100%; }
+    .muted{ opacity:.75; }
+    .apply-btn{ width:100%; margin-top:10px; padding:12px 14px; border:0; border-radius:12px; cursor:pointer; font-weight:800; color:var(--bg); background:var(--accent); transition:filter .2s, transform .05s; }
+    .apply-btn:hover{ filter:brightness(1.05); } .apply-btn:active{ transform:translateY(1px); }
+
     .results{ padding:14px; }
-    .toolbar{ display:flex; justify-content:space-between; align-items:center; padding:8px 6px 14px; }
-    .toolbar .count{ color:var(--muted); font-weight:600; }
+    .toolbar{ display:flex; justify-content:space-between; align-items:center; padding:8px 6px 10px; gap:8px; flex-wrap:wrap; }
+    .toolbar .count{ opacity:.85; font-weight:600; }
+    .toolbar-actions{ display:flex; align-items:center; gap:10px; }
     .grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
-    .brand-panel{ padding:14px; }
-    .brand-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; }
-    .brand-tile{ background: #121212; border:1px solid #262626; border-radius:14px; padding:12px; display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer; transition: transform .2s ease, border-color .25s ease; }
-    .brand-tile .brand-logo{ font-size:22px; font-weight:700; color:var(--muted); }
-    .brand-tile .brand-name{ font-size:14px; font-weight:600; text-align:center; }
+
+    .active-filters{ display:flex; align-items:center; flex-wrap:wrap; gap:8px; padding:6px 6px 12px; }
+    .af-chip{ display:inline-flex; align-items:center; gap:8px; font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.2); background:transparent; }
+    .af-chip .x{ background:transparent; border:0; color:var(--text); opacity:.9; cursor:pointer; font-weight:800; }
+    .af-chip .x:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+    .clear-filters{ background:transparent; border:1px solid rgba(255,255,255,.2); color:var(--text); border-radius:999px; padding:6px 10px; font-size:12px; cursor:pointer; }
+    .clear-filters:hover{ border-color:var(--accent); color:var(--accent); }
+
+    .brand-panel{ padding:14px; } .brand-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+    .brand-tile{ background:transparent; border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:12px; display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer; transition:transform .2s, border-color .2s, box-shadow .2s, color .2s; }
+    .brand-tile .brand-logo{ font-size:22px; font-weight:700; opacity:.7; } .brand-tile .brand-name{ font-size:14px; font-weight:600; text-align:center; }
+    .brand-tile:hover{ transform:translateY(-2px); border-color:rgba(255,255,255,.25); }
+    .brand-tile.active{ border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset; color:var(--accent); }
+    .brand-tile:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
     .alpha-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-    .alpha{ cursor:pointer; padding:6px 10px; border-radius:6px; background:#121212; color:var(--muted); font-size:12px; font-weight:600; }
-    .alpha.active{ background:linear-gradient(135deg, rgba(139,92,246,.25), rgba(34,211,238,.25)); color:#fff; }
+    .alpha{ cursor:pointer; padding:6px 10px; border-radius:6px; background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.15); font-size:12px; font-weight:600; opacity:.85; transition:background .2s, color .2s, border-color .2s; }
+    .alpha:hover{ border-color:rgba(255,255,255,.35); } .alpha.active{ background:var(--accent); color:var(--bg); border-color:var(--accent); }
+
+    /* Toasts */
+    .toast-wrap{ position:fixed; right:16px; bottom:16px; display:grid; gap:10px; z-index:2000; }
+    .toast{ background:var(--accent); color:var(--bg); border-radius:12px; padding:10px 12px; box-shadow:var(--shadow-2); transform:translateY(10px); opacity:0; animation:toast-in .2s ease forwards; font-weight:700; }
+    @keyframes toast-in{ to{ transform:translateY(0); opacity:1; } }
+    @media (prefers-reduced-motion:reduce){ .toast{ animation:none; opacity:1; transform:none; } }
+
+    .sr-only{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
   </style>
 </head>
 <body>
 
-  <!-- ---------------- HEADER ---------------- -->
+  <!-- Header -->
   <header>
-  <h1><a href="/homepage.html" style="color:white; text-decoration:none;">VeloValue</a></h1>
-  <nav>
-    <a href="/homepage.html">HOME</a>
-    <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
-    <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
-    <a href="#about">ABOUT US</a>
+    <h1><a href="/homepage.html" style="color:inherit; text-decoration:none;">VeloValue</a></h1>
+    <nav>
+      <a href="/homepage.html">HOME</a>
+      <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+      <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+      <a href="#about">ABOUT US</a>
 
-    <div class="language-select">
-      <select id="languageSelect">
-        <option value="en">🇬🇧 English</option>
-        <option value="it">🇮🇹 Italiano</option>
-        <option value="de">🇩🇪 Deutsch</option>
-      </select>
-    </div>
+      <div class="language-select">
+        <select id="languageSelect">
+          <option value="en">🇬🇧 English</option>
+          <option value="it">🇮🇹 Italiano</option>
+          <option value="de">🇩🇪 Deutsch</option>
+        </select>
+      </div>
 
-    <div id="authSection">
-      <button onclick="window.location.href='login.html'">Login / Register</button>
-    </div>
-  </nav>
-</header>
+      <div id="authSection">
+        <button onclick="window.location.href='login.html'">Login / Register</button>
+      </div>
+
+      <!-- Wishlist dropdown -->
+      <div class="wishlist" id="wishlist">
+        <button id="wishlistBtn" class="icon-btn" aria-label="Wishlist" aria-expanded="false" aria-controls="wishlistMenu">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span class="badge" id="wishlistBadge">0</span>
+        </button>
+        <div id="wishlistMenu" class="dropdown" role="menu" aria-label="Wishlist">
+          <div class="dropdown-head">
+            <strong>Wishlist</strong>
+            <button id="clearWishlist" class="text-btn">Clear all</button>
+          </div>
+          <div id="wishlistItems" class="dropdown-list">
+            <div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Your wishlist is empty.</div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
 
   <!-- Hero search -->
   <section class="hero" id="home">
-     <!-- Replace video.mp4 with your actual file path -->
     <video autoplay muted loop playsinline>
       <source src="/Multimedia/videoplayback.mp4" type="video/mp4">
       Your browser does not support the video tag.
@@ -238,11 +181,11 @@
     </div>
   </section>
 
-  <!-- Popular in Italy (auto-scrolling) -->
+  <!-- Popular in Italy -->
   <section class="section" id="popular">
     <h2>Popular Cars in Italy</h2>
     <div class="marquee">
-      <div class="track" id="popularTrack"><!-- slides injected by JS --></div>
+      <div class="track" id="popularTrack"></div>
     </div>
   </section>
 
@@ -277,8 +220,8 @@
       <!-- Center: results grid -->
       <main class="panel results">
         <div class="toolbar">
-          <div class="count" id="resultCount">0 results</div>
-          <div>
+          <div class="count" id="resultCount" role="status" aria-live="polite">0 results</div>
+          <div class="toolbar-actions">
             <label class="sr-only" for="sortSel">Sort</label>
             <select id="sortSel">
               <option value="relevance">Sort: Relevance</option>
@@ -286,22 +229,27 @@
               <option value="price_desc">Price: High → Low</option>
               <option value="rating_desc">Rating</option>
             </select>
+            <button id="clearFiltersBtn" class="clear-filters" title="Clear all filters">Clear filters</button>
           </div>
         </div>
-        <div class="grid" id="resultsGrid"><!-- cards injected --></div>
+        <div id="activeFilters" class="active-filters"></div>
+        <div class="grid" id="resultsGrid"></div>
       </main>
 
       <!-- Right: brand tiles -->
       <aside class="panel brand-panel">
         <h3 style="margin:4px 0 10px">Brands</h3>
-        <div class="brand-grid" id="brandGrid"><!-- tiles injected --></div>
-        <div class="alpha-row" id="alphaRow"><!-- A..Z --></div>
+        <div class="brand-grid" id="brandGrid"></div>
+        <div class="alpha-row" id="alphaRow"></div>
       </aside>
     </div>
   </section>
 
+  <!-- Toast container -->
+  <div id="toastWrap" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+
   <script>
-    /* ---------------- Data & JS (same as your 500+ code) ---------------- */
+    // Data
     const cars = [
       {brand:'Fiat', model:'500', body:'Hatchback', fuel:'Petrol', gear:'Manual', price:16500, rating:4.5, popularIn:['IT'], img:'https://images.unsplash.com/photo-1615089000191-3b82ba9fb3a5?q=80&w=1400&auto=format&fit=crop'},
       {brand:'Fiat', model:'Panda', body:'Hatchback', fuel:'Petrol', gear:'Manual', price:14500, rating:4.2, popularIn:['IT'], img:'https://images.unsplash.com/photo-1658580776761-19e3f3323cf8?q=80&w=1400&auto=format&fit=crop'},
@@ -316,132 +264,292 @@
       {brand:'Audi', model:'A3', body:'Hatchback', fuel:'Petrol', gear:'Auto', price:30900, rating:4.3, popularIn:['IT'], img:'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1400&auto=format&fit=crop'}
     ];
 
-    /* ---------------- Populate Popular slider ---------------- */
+    // Helpers
+    const $ = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+    const toEUR = n => `€${Number(n).toLocaleString()}`;
+    const debounce = (fn, wait=280) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; };
+    const carId = c => `${c.brand}-${c.model}`.toLowerCase().replace(/\s+/g,'-'); // stable id (no year)
+    const carsById = new Map(cars.map(c=>[carId(c), c]));
+    const showToast = msg => {
+      const wrap = $('#toastWrap');
+      const el = document.createElement('div'); el.className='toast'; el.textContent=msg;
+      wrap.appendChild(el);
+      setTimeout(()=>{ el.style.transition='opacity .2s, transform .2s'; el.style.opacity='0'; el.style.transform='translateY(8px)'; }, 1600);
+      setTimeout(()=> wrap.contains(el) && wrap.removeChild(el), 1850);
+    };
+
+    // Wire to details page (sessionStorage + URL id)
+    const WIRE_KEY = 'vv_selected_car';
+    const DETAILS_PATH = 'cars.html'; // adjust if your cars.html is elsewhere
+    function openCarById(id) {
+      const car = carsById.get(id);
+      if (!car) return;
+      const normalized = {
+        id, brand: car.brand, model: car.model, year: car.year ?? null,
+        fuel: car.fuel ?? null, body: car.body ?? null,
+        transmission: car.transmission ?? (car.gear==='Auto'?'Automatic':car.gear==='Manual'?'Manual':car.gear ?? null),
+        drivetrain: car.drivetrain ?? null,
+        powerKw: car.powerKw ?? null, powerPs: car.powerPs ?? null, torqueNm: car.torqueNm ?? null,
+        zeroTo100KmhS: car.zeroTo100KmhS ?? null, topSpeedKmh: car.topSpeedKmh ?? null,
+        seats: car.seats ?? null, doors: car.doors ?? null,
+        priceFromEur: car.price ?? null, image: car.img ?? car.image ?? '', logo: car.logo ?? ''
+      };
+      sessionStorage.setItem(WIRE_KEY, JSON.stringify(normalized));
+      location.href = `${DETAILS_PATH}?id=${encodeURIComponent(id)}`;
+    }
+
+    // Wishlist
+    const WISHLIST_KEY = 'velovalue_wishlist_v1';
+    const wishlist = new Set((()=>{ try{ return JSON.parse(localStorage.getItem(WISHLIST_KEY)||'[]'); }catch{ return []; } })().filter(id=>carsById.has(id)));
+    function saveWishlist(){ localStorage.setItem(WISHLIST_KEY, JSON.stringify([...wishlist])); }
+    function updateWishlistBadge(){ const b=$('#wishlistBadge'); const n=wishlist.size; b.style.display = n? 'grid':'none'; if(n) b.textContent = n; }
+    function buildWishlistMenu(){
+      const list = $('#wishlistItems');
+      if(!wishlist.size){ list.innerHTML='<div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Your wishlist is empty.</div>'; return; }
+      list.innerHTML = [...wishlist].map(id=>{ const c=carsById.get(id); return `
+        <div class="wish-item" data-id="${id}">
+          <img src="${c.img}" alt="${c.brand} ${c.model}">
+          <div class="wish-meta">
+            <div class="wish-title">${c.brand} ${c.model}</div>
+            <div class="wish-sub">${c.body} • ${toEUR(c.price)}</div>
+          </div>
+          <button class="remove-btn" data-remove="${id}">Remove</button>
+        </div>`; }).join('');
+    }
+    function syncHeartButtons(){
+      $$('.heart-btn').forEach(btn=>{
+        const id=btn.dataset.id, active=wishlist.has(id);
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active?'true':'false');
+        btn.setAttribute('aria-label', active?'Remove from wishlist':'Add to wishlist');
+      });
+    }
+    function toggleWishlist(id){
+      const c=carsById.get(id); if(!c) return;
+      const was=wishlist.has(id);
+      if(was){ wishlist.delete(id); showToast(`Removed: ${c.brand} ${c.model}`); }
+      else { wishlist.add(id); showToast(`Added: ${c.brand} ${c.model}`); }
+      saveWishlist(); updateWishlistBadge(); buildWishlistMenu(); syncHeartButtons();
+      const btn = document.querySelector(`.heart-btn[data-id="${id}"]`); if(btn){ btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); }
+    }
+
+    // Elements
+    const els = {
+      wishlist: $('#wishlist'), wishlistBtn: $('#wishlistBtn'), wishlistMenu: $('#wishlistMenu'),
+      wishlistItems: $('#wishlistItems'), clearWishlist: $('#clearWishlist'),
+      track: $('#popularTrack'),
+      bodyChips: $('#bodyChips'), fuelChips: $('#fuelChips'), gearChips: $('#gearChips'),
+      priceRange: $('#priceRange'), priceOut: $('#priceOut'),
+      brandGrid: $('#brandGrid'), alphaRow: $('#alphaRow'),
+      grid: $('#resultsGrid'), resultCount: $('#resultCount'),
+      sortSel: $('#sortSel'), searchInput: $('#searchInput'),
+      applyBtn: $('#applyFilters'), searchBtn: $('#searchBtn'),
+      activeFilters: $('#activeFilters'), clearFiltersBtn: $('#clearFiltersBtn')
+    };
+
+    // Popular slider (with hearts, data-id)
     const popularCars = cars.filter(c=>c.popularIn.includes('IT'));
-    const track = document.getElementById('popularTrack');
-    function carSlide(c){
-      return `<article class="car-card">
+    const heartButtonHTML = id => `<button class="heart-btn" data-id="${id}" aria-label="Add to wishlist" aria-pressed="false" title="Wishlist">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>`;
+    const slideHTML = c => { const id=carId(c); return `
+      <article class="car-card" data-id="${id}" role="link" tabindex="0" aria-label="${c.brand} ${c.model}">
+        ${heartButtonHTML(id)}
         <img class="thumb" src="${c.img}" alt="${c.brand} ${c.model}">
         <div class="meta">
           <div>
             <div class="name">${c.brand} ${c.model}</div>
-            <div class="muted" style="font-size:12px">${c.body} • €${c.price.toLocaleString()}</div>
+            <div class="muted" style="font-size:12px">${c.body} • ${toEUR(c.price)}</div>
           </div>
           <div class="pill">★ ${c.rating}</div>
         </div>
-      </article>`;
-    }
-    const slides = popularCars.map(carSlide).join('');
-    track.innerHTML = slides + slides;
+      </article>`; };
+    els.track.innerHTML = popularCars.map(slideHTML).join('') + popularCars.map(slideHTML).join('');
 
-    /* ---------------- Filters UI ---------------- */
-    const bodyChips = document.getElementById('bodyChips');
-    const fuelChips = document.getElementById('fuelChips');
-    const gearChips = document.getElementById('gearChips');
+    // Filters UI
     const selected = { brands:new Set(), body:new Set(), fuel:new Set(), gear:new Set(), maxPrice:120000 };
-    const bodies = [...new Set(cars.map(c=>c.body))];
-    const fuels  = [...new Set(cars.map(c=>c.fuel))];
-    const gears  = [...new Set(cars.map(c=>c.gear))];
-    const brands = [...new Set(cars.map(c=>c.brand))].sort();
+    const bodies=[...new Set(cars.map(c=>c.body))], fuels=[...new Set(cars.map(c=>c.fuel))], gears=[...new Set(cars.map(c=>c.gear))], brands=[...new Set(cars.map(c=>c.brand))].sort();
+    const chipMap = { body:new Map(), fuel:new Map(), gear:new Map() };
+    const brandTileMap = new Map();
 
     function chip(label, group){
-      const el = document.createElement('button');
+      const el=document.createElement('button');
       el.className='chip'; el.textContent=label; el.dataset.group=group; el.dataset.value=label;
-      el.addEventListener('click',()=>{ el.classList.toggle('active'); 
-        const set = selected[group]; 
-        if(el.classList.contains('active')) set.add(label); else set.delete(label);
-      });
-      return el;
+      el.addEventListener('click',()=>{ el.classList.toggle('active'); const set=selected[group]; if(el.classList.contains('active')) set.add(label); else set.delete(label); });
+      chipMap[group].set(label, el); return el;
     }
-    bodies.forEach(b=>bodyChips.appendChild(chip(b,'body')));
-    fuels.forEach(f=>fuelChips.appendChild(chip(f,'fuel')));
-    gears.forEach(g=>gearChips.appendChild(chip(g,'gear')));
+    bodies.forEach(b=>els.bodyChips.appendChild(chip(b,'body')));
+    fuels.forEach(f=>els.fuelChips.appendChild(chip(f,'fuel')));
+    gears.forEach(g=>els.gearChips.appendChild(chip(g,'gear')));
 
-    const priceRange = document.getElementById('priceRange');
-    const priceOut = document.getElementById('priceOut');
-    priceRange.addEventListener('input', e=>{ selected.maxPrice=Number(e.target.value); priceOut.textContent=`≤ €${Number(e.target.value).toLocaleString()}`; });
-
-    /* ---------------- Brand Tiles ---------------- */
-    const brandGrid = document.getElementById('brandGrid');
     function makeBrandTile(name){
-      const tile = document.createElement('div'); tile.className='brand-tile'; tile.tabIndex=0;
-      const logo = document.createElement('div'); logo.className='brand-logo'; logo.textContent=name.split(' ').map(s=>s[0]).join('').slice(0,3).toUpperCase();
-      const label = document.createElement('div'); label.className='brand-name'; label.textContent=name;
+      const tile=document.createElement('div'); tile.className='brand-tile'; tile.tabIndex=0;
+      const logo=document.createElement('div'); logo.className='brand-logo'; logo.textContent=name.split(' ').map(s=>s[0]).join('').slice(0,3).toUpperCase();
+      const label=document.createElement('div'); label.className='brand-name'; label.textContent=name;
       tile.append(logo,label);
-      tile.addEventListener('click',()=>toggleBrand(name,tile));
-      tile.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleBrand(name,tile);} });
-      return tile;
+      const toggle=()=>{ const active=tile.classList.toggle('active'); if(active) selected.brands.add(name); else selected.brands.delete(name); };
+      tile.addEventListener('click',toggle); tile.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); }});
+      brandTileMap.set(name,tile); return tile;
     }
-    function toggleBrand(name,tile){
-      const active = tile.classList.toggle('active');
-      tile.style.borderColor = active ? '#4b4b4b' : '#262626';
-      tile.style.background = active ? 'linear-gradient(135deg, rgba(139,92,246,.18), rgba(34,211,238,.18))' : '#121212';
-      if(active) selected.brands.add(name); else selected.brands.delete(name);
-    }
-    brands.forEach(b=>brandGrid.appendChild(makeBrandTile(b)));
+    brands.forEach(b=>els.brandGrid.appendChild(makeBrandTile(b)));
 
-    const alphaRow = document.getElementById('alphaRow');
-    const AZ = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const allSpan=document.createElement('span'); allSpan.className='alpha active'; allSpan.textContent='All';
+    allSpan.addEventListener('click',()=>{ $$('.alpha',els.alphaRow).forEach(a=>a.classList.remove('active')); allSpan.classList.add('active'); $$('.brand-tile',els.brandGrid).forEach(t=>t.style.display='flex'); });
+    els.alphaRow.appendChild(allSpan);
     AZ.forEach(letter=>{
-      const span = document.createElement('span'); span.className='alpha'; span.textContent=letter;
+      const span=document.createElement('span'); span.className='alpha'; span.textContent=letter;
       span.addEventListener('click',()=>{
-        document.querySelectorAll('#brandGrid .brand-tile').forEach(tile=>{
-          const show = tile.querySelector('.brand-name').textContent.startsWith(letter);
-          tile.style.display = show? 'flex':'none';
-        });
-        document.querySelectorAll('.alpha').forEach(a=>a.classList.remove('active'));
-        span.classList.add('active');
+        $$('.brand-tile',els.brandGrid).forEach(t=>{ const show=t.querySelector('.brand-name').textContent.startsWith(letter); t.style.display=show?'flex':'none'; });
+        $$('.alpha',els.alphaRow).forEach(a=>a.classList.remove('active')); span.classList.add('active');
       });
-      alphaRow.appendChild(span);
+      els.alphaRow.appendChild(span);
     });
 
-    /* ---------------- Results Rendering ---------------- */
-    const grid = document.getElementById('resultsGrid');
-    const resultCount = document.getElementById('resultCount');
-    const sortSel = document.getElementById('sortSel');
+    els.priceRange.addEventListener('input', e=>{ selected.maxPrice=Number(e.target.value); els.priceOut.textContent=`≤ ${toEUR(selected.maxPrice)}`; });
 
+    // Active filters UI
+    function updateActiveFiltersUI(q){
+      const chips=[];
+      if(q) chips.push({group:'q', value:q, label:`Search: ${q}`});
+      if(selected.maxPrice<120000) chips.push({group:'price', value:String(selected.maxPrice), label:`≤ ${toEUR(selected.maxPrice)}`});
+      selected.brands.forEach(v=>chips.push({group:'brands', value:v, label:`Brand: ${v}`}));
+      selected.body.forEach(v=>chips.push({group:'body', value:v, label:v}));
+      selected.fuel.forEach(v=>chips.push({group:'fuel', value:v, label:v}));
+      selected.gear.forEach(v=>chips.push({group:'gear', value:v, label:v}));
+      els.activeFilters.innerHTML = chips.map(c=>`<span class="af-chip" data-group="${c.group}" data-value="${c.value}">${c.label} <button class="x" aria-label="Remove ${c.label}">×</button></span>`).join('');
+    }
+    els.activeFilters.addEventListener('click', e=>{
+      const x=e.target.closest('.x'); if(!x) return;
+      const chip=x.closest('.af-chip'); const group=chip.dataset.group, value=chip.dataset.value;
+      if(group==='q'){ els.searchInput.value=''; }
+      else if(group==='price'){ selected.maxPrice=120000; els.priceRange.value='120000'; els.priceOut.textContent='≤ €120,000'; }
+      else if(group==='brands'){ selected.brands.delete(value); const tile=brandTileMap.get(value); if(tile) tile.classList.remove('active'); }
+      else { selected[group].delete(value); const el=chipMap[group].get(value); if(el) el.classList.remove('active'); }
+      applyFiltersNow();
+    });
+    $('#clearFiltersBtn').addEventListener('click', ()=>{
+      selected.brands.clear(); brandTileMap.forEach(t=>t.classList.remove('active'));
+      ['body','fuel','gear'].forEach(g=>{ selected[g].clear(); chipMap[g].forEach(el=>el.classList.remove('active')); });
+      selected.maxPrice=120000; els.priceRange.value='120000'; els.priceOut.textContent='≤ €120,000';
+      els.searchInput.value=''; applyFiltersNow();
+    });
+
+    // Relevance sort
+    function relevanceScore(c, q){
+      if(!q) return c.rating*10 + (c.popularIn?.includes('IT')?4:0);
+      const hay = `${c.brand} ${c.model} ${c.body}`.toLowerCase();
+      const brand=c.brand.toLowerCase(), model=c.model.toLowerCase();
+      q=q.toLowerCase().trim();
+      let s=0;
+      if(`${c.brand} ${c.model}`.toLowerCase()===q) s+=240;
+      if(hay.startsWith(q)) s+=140;
+      if(brand===q) s+=120;
+      if(model===q) s+=110;
+      if(hay.includes(q)) s+=90;
+      s+=c.rating*8;
+      if(c.popularIn?.includes('IT')) s+=6;
+      return s;
+    }
+
+    // Results rendering (with data-id)
     function renderCards(list){
-      grid.innerHTML = list.map(c=>`
-        <article class="car-card" title="${c.brand} ${c.model}">
+      if(!list.length){
+        els.grid.innerHTML = `<div style="padding:30px; text-align:center; opacity:.75">No cars match your filters. Try clearing some filters or increasing the price range.</div>`;
+        els.resultCount.textContent='0 results';
+        return;
+      }
+      els.grid.innerHTML = list.map(c=>{ const id=carId(c); return `
+        <article class="car-card" data-id="${id}" role="link" tabindex="0" title="${c.brand} ${c.model}" aria-label="${c.brand} ${c.model}">
+          ${heartButtonHTML(id)}
           <img class="thumb" loading="lazy" src="${c.img}" alt="${c.brand} ${c.model}">
           <div class="meta">
             <div>
               <div class="name">${c.brand} ${c.model}</div>
-              <div class="muted" style="font-size:12px">${c.body} • €${c.price.toLocaleString()}</div>
+              <div class="muted" style="font-size:12px">${c.body} • ${toEUR(c.price)}</div>
             </div>
             <div class="pill">★ ${c.rating}</div>
           </div>
-        </article>`).join('');
-      resultCount.textContent = `${list.length} result${list.length!==1?'s':''}`;
+        </article>`; }).join('');
+      els.resultCount.textContent = `${list.length} result${list.length!==1?'s':''}`;
+      syncHeartButtons();
     }
 
-    function applyFiltersNow(){
-      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    function applyFiltersNow(scroll=false){
+      const q = els.searchInput.value.trim();
       let list = cars.filter(c=> c.price <= selected.maxPrice);
       if(selected.brands.size) list = list.filter(c=> selected.brands.has(c.brand));
-      if(selected.body.size) list = list.filter(c=> selected.body.has(c.body));
-      if(selected.fuel.size) list = list.filter(c=> selected.fuel.has(c.fuel));
-      if(selected.gear.size) list = list.filter(c=> selected.gear.has(c.gear));
-      if(q) list = list.filter(c=> `${c.brand} ${c.model} ${c.body}`.toLowerCase().includes(q));
+      if(selected.body.size)   list = list.filter(c=> selected.body.has(c.body));
+      if(selected.fuel.size)   list = list.filter(c=> selected.fuel.has(c.fuel));
+      if(selected.gear.size)   list = list.filter(c=> selected.gear.has(c.gear));
+      if(q) list = list.filter(c=> `${c.brand} ${c.model} ${c.body}`.toLowerCase().includes(q.toLowerCase()));
 
-      switch(sortSel.value){
+      switch(els.sortSel.value){
         case 'price_asc':  list.sort((a,b)=>a.price-b.price); break;
         case 'price_desc': list.sort((a,b)=>b.price-a.price); break;
         case 'rating_desc': list.sort((a,b)=>b.rating-a.rating); break;
+        default: list.sort((a,b)=> relevanceScore(b, q) - relevanceScore(a, q));
       }
+      updateActiveFiltersUI(q);
       renderCards(list);
+      if(scroll) $('#filters').scrollIntoView({ behavior:'smooth', block:'start' });
     }
 
-    document.getElementById('applyFilters').addEventListener('click', applyFiltersNow);
-    document.getElementById('searchBtn').addEventListener('click', applyFiltersNow);
-    document.getElementById('searchInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') applyFiltersNow(); });
-    sortSel.addEventListener('change', applyFiltersNow);
+    // Events
+    els.applyBtn.addEventListener('click', ()=> applyFiltersNow(true));
+    els.searchBtn.addEventListener('click', ()=> applyFiltersNow(true));
+    els.searchInput.addEventListener('keydown', e=>{ if(e.key==='Enter') applyFiltersNow(true); });
+    els.searchInput.addEventListener('input', debounce(()=> applyFiltersNow(false), 280));
+    els.sortSel.addEventListener('change', ()=> applyFiltersNow(false));
 
-    // initial render
-    renderCards(cars);
+    // Heart clicks (delegation)
+    function onHeartClick(e){ const btn=e.target.closest('.heart-btn'); if(!btn) return; e.preventDefault(); toggleWishlist(btn.dataset.id); }
+    els.grid.addEventListener('click', onHeartClick);
+    els.track.addEventListener('click', onHeartClick);
+
+    // Card open (delegation) - works for current and future cards
+    function onCardActivate(e, root){
+      if (e.type === 'click' && e.target.closest('.heart-btn')) return; // ignore heart
+      const card = e.target.closest('.car-card');
+      if (!card || !root.contains(card)) return;
+      openCarById(card.dataset.id);
+    }
+    els.grid.addEventListener('click', (e)=> onCardActivate(e, els.grid));
+    els.track.addEventListener('click', (e)=> onCardActivate(e, els.track));
+    els.grid.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') onCardActivate(e, els.grid); });
+    els.track.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') onCardActivate(e, els.track); });
+
+    // Wishlist dropdown
+    $('#wishlistBtn').addEventListener('click', ()=>{
+      const open = $('#wishlist').classList.toggle('open');
+      $('#wishlistBtn').setAttribute('aria-expanded', open?'true':'false');
+    });
+    document.addEventListener('click', e=>{
+      if(!$('#wishlist').contains(e.target)){ $('#wishlist').classList.remove('open'); $('#wishlistBtn').setAttribute('aria-expanded','false'); }
+    });
+    document.addEventListener('keydown', e=>{
+      if(e.key==='Escape'){ $('#wishlist').classList.remove('open'); $('#wishlistBtn').setAttribute('aria-expanded','false'); }
+    });
+    // Remove from dropdown
+    els.wishlistItems.addEventListener('click', e=>{
+      const btn=e.target.closest('[data-remove]'); if(!btn) return;
+      toggleWishlist(btn.getAttribute('data-remove'));
+    });
+    // Clear all wishlist
+    els.clearWishlist.addEventListener('click', ()=>{
+      wishlist.clear(); saveWishlist(); updateWishlistBadge(); buildWishlistMenu(); syncHeartButtons(); showToast('Wishlist cleared');
+    });
+
+    // Init
+    (function init(){
+      updateWishlistBadge();
+      buildWishlistMenu();
+      applyFiltersNow(false);
+      syncHeartButtons();
+    })();
   </script>
 
   <script src="/js/auth.js"></script>
-
 </body>
-</html> 
+</html>

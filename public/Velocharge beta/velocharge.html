@@ -1,52 +1,853 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeloCharge - Find Charging Stations</title>
+  <head>
+    <meta charset="utf-8" />
+    <title>VeloValue • VeloCharge: Real Stations Near Me</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: Arial, sans-serif;
-    }
-    #map {
-      height: 100vh; /* full screen map */
-      width: 100%;
-    }
-    .leaflet-popup-content b {
-      color: #2c3e50;
-    }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
+    <!-- Mapbox GL CSS -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    // Initialize map (centered on Rome for now)
-    const map = L.map('map').setView([41.9028, 12.4964], 12);
+    <style>
+      :root { --header-h: 64px; } /* Fallback, updated dynamically via JS */
 
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+      /* ===== Reset / Global ===== */
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { height: 100%; }
+      body {
+        background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
+        font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: #fff;
+        padding-top: var(--header-h);
+      }
 
-    // Fetch stations from backend
-    fetch('/api/stations')
-      .then(res => res.json())
-      .then(stations => {
-        stations.forEach(station => {
-          L.marker([station.lat, station.lng]).addTo(map)
-            .bindPopup(`<b>${station.name}</b>`);
+      /* ===== Header ===== */
+      header {
+        position: fixed;
+        top: 0; left: 0; width: 100%;
+        padding: 1rem 2rem;
+        background: rgba(0,0,0,0.6);
+        display: flex; justify-content: space-between; align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(6px);
+      }
+      header h1 { font-size: 24px; font-weight: 800; margin: 0; }
+      header h1 a { color: white; text-decoration: none; }
+      header nav { display: flex; align-items: center; gap: 20px; }
+      header nav a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; }
+      header nav a:hover { text-decoration: underline; }
+
+      /* Language select */
+      .language-select select {
+        background: #111;
+        color: #fff;
+        border: 1px solid #fff;
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      /* Auth button */
+      #authSection button {
+        background: #fff;
+        color: #111;
+        border: 1px solid #333;
+        border-radius: 20px;
+        padding: 6px 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      #authSection button:hover {
+        background: #444;
+        color: #fff;
+      }
+
+      /* ===== Map + UI ===== */
+      #map {
+        position: fixed;
+        top: var(--header-h);
+        left: 0; right: 0; bottom: 0;
+      }
+
+      .search-area {
+        position: fixed;
+        top: calc(var(--header-h) + 12px);
+        left: 50%; transform: translateX(-50%);
+        background: white; color: #111;
+        padding: 8px 12px; border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.15);
+        font: 14px system-ui; cursor: pointer; display: none;
+        z-index: 900; /* above map, below header */
+      }
+
+      .credit {
+        position: fixed; bottom: 8px; left: 8px;
+        background: rgba(255,255,255,.9); padding: 4px 8px; border-radius: 4px;
+        font: 12px system-ui; color: #111;
+        z-index: 900;
+      }
+
+      .popup { font: 13px system-ui; color: #111; }
+      .popup .name { font-weight: 600; margin-bottom: 4px; }
+
+      /* ===== Left Filter Panel (structure) ===== */
+      .left-panel {
+        position: fixed;
+        top: calc(var(--header-h) + 12px);
+        left: 12px;
+        width: 360px;
+        max-width: calc(100% - 24px);
+        z-index: 950; /* below header(1000), above map/search(900) */
+        padding: 18px;
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.07);
+        background: linear-gradient(160deg, #0b0c0f, #121318);
+        box-shadow: 0 24px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+      }
+      .left-panel .panel-scroll {
+        max-height: calc(100vh - var(--header-h) - 48px);
+        overflow: auto;
+        padding-right: 4px;
+      }
+      .panel-title {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        color: #f2c94c;
+        margin: 4px 4px 10px;
+        text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+      }
+
+      /* ===== Accordion base ===== */
+      .accordion {
+        margin: 16px 6px;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        background: linear-gradient(160deg, #15171d, #0f1014);
+        box-shadow: 0 14px 28px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.05);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+      }
+      .accordion:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07);
+      }
+      .accordion-header {
+        position: relative;
+        padding: 18px 24px;
+        font-size: 16px;
+        font-weight: 700;
+        color: #f5f5f5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        background:
+          linear-gradient( to bottom, rgba(255,255,255,0.06), rgba(255,255,255,0) ),
+          linear-gradient(160deg, #15171d, #0f1014);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+      }
+      .accordion-header:hover {
+        color: #ffffff;
+        background:
+          linear-gradient( to bottom, rgba(242,201,76,0.10), rgba(242,201,76,0.02) ),
+          linear-gradient(160deg, #15171d, #0f1014);
+        border-color: rgba(242,201,76,0.22);
+      }
+      .accordion-header::after {
+        content: "›";
+        font-size: 20px;
+        line-height: 1;
+        color: #cfcfd4;
+        opacity: 0.9;
+        transition: transform 0.25s ease, color 0.25s ease;
+      }
+      .accordion.open .accordion-header::after {
+        transform: rotate(90deg);
+        color: #f2c94c;
+      }
+      .accordion .accordion-arrow { display: none; }
+
+      .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        padding: 0 24px;
+        font-size: 15px;
+        color: #cfcfd4;
+        transition: max-height 0.45s ease, padding 0.3s ease, opacity 0.3s ease;
+        opacity: 0;
+      }
+      .accordion.open .accordion-content {
+        max-height: 800px;
+        padding: 16px 24px 18px;
+        opacity: 1;
+      }
+
+      /* Inputs & helpers */
+      .filter-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 10px 0; }
+      .filter-row label { font-size: 14px; color: #f5f5f5; font-weight: 600; }
+      .pill {
+        display:inline-block; padding:3px 10px; border:1px solid rgba(255,255,255,0.12);
+        border-radius: 999px; font-size:12px; color:#ddd;
+        background: linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      }
+      .list-compact { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+      .list-compact label { display:flex; align-items:center; gap:8px; font-size:14px; color:#f5f5f5; }
+
+      .btn-reset {
+        margin-top: 10px;
+        width: 100%;
+        background: transparent;
+        color: #f5f5f5;
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 12px;
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: background 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+      }
+      .btn-reset:hover {
+        background: rgba(242,201,76,0.08);
+        border-color: rgba(242,201,76,0.35);
+      }
+      .btn-reset:active { transform: scale(0.995); }
+
+      input[type="checkbox"], input[type="radio"] { accent-color: #f2c94c; }
+
+      /* Range slider styling + fill */
+      input[type="range"] {
+        -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: transparent; margin-top: 8px;
+      }
+      input[type="range"]::-webkit-slider-runnable-track {
+        height: 8px; border-radius: 999px;
+        background: linear-gradient(90deg, rgba(242,201,76,0.9), rgba(242,201,76,0.25)) left/var(--fill,0%) 100% no-repeat,
+                    rgba(255,255,255,0.12);
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+        background: #f2c94c; border: 2px solid #000; margin-top: -5px;
+        box-shadow: 0 2px 8px rgba(242,201,76,0.5);
+      }
+      input[type="range"]::-moz-range-track { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.12); }
+      input[type="range"]::-moz-range-progress {
+        height: 8px; border-radius: 999px; background: linear-gradient(90deg, rgba(242,201,76,0.9), rgba(242,201,76,0.25));
+      }
+      input[type="range"]::-moz-range-thumb {
+        width: 18px; height: 18px; border-radius: 50%; background: #f2c94c; border: 2px solid #000;
+        box-shadow: 0 2px 8px rgba(242,201,76,0.5);
+      }
+
+      /* Legend dots */
+      .legend-item { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+      .legend-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.9); }
+      .dot-green { background:#2ecc71; }
+      .dot-amber { background:#f39c12; }
+
+      /* Mobile */
+      @media (max-width: 900px) {
+        .left-panel { width: 90vw; }
+      }
+
+      /* ===== Premium upgrade (glass + gradient border + motion) ===== */
+      :root {
+        --accent: #f2c94c;
+        --glassA: rgba(12,14,18,0.55);
+        --glassB: rgba(12,14,18,0.82);
+        --cardA: rgba(20,22,28,0.85);
+        --cardB: rgba(14,15,20,0.9);
+        --textStrong: #f5f5f5;
+        --textSoft: #d8d8dc;
+      }
+
+      /* Panel: glass, blur, gradient border */
+      .left-panel {
+        backdrop-filter: blur(10px) saturate(125%);
+        -webkit-backdrop-filter: blur(10px) saturate(125%);
+        border: 1px solid transparent;
+        background:
+          linear-gradient(160deg, var(--glassA), var(--glassB)) padding-box,
+          linear-gradient(135deg, rgba(242,201,76,.35), rgba(255,255,255,.06) 35%, rgba(242,201,76,.25)) border-box;
+        box-shadow:
+          0 26px 60px rgba(0,0,0,0.55),
+          inset 0 1px 0 rgba(255,255,255,0.05);
+      }
+
+      .left-panel .panel-title {
+        font-weight: 900;
+        letter-spacing: .2px;
+        color: var(--accent);
+        text-shadow: 0 1px 0 rgba(0,0,0,.6);
+      }
+
+      /* Accordion: gradient border, sheen */
+      .accordion {
+        border: 1px solid transparent;
+        background:
+          linear-gradient(160deg, var(--cardA), var(--cardB)) padding-box,
+          linear-gradient(135deg, rgba(255,255,255,.06), rgba(242,201,76,.15)) border-box;
+        box-shadow: 0 14px 28px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.05);
+      }
+      .accordion-header {
+        color: var(--textStrong);
+        background:
+          linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,0)),
+          linear-gradient(160deg, var(--cardA), var(--cardB));
+      }
+      .accordion-header:hover {
+        background:
+          linear-gradient(to bottom, rgba(242,201,76,.10), rgba(242,201,76,.02)),
+          linear-gradient(160deg, var(--cardA), var(--cardB));
+        border-color: rgba(242,201,76,.22);
+      }
+      .accordion-content { color: var(--textSoft); }
+
+      /* Inputs and chips */
+      .filter-row label, .list-compact label { color: var(--textStrong); font-weight: 600; }
+      .pill {
+        border: 1px solid rgba(255,255,255,.12);
+        background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+        color: #ddd;
+      }
+      input[type="checkbox"], input[type="radio"] { accent-color: var(--accent); }
+
+      /* Focus ring for a11y */
+      .left-panel :focus-visible {
+        outline: 2px solid rgba(242,201,76,.7);
+        outline-offset: 2px;
+        border-radius: 10px;
+      }
+
+      /* Make Search-this-area match the theme */
+      .search-area {
+        background: #14161c; color: #fff; border: 1px solid rgba(255,255,255,.12);
+        box-shadow: 0 10px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+      }
+      .search-area:hover { border-color: rgba(242,201,76,.35); }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <h1><a href="/homepage.html">VeloValue</a></h1>
+      <nav>
+        <a href="/homepage.html">HOME</a>
+        <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+        <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+        <a href="#about">ABOUT US</a>
+
+        <div class="language-select">
+          <select id="languageSelect">
+            <option value="en">🇬🇧 English</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="de">🇩🇪 Deutsch</option>
+          </select>
+        </div>
+
+        <div id="authSection">
+          <button onclick="window.location.href='login.html'">Login / Register</button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Left filter panel -->
+    <aside class="left-panel">
+      <div class="panel-scroll">
+        <h2 class="panel-title">Welcome to VeloCharge</h2>
+
+        <div class="accordion open" id="filtersAccordion">
+          <div class="accordion-header">Filters</div>
+          <div class="accordion-content">
+            <form id="filtersForm">
+              <div class="filter-row">
+                <label for="filterOperational">Operational only</label>
+                <input type="checkbox" id="filterOperational" />
+              </div>
+
+              <div class="filter-row" style="flex-direction: column; align-items: stretch;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <label for="filterMinKw">Minimum power (kW)</label>
+                  <span class="pill"><span id="minKwValue">0</span> kW</span>
+                </div>
+                <input type="range" id="filterMinKw" min="0" max="350" step="10" value="0">
+              </div>
+
+              <div style="margin-top: 12px; font-weight:700;">Networks</div>
+              <div id="networksList" class="list-compact" style="margin-top:8px;">
+                <!-- dynamically populated -->
+              </div>
+
+              <div style="margin-top: 12px; font-weight:700;">Connector types</div>
+              <div id="connectorsList" class="list-compact" style="margin-top:8px;">
+                <!-- dynamically populated -->
+              </div>
+
+              <div style="margin-top: 12px; font-weight:700;">Cost</div>
+              <div class="filter-row">
+                <label><input type="radio" name="cost" value="all" checked> All</label>
+                <label><input type="radio" name="cost" value="free"> Free</label>
+                <label><input type="radio" name="cost" value="paid"> Paid</label>
+              </div>
+
+              <button type="button" class="btn-reset" id="resetFiltersBtn">Reset filters</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="accordion" id="legendAccordion">
+          <div class="accordion-header">Legend</div>
+          <div class="accordion-content">
+            <div class="legend-item"><span class="legend-dot dot-green"></span> Operational</div>
+            <div class="legend-item"><span class="legend-dot dot-amber"></span> Unknown/Other status</div>
+            <div class="legend-item">Cluster colors scale with density</div>
+          </div>
+        </div>
+
+        <div class="accordion" id="paywithvelovalueAccordion">
+          <div class="accordion-header">Pay with VeloValue</div>
+          </div>
+        </div>
+
+        <div class="accordion" id="addstation">
+          <div class="accordion-header">Add Station</div>
+          </div>
+        </div>
+
+        <div class="accordion" id="tripplanner">
+          <div class="accordion-header">Trip Planner</div>
+          </div>
+        </div>
+
+        <div class="accordion" id="recentactivity">
+          <div class="accordion-header">Recent Activity</div>
+          </div>
+        </div>
+
+        <div class="accordion" id="settings">
+          <div class="accordion-header">Settings</div>
+          </div>
+        </div>
+
+        <div class="accordion" id="help">
+          <div class="accordion-header">Help</div>
+          </div>
+        </div>
+
+        <div class="accordion" id="submitfeedback">
+          <div class="accordion-header">Submit Feedback</div>
+          </div>
+        </div>
+
+        <div class="accordion" id="velovaluestore">
+          <div class="accordion-header">VeloValue Store</div>
+          </div>
+        </div>
+
+        <div class="accordion" id="downloadtheapp">
+          <div class="accordion-header">Download the App</div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Map + UI -->
+    <div id="map"></div>
+    <button id="searchAreaBtn" class="search-area">Search this area</button>
+    <div class="credit">Data © Open Charge Map</div>
+
+    <!-- Mapbox GL JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+
+    <script>
+      // Dynamically set CSS var for header height (handles responsive changes)
+      function setHeaderHeightVar() {
+        const header = document.querySelector('header');
+        const h = header ? header.offsetHeight : 64;
+        document.documentElement.style.setProperty('--header-h', h + 'px');
+      }
+      window.addEventListener('load', setHeaderHeightVar);
+      window.addEventListener('resize', setHeaderHeightVar);
+    </script>
+
+    <script>
+      // Map + OCM + Filters
+      mapboxgl.accessToken = 'pk.eyJ1IjoidmVsb3ZhbHVlIiwiYSI6ImNtZ2NzYm02azE4em0ybHI1djQxaHQ3OG4ifQ.Vw4oGZE7eDxW1e-bJDdypA';
+      const OCM_API_KEY = 'YOUR_OCM_API_KEY'; // get one at openchargemap.org
+
+      const defaultCenter = [77.5946, 12.9716];
+      const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v12', // change to 'mapbox://styles/mapbox/dark-v11' for full dark theme
+        center: defaultCenter,
+        zoom: 12
+      });
+
+      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+      const geolocate = new mapboxgl.GeolocateControl({
+        positionOptions: { enableHighAccuracy: true, timeout: 10000 },
+        trackUserLocation: false,
+        showAccuracyCircle: false,
+        fitBoundsOptions: { maxZoom: 14 }
+      });
+      map.addControl(geolocate, 'top-right');
+
+      const searchBtn = document.getElementById('searchAreaBtn');
+
+      // Filter state
+      let allStationsGeoJSON = { type: 'FeatureCollection', features: [] };
+      const filterState = {
+        operationalOnly: false,
+        minKw: 0,
+        networks: new Set(),     // string titles
+        connectors: new Set(),   // string titles
+        cost: 'all'              // 'all' | 'free' | 'paid'
+      };
+
+      map.on('load', () => {
+        addStationsLayers();
+        initAccordions();
+        initFiltersUI();
+        geolocate.trigger(); // auto-jump to user
+      });
+
+      geolocate.once('geolocate', () => {
+        refreshStations();
+      });
+
+      map.on('moveend', () => {
+        searchBtn.style.display = 'block';
+      });
+      searchBtn.addEventListener('click', () => {
+        refreshStations();
+        searchBtn.style.display = 'none';
+      });
+
+      function addStationsLayers() {
+        map.addSource('stations', {
+          type: 'geojson',
+          data: emptyGeoJSON(),
+          cluster: true,
+          clusterRadius: 60,
+          clusterMaxZoom: 14
         });
-      })
-      .catch(err => console.error("Error fetching stations:", err));
-  </script>
-</body>
+
+        map.addLayer({
+          id: 'clusters',
+          type: 'circle',
+          source: 'stations',
+          filter: ['has', 'point_count'],
+          paint: {
+            'circle-color': [
+              'step', ['get', 'point_count'],
+              '#68B5FB', 10,
+              '#3A8EE6', 50,
+              '#1F6FDB', 100,
+              '#1254B3'
+            ],
+            'circle-radius': [
+              'step', ['get', 'point_count'],
+              16, 10, 22, 50, 28, 100, 34
+            ]
+          }
+        });
+
+        map.addLayer({
+          id: 'cluster-count',
+          type: 'symbol',
+          source: 'stations',
+          filter: ['has', 'point_count'],
+          layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12 },
+          paint: { 'text-color': '#fff' }
+        });
+
+        map.addLayer({
+          id: 'unclustered',
+          type: 'circle',
+          source: 'stations',
+          filter: ['!', ['has', 'point_count']],
+          paint: {
+            'circle-color': ['case', ['get', 'has_available'], '#2ecc71', '#f39c12'],
+            'circle-radius': 7,
+            'circle-stroke-width': 1.5,
+            'circle-stroke-color': '#fff'
+          }
+        });
+
+        map.on('click', 'clusters', (e) => {
+          const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+          const clusterId = features[0].properties.cluster_id;
+          map.getSource('stations').getClusterExpansionZoom(clusterId, (err, zoom) => {
+            if (err) return;
+            map.easeTo({ center: features[0].geometry.coordinates, zoom });
+          });
+        });
+
+        map.on('click', 'unclustered', (e) => {
+          const f = e.features[0];
+          const p = f.properties;
+          const html = `
+            <div class="popup">
+              <div class="name">${p.name}</div>
+              <div>${p.network || '—'} • ${p.max_power ? p.max_power + ' kW' : 'kW ?'} • ${p.total_connectors || '?'} ports</div>
+              <div>${p.has_available ? '✅ Operational' : '⚠️ Unknown'} ${p.usage_cost ? '• ' + p.usage_cost : ''}</div>
+              ${Array.isArray(p.connectors) && p.connectors.length ? `<div style="margin-top:6px; font-size:12px; color:#333;">${p.connectors.join(', ')}</div>` : ''}
+            </div>`;
+          new mapboxgl.Popup({ offset: 12 })
+            .setLngLat(f.geometry.coordinates)
+            .setHTML(html)
+            .addTo(map);
+        });
+
+        map.on('mouseenter', 'clusters', () => map.getCanvas().style.cursor = 'pointer');
+        map.on('mouseleave', 'clusters', () => map.getCanvas().style.cursor = '');
+        map.on('mouseenter', 'unclustered', () => map.getCanvas().style.cursor = 'pointer');
+        map.on('mouseleave', 'unclustered', () => map.getCanvas().style.cursor = '');
+      }
+
+      function emptyGeoJSON() {
+        return { type: 'FeatureCollection', features: [] };
+      }
+
+      async function refreshStations() {
+        const center = map.getCenter();
+        const radiusKm = clamp(approxRadiusKm(map), 2, 25); // fetch ~viewport radius, 2–25 km
+        const geojson = await fetchOCMStations(center.lng, center.lat, radiusKm);
+        allStationsGeoJSON = geojson;
+
+        populateDynamicFilterOptions();
+        applyFilters();
+      }
+
+      function approxRadiusKm(map) {
+        const b = map.getBounds();
+        const R = 6371; // km
+        const lat1 = b.getNorth() * Math.PI/180, lat2 = b.getSouth() * Math.PI/180;
+        const dLat = lat2 - lat1;
+        const dLng = (b.getEast() - b.getWest()) * Math.PI/180;
+        const aLat = Math.sin(dLat/2)**2;
+        const aLng = Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLng/2)**2;
+        const approx = 2*R*Math.asin(Math.sqrt(aLat + aLng));
+        return approx / 2;
+      }
+      function clamp(x, min, max) { return Math.max(min, Math.min(max, x)); }
+
+      async function fetchOCMStations(lng, lat, distanceKm = 10, maxResults = 200) {
+        const params = new URLSearchParams({
+          output: 'json',
+          latitude: String(lat),
+          longitude: String(lng),
+          distance: String(distanceKm),
+          distanceunit: 'KM',
+          maxresults: String(maxResults),
+          compact: 'true',
+          verbose: 'false',
+          key: OCM_API_KEY
+        });
+        const url = `https://api.openchargemap.io/v3/poi/?${params.toString()}`;
+        const res = await fetch(url);
+        const items = await res.json();
+        return ocmToGeoJSON(items);
+      }
+
+      function ocmToGeoJSON(items) {
+        return {
+          type: 'FeatureCollection',
+          features: items.map(item => {
+            const ai = item.AddressInfo || {};
+            const ops = item.OperatorInfo || {};
+            const status = item.StatusType || {};
+            const conns = Array.isArray(item.Connections) ? item.Connections : [];
+
+            let maxPower = null;
+            let totalConnectors = 0;
+            const connectorTitles = [];
+
+            conns.forEach(c => {
+              if (typeof c.PowerKW === 'number') {
+                if (maxPower === null || c.PowerKW > maxPower) maxPower = c.PowerKW;
+              }
+              totalConnectors += (c.Quantity || 1);
+              const t = c.ConnectionType && c.ConnectionType.Title;
+              if (t) connectorTitles.push(t);
+            });
+
+            return {
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [ai.Longitude, ai.Latitude] },
+              properties: {
+                id: item.ID,
+                name: ai.Title || 'Charging Station',
+                network: ops.Title || null,
+                max_power: maxPower,
+                total_connectors: totalConnectors || conns.length || null,
+                has_available: status.IsOperational === true, // operational, not real-time availability
+                usage_cost: item.UsageCost || null,
+                connectors: connectorTitles
+              }
+            };
+          }).filter(f =>
+            Array.isArray(f.geometry.coordinates) &&
+            isFinite(f.geometry.coordinates[0]) &&
+            isFinite(f.geometry.coordinates[1])
+          )
+        };
+      }
+
+      // ===== UI: Accordions + Filters =====
+      function initAccordions() {
+        document.querySelectorAll('.accordion .accordion-header').forEach(h => {
+          h.addEventListener('click', () => {
+            h.parentElement.classList.toggle('open');
+          });
+        });
+      }
+
+      function initFiltersUI() {
+        const minKw = document.getElementById('filterMinKw');
+        const minKwValue = document.getElementById('minKwValue');
+        const operational = document.getElementById('filterOperational');
+        const resetBtn = document.getElementById('resetFiltersBtn');
+
+        // Range fill paint
+        function paintRangeFill(el) {
+          const percent = (100 * (el.value - el.min)) / (el.max - el.min);
+          el.style.setProperty('--fill', percent + '%');
+        }
+        paintRangeFill(minKw);
+
+        minKw.addEventListener('input', () => {
+          filterState.minKw = Number(minKw.value);
+          minKwValue.textContent = String(filterState.minKw);
+          paintRangeFill(minKw);
+          applyFilters();
+        });
+        operational.addEventListener('change', () => {
+          filterState.operationalOnly = operational.checked;
+          applyFilters();
+        });
+
+        document.getElementById('filtersForm').addEventListener('change', (e) => {
+          if (e.target.name === 'cost') {
+            filterState.cost = e.target.value;
+            applyFilters();
+          }
+        });
+
+        // Delegated handling for dynamic checkboxes
+        document.getElementById('networksList').addEventListener('change', (e) => {
+          if (e.target && e.target.type === 'checkbox') {
+            const val = e.target.value;
+            if (e.target.checked) filterState.networks.add(val);
+            else filterState.networks.delete(val);
+            applyFilters();
+          }
+        });
+        document.getElementById('connectorsList').addEventListener('change', (e) => {
+          if (e.target && e.target.type === 'checkbox') {
+            const val = e.target.value;
+            if (e.target.checked) filterState.connectors.add(val);
+            else filterState.connectors.delete(val);
+            applyFilters();
+          }
+        });
+
+        resetBtn.addEventListener('click', () => {
+          filterState.operationalOnly = false;
+          filterState.minKw = 0;
+          filterState.networks.clear();
+          filterState.connectors.clear();
+          filterState.cost = 'all';
+
+          operational.checked = false;
+          minKw.value = 0;
+          minKwValue.textContent = '0';
+          paintRangeFill(minKw);
+          document.querySelectorAll('input[name="cost"]').forEach(r => r.checked = r.value === 'all');
+          document.querySelectorAll('#networksList input[type="checkbox"]').forEach(cb => cb.checked = false);
+          document.querySelectorAll('#connectorsList input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+          applyFilters();
+        });
+      }
+
+      function populateDynamicFilterOptions() {
+        const nets = new Map(); // title -> count
+        const cons = new Map(); // title -> count
+
+        for (const f of allStationsGeoJSON.features) {
+          const p = f.properties || {};
+          if (p.network) nets.set(p.network, (nets.get(p.network) || 0) + 1);
+          if (Array.isArray(p.connectors)) {
+            p.connectors.forEach(t => {
+              cons.set(t, (cons.get(t) || 0) + 1);
+            });
+          }
+        }
+
+        const networksList = document.getElementById('networksList');
+        const connectorsList = document.getElementById('connectorsList');
+        networksList.innerHTML = '';
+        connectorsList.innerHTML = '';
+
+        const topNets = [...nets.entries()].sort((a,b)=>b[1]-a[1]).slice(0, 12);
+        const topCons = [...cons.entries()].sort((a,b)=>b[1]-a[1]).slice(0, 12);
+
+        for (const [label, count] of topNets) {
+          const id = 'net-' + label.replace(/\W+/g, '_');
+          const checked = filterState.networks.has(label) ? 'checked' : '';
+          networksList.insertAdjacentHTML('beforeend',
+            `<label for="${id}"><input id="${id}" type="checkbox" value="${label}" ${checked}> ${label} <span class="pill">${count}</span></label>`);
+        }
+        for (const [label, count] of topCons) {
+          const id = 'con-' + label.replace(/\W+/g, '_');
+          const checked = filterState.connectors.has(label) ? 'checked' : '';
+          connectorsList.insertAdjacentHTML('beforeend',
+            `<label for="${id}"><input id="${id}" type="checkbox" value="${label}" ${checked}> ${label} <span class="pill">${count}</span></label>`);
+        }
+      }
+
+      function applyFilters() {
+        const src = map.getSource('stations');
+        if (!src) return;
+
+        const filtered = {
+          type: 'FeatureCollection',
+          features: allStationsGeoJSON.features.filter(f => {
+            const p = f.properties || {};
+
+            if (filterState.operationalOnly && !p.has_available) return false;
+            if (filterState.minKw && (p.max_power || 0) < filterState.minKw) return false;
+
+            if (filterState.cost === 'free') {
+              const cost = p.usage_cost ? String(p.usage_cost) : '';
+              if (!/free/i.test(cost)) return false;
+            } else if (filterState.cost === 'paid') {
+              const cost = p.usage_cost ? String(p.usage_cost) : '';
+              if (!cost || /free/i.test(cost)) return false;
+            }
+
+            if (filterState.networks.size > 0) {
+              const net = p.network;
+              if (!net || !filterState.networks.has(net)) return false;
+            }
+            if (filterState.connectors.size > 0) {
+              const list = Array.isArray(p.connectors) ? p.connectors : [];
+              const hit = list.some(t => filterState.connectors.has(t));
+              if (!hit) return false;
+            }
+
+            return true;
+          })
+        };
+
+        src.setData(filtered);
+      }
+    </script>
+
+    <!-- Remove this if you don’t have auth.js -->
+    <script src="/js/auth.js"></script>
+  </body>
 </html>
