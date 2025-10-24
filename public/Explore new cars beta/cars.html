@@ -42,11 +42,12 @@
     .remove-btn{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:12px; padding:6px 8px; cursor:pointer; }
 
     /* Layout */
-    .container{ width:min(1200px,94vw); margin:0 auto; padding:24px 0 40px; display:grid; grid-template-columns: 1fr 1fr; gap:24px; }
+    .container{ width:min(1200px,94vw); margin:0 auto; padding:24px 0 40px; display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start; } /* prevent stretch */
     @media (max-width:980px){ .container{ grid-template-columns: 1fr; padding:18px 0 28px; } }
     .panel{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-xl); box-shadow:var(--shadow-1); padding:22px; }
 
     /* LEFT: Image + brand/model/fuel/price */
+    .left{ position:relative; align-self:start; } /* independent height + anchor share btn */
     .left .car-header{ display:flex; align-items:center; gap:18px; margin-bottom:14px; }
     .car-logo{ width:90px; height:90px; border-radius:12px; object-fit:contain; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); padding:8px; }
     .title-stack{ display:flex; flex-direction:column; gap:4px; }
@@ -55,14 +56,39 @@
     .pill{ display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border:1px solid rgba(255,255,255,.2); border-radius:999px; background:transparent; font-weight:700; width:max-content; }
     .price{ margin-top:8px; font-size:18px; font-weight:800; }
 
-    .hero-wrap{ position:relative; width:100%; max-width:720px; margin:10px auto 0; }
-    .hero{ width:100%; border-radius:16px; display:block; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.02); box-shadow:var(--shadow-1); }
+    .hero-wrap{ position:relative; width:100%; max-width:720px; margin:10px auto 0; height:420px; } /* fixed box */
+    .hero{ width:100%; height:100%; border-radius:16px; display:block; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.02); box-shadow:var(--shadow-1); object-fit:contain; }
     .img-heart{ position:absolute; top:10px; right:10px; width:40px; height:40px; border-radius:999px; display:grid; place-items:center; background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.25); color:var(--text); cursor:pointer; transition:transform .12s, border-color .2s, color .2s, background .2s; }
     .img-heart:hover{ border-color:var(--accent); }
     .img-heart svg{ width:20px; height:20px; stroke:currentColor; fill:transparent; stroke-width:1.8; }
     .img-heart.active{ border-color:var(--accent); color:var(--accent); background:rgba(29,185,84,.1); }
     @keyframes pop{ 0%{transform:scale(1);} 50%{transform:scale(1.12);} 100%{transform:scale(1);} }
     .img-heart.pop{ animation:pop .22s ease; }
+
+    /* NEW: Compare button on left of image */
+    .img-compare{
+      position:absolute; top:10px; left:10px;
+      width:40px; height:40px; border-radius:999px;
+      display:grid; place-items:center;
+      background:rgba(0,0,0,.4);
+      border:1px solid rgba(255,255,255,.25);
+      color:var(--text); cursor:pointer; backdrop-filter:blur(4px);
+      transition:transform .12s, border-color .2s, color .2s, background .2s;
+    }
+    .img-compare:hover{ border-color:var(--accent); }
+    .img-compare.active{ border-color:var(--accent); color:var(--accent); background:rgba(29,185,84,.1); }
+    .img-compare svg{ width:20px; height:20px; stroke:currentColor; fill:transparent; stroke-width:1.8; }
+
+    /* NEW: Share button at top-right of left box */
+    .share-btn{
+      position:absolute; top:12px; right:12px;
+      width:36px; height:36px; border-radius:50%;
+      border:1px solid rgba(255,255,255,.25);
+      background:transparent; color:#fff; display:grid; place-items:center;
+      cursor:pointer; transition:border-color .2s;
+    }
+    .share-btn:hover{ border-color:var(--accent); }
+    .share-btn svg{ width:18px; height:18px; stroke:currentColor; fill:transparent; stroke-width:1.8; }
 
     .price-box{ margin:14px auto 4px; width:min(380px,100%); background:var(--accent); color:var(--bg); border-radius:12px; padding:10px 12px; font-weight:800; box-shadow:var(--shadow-2); text-align:center; }
 
@@ -141,6 +167,14 @@
   <main class="container">
     <!-- LEFT: image + brand/model/fuel/price -->
     <section class="panel left">
+      <!-- Share button (top-right of left box) -->
+      <button id="shareBtn" class="share-btn" aria-label="Share">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <!-- curved share arrow -->
+          <path d="M14 5l5 5-5 5M19 10H9a5 5 0 100 10" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
       <div class="car-header">
         <img class="car-logo" id="carLogo" alt="Brand logo" onerror="this.style.display='none'"/>
         <div class="title-stack">
@@ -153,6 +187,13 @@
 
       <div class="hero-wrap">
         <img id="heroImg" class="hero" alt="Car image" src="" />
+        <!-- Compare (left) -->
+        <button id="imgCompare" class="img-compare" aria-label="Add to compare" aria-pressed="false" title="Compare">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" stroke-width="1.8" fill="none"/>
+          </svg>
+        </button>
+        <!-- Wishlist (right) -->
         <button id="imgHeart" class="img-heart" aria-label="Add to wishlist" aria-pressed="false">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/>
@@ -269,6 +310,91 @@
       const btn = $('#imgHeart'); if(btn){ btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); }
     }
 
+    // ---------- Compare (same keys as Explore) ----------
+    const CMP_KEY = 'vv_compare_ids';
+    const META_KEY = 'vv_compare_meta';
+
+    // ===== User-scoped storage helpers (paste at top of each page script) =====
+(function ensureUserKey(){ window.__vvUserKey = window.__vvUserKey || 'guest'; })();
+
+function scopeKey(base) {
+  const k = (window.__vvUserKey || 'guest').toLowerCase();
+  return `${base}::${k}`;
+}
+
+// One-time migration of legacy global keys into the current user scope (only if scoped is empty)
+function migrateLegacyOnce(base) {
+  const scoped = scopeKey(base);
+  const migratedFlag = `${scoped}::migrated`;
+  if (localStorage.getItem(migratedFlag)) return;
+
+  const legacy = localStorage.getItem(base);
+  if (legacy && !localStorage.getItem(scoped)) {
+    localStorage.setItem(scoped, legacy);
+  }
+  localStorage.setItem(migratedFlag, '1');
+}
+
+// Re-run UI when user changes (login/logout)
+document.addEventListener('vv:user-change', () => {
+  // Migrate keys for the new user if needed
+  ['velovalue_wishlist_v1', 'vv_compare_ids', 'vv_compare_meta'].forEach(migrateLegacyOnce);
+
+  // Refresh UI (guard functions if not present on this page)
+  if (typeof updateWishlistBadge === 'function') updateWishlistBadge();
+  if (typeof buildWishlistMenu === 'function') buildWishlistMenu();
+  if (typeof syncHeartButtons === 'function') syncHeartButtons();
+  if (typeof syncCompareButtons === 'function') syncCompareButtons();
+  if (typeof updateCompareBadge === 'function') updateCompareBadge();
+  if (typeof buildCompareMenu === 'function') buildCompareMenu();
+});
+
+    function loadCompare(){ try { return new Set(JSON.parse(localStorage.getItem(CMP_KEY) || '[]')); } catch { return new Set(); } }
+    function saveCompare(set){ localStorage.setItem(CMP_KEY, JSON.stringify([...set])); }
+    function loadMeta(){ try { return JSON.parse(localStorage.getItem(META_KEY) || '{}'); } catch { return {}; } }
+    function saveMeta(obj){ localStorage.setItem(META_KEY, JSON.stringify(obj)); }
+    function setCompareActive(active){
+      const btn = $('#imgCompare');
+      if (!btn) return;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      btn.setAttribute('aria-label', active ? 'Remove from compare' : 'Add to compare');
+    }
+    function toggleCompare(id, meta){
+      const set = loadCompare();
+      const m = loadMeta();
+      if (set.has(id)) {
+        set.delete(id); delete m[id];
+        saveCompare(set); saveMeta(m);
+        setCompareActive(false);
+        showToast('Removed from compare');
+      } else {
+        if (set.size >= 4) { showToast('You can compare up to 4 cars'); return; }
+        set.add(id); m[id] = m[id] || meta;
+        saveCompare(set); saveMeta(m);
+        setCompareActive(true);
+        showToast('Added to compare');
+      }
+    }
+    function buildCompareUrl(){
+      const ids = [...loadCompare()];
+      const url = new URL('compare.html', location.href);
+      if (ids.length) url.searchParams.set('ids', ids.join(','));
+      return url.toString();
+    }
+
+    // ---------- Share ----------
+    async function shareCurrent(url, title){
+      try {
+        if (navigator.share) {
+          await navigator.share({ title, url });
+        } else {
+          await navigator.clipboard.writeText(url);
+          showToast('Link copied');
+        }
+      } catch {}
+    }
+
     // ---------- Accordions (accessible) ----------
     function toggleAccordion(btn){
       const panel = document.getElementById(btn.getAttribute('aria-controls'));
@@ -284,13 +410,12 @@
       });
     });
 
-    // ---------- Page init: get car from sessionStorage or URL id ----------
+    // ---------- Page init ----------
     (function init(){
       const WIRE_KEY = 'vv_selected_car';
       let car = null;
       let idParam = new URLSearchParams(location.search).get('id');
 
-      // 1) Try sessionStorage (best: coming from list)
       try {
         const raw = sessionStorage.getItem(WIRE_KEY);
         if (raw) {
@@ -300,7 +425,6 @@
         }
       } catch {}
 
-      // 2) Fallback to inline dataset by id/prefix
       if (!car) {
         if (!idParam) idParam = 'lamborghini-revuelto-2024';
         if (!new URLSearchParams(location.search).get('id')) {
@@ -393,6 +517,24 @@
       const currentTitle = `${car.brand || ''} ${car.model || ''}`.trim();
       setHeartActive(getWishlist().has(currentId));
       $('#imgHeart').addEventListener('click', ()=> toggleWishlist(currentId, currentTitle));
+
+      // ----- Compare hooks -----
+      setCompareActive(loadCompare().has(currentId));
+      $('#imgCompare').addEventListener('click', ()=>{
+        const meta = {
+          brand: car.brand, model: car.model, body: car.body || '',
+          fuel: car.fuel || '', gear: car.transmission || '', rating: null,
+          price: car.priceFromEur ?? null, img: car.image || ''
+        };
+        toggleCompare(currentId, meta);
+      });
+
+      // ----- Share hook -----
+      $('#shareBtn').addEventListener('click', ()=>{
+        const url = location.href;
+        const title = document.title;
+        shareCurrent(url, title);
+      });
 
       // Header dropdown events
       $('#wishlistBtn').addEventListener('click', ()=>{

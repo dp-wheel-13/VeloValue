@@ -224,6 +224,91 @@ let cars = [
   { name:"Add a new car", img:"", logo:"", isAddNew:true }
 ];
 
+// ===== Wiring helpers (adds ids, normalizes, and navigates) =====
+const WIRE_KEYS = {
+  DETAILS: 'vv_selected_car',
+  PAGE2: 'vv_page2_car', // rename if you wire more pages
+  PAGE3: 'vv_page3_car'
+};
+
+const PATHS = {
+  DETAILS: 'cardetailsview.html', // details page in same folder
+  PAGE2: 'page2.html',            // placeholders
+  PAGE3: 'page3.html'
+};
+
+// NEW: navigate to Add Car page (same folder)
+const ADD_CAR_PATH = 'garagesearch.html';
+function goToAddCar() {
+  const url = new URL(ADD_CAR_PATH, location.href);
+  location.href = url.toString();
+}
+
+function slugify(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+// Give every car a stable id (skip the "+ Add a new car" tile)
+function ensureIds() {
+  cars = cars.map((c, i) =>
+    c.isAddNew
+      ? c
+      : {
+          ...c,
+          id:
+            c.id ||
+            `${slugify(c.brand || c.name || 'car')}-${slugify(
+              c.model || String(i + 1)
+            )}`
+        }
+  );
+}
+ensureIds();
+
+// Normalize fields your destination pages will read
+function normalizeFromGarage(car) {
+  return {
+    id: car.id,
+    brand: car.brand || car.name || '',
+    model: car.model ?? null,
+    fuel: car.fuel ?? null,
+    image: car.img || '',
+    logo: car.logo || ''
+  };
+}
+
+// Send selected car to a destination page
+function wireToPage(car, { path, key, pick } = {}) {
+  const normalized = normalizeFromGarage(car);
+  let payload = normalized;
+  if (Array.isArray(pick) && pick.length) {
+    payload = {};
+    for (const k of pick) payload[k] = normalized[k] ?? null;
+  }
+  sessionStorage.setItem(key, JSON.stringify(payload));
+  const url = new URL(path, location.href); // relative to this file
+  url.searchParams.set('id', normalized.id);
+  location.href = url.toString();
+}
+
+// Convenience openers
+function openDetails(car) {
+  wireToPage(car, {
+    path: PATHS.DETAILS,
+    key: WIRE_KEYS.DETAILS,
+    pick: ['id', 'brand', 'model', 'image', 'logo', 'fuel']
+  });
+}
+function openPage2(car) {
+  wireToPage(car, { path: PATHS.PAGE2, key: WIRE_KEYS.PAGE2, pick: ['id','brand','model','image','logo'] });
+}
+function openPage3(car) {
+  wireToPage(car, { path: PATHS.PAGE3, key: WIRE_KEYS.PAGE3, pick: ['id','brand','model'] });
+}
+
 const garageDisplay=document.getElementById("garageDisplay");
 const viewModeSelect=document.getElementById("viewMode");
 const garageLevel=document.getElementById("garage-level");
@@ -233,7 +318,8 @@ const searchBox=document.getElementById("searchBox");
 let currentIndex=0;
 let filteredCars=[...cars];
 
-addCarBtn.addEventListener("click",()=>alert("Open form to add a new car!"));
+// CHANGED: pill button now opens garagesearch.html
+addCarBtn.addEventListener("click", goToAddCar);
 
 function renderCarCard(car){
   return `
@@ -266,9 +352,18 @@ function renderCardSlider(list=filteredCars){
                         <div style="font-size:14px;color:#ccc;">Click to add car details</div>
                       </div>
                     </div>`;
-    card.addEventListener("click",()=>alert("Open form to add a new car!"));
+    // CHANGED: big "Add a new car" card now opens garagesearch.html
+    card.addEventListener("click", goToAddCar);
   } else {
     card.innerHTML=renderCarCard(car);
+
+    // Wiring: make the whole card open details (click or Enter)
+    card.dataset.id = car.id;
+    card.setAttribute('role','link');
+    card.tabIndex = 0;
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => openDetails(car));
+    card.addEventListener('keydown', (e) => { if (e.key === 'Enter') openDetails(car); });
   }
   garageDisplay.appendChild(card);
 
@@ -301,7 +396,8 @@ function renderTiles(list=filteredCars){
     const tile=document.createElement("div"); tile.className="tile-card";
     if(car.isAddNew){
       tile.innerHTML=`<div class="car-name">+ Add a new car</div>`;
-      tile.addEventListener("click",()=>alert("Open form to add a new car!"));
+      // CHANGED: add tile opens garagesearch.html
+      tile.addEventListener("click", goToAddCar);
     } else {
       tile.innerHTML=`
         ${car.img?`<img src="${car.img}" alt="${car.name}">`:`<div style="height:150px;display:flex;align-items:center;justify-content:center;color:#bbb">No image</div>`}
@@ -313,6 +409,14 @@ function renderTiles(list=filteredCars){
             ${car.fuel?`<span class="fuel-pill">${car.fuel}</span>`:""}
           </div>
         </div>`;
+
+      // Wiring for tiles: open details on click or Enter
+      tile.dataset.id = car.id;
+      tile.setAttribute('role','link');
+      tile.tabIndex = 0;
+      tile.style.cursor = 'pointer';
+      tile.addEventListener('click', () => openDetails(car));
+      tile.addEventListener('keydown', (e) => { if (e.key === 'Enter') openDetails(car); });
     }
     garageDisplay.appendChild(tile);
   });
@@ -325,7 +429,8 @@ function renderList(list=filteredCars){
     const item=document.createElement("div"); item.className="list-card";
     if(car.isAddNew){
       item.innerHTML=`<div class="car-name">+ Add a new car</div>`;
-      item.addEventListener("click",()=>alert("Open form to add a new car!"));
+      // CHANGED: add row opens garagesearch.html
+      item.addEventListener("click", goToAddCar);
     } else {
       item.innerHTML=`
         ${car.logo?`<img src="${car.logo}" class="car-logo">`:""}
@@ -334,6 +439,14 @@ function renderList(list=filteredCars){
           ${car.model?`<span class="car-model">${car.model}</span>`:""}
           ${car.fuel?`<span class="fuel-pill">${car.fuel}</span>`:""}
         </div>`;
+
+      // Wiring for list rows: open details on click or Enter
+      item.dataset.id = car.id;
+      item.setAttribute('role','link');
+      item.tabIndex = 0;
+      item.style.cursor = 'pointer';
+      item.addEventListener('click', () => openDetails(car));
+      item.addEventListener('keydown', (e) => { if (e.key === 'Enter') openDetails(car); });
     }
     garageDisplay.appendChild(item);
   });

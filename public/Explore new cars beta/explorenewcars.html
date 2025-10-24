@@ -39,6 +39,40 @@
     .wish-title{ font-weight:700; font-size:13px; } .wish-sub{ font-size:12px; opacity:.75; }
     .remove-btn{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:12px; padding:6px 8px; cursor:pointer; }
 
+    /* Compare toggle (overlay like heart) */
+    .compare-btn{
+      position:absolute; top:10px; left:10px;
+      width:36px; height:36px; border-radius:999px;
+      display:grid; place-items:center;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.25);
+      color:#fff; cursor:pointer; z-index:2;
+      backdrop-filter: blur(4px);
+      transition:transform .12s, border-color .2s, background .2s, color .2s;
+    }
+    .compare-btn:hover{ border-color:#1db954; }
+    .compare-btn.active{ border-color:#1db954; color:#1db954; background:rgba(29,185,84,.1); }
+    .compare-btn svg{ width:18px; height:18px; stroke:currentColor; fill:transparent; stroke-width:1.8; }
+
+    /* Sticky compare bar */
+    .compare-bar{
+      position:fixed; left:50%; transform:translateX(-50%);
+      bottom:16px; z-index:1500; width:min(1100px,94vw);
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+      border-radius:14px; backdrop-filter:blur(8px); box-shadow: var(--shadow-2, 0 18px 50px rgba(0,0,0,.55));
+      display:none; padding:10px;
+    }
+    .compare-bar.show{ display:block; }
+    .compare-bar .row{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .compare-bar .chips{ display:flex; gap:8px; flex-wrap:wrap; }
+    .compare-bar .chip{ display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.2); }
+    .compare-bar .chip .x{ background:transparent; border:0; color:#fff; font-weight:800; cursor:pointer; }
+    .compare-bar .actions{ display:flex; gap:8px; }
+    .compare-bar .btn{ padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:transparent; color:#fff; cursor:pointer; font-weight:800; }
+    .compare-bar .btn:hover{ border-color:#1db954; color:#1db954; }
+    .compare-bar .btn.primary{ background:#1db954; color:#081; border-color:#178b42; }
+    .compare-bar .btn.primary:hover{ filter:brightness(1.05); }
+
     /* Hero */
     .hero{ position:relative; overflow:hidden; min-height:clamp(350px,70vh,900px); display:grid; place-items:center; padding:48px 16px 70px; border-bottom:1px solid rgba(255,255,255,.1); isolation:isolate; }
     .hero::before{ content:""; position:absolute; inset:0; background:radial-gradient(1200px 300px at 50% 0%, rgba(255,255,255,.06), transparent 60%); z-index:0; pointer-events:none; }
@@ -131,42 +165,65 @@
   <header>
     <h1><a href="/homepage.html" style="color:inherit; text-decoration:none;">VeloValue</a></h1>
     <nav>
-      <a href="/homepage.html">HOME</a>
-      <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
-      <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
-      <a href="#about">ABOUT US</a>
+  <a href="/homepage.html">HOME</a>
+  <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+  <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+  <a href="#about">ABOUT US</a>
 
-      <div class="language-select">
-        <select id="languageSelect">
-          <option value="en">🇬🇧 English</option>
-          <option value="it">🇮🇹 Italiano</option>
-          <option value="de">🇩🇪 Deutsch</option>
-        </select>
-      </div>
+  <div class="language-select">
+    <select id="languageSelect">
+      <option value="en">🇬🇧 English</option>
+      <option value="it">🇮🇹 Italiano</option>
+      <option value="de">🇩🇪 Deutsch</option>
+    </select>
+  </div>
 
-      <div id="authSection">
-        <button onclick="window.location.href='login.html'">Login / Register</button>
+  <!-- Wishlist dropdown -->
+  <div class="wishlist" id="wishlist">
+    <button id="wishlistBtn" class="icon-btn" aria-label="Wishlist" aria-expanded="false" aria-controls="wishlistMenu">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      <span class="badge" id="wishlistBadge">0</span>
+    </button>
+    <div id="wishlistMenu" class="dropdown" role="menu" aria-label="Wishlist">
+      <div class="dropdown-head">
+        <strong>Wishlist</strong>
+        <button id="clearWishlist" class="text-btn">Clear all</button>
       </div>
+      <div id="wishlistItems" class="dropdown-list">
+        <div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Your wishlist is empty.</div>
+      </div>
+    </div>
+  </div>
 
-      <!-- Wishlist dropdown -->
-      <div class="wishlist" id="wishlist">
-        <button id="wishlistBtn" class="icon-btn" aria-label="Wishlist" aria-expanded="false" aria-controls="wishlistMenu">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/>
-          </svg>
-          <span class="badge" id="wishlistBadge">0</span>
-        </button>
-        <div id="wishlistMenu" class="dropdown" role="menu" aria-label="Wishlist">
-          <div class="dropdown-head">
-            <strong>Wishlist</strong>
-            <button id="clearWishlist" class="text-btn">Clear all</button>
-          </div>
-          <div id="wishlistItems" class="dropdown-list">
-            <div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Your wishlist is empty.</div>
-          </div>
-        </div>
+  <!-- Compare dropdown -->
+  <div class="wishlist compare" id="compare">
+    <button id="compareBtn" class="icon-btn" aria-label="Compare" aria-expanded="false" aria-controls="compareMenu" title="Compare">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/>
+      </svg>
+      <span class="badge" id="compareBadge">0</span>
+    </button>
+    <div id="compareMenu" class="dropdown" role="menu" aria-label="Compare">
+      <div class="dropdown-head">
+        <strong>Compare</strong>
+        <button id="clearCompare" class="text-btn">Clear all</button>
       </div>
-    </nav>
+      <div id="compareItems" class="dropdown-list">
+        <div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Nothing to compare.</div>
+      </div>
+      <div style="padding:10px; border-top:1px solid rgba(255,255,255,.1); display:flex; justify-content:flex-end;">
+        <button id="viewCompare" class="text-btn">View compare</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth section moved to end -->
+  <div id="authSection">
+    <button onclick="window.location.href='login.html'">Login / Register</button>
+  </div>
+</nav>
   </header>
 
   <!-- Hero search -->
@@ -245,6 +302,20 @@
     </div>
   </section>
 
+  <!-- Sticky compare bar -->
+  <div id="compareBar" class="compare-bar" aria-live="polite">
+    <div class="row">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <strong>Compare</strong>
+        <div class="chips" id="compareChips"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="compareClearBtn">Clear</button>
+        <button class="btn primary" id="compareGoBtn">Compare Now</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast container -->
   <div id="toastWrap" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
 
@@ -278,6 +349,218 @@
       setTimeout(()=>{ el.style.transition='opacity .2s, transform .2s'; el.style.opacity='0'; el.style.transform='translateY(8px)'; }, 1600);
       setTimeout(()=> wrap.contains(el) && wrap.removeChild(el), 1850);
     };
+
+    // Compare selections
+    const CMP_KEY = 'vv_compare_ids';
+    const META_KEY = 'vv_compare_meta';
+    const MAX_CMP = 4;
+
+    // ===== User-scoped storage helpers (paste at top of each page script) =====
+(function ensureUserKey(){ window.__vvUserKey = window.__vvUserKey || 'guest'; })();
+
+function scopeKey(base) {
+  const k = (window.__vvUserKey || 'guest').toLowerCase();
+  return `${base}::${k}`;
+}
+
+// User authentication helpers
+function isLoggedIn() {
+  return window.__vvUserKey && window.__vvUserKey !== 'guest';
+}
+
+function requireLogin(action) {
+  if (!isLoggedIn()) {
+    showToast(`Please Login/Register to ${action}`);
+    return false;
+  }
+  return true;
+}
+
+// Modified storage helpers
+function getStorageKey(base) {
+  const user = window.__vvUserKey || 'guest';
+  return `${base}_${user}`;
+}
+
+// Replace your existing storage functions with these:
+function loadWishlist() {
+  try {
+    const key = getStorageKey(WISHLIST_KEY);
+    return new Set(JSON.parse(localStorage.getItem(key) || '[]'));
+  } catch {
+    return new Set();
+  }
+}
+
+function saveWishlist() {
+  const key = getStorageKey(WISHLIST_KEY);
+  localStorage.setItem(key, JSON.stringify([...wishlist]));
+}
+
+function loadCompare() {
+  try {
+    const key = getStorageKey(CMP_KEY);
+    return new Set(JSON.parse(localStorage.getItem(key) || '[]'));
+  } catch {
+    return new Set();
+  }
+}
+
+function saveCompare(set) {
+  const key = getStorageKey(CMP_KEY);
+  localStorage.setItem(key, JSON.stringify([...set]));
+}
+
+function loadMeta() {
+  try {
+    const key = getStorageKey(META_KEY);
+    return JSON.parse(localStorage.getItem(key) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function saveMeta(obj) {
+  const key = getStorageKey(META_KEY);
+  localStorage.setItem(key, JSON.stringify(obj));
+}
+
+// One-time migration of legacy global keys into the current user scope (only if scoped is empty)
+function migrateLegacyOnce(base) {
+  const scoped = scopeKey(base);
+  const migratedFlag = `${scoped}::migrated`;
+  if (localStorage.getItem(migratedFlag)) return;
+
+  const legacy = localStorage.getItem(base);
+  if (legacy && !localStorage.getItem(scoped)) {
+    localStorage.setItem(scoped, legacy);
+  }
+  localStorage.setItem(migratedFlag, '1');
+}
+
+// Re-run UI when user changes (login/logout)
+document.addEventListener('vv:user-change', () => {
+  // Migrate keys for the new user if needed
+  ['velovalue_wishlist_v1', 'vv_compare_ids', 'vv_compare_meta'].forEach(migrateLegacyOnce);
+
+  // Refresh UI (guard functions if not present on this page)
+  if (typeof updateWishlistBadge === 'function') updateWishlistBadge();
+  if (typeof buildWishlistMenu === 'function') buildWishlistMenu();
+  if (typeof syncHeartButtons === 'function') syncHeartButtons();
+  if (typeof syncCompareButtons === 'function') syncCompareButtons();
+  if (typeof updateCompareBadge === 'function') updateCompareBadge();
+  if (typeof buildCompareMenu === 'function') buildCompareMenu();
+});
+
+    function loadCompare(){ try { return new Set(JSON.parse(localStorage.getItem(CMP_KEY) || '[]')); } catch { return new Set(); } }
+    function saveCompare(set){ localStorage.setItem(CMP_KEY, JSON.stringify([...set])); }
+    function loadMeta(){ try { return JSON.parse(localStorage.getItem(META_KEY) || '{}'); } catch { return {}; } }
+    function saveMeta(obj){ localStorage.setItem(META_KEY, JSON.stringify(obj)); }
+
+    function addToCompare(id, meta){
+      const set = loadCompare();
+      if (set.has(id)) return set; // already selected
+      if (set.size >= MAX_CMP) { alert(`You can compare up to ${MAX_CMP} cars.`); return set; }
+      set.add(id);
+      const m = loadMeta(); m[id] = meta; saveMeta(m);
+      saveCompare(set); return set;
+    }
+    function removeFromCompare(id){
+      const set = loadCompare(); set.delete(id); saveCompare(set);
+      const m = loadMeta(); delete m[id]; saveMeta(m); return set;
+    }
+    function inCompare(id){ return loadCompare().has(id); }
+
+    function compareButtonHTML(id){
+      return `<button class="compare-btn" data-compare="${id}" aria-label="Add to compare" aria-pressed="false" title="Compare">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+      </button>`;
+    }
+
+    // ===== Header compare helpers =====
+function updateCompareBadge(){
+  const n = loadCompare().size;
+  const b = document.getElementById('compareBadge');
+  if (!b) return;
+  if (n > 0) { b.style.display = 'grid'; b.textContent = n; }
+  else { b.style.display = 'none'; }
+}
+
+function buildCompareMenu(){
+  const listEl = document.getElementById('compareItems');
+  if (!listEl) return;
+  const ids = [...loadCompare()];
+  const meta = loadMeta();
+
+  if (!ids.length) {
+    listEl.innerHTML = `<div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Nothing to compare.</div>`;
+    return;
+  }
+
+  listEl.innerHTML = ids.map(id => {
+    const m = meta[id] || {};
+    const name = [m.brand, m.model].filter(Boolean).join(' ') || id;
+    const sub = [m.body, (m.price!=null ? '€'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' • ');
+    const img = m.img || '';
+    return `
+      <div class="wish-item" data-id="${id}">
+        ${img ? `<img src="${img}" alt="${name}">` : `<div style="width:44px;height:44px;border-radius:8px;background:#111;display:grid;place-items:center;opacity:.6">—</div>`}
+        <div class="wish-meta">
+          <div class="wish-title">${name}</div>
+          <div class="wish-sub">${sub || ''}</div>
+        </div>
+        <button class="remove-btn" data-remove="${id}">Remove</button>
+      </div>`;
+  }).join('');
+}
+
+// Open/close header compare dropdown
+(function wireCompareDropdown(){
+  const wrap = document.getElementById('compare');
+  const btn  = document.getElementById('compareBtn');
+  const menu = document.getElementById('compareMenu');
+  if (!wrap || !btn || !menu) return;
+
+  btn.addEventListener('click', ()=>{
+    const open = wrap.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.addEventListener('click', (e)=>{
+    if (!wrap.contains(e.target)) {
+      wrap.classList.remove('open');
+      btn.setAttribute('aria-expanded','false');
+    }
+  });
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === 'Escape') {
+      wrap.classList.remove('open');
+      btn.setAttribute('aria-expanded','false');
+    }
+  });
+
+  // Remove from compare (inside dropdown)
+  document.getElementById('compareItems').addEventListener('click', (e)=>{
+    const rm = e.target.closest('[data-remove]'); if(!rm) return;
+    const id = rm.getAttribute('data-remove');
+    removeFromCompare(id);
+    updateCompareBadge();
+    buildCompareMenu();
+    // Refresh buttons and sticky bar on the page
+    if (typeof syncCompareButtons === 'function') syncCompareButtons();
+  });
+
+  // Clear all compare
+  document.getElementById('clearCompare').addEventListener('click', ()=>{
+    saveCompare(new Set()); saveMeta({});
+    updateCompareBadge(); buildCompareMenu();
+    if (typeof syncCompareButtons === 'function') syncCompareButtons();
+  });
+
+  // View compare page
+  document.getElementById('viewCompare').addEventListener('click', ()=>{
+    location.href = buildCompareUrl(); // uses your existing helper
+  });
+})();
 
     // Wire to details page (sessionStorage + URL id)
     const WIRE_KEY = 'vv_selected_car';
@@ -325,13 +608,68 @@
         btn.setAttribute('aria-label', active?'Remove from wishlist':'Add to wishlist');
       });
     }
-    function toggleWishlist(id){
-      const c=carsById.get(id); if(!c) return;
-      const was=wishlist.has(id);
-      if(was){ wishlist.delete(id); showToast(`Removed: ${c.brand} ${c.model}`); }
-      else { wishlist.add(id); showToast(`Added: ${c.brand} ${c.model}`); }
-      saveWishlist(); updateWishlistBadge(); buildWishlistMenu(); syncHeartButtons();
-      const btn = document.querySelector(`.heart-btn[data-id="${id}"]`); if(btn){ btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); }
+    function toggleWishlist(id) {
+  if (!requireLogin('wishlist your favourite car')) return;
+  
+  const c = carsById.get(id);
+  if (!c) return;
+  
+  const was = wishlist.has(id);
+  if (was) {
+    wishlist.delete(id);
+    showToast(`Removed: ${c.brand} ${c.model}`);
+  } else {
+    wishlist.add(id);
+    showToast(`Added: ${c.brand} ${c.model}`);
+  }
+  saveWishlist();
+  updateWishlistBadge();
+  buildWishlistMenu();
+  syncHeartButtons();
+  
+  const btn = document.querySelector(`.heart-btn[data-id="${id}"]`);
+  if (btn) {
+    btn.classList.remove('pop');
+    void btn.offsetWidth;
+    btn.classList.add('pop');
+  }
+}
+
+    function syncCompareButtons(){
+  const set = loadCompare();
+  document.querySelectorAll('.compare-btn').forEach(btn=>{
+    const id = btn.getAttribute('data-compare');
+    const active = set.has(id);
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    btn.setAttribute('aria-label', active ? 'Remove from compare' : 'Add to compare');
+  });
+  updateCompareBar();
+  updateCompareBadge();   // NEW
+  buildCompareMenu();     // NEW
+}
+
+    function updateCompareBar(){
+      const bar = document.getElementById('compareBar');
+      const chips = document.getElementById('compareChips');
+      const ids = [...loadCompare()];
+      const meta = loadMeta();
+      if (ids.length >= 1) {
+        chips.innerHTML = ids.map(id=>{
+          const m = meta[id]; const name = m ? `${m.brand} ${m.model}`.trim() : id;
+          return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">×</button></span>`;
+        }).join('');
+      } else {
+        chips.innerHTML = '';
+      }
+      bar.classList.toggle('show', ids.length >= 2);
+    }
+
+    function buildCompareUrl(){
+      const ids = [...loadCompare()];
+      const url = new URL('compare.html', location.href);
+      if (ids.length) url.searchParams.set('ids', ids.join(','));
+      return url.toString();
     }
 
     // Elements
@@ -348,7 +686,7 @@
       activeFilters: $('#activeFilters'), clearFiltersBtn: $('#clearFiltersBtn')
     };
 
-    // Popular slider (with hearts, data-id)
+    // Popular slider (with hearts + compare, data-id)
     const popularCars = cars.filter(c=>c.popularIn.includes('IT'));
     const heartButtonHTML = id => `<button class="heart-btn" data-id="${id}" aria-label="Add to wishlist" aria-pressed="false" title="Wishlist">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
@@ -356,6 +694,7 @@
     const slideHTML = c => { const id=carId(c); return `
       <article class="car-card" data-id="${id}" role="link" tabindex="0" aria-label="${c.brand} ${c.model}">
         ${heartButtonHTML(id)}
+        ${compareButtonHTML(id)}
         <img class="thumb" src="${c.img}" alt="${c.brand} ${c.model}">
         <div class="meta">
           <div>
@@ -453,7 +792,7 @@
       return s;
     }
 
-    // Results rendering (with data-id)
+    // Results rendering (with compare)
     function renderCards(list){
       if(!list.length){
         els.grid.innerHTML = `<div style="padding:30px; text-align:center; opacity:.75">No cars match your filters. Try clearing some filters or increasing the price range.</div>`;
@@ -463,6 +802,7 @@
       els.grid.innerHTML = list.map(c=>{ const id=carId(c); return `
         <article class="car-card" data-id="${id}" role="link" tabindex="0" title="${c.brand} ${c.model}" aria-label="${c.brand} ${c.model}">
           ${heartButtonHTML(id)}
+          ${compareButtonHTML(id)}
           <img class="thumb" loading="lazy" src="${c.img}" alt="${c.brand} ${c.model}">
           <div class="meta">
             <div>
@@ -474,6 +814,7 @@
         </article>`; }).join('');
       els.resultCount.textContent = `${list.length} result${list.length!==1?'s':''}`;
       syncHeartButtons();
+      syncCompareButtons();
     }
 
     function applyFiltersNow(scroll=false){
@@ -496,29 +837,100 @@
       if(scroll) $('#filters').scrollIntoView({ behavior:'smooth', block:'start' });
     }
 
-    // Events
-    els.applyBtn.addEventListener('click', ()=> applyFiltersNow(true));
-    els.searchBtn.addEventListener('click', ()=> applyFiltersNow(true));
-    els.searchInput.addEventListener('keydown', e=>{ if(e.key==='Enter') applyFiltersNow(true); });
-    els.searchInput.addEventListener('input', debounce(()=> applyFiltersNow(false), 280));
-    els.sortSel.addEventListener('change', ()=> applyFiltersNow(false));
+      // Helper function to extract card metadata
+function extractCardMetadata(card) {
+    const name = card?.querySelector('.name')?.textContent || '';
+    const parts = name.split(' ');
+    const priceText = card?.querySelector('.muted')?.textContent || '';
+    
+    return {
+        brand: parts[0] || '',
+        model: parts.slice(1).join(' ') || '',
+        price: (() => {
+            const m = priceText.match(/€([\d.,]+)/);
+            return m ? Number(m[1].replace(/[.,](?=\d{3})/g,'').replace(',','.')) : null;
+        })(),
+        img: card?.querySelector('img.thumb')?.getAttribute('src') || '',
+        body: priceText.split('•')[0]?.trim() || '',
+        fuel: '',
+        gear: '',
+        rating: (card?.querySelector('.pill')?.textContent||'').replace(/[^\d.]/g,'') || null
+    };
+}
 
-    // Heart clicks (delegation)
-    function onHeartClick(e){ const btn=e.target.closest('.heart-btn'); if(!btn) return; e.preventDefault(); toggleWishlist(btn.dataset.id); }
-    els.grid.addEventListener('click', onHeartClick);
-    els.track.addEventListener('click', onHeartClick);
-
-    // Card open (delegation) - works for current and future cards
-    function onCardActivate(e, root){
-      if (e.type === 'click' && e.target.closest('.heart-btn')) return; // ignore heart
-      const card = e.target.closest('.car-card');
-      if (!card || !root.contains(card)) return;
-      openCarById(card.dataset.id);
+// Compare button clicks (delegation)
+function onCompareClick(e) {
+    if (!requireLogin('compare cars')) return;
+    
+    const btn = e.target.closest('.compare-btn');
+    if (!btn) return;
+    
+    e.preventDefault();
+    const id = btn.getAttribute('data-compare');
+    const card = btn.closest('.car-card');
+    
+    const meta = loadMeta();
+    meta[id] = meta[id] || extractCardMetadata(card);
+    
+    if (loadCompare().has(id)) {
+        removeFromCompare(id);
+    } else {
+        addToCompare(id, meta[id]);
     }
-    els.grid.addEventListener('click', (e)=> onCardActivate(e, els.grid));
-    els.track.addEventListener('click', (e)=> onCardActivate(e, els.track));
-    els.grid.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') onCardActivate(e, els.grid); });
-    els.track.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') onCardActivate(e, els.track); });
+    syncCompareButtons();
+}
+
+// Events
+els.applyBtn.addEventListener('click', () => applyFiltersNow(true));
+els.searchBtn.addEventListener('click', () => applyFiltersNow(true));
+els.searchInput.addEventListener('keydown', e => { if(e.key === 'Enter') applyFiltersNow(true); });
+els.searchInput.addEventListener('input', debounce(() => applyFiltersNow(false), 280));
+els.sortSel.addEventListener('change', () => applyFiltersNow(false));
+
+// Heart clicks (delegation)
+function onHeartClick(e) {
+    const btn = e.target.closest('.heart-btn');
+    if (!btn) return;
+    e.preventDefault();
+    toggleWishlist(btn.dataset.id);
+}
+els.grid.addEventListener('click', onHeartClick);
+els.track.addEventListener('click', onHeartClick);
+
+// Compare clicks (delegation)
+els.grid.addEventListener('click', onCompareClick);
+els.track.addEventListener('click', onCompareClick);
+
+// Card open (delegation) - works for current and future cards
+function onCardActivate(e, root) {
+    if (e.type === 'click' && (e.target.closest('.heart-btn') || e.target.closest('.compare-btn'))) return;
+    const card = e.target.closest('.car-card');
+    if (!card || !root.contains(card)) return;
+    openCarById(card.dataset.id);
+}
+els.grid.addEventListener('click', (e) => onCardActivate(e, els.grid));
+els.track.addEventListener('click', (e) => onCardActivate(e, els.track));
+els.grid.addEventListener('keydown', (e) => { if (e.key === 'Enter') onCardActivate(e, els.grid); });
+els.track.addEventListener('keydown', (e) => { if (e.key === 'Enter') onCardActivate(e, els.track); });
+
+// Sticky bar actions
+document.getElementById('compareChips').addEventListener('click', (e) => {
+    const x = e.target.closest('.x');
+    if (!x) return;
+    const id = x.closest('.chip').dataset.id;
+    removeFromCompare(id);
+    syncCompareButtons();
+});
+
+document.getElementById('compareClearBtn').addEventListener('click', () => {
+    saveCompare(new Set());
+    saveMeta({});
+    syncCompareButtons();
+});
+
+document.getElementById('compareGoBtn').addEventListener('click', () => {
+    location.href = buildCompareUrl();
+});
 
     // Wishlist dropdown
     $('#wishlistBtn').addEventListener('click', ()=>{
@@ -547,6 +959,9 @@
       buildWishlistMenu();
       applyFiltersNow(false);
       syncHeartButtons();
+      syncCompareButtons(); // ensure buttons/bar reflect stored state
+      updateCompareBadge();
+      buildCompareMenu();
     })();
   </script>
 
