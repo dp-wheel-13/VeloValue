@@ -104,13 +104,48 @@ header {
   gap: 1rem;
 }
 
+.language-select {
+  position: relative;
+  display: inline-block;
+  width: 150px; /* adjust width as needed */
+}
+
+/* Select styles */
 .language-select select {
+  appearance: none; /* Remove default arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
   background: #111;
   color: var(--text);
   border: 1px solid #333;
   border-radius: 6px;
-  padding: 6px 12px;
+  padding: 6px 30px 6px 35px; /* left for globe, right for arrow */
   font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Globe icon on the left */
+.language-select::before {
+  content: "🌐";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 1rem;
+}
+
+/* Pointer arrow on the right */
+.language-select::after {
+  content: "▾"; /* downward arrow */
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 0.8rem;
+  color: var(--text);
 }
 
 #authSection button {

@@ -1,11 +1,17 @@
+// ------------------- ENV CONFIG -------------------
+require('dotenv').config();
+console.log("✅ Your DeepL key loaded:", process.env.DEEPL_API_KEY ? "Yes" : "No");
+
+// ------------------- IMPORTS -------------------
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
+const axios = require("axios"); // For DeepL API
 const User = require("./models/User");
-const app = express();
 const garageRoutes = require("./routes/garageRoutes");
+const app = express();
 
 // ------------------- MIDDLEWARE -------------------
 app.use(express.json());
@@ -29,26 +35,69 @@ mongoose
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// ------------------- ROUTES -------------------
+// ------------------- TRANSLATION MODEL -------------------
+const translationSchema = new mongoose.Schema({
+  text: String,
+  targetLang: String,
+  translatedText: String,
+});
+const Translation = mongoose.model("Translation", translationSchema);
 
-// Serve Register Page
+// ------------------- TRANSLATION ROUTE -------------------
+app.post("/api/translate", async (req, res) => {
+  try {
+    const { text, targetLang } = req.body;
+    console.log("🧠 Translation request received:", text, targetLang);
+
+    if (!text || !targetLang) {
+      return res.status(400).json({ error: "Missing text or target language" });
+    }
+
+    // Step 1: Check cache
+    const cached = await Translation.findOne({ text, targetLang });
+    if (cached) {
+      console.log("✅ Translation served from MongoDB cache");
+      return res.json({ translatedText: cached.translatedText, source: "cache" });
+    }
+
+    // Step 2: Fetch from DeepL
+    const deeplRes = await axios.post(
+      "https://api-free.deepl.com/v2/translate",
+      new URLSearchParams({
+        auth_key: process.env.DEEPL_API_KEY,
+        text,
+        target_lang: targetLang.toUpperCase(),
+      }),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+
+    const translatedText = deeplRes.data.translations[0].text;
+
+    // Step 3: Save in Mongo
+    await Translation.create({ text, targetLang, translatedText });
+
+    console.log("🌐 Translation fetched from DeepL and saved to DB");
+    res.json({ translatedText, source: "deepl" });
+  } catch (error) {
+    console.error("❌ Translation Error:", error.message);
+    res.status(500).json({ error: "Translation failed" });
+  }
+});
+
+// ------------------- STATIC ROUTES -------------------
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "register.html"));
 });
 
-// Serve Login Page
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
-// Serve Homepage
 app.get("/homepage.html", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "homepage.html"));
 });
 
 // ------------------- AUTH ROUTES -------------------
-
-// Signup Route
 app.post("/signup", async (req, res) => {
   try {
     const { fullname, email, password, confirmPassword } = req.body;
@@ -69,7 +118,6 @@ app.post("/signup", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = new User({
       fullName: fullname,
       email: email.trim().toLowerCase(),
@@ -77,56 +125,41 @@ app.post("/signup", async (req, res) => {
     });
 
     await newUser.save();
-
-    // Set session
     req.session.userId = newUser._id;
     req.session.username = newUser.fullName;
 
-    // ✅ send success back, frontend will redirect
-    return res.json({ success: true, username: newUser.fullName });
+    res.json({ success: true, username: newUser.fullName });
   } catch (err) {
     console.error("Signup Error:", err);
-    return res.json({ success: false, message: "Error registering user" });
+    res.json({ success: false, message: "Error registering user" });
   }
 });
 
-// Login Route
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.json({
-        success: false,
-        message: "Email and password required",
-      });
-    }
+    if (!email || !password)
+      return res.json({ success: false, message: "Email and password required" });
 
     const user = await User.findOne({ email: email.trim().toLowerCase() });
-    if (!user) {
+    if (!user)
       return res.json({ success: false, message: "User not found" });
-    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    if (!isMatch)
       return res.json({ success: false, message: "Incorrect password" });
-    }
 
-    // Set session
     req.session.userId = user._id;
     req.session.username = user.fullName;
 
-    // ✅ send success back, frontend will redirect
-    return res.json({ success: true, username: user.fullName });
+    res.json({ success: true, username: user.fullName });
   } catch (err) {
     console.error("Login Error:", err);
-    return res.json({ success: false, message: "Error logging in" });
+    res.json({ success: false, message: "Error logging in" });
   }
 });
 
 // ------------------- SESSION ROUTES -------------------
-
-// Get current logged-in user
 app.get("/api/user", (req, res) => {
   if (req.session.userId) {
     res.json({ loggedIn: true, username: req.session.username });
@@ -135,7 +168,6 @@ app.get("/api/user", (req, res) => {
   }
 });
 
-// Logout
 app.post("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) return res.json({ success: false, message: "Logout failed" });
@@ -144,18 +176,7 @@ app.post("/logout", (req, res) => {
   });
 });
 
-// ------------------- START SERVER -------------------
-
-const PORT = 3000;
-
-// 👉 mount garage routes BEFORE listen
-app.use("/", garageRoutes);
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
-});
-
-// Temporary static charging stations (later from MongoDB)
+// ------------------- CHARGING STATIONS -------------------
 const stations = [
   { id: 1, name: "Station A", lat: 37.7749, lng: -122.4194 },
   { id: 2, name: "Station B", lat: 37.7849, lng: -122.4094 },
@@ -164,4 +185,10 @@ const stations = [
 
 app.get("/api/stations", (req, res) => {
   res.json(stations);
+});
+
+// ------------------- START SERVER -------------------
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
