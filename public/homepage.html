@@ -9,23 +9,23 @@
 </head>
 <body>
 
+  <!-- Header -->
   <header>
     <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
-    <h1 class="center-title">VeloValue</h1>
+    <h1 class="logo">VeloValue</h1>
     <div class="right-section">
       <div class="language-select">
         <select id="languageSelect">
           <option value="en">English</option>
           <option value="it">Italiano</option>
-          <option value="de">🇩🇪 Deutsch</option>
+          <option value="de">Deutsch</option>
         </select>
       </div>
-      <div id="authSection">
-        <button id="loginBtn" onclick="window.location.href='login.html'">Login / Register</button>
-      </div>
+      <div id="authSection"></div> <!-- JS will handle desktop/mobile button -->
     </div>
   </header>
 
+  <!-- Hamburger menu -->
   <nav class="menu" id="hamburgerMenu" aria-hidden="true">
     <a href="homepage.html">HOME</a>
     <a href="Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
@@ -36,6 +36,7 @@
   </nav>
   <div class="menu-overlay"></div>
 
+  <!-- Hero Sections -->
   <section id="explore" class="hero">
     <h2>DISCOVER THE VALUE OF EVERY DRIVE</h2>
     <p>Search for your next car with elegance and precision.</p>
@@ -54,6 +55,7 @@
     <button onclick="window.location.href='Velocharge beta/velocharge.html'">DISCOVER VELOCHARGE</button>
   </section>
 
+  <!-- Features Section -->
   <section id="features" class="features">
     <div class="feature">
       <h3>🔍 Smart Search</h3>
@@ -65,15 +67,16 @@
     </div>
   </section>
 
+  <!-- Join Community Section -->
   <section id="about" class="join-community">
     <h2>JOIN OUR COMMUNITY</h2>
     <div class="social-icons">
-      <a href="#" aria-label="Facebook" class="icon fb" title="Facebook"><img src="Multimedia/facebook.svg" alt="Facebook" /></a>
-      <a href="#" aria-label="X (Twitter)" class="icon x" title="X (Twitter)"><img src="Multimedia/x.svg" alt="X" /></a>
-      <a href="#" aria-label="Instagram" class="icon insta" title="Instagram"><img src="Multimedia/instagram.svg" alt="Instagram" /></a>
-      <a href="#" aria-label="YouTube" class="icon yt" title="YouTube"><img src="Multimedia/youtube.svg" alt="YouTube" /></a>
-      <a href="#" aria-label="LinkedIn" class="icon linkedin" title="LinkedIn"><img src="Multimedia/linkedin.svg" alt="LinkedIn" /></a>
-      <a href="#" aria-label="TikTok" class="icon tiktok" title="TikTok"><img src="Multimedia/tiktok.svg" alt="TikTok" /></a>
+      <a href="#" aria-label="Facebook" class="icon fb"><img src="Multimedia/facebook.svg" alt="Facebook" /></a>
+      <a href="#" aria-label="X (Twitter)" class="icon x"><img src="Multimedia/x.svg" alt="X" /></a>
+      <a href="#" aria-label="Instagram" class="icon insta"><img src="Multimedia/instagram.svg" alt="Instagram" /></a>
+      <a href="#" aria-label="YouTube" class="icon yt"><img src="Multimedia/youtube.svg" alt="YouTube" /></a>
+      <a href="#" aria-label="LinkedIn" class="icon linkedin"><img src="Multimedia/linkedin.svg" alt="LinkedIn" /></a>
+      <a href="#" aria-label="TikTok" class="icon tiktok"><img src="Multimedia/tiktok.svg" alt="TikTok" /></a>
     </div>
 
     <div class="cars">
@@ -81,13 +84,15 @@
     </div>
   </section>
 
+  <!-- Footer -->
   <footer>
     &copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.<br>
     Contact - debanjan.pal@community.unipa.it
   </footer>
 
+  <!-- Scripts -->
   <script>
-    // ====== Hamburger menu toggle ======
+    // Hamburger menu toggle
     const hamburger = document.querySelector('.hamburger');
     const menu = document.getElementById('hamburgerMenu');
     const overlay = document.querySelector('.menu-overlay');
@@ -122,33 +127,22 @@
       if (window.innerWidth > 768 && menu.classList.contains('active')) toggleMenu();
     });
 
-    // ====== User login handling ======
+    // Login/Logout handling with responsive icon
     const authSection = document.getElementById('authSection');
 
-    function showLoggedIn(username) {
-      authSection.innerHTML = `
-        <span>👋 Hello, <strong>${username}</strong></span>
-        <button id="logoutBtn">Logout</button>
-      `;
-      document.getElementById('logoutBtn').addEventListener('click', () => {
-        // redirect to login page on logout
-        window.location.href = '/login';
-      });
+    function updateAuthButton() {
+      if (window.innerWidth <= 768) {
+        authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+      } else {
+        authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
+      }
     }
 
-    function showLoggedOut() {
-      authSection.innerHTML = `<button id="loginBtn" onclick="window.location.href='login.html'">Login / Register</button>`;
-    }
+    // Initial load
+    updateAuthButton();
 
-    // Check query string for username
-    const params = new URLSearchParams(window.location.search);
-    const userName = params.get('user');
-
-    if (userName) {
-      showLoggedIn(userName);
-    } else {
-      showLoggedOut();
-    }
+    // Update on window resize
+    window.addEventListener('resize', updateAuthButton);
   </script>
   <script src="js/auth.js"></script>
   <script src="js/translate.js"></script>

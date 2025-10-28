@@ -11,50 +11,126 @@
   font-family: 'Inter', sans-serif;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   background-color: var(--bg);
   color: var(--text);
 }
 
+/* ===================== */
+/* Header layout */
 header {
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  border-bottom: 1px solid #333;
-  position: sticky;
-  width: 100%;
+  padding: 1rem 2rem;
+  position: relative; /* required for absolute logo centering */
   top: 0;
-  left: 0;
   background-color: var(--bg);
   z-index: 2000;
+  border-bottom: 1px solid #333;
 }
 
+/* Logo */
+.logo {
+  font-size: 2rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* Hamburger (left) */
 .hamburger {
   font-size: 1.8rem;
   cursor: pointer;
   background: none;
   border: none;
   color: var(--text);
-  z-index: 2101;
-  user-select: none;
   width: 3rem;
   height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-right: 1rem;
-  transition: color 0.3s ease;
 }
 
-.hamburger:hover {
-  color: var(--accent);
+/* Right section - language + auth */
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
+/* Ensure right-section stays right on desktop */
+@media (min-width: 769px) {
+  .right-section {
+    justify-self: end;
+  }
+}
+
+/* Language select */
+.language-select {
+  position: relative;
+}
+
+.language-select select {
+  appearance: none;
+  background: #111;
+  color: var(--text);
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 6px 30px 6px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.language-select::after {
+  content: "▾";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 0.8rem;
+}
+
+/* Desktop: show text button, hide icon */
+#authSection .text-btn {
+  display: inline-flex;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+#authSection .icon-btn {
+  display: none; /* hide icon on desktop */
+}
+
+/* Mobile view */
+@media (max-width: 768px) {
+  #authSection .text-btn {
+    display: none; /* hide text button */
+  }
+
+  #authSection .icon-btn {
+    display: inline-flex; /* show icon */
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    cursor: pointer;
+  }
+}
+
+/* Hamburger menu nav */
 .menu {
   position: fixed;
   top: 0;
@@ -69,7 +145,6 @@ header {
   gap: 2rem;
   transition: left 0.3s ease;
   z-index: 2100;
-  overflow-y: auto;
 }
 
 .menu.active {
@@ -81,96 +156,16 @@ header {
   text-decoration: none;
   font-size: 1.6rem;
   font-weight: 800;
-  padding: 0.5rem 0;
-  letter-spacing: 0.05em;
 }
 
-.menu a:hover {
-  color: var(--accent);
-}
-
-.center-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 2.5rem;
-  font-weight: 800;
-  user-select: none;
-}
-
-.right-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.language-select {
-  position: relative;
-  display: inline-block;
-  width: 150px; /* adjust width as needed */
-}
-
-/* Select styles */
-.language-select select {
-  appearance: none; /* Remove default arrow */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background: #111;
-  color: var(--text);
-  border: 1px solid #333;
-  border-radius: 6px;
-  padding: 6px 30px 6px 35px; /* left for globe, right for arrow */
-  font-size: 0.9rem;
-  cursor: pointer;
-  width: 100%;
-}
-
-/* Globe icon on the left */
-.language-select::before {
-  content: "🌐";
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  font-size: 1rem;
-}
-
-/* Pointer arrow on the right */
-.language-select::after {
-  content: "▾"; /* downward arrow */
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  font-size: 0.8rem;
-  color: var(--text);
-}
-
-#authSection button {
-  background: var(--text);
-  color: var(--bg);
-  border: none;
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-#authSection button:hover {
-  background: #444;
-  color: var(--text);
-}
-
+/* Overlay */
 .menu-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0,0,0,0.5);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -182,13 +177,78 @@ header {
   pointer-events: auto;
 }
 
+/* Desktop: absolute center logo */
+@media (min-width: 769px) {
+  .logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* ===================== */
+/* Mobile responsive */
+@media (max-width: 768px) {
+
+  header {
+    padding: 0.6rem 1rem;
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .logo {
+    position: static;
+    transform: none;
+    font-size: 1.4rem;
+  }
+
+  /* Language select compact */
+  .language-select select {
+    width: 36px;
+    padding: 6px;
+    text-indent: -9999px; /* hide text */
+  }
+
+  .language-select::before {
+    content: "🌐";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.1rem;
+    pointer-events: none;
+  }
+
+  .language-select::after {
+    display: none; /* hide arrow */
+  }
+
+  /* Auth button becomes circular icon */
+  #authSection .text-btn {
+    display: none;
+  }
+
+  #authSection .icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+  }
+}
+
+/* ===================== */
+/* Sections, hero, features, social icons etc. */
 section {
   scroll-margin-top: 120px;
   position: relative;
   z-index: -1;
 }
 
-/* Hero and Join Community share styles */
 .hero,
 .join-community {
   padding-bottom: 10rem;
@@ -222,6 +282,27 @@ section {
   margin-bottom: 1rem;
   color: #fff;
   user-select: none;
+}
+
+/* Car image full-width at bottom */
+.cars {
+  position: absolute;
+  bottom: -150px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.cars img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 0;
+  filter: drop-shadow(0 8px 20px rgba(255, 76, 0, 0.4));
 }
 
 .hero p {
@@ -312,7 +393,7 @@ section {
 /* Car image full-width at bottom */
 .cars {
   position: absolute;
-  bottom: -170px; /* placed below container */
+  bottom: -150px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -323,7 +404,7 @@ section {
 }
 
 .cars img {
-  width: 90%;
+  width: 100%;
   height: auto;
   object-fit: cover;
   border-radius: 0;
