@@ -4,141 +4,274 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VeloValue Hero & Community</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { font-family: Arial, sans-serif; background: #000; color: #fff; }
+  body { font-family: 'Inter', sans-serif; background: #000; color: #fff; }
 
-  /* Header */
+  /* ===== Header ===== */
   header {
-    position: fixed;
-    top: 0; left: 0; width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 1rem 2rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
     background: rgba(0,0,0,0.6);
-    display: flex; justify-content: space-between; align-items: center;
-    z-index: 1000;
+    z-index: 2000;
+    border-bottom: 1px solid #333;
   }
-  header h1 { font-size: 24px; font-weight: 800; margin: 0; }
-  header nav { display: flex; align-items: center; gap: 20px; }
-  header nav a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; }
-  header nav a:hover { text-decoration: underline; }
 
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  header h1 a {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  /* Desktop nav */
+  nav.desktop-nav {
+    display: flex;
+    gap: 20px;
+  }
+  nav.desktop-nav a {
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  nav.desktop-nav a:hover { text-decoration: underline; }
+
+  /* Language select */
   .language-select {
-  position: relative;
-  display: inline-block;
-}
-
-.language-select select {
-  background: #111;
-  color: #fff;
-  border: 1px solid #fff;
-  border-radius: 6px;
-  padding: 4px 28px 4px 32px; /* space for icon */
-  font-size: 14px;
-  cursor: pointer;
-  appearance: none; /* removes default arrow in most browsers */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-
-/* Add the "木A" icon inside the box */
-.language-select::before {
-  content: "木A";
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #fff;
-  font-weight: bold;
-  pointer-events: none;
-}
-
-/* Optional: add a custom arrow */
-.language-select::after {
-  content: "▼";
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: #fff;
-  font-size: 10px;
-}
-
+    position: relative;
+  }
+  .language-select select {
+    appearance: none;
+    background: #111;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 6px 30px 6px 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
 
   /* Auth button */
-  #authSection button {
+  #authSection .text-btn {
+    display: inline-flex;
     background: #fff;
-    color: #111;
-    border: 1px solid #333;
-    border-radius: 20px;
-    padding: 6px 12px;
+    color: #000;
+    border: none;
+    border-radius: 999px;
+    padding: 8px 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
   }
-  #authSection button:hover {
-    background: #444;
+  #authSection .icon-btn { display: none; }
+
+  /* Hamburger */
+  .hamburger {
+    font-size: 1.8rem;
+    background: none;
+    border: none;
     color: #fff;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2200;
   }
 
-  /* Videos wrapper */
-  .videos-wrapper { position: relative; }
-  .video-section {
-    width: 100vw; height: 100vh;
-    overflow: hidden; position: relative;
+  /* Mobile menu */
+  .menu {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100vh;
+    background: rgba(17,17,17,0.95);
+    border-right: 1px solid rgba(255,255,255,0.12);
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    transition: left 0.3s ease;
+    z-index: 2100;
+    backdrop-filter: blur(10px);
+    border-radius: 0 1rem 1rem 0;
   }
-  .video-section video {
-    width: 100%; height: 100%; object-fit: cover;
-  }
-
-  /* Sticky Button */
-  .button-wrapper { position: relative; width: 100%; }
-  .button-wrapper .fixed-button {
-    position: sticky;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 14px 36px;
-    font-size: 18px;
-    font-weight: 700;
-    color: white;
-    background-color: rgba(0,0,0,0.4);
+  .menu.active { left: 0; }
+  .menu a {
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 800;
     text-decoration: none;
-    border: 2px solid white;
-    border-radius: 18px;
-    box-shadow: 0 0 8px #333, 0 0 16px #333, 0 0 24px #333;
-    z-index: 1001;
-    transition: all 0.3s ease;
-  }
-  .button-wrapper .fixed-button:hover {
-    background-color: rgba(0,0,0,0.6);
-    box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff;
-    transform: translateX(-50%) scale(1.05);
   }
 
-  /* Community Section */
+  /* Menu overlay */
+  .menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 2050;
+  }
+  .menu-overlay.active { 
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Mobile styles */
+  @media (max-width: 1024px) {
+    nav.desktop-nav { display: none; }
+    .hamburger { display: flex; width: 40px; height: 40px; }
+  }
+
+  @media (max-width: 768px) {
+    #authSection .text-btn { display: none; }
+    #authSection .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      background: #fff;
+      color: #000;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    #authSection .icon-btn:active { transform: scale(0.95); }
+
+    /* Circular language icon */
+    .language-select {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #111;
+      border: 1px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .language-select::before {
+      content:"🌐";
+      font-size:1.2rem;
+      color:#fff;
+      position:absolute;
+    }
+    .language-select select {
+      opacity:0;
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      cursor:pointer;
+    }
+  }
+
+  /* ===== Videos Section ===== */
+  .videos-wrapper { position: relative; }
+  .video-section { width: 100vw; height: 100vh; overflow: hidden; position: relative; }
+  .video-section video { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Centered Enter Smart Garage Button */
+  .enter-garage-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    bottom: 80px;
+    width: 100%;
+    z-index: 1001;
+    margin-top: -120px;
+  }
+
+  .enter-garage-container button {
+    background: #1db954;
+    color: #fff;
+    border: none;
+    padding: 1rem 2.2rem;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    transition: 0.3s ease;
+  }
+
+  .enter-garage-container button:hover {
+    background: #17a84b;
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 600px) {
+    .enter-garage-container {
+      justify-content: center;
+    }
+    .enter-garage-container button {
+      font-size: 1rem;
+      padding: 0.8rem 1.6rem;
+    }
+  }
+
+  /* ===== Join Community Section ===== */
   .join-community {
     padding: 6rem 2rem 4rem;
     text-align: center;
     position: relative;
     min-height: 320px;
   }
-  .join-community h2 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: #fff; }
+  .join-community h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #fff;
+  }
   .social-icons {
-    display: flex; justify-content: center; gap: 24px;
-    margin-bottom: 4rem; flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 4rem;
+    flex-wrap: wrap;
   }
   .social-icons a.icon {
-    width: 56px; height: 56px;
+    width: 56px;
+    height: 56px;
     background-color: #222;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
   .social-icons a.icon:hover { background-color: #1db954; }
   .social-icons a.icon img {
-    width: 24px; height: 24px; filter: invert(100%);
+    width: 24px;
+    height: 24px;
+    filter: invert(100%);
     transition: filter 0.3s ease;
   }
   .social-icons a.icon:hover img {
@@ -146,11 +279,18 @@
   }
 
   .cars {
-    position: absolute; bottom: -170px; left: 50%; transform: translateX(-50%);
-    width: 100%; pointer-events: none; user-select: none;
+    position: absolute;
+    bottom: -170px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    pointer-events: none;
+    user-select: none;
   }
   .cars img {
-    width: 90%; height: auto; object-fit: cover;
+    width: 90%;
+    height: auto;
+    object-fit: cover;
     filter: drop-shadow(0 8px 20px rgba(255,76,0,0.4));
   }
 
@@ -167,66 +307,56 @@
 <body>
 
 <header>
-  <h1><a href="/homepage.html" style="color:white; text-decoration:none;">VeloValue</a></h1>
-  <nav>
-    <a href="/homepage.html">HOME</a>
-    <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
-    <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
-    <a href="#about">ABOUT US</a>
+  <div class="header-left">
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <h1><a href="/homepage.html">VeloValue</a></h1>
+  </div>
 
+  <div class="header-right">
+    <nav class="desktop-nav">
+      <a href="/homepage.html">HOME</a>
+      <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+      <a href="/Explore smart garage beta/smartgarage.html">SMART GARAGE</a>
+      <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+    </nav>
     <div class="language-select">
       <select id="languageSelect">
-        <option value="en">English</option>
-        <option value="it">Italiano</option>
-        <option value="de">Deutsch</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
       </select>
     </div>
-
     <div id="authSection">
-      <button onclick="window.location.href='login.html'">Login / Register</button>
+      <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
     </div>
-  </nav>
+  </div>
 </header>
 
-<!-- Videos with sticky button -->
-<div class="videos-wrapper">
-  <div class="button-wrapper">
-    <!-- First Video -->
-    <div class="video-section">
-      <video autoplay muted>
-        <source src="/Multimedia/desktop_hero_video_1.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-    </div>
-    <!-- Second Video -->
-    <div class="video-section">
-      <video autoplay muted loop>
-        <source src="/Multimedia/desktop_enter_garage_video2.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-    </div>
-  
-    <!-- Sticky Button -->
-<button class="fixed-button" id="enterGarageBtn">Enter Smart Garage</button>
-<script>
-  document.getElementById("enterGarageBtn").addEventListener("click", async () => {
-    try {
-      const response = await fetch("/garage-entry", {
-        method: "GET",
-        credentials: "include" // important for sessions
-      });
+<nav class="menu" id="hamburgerMenu" aria-hidden="true">
+  <a href="/homepage.html">HOME</a>
+  <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+  <a href="/Explore smart garage beta/smartgarage.html">SMART GARAGE</a>
+  <a href="/Velocharge beta/velocharge.html">DISCOVER VELOCHARGE</a>
+  <a href="#careers">WORK WITH US</a>
+  <a href="#about">ABOUT US</a>
+</nav>
+<div class="menu-overlay"></div>
 
-      if (response.redirected) {
-        window.location.href = response.url;
-      } else {
-        window.location.href = "/login.html"; // fallback
-      }
-    } catch (err) {
-      console.error("Error contacting backend:", err);
-      window.location.href = "/login.html";
-    }
-  });
-</script>
+<!-- Videos with centered button -->
+<div class="videos-wrapper">
+  <div class="video-section">
+    <video autoplay muted>
+      <source src="/Multimedia/desktop_hero_video_1.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="video-section" id="second-video">
+    <video autoplay muted loop>
+      <source src="/Multimedia/desktop_enter_garage_video2.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="enter-garage-container">
+    <button id="enterGarageBtn">Enter Smart Garage</button>
   </div>
 </div>
 
@@ -252,7 +382,69 @@
   Contact - debanjan.pal@community.unipa.it
 </footer>
 
-<script src="/js/auth.js"></script>
+<script>
+  // Hamburger toggle
+  const hamburger = document.querySelector(".hamburger");
+  const menu = document.getElementById("hamburgerMenu");
+  const overlay = document.querySelector(".menu-overlay");
+
+  hamburger.addEventListener("click", () => {
+    const expanded = hamburger.getAttribute("aria-expanded") === "true";
+    hamburger.setAttribute("aria-expanded", !expanded);
+    menu.classList.toggle("active");
+    overlay.classList.toggle("active");
+    menu.setAttribute("aria-hidden", !menu.classList.contains("active"));
+  });
+  overlay.addEventListener("click", () => { hamburger.click(); });
+  window.addEventListener("resize", () => {
+    if(window.innerWidth>1024 && menu.classList.contains("active")) hamburger.click();
+  });
+
+  // Auth button toggle
+  const authSection = document.getElementById("authSection");
+  function updateAuthButton() {
+    if(window.innerWidth <= 768) {
+      authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+    } else {
+      authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
+    }
+  }
+  updateAuthButton();
+  window.addEventListener("resize", updateAuthButton);
+
+  // Enter Garage button redirect
+  document.getElementById("enterGarageBtn").addEventListener("click", async () => {
+    try {
+      const response = await fetch("/garage-entry", { method: "GET", credentials: "include" });
+      if (response.redirected) window.location.href = response.url;
+      else window.location.href = "/login.html";
+    } catch (err) {
+      console.error("Error contacting backend:", err);
+      window.location.href = "/login.html";
+    }
+  });
+
+  // ===== Stop button at 80% of 2nd video =====
+  document.addEventListener("scroll", () => {
+    const buttonContainer = document.querySelector(".enter-garage-container");
+    const secondVideo = document.querySelector("#second-video");
+
+    if (buttonContainer && secondVideo) {
+      const rect = secondVideo.getBoundingClientRect();
+      const stopPoint = rect.top + window.scrollY + rect.height * 0.7; // 80% of second video
+      const buttonTop = buttonContainer.offsetTop + window.scrollY;
+
+      if (window.scrollY > stopPoint) {
+        buttonContainer.style.position = "absolute";
+        buttonContainer.style.top = stopPoint + "px";
+      } else {
+        buttonContainer.style.position = "sticky";
+        buttonContainer.style.bottom = "80px";
+        buttonContainer.style.top = "auto";
+      }
+    }
+  });
+</script>
 
 </body>
 </html>

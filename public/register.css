@@ -208,3 +208,32 @@ body {
 .signup-link a:hover {
   text-decoration: underline;
 }
+
+/* Mobile Friendly Styles for Register Page */
+@media (max-width: 768px) {
+  body {
+    justify-content: center; /* Center form horizontally */
+    align-items: flex-start; /* Start from top */
+    flex-direction: column;
+    padding: 20px; /* small padding around */
+    height: auto; /* allow scrolling if needed */
+  }
+
+  /* Center the logo at the top */
+  .velovalue-header {
+    position: relative;
+    top: 0;
+    left: 0;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+  }
+
+  /* Center the register box */
+  .login-container {
+    margin: 0 auto; /* center horizontally */
+    margin-right: 0; /* remove desktop right margin */
+    width: 95%; /* nearly full width on mobile */
+    max-width: 360px; /* keep max width */
+  }
+}
