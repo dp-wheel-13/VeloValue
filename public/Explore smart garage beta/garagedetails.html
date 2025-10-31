@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Garage</title>
+  <link rel="stylesheet" href="garagedetails.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+  <h1><a href="/homepage.html" style="color:white; text-decoration:none;">VeloValue</a></h1>
+  <nav>
+    <a href="/homepage.html">HOME</a>
+    <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+    <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+    <a href="#about">ABOUT US</a>
+
+    <div class="language-select">
+      <select id="languageSelect">
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+
+    <div id="authSection">
+      <button onclick="window.location.href='login.html'">Login / Register</button>
+    </div>
+  </nav>
+</header>
+
+  <!-- Garage Info -->
+  <section class="garage-info">
+    <h2 id="garage-level">Garage Level - 3</h2>
+    <div class="view-toggle">
+      <select id="viewMode">
+        <option value="card">Card View</option>
+        <option value="tiles">Tiles View</option>
+        <option value="list">List View</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Garage Display -->
+  <section class="garage-display" id="garageDisplay">
+    <!-- content inserted by JS -->
+  </section>
+
+  <script>
+    // Mock Cars Data
+    const cars = [
+  {
+    name: "Hyundai i20",
+    img: "https://cdn.pixabay.com/photo/2021/04/21/10/34/race-track-6194363_1280.jpg",
+    logo: "https://cdn.pixabay.com/photo/2013/07/12/17/00/car-151385_1280.png"
+  },
+  {
+    name: "Fiat 500",
+    img: "https://cdn.pixabay.com/photo/2017/09/06/22/08/fiat-500-2724696_1280.jpg",
+    logo: "https://cdn.pixabay.com/photo/2016/11/29/09/08/fiat-1868726_1280.png"
+  },
+  {
+    name: "BMW X5",
+    img: "https://cdn.pixabay.com/photo/2018/03/29/00/27/bmw-3270494_1280.jpg",
+    logo: "https://cdn.pixabay.com/photo/2017/01/06/19/15/bmw-1956127_1280.png"
+  },
+  {
+    name: "Add a new car",
+    img: "",   // no image
+    logo: "",
+    isAddNew: true
+  }
+];
+
+
+
+    let currentIndex = 0;
+    const garageLevel = document.getElementById("garage-level");
+    const garageDisplay = document.getElementById("garageDisplay");
+    const viewModeSelect = document.getElementById("viewMode");
+
+    // Update Garage Level
+    garageLevel.textContent = `Garage Level - ${cars.length - 1}`;
+
+    // Render Views
+    function renderView(mode) {
+      garageDisplay.innerHTML = "";
+
+      if (mode === "card") {
+        // Arrows + Single Card
+        const prevBtn = document.createElement("button");
+        prevBtn.className = "arrow left";
+        prevBtn.textContent = "←";
+
+        const nextBtn = document.createElement("button");
+        nextBtn.className = "arrow right";
+        nextBtn.textContent = "→";
+
+        const card = document.createElement("div");
+        card.className = "car-card glass";
+        card.innerHTML = `
+          <img id="carImage" src="${cars[currentIndex].img}" alt="${cars[currentIndex].name}">
+          <div class="car-info">
+            ${cars[currentIndex].logo ? `<img src="${cars[currentIndex].logo}" class="car-logo">` : ""}
+            <span>${cars[currentIndex].name}</span>
+          </div>
+        `;
+
+        garageDisplay.appendChild(prevBtn);
+        garageDisplay.appendChild(card);
+        garageDisplay.appendChild(nextBtn);
+
+        // Hide arrows if at limits
+        prevBtn.style.visibility = currentIndex === 0 ? "hidden" : "visible";
+        nextBtn.style.visibility = currentIndex === cars.length - 1 ? "hidden" : "visible";
+
+        // Arrow actions
+        prevBtn.addEventListener("click", () => {
+          if (currentIndex > 0) currentIndex--;
+          renderView("card");
+        });
+        nextBtn.addEventListener("click", () => {
+          if (currentIndex < cars.length - 1) currentIndex++;
+          renderView("card");
+        });
+
+      } else if (mode === "tiles") {
+        garageDisplay.classList.add("tiles-view");
+        cars.forEach(car => {
+          const tile = document.createElement("div");
+          tile.className = "tile-card glass";
+          tile.innerHTML = `
+            <img src="${car.img}" alt="${car.name}">
+            <div class="car-info">
+              ${car.logo ? `<img src="${car.logo}" class="car-logo">` : ""}
+              <span>${car.name}</span>
+            </div>
+          `;
+          garageDisplay.appendChild(tile);
+        });
+
+      } else if (mode === "list") {
+        garageDisplay.classList.add("list-view");
+        cars.forEach(car => {
+          const listItem = document.createElement("div");
+          listItem.className = "list-card glass";
+          listItem.innerHTML = `
+            ${car.logo ? `<img src="${car.logo}" class="car-logo">` : ""}
+            <span>${car.name}</span>
+          `;
+          garageDisplay.appendChild(listItem);
+        });
+      }
+    }
+
+    // Change View
+    viewModeSelect.addEventListener("change", () => {
+      garageDisplay.className = "garage-display"; // reset classes
+      renderView(viewModeSelect.value);
+    });
+
+    // Initial load
+    renderView("card");
+  </script>
+
+  <script src="/js/auth.js"></script>
+
+</body>
+</html>

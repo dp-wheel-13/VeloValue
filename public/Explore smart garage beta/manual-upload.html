@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual Car Upload – Smart Garage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/manualupload.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+  <h1><a href="/homepage.html" style="color:white; text-decoration:none;">VeloValue</a></h1>
+  <nav>
+    <a href="/homepage.html">HOME</a>
+    <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+    <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+    <a href="#about">ABOUT US</a>
+
+    <div class="language-select">
+      <select id="languageSelect">
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+
+    <div id="authSection">
+      <button onclick="window.location.href='login.html'">Login / Register</button>
+    </div>
+  </nav>
+</header>
+
+  <!-- Main Content -->
+  <main class="upload-container">
+    <h2>Manual Car Entry</h2>
+    <p>If your car is not found in our database, you can add it here.</p>
+
+    <form id="manualCarForm">
+      <label>Number Plate</label>
+      <input type="text" id="plateInput" placeholder="AB 123 CD" required>
+
+      <label>Brand</label>
+      <input type="text" id="brandInput" placeholder="Fiat, BMW, Audi..." required>
+
+      <label>Model</label>
+      <input type="text" id="modelInput" placeholder="500X, A3, i20..." required>
+
+      <label>Year</label>
+      <input type="number" id="yearInput" placeholder="2023" required>
+
+      <h3>Upload Documents</h3>
+      <label>Insurance</label>
+      <input type="file" id="insuranceUpload" required>
+
+      <label>PUC</label>
+      <input type="file" id="pucUpload">
+
+      <label>Driving License</label>
+      <input type="file" id="licenseUpload">
+
+      <label>Other Documents</label>
+      <input type="file" id="otherDocsUpload" multiple>
+
+      <button type="submit">Save Car</button>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById('manualCarForm');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const car = {
+        numberPlate: document.getElementById('plateInput').value.trim().toUpperCase(),
+        brand: document.getElementById('brandInput').value.trim(),
+        model: document.getElementById('modelInput').value.trim(),
+        year: document.getElementById('yearInput').value.trim()
+      };
+
+      // Right now we just simulate save
+      alert(`Car Saved!\nPlate: ${car.numberPlate}\nBrand: ${car.brand}\nModel: ${car.model}\nYear: ${car.year}`);
+
+      // TODO later: send this data + docs to backend via fetch()
+    });
+  </script>
+
+  <script src="/js/auth.js"></script>
+
+</body>
+</html>

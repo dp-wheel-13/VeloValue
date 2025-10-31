@@ -1,0 +1,106 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f7f7f7;
+  margin: 0;
+  padding: 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+header h1 a {
+  text-decoration: none;
+  color: #333;
+}
+
+nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: #007bff;
+}
+
+.garage-container {
+  max-width: 700px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+h2, h3 {
+  text-align: center;
+}
+
+.car-card {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.car-card img {
+  max-width: 300px;
+  border-radius: 16px;
+  margin-bottom: 15px;
+}
+
+.car-info p {
+  margin: 5px 0;
+}
+
+.status-section {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.status-badge {
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+}
+
+.status-badge.valid { background-color: green; }
+.status-badge.uploaded { background-color: blue; }
+.status-badge.pending { background-color: red; }
+
+.upload-section {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.upload-section form {
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-section label {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.upload-section input {
+  margin-top: 5px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.upload-section button {
+  margin-top: 15px;
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.upload-section button:hover {
+  background: #0056b3;
+}

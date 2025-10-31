@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up – VeloValue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="register.css" />
+</head>
+<body>
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="Multimedia/login video.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="velovalue-header" onclick="window.location.href='homepage.html'">VeloValue</div>
+
+  <div class="login-container">
+    <form id="registerForm" class="login-form">
+      <h2>Create Account</h2>
+
+      <!-- Social Signup Buttons -->
+      <button type="button" class="social-btn">Sign up with Google</button>
+      <button type="button" class="social-btn">Sign up with Facebook</button>
+      <button type="button" class="social-btn">Sign up with Apple</button>
+
+      <div class="divider"><span>or</span></div>
+
+      <!-- Full Name -->
+      <label for="fullname">Full Name</label>
+      <input type="text" id="fullname" name="fullname" placeholder="Your Full Name" required />
+
+      <!-- Email -->
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required />
+
+      <!-- Password -->
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Create Password" required />
+
+      <!-- Confirm Password -->
+      <label for="confirmPassword">Confirm Password</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required />
+
+      <button type="submit">Sign Up</button>
+
+      <p class="signup-link">
+        Already have an account? <a href="login.html">Log In</a>
+      </p>
+    </form>
+  </div>
+
+  <script>
+    const registerForm = document.getElementById('registerForm');
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fullname = document.getElementById('fullname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (password !== confirmPassword) {
+        alert("❌ Passwords do not match");
+        return;
+      }
+
+      try {
+        const res = await fetch('/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fullname, email, password, confirmPassword })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          // Redirect to homepage with user info in query string
+          window.location.href = `/homepage.html?user=${encodeURIComponent(data.username)}`;
+        } else {
+          alert(data.message || "❌ Something went wrong. Please try again.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ Error registering user");
+      }
+    });
+  </script>
+</body>
+</html>
