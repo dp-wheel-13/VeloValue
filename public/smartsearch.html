@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Car Identifier</title>
+    <!-- Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+        font-family: 'Inter', sans-serif;
+        background: radial-gradient(circle at top, #0a0a0a, #000);
+        color: #e5e7eb;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        }
+        
+        /* Main Glass Card */
+            .main-card {
+            max-width: 650px;
+            width: 95%;
+            padding: 1.8rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 22px;
+            border: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7);
+            transition: 0.35s ease;
+            }
+
+            .main-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 35px 90px rgba(0, 0, 0, 0.85);
+            }
+
+                /* Camera Feed Styling */
+            #camera-feed {
+            width: 100%;
+            max-height: 430px;
+            object-fit: cover;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.4);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            }
+
+            /* Captured Image */
+            #capture-canvas, #captured-image {
+            display: none;
+            width: 100%;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            }
+
+            /* Status Glass Badge */
+            #status-message {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.14);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #cbd5e1 !important;
+            border-radius: 12px;
+            }
+
+            /* Result Output Box */
+            #result-display {
+            background: rgba(0, 255, 150, 0.08);
+            border: 1px solid rgba(0,255,150,0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #88ffc9;
+            border-radius: 16px;
+            }
+
+            /* Premium Buttons */
+            button {
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            transition: 0.25s !important;
+            border: 1px solid rgba(255,255,255,0.18) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            }
+
+            #smart-search-btn {
+            background: linear-gradient(90deg, #4b82ff, #2b5cff);
+            }
+
+            #smart-search-btn:hover {
+            background: linear-gradient(90deg, #5b93ff, #3a6aff);
+            transform: translateY(-2px);
+            }
+
+            #capture-btn {
+            background: linear-gradient(90deg, #ff4444, #c91414);
+            }
+
+            #capture-btn:hover {
+            background: linear-gradient(90deg, #ff5555, #d92626);
+            transform: translateY(-2px);
+            }
+
+            #reset-btn {
+            background: rgba(255,255,255,0.1);
+            }
+
+            #reset-btn:hover {
+            background: rgba(255,255,255,0.15);
+            }
+
+            /* Loading Spinner */
+            .loading-spinner {
+            border-top-color: #10b981;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+             }
+
+             @keyframes spin {
+            to {transform: rotate(360deg);}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-card">
+        <h1 class="text-3xl font-extrabold mb-2 text-center text-indigo-700">
+            VeloValue: Smart Search
+        </h1>
+        <p class="text-center text-gray-500 mb-6 text-sm">
+            Use your camera to identify a car's make and model.
+        </p>
+
+        <!-- Main Interface -->
+        <div id="interface-container" class="space-y-4">
+
+            <!-- Camera Feed (Video Element) -->
+            <video id="camera-feed" class="shadow-lg border-2 border-gray-200" autoplay playsinline></video>
+            
+            <!-- Canvas and Image Elements (Hidden initially) -->
+            <canvas id="capture-canvas"></canvas>
+            <img id="captured-image" alt="Captured Car Image" class="shadow-lg border-2 border-gray-200" style="display: none;">
+
+            <!-- Status and Result Message -->
+            <div id="status-message" class="p-3 text-sm font-medium rounded-lg text-blue-800 bg-blue-100 border border-blue-300 hidden">
+                Ready to search. Click 'Smart Search' to start your camera.
+            </div>
+
+            <div id="result-display" class="p-4 bg-emerald-50 rounded-lg shadow-inner hidden">
+                <h3 class="text-lg font-bold text-emerald-800 mb-2">Identification Result</h3>
+                <p id="gemini-response" class="text-gray-700 whitespace-pre-wrap"></p>
+            </div>
+
+            <!-- Buttons -->
+            <div id="button-area" class="flex gap-4 pt-2">
+                <button id="smart-search-btn"
+                        class="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-300 flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.552 4.552A1.405 1.405 0 0119 16.143V20a2 2 0 01-2 2H7a2 2 0 01-2-2v-3.857a1.405 1.405 0 01.448-1.591L10 10m-2 4h8m-4-7V4"></path></svg>
+                    Smart Search (Start Camera)
+                </button>
+                <button id="capture-btn" disabled
+                        class="w-full px-6 py-3 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition-colors focus:outline-none focus:ring-4 focus:ring-red-300 flex items-center justify-center hidden">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Capture Photo
+                </button>
+            </div>
+            <button id="reset-btn"
+                    class="w-full px-6 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors hidden"
+                    onclick="resetApp()">
+                Restart
+            </button>
+
+        </div>
+    </div>
+
+    <script>
+        const API_MODEL = 'gemini-2.5-flash-preview-09-2025';
+        const apiKey = "AIzaSyDvWeGF6rB4lc4jdcRvuQgxt0I7jjNM-Ac"; 
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${API_MODEL}:generateContent?key=${apiKey}`;
+
+        const videoElement = document.getElementById('camera-feed');
+        const canvasElement = document.getElementById('capture-canvas');
+        const capturedImageEl = document.getElementById('captured-image');
+        const smartSearchBtn = document.getElementById('smart-search-btn');
+        const captureBtn = document.getElementById('capture-btn');
+        const statusMessageEl = document.getElementById('status-message');
+        const resultDisplayEl = document.getElementById('result-display');
+        const geminiResponseEl = document.getElementById('gemini-response');
+        const resetBtn = document.getElementById('reset-btn');
+
+        let videoStream = null;
+        let isCameraActive = false;
+
+        // --- UTILITY FUNCTIONS ---
+
+        function setStatus(message, type = 'info') {
+            statusMessageEl.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-blue-100', 'text-blue-800', 'bg-green-100', 'text-green-800', 'border-red-300', 'border-blue-300', 'border-green-300');
+            statusMessageEl.textContent = message;
+            
+            let classes = '';
+            if (type === 'error') {
+                classes = 'bg-red-100 text-red-800 border-red-300';
+            } else if (type === 'success') {
+                classes = 'bg-green-100 text-green-800 border-green-300';
+            } else { // info / loading
+                classes = 'bg-blue-100 text-blue-800 border-blue-300';
+            }
+            statusMessageEl.className = `p-3 text-sm font-medium rounded-lg border ${classes}`;
+            statusMessageEl.classList.remove('hidden');
+        }
+
+        function stopCamera() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+                isCameraActive = false;
+                videoElement.style.display = 'none';
+            }
+        }
+
+        window.resetApp = function() {
+            stopCamera();
+            smartSearchBtn.classList.remove('hidden');
+            smartSearchBtn.disabled = false;
+            captureBtn.classList.add('hidden');
+            captureBtn.disabled = true;
+            videoElement.style.display = 'block';
+            capturedImageEl.style.display = 'none';
+            resultDisplayEl.classList.add('hidden');
+            resetBtn.classList.add('hidden');
+            setStatus("Ready to identify. Click 'Smart Search' to open the camera.", 'info');
+        }
+
+        // --- CAMERA LOGIC ---
+
+        async function startCamera() {
+            try {
+                // Request access to video stream (camera)
+                // Use 'environment' facing mode for mobile back camera, 'user' for front camera
+                videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                videoElement.srcObject = videoStream;
+                videoElement.play();
+
+                // Show camera, hide smart search button, show capture button
+                videoElement.style.display = 'block';
+                smartSearchBtn.classList.add('hidden');
+                captureBtn.classList.remove('hidden');
+                captureBtn.disabled = false;
+                isCameraActive = true;
+                setStatus("Camera active. Point at a car and click 'Capture Photo'.", 'info');
+
+            } catch (error) {
+                console.error("Error accessing camera:", error);
+                setStatus("Error: Could not access the camera. Please check permissions and try refreshing the app.", 'error');
+            }
+        }
+
+        function captureImage() {
+            if (!videoStream) {
+                setStatus("Camera is not active.", 'error');
+                return;
+            }
+            
+            // Immediately disable and hide capture button to prevent issues
+            captureBtn.disabled = true;
+            captureBtn.classList.add('hidden');
+
+            // 1. Configure Canvas to match video size
+            const context = canvasElement.getContext('2d');
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
+
+            // 2. Draw the current video frame onto the canvas
+            context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+
+            // 3. Convert the canvas content to a Base64 JPEG string (High Quality: 0.98)
+            const fullDataUrl = canvasElement.toDataURL('image/jpeg', 0.98); 
+            const base64Image = fullDataUrl.split(',')[1]; // Extract the raw base64 data
+
+            // 4. Show the captured image and stop the camera
+            capturedImageEl.src = fullDataUrl;
+            videoElement.style.display = 'none';
+            capturedImageEl.style.display = 'block';
+            stopCamera();
+
+            // 5. Send to API
+            resetBtn.classList.remove('hidden');
+            sendToGemini(base64Image);
+        }
+
+        // --- GEMINI API LOGIC ---
+
+        async function sendToGemini(base64Image) {
+            
+            // Set loading state immediately
+            resultDisplayEl.classList.add('hidden');
+            smartSearchBtn.disabled = true;
+            resetBtn.disabled = true;
+
+            // STRONGER PROMPT for better accuracy (Instructs model to be specific and avoid filler)
+            const systemPrompt = "You are an expert automotive analyst. Your task is to ONLY identify the vehicle in the image. You must be specific: identify the Make, Model, and approximate Year/Generation range. If no vehicle is visible, you must explicitly state 'No vehicle was detected in the image.'";
+            const userQuery = "Identify the car. Provide the Make, Model, and any visible features (color, body style). If possible, suggest the approximate model year range. Be concise.";
+
+            const payload = {
+                contents: [
+                    {
+                        role: "user",
+                        parts: [
+                            { text: userQuery },
+                            {
+                                inlineData: {
+                                    mimeType: "image/jpeg",
+                                    data: base64Image
+                                }
+                            }
+                        ]
+                    }
+                ],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                }
+            };
+            
+            // Display loading spinner
+            statusMessageEl.innerHTML = `
+                <div class="flex items-center">
+                    <div class="loading-spinner ease-linear rounded-full border-4 h-5 w-5 mr-3 border-gray-200"></div>
+                    Analyzing image... Please wait.
+                </div>
+            `;
+            
+            const maxRetries = 3;
+            let lastError;
+
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    // 1. Safety Block Check (Most common failure for user-uploaded images)
+                    if (result.promptFeedback && result.promptFeedback.blockReason) {
+                        const safetyRatings = result.promptFeedback.safetyRatings || [];
+                        let safetyMessage = `Identification blocked. The image may be too blurry or violate content policies.`;
+                        if (safetyRatings.length > 0) {
+                             safetyMessage += ` Category: ${safetyRatings[0].category} at level ${safetyRatings[0].probability}.`;
+                        }
+                        throw new Error(safetyMessage); 
+                    }
+
+                    // 2. Successful Content Extraction Check
+                    const candidate = result.candidates?.[0];
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        const identificationText = candidate.content.parts[0].text;
+                        
+                        setStatus("Car identified successfully!", 'success');
+                        geminiResponseEl.textContent = identificationText;
+                        resultDisplayEl.classList.remove('hidden');
+                        resetBtn.disabled = false;
+                        
+                        return; // Exit function on success
+
+                    } else {
+                        // 3. Empty/Invalid Response Check (Model failed to generate confident text)
+                        throw new Error("The AI could not confidently identify the car. Please ensure the car is clearly visible and well-lit.");
+                    }
+
+                } catch (error) {
+                    lastError = error;
+                    console.error("API Error on attempt " + (attempt + 1) + ":", error);
+                    // Use exponential backoff for retries
+                    if (attempt < maxRetries - 1) {
+                        const delay = Math.pow(2, attempt) * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    }
+                }
+            }
+
+            // Final error if all retries fail
+            setStatus(`Identification failed after ${maxRetries} attempts: ${lastError.message}`, 'error');
+            resetBtn.disabled = false;
+        }
+
+        // --- EVENT LISTENERS ---
+
+        smartSearchBtn.addEventListener('click', startCamera);
+        captureBtn.addEventListener('click', captureImage);
+
+        // Initial setup on load
+        resetApp();
+    </script>
+</body>
+</html>

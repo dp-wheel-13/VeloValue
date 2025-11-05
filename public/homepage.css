@@ -23,7 +23,7 @@ header {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   padding: 1rem 2rem;
-  position: relative; /* required for absolute logo centering */
+  position: sticky; /* keep header pinned */
   top: 0;
   background-color: var(--bg);
   z-index: 2000;
@@ -37,19 +37,44 @@ header {
   text-align: center;
 }
 
-/* Hamburger (left) */
+/* Hamburger (left) with morph animation */
 .hamburger {
-  font-size: 1.8rem;
+  position: relative;
+  width: 3rem;
+  height: 3rem;
+  font-size: 0; /* hide ☰ text */
   cursor: pointer;
   background: none;
   border: none;
   color: var(--text);
-  width: 3rem;
-  height: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
+
+/* Lines */
+.hamburger::before,
+.hamburger::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+  transform: translateX(-50%);
+  transition: transform .25s ease, top .25s ease, opacity .2s ease;
+}
+.hamburger::before { top: calc(50% - 6px); } /* top line */
+.hamburger::after  { top: calc(50% + 6px); } /* bottom line */
+/* middle line via background */
+.hamburger {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22px 2px;
+}
+
+/* Active state: morph to X */
+.hamburger.is-active { background-size: 0 0; } /* hide middle line */
+.hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
+.hamburger.is-active::after  { top: 50%; transform: translateX(-50%) rotate(-45deg); }
 
 /* Right section - language + auth */
 .right-section {
@@ -60,17 +85,15 @@ header {
 
 /* Ensure right-section stays right on desktop */
 @media (min-width: 769px) {
-  .right-section {
-    justify-self: end;
-  }
+  .right-section { justify-self: end; }
 }
 
 /* Language select */
-.language-select {
-  position: relative;
-}
+.language-select { position: relative; }
 
 .language-select select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   background: #111;
   color: var(--text);
@@ -105,18 +128,13 @@ header {
   justify-content: center;
 }
 
-#authSection .icon-btn {
-  display: none; /* hide icon on desktop */
-}
+#authSection .icon-btn { display: none; }
 
 /* Mobile view */
 @media (max-width: 768px) {
-  #authSection .text-btn {
-    display: none; /* hide text button */
-  }
-
+  #authSection .text-btn { display: none; }
   #authSection .icon-btn {
-    display: inline-flex; /* show icon */
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 36px;
@@ -130,7 +148,8 @@ header {
   }
 }
 
-/* Hamburger menu nav */
+/* ===================== */
+/* Hamburger menu nav (slide-out) */
 .menu {
   position: fixed;
   top: 0;
@@ -139,24 +158,55 @@ header {
   height: 100vh;
   background-color: #111;
   border-right: 1px solid #333;
-  padding: 3rem 2rem;
+  padding: 5.5rem 2rem 2rem; /* space for the close X */
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2rem; /* equal spacing between links */
   transition: left 0.3s ease;
   z-index: 2100;
+
+  /* scrolling inside menu if content is tall */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.menu.active {
-  left: 0;
-}
+.menu.active { left: 0; }
 
 .menu a {
   color: #fff;
   text-decoration: none;
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-size: 1.2rem;
+  font-weight: 700;
 }
+
+/* Close (X) button inside the menu */
+.menu .menu-close {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: none;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* X icon lines */
+.menu .menu-close::before,
+.menu .menu-close::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+  transform-origin: center;
+  transition: transform .25s ease, opacity .2s ease;
+}
+.menu .menu-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.menu .menu-close::after  { transform: translate(-50%, -50%) rotate(-45deg); }
 
 /* Overlay */
 .menu-overlay {
@@ -171,10 +221,16 @@ header {
   transition: opacity 0.3s ease;
   z-index: 2050;
 }
-
 .menu-overlay.active {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Lock background scroll when menu is open */
+body.menu-lock {
+  position: fixed;     /* robust on iOS */
+  width: 100%;
+  overflow: hidden;
 }
 
 /* Desktop: absolute center logo */
@@ -188,25 +244,21 @@ header {
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-
   header {
     padding: 0.6rem 1rem;
     grid-template-columns: auto 1fr auto;
   }
-
   .logo {
     position: static;
     transform: none;
     font-size: 1.4rem;
   }
-
   /* Language select compact */
   .language-select select {
     width: 36px;
     padding: 6px;
     text-indent: -9999px; /* hide text */
   }
-
   .language-select::before {
     content: "🌐";
     position: absolute;
@@ -216,49 +268,38 @@ header {
     font-size: 1.1rem;
     pointer-events: none;
   }
-
-  .language-select::after {
-    display: none; /* hide arrow */
-  }
-
-  /* Auth button becomes circular icon */
-  #authSection .text-btn {
-    display: none;
-  }
-
-  #authSection .icon-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-  }
+  .language-select::after { display: none; }
 }
 
 /* ===================== */
 /* Sections, hero, features, social icons etc. */
+
+/* Stacking: keep features clickable, heroes can overlap visually */
 section {
   scroll-margin-top: 120px;
   position: relative;
-  z-index: -1;
+  z-index: 1; /* baseline for all sections */
 }
+
+#features { z-index: 1; } /* keep clickable */
 
 .hero,
 .join-community {
-  padding-bottom: 10rem;
-  padding: 6rem 2rem 4rem;
+  padding-bottom: 10rem;        /* original line kept for structure */
+  padding: 6rem 2rem 4rem;      /* base layout */
   text-align: center;
   position: relative;
-  z-index: 1;
+  z-index: 2; /* heroes above features so frame can overlap */
   box-sizing: border-box;
   min-height: 320px;
 }
 
+/* Extra bottom space for the Join Community car (responsive) */
+.join-community {
+  padding-bottom: clamp(10rem, 20vw, 16rem); /* space reserved for the car image */
+}
+
+/* Frame behind hero content (doesn't block clicks) */
 .hero::before,
 .join-community::before {
   content: "";
@@ -269,9 +310,11 @@ section {
   height: calc(100% - 20px);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-radius: 1rem;
   z-index: -1;
+  pointer-events: none;
 }
 
 .hero h2,
@@ -283,27 +326,6 @@ section {
   user-select: none;
 }
 
-/* Car image full-width at bottom */
-.cars {
-  position: absolute;
-  bottom: -150px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: none;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-}
-
-.cars img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: 0;
-  filter: drop-shadow(0 8px 20px rgba(255, 76, 0, 0.4));
-}
-
 .hero p {
   font-size: 1.25rem;
   color: #ccc;
@@ -311,20 +333,25 @@ section {
   margin: 0 auto 2rem;
 }
 
-.hero button {
+.hero .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 1rem 2rem;
   font-size: 1rem;
   border-radius: 999px;
-  border: none;
   background: var(--accent);
   color: var(--bg);
   font-weight: 600;
+  text-decoration: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: opacity .3s ease;
 }
-
-.hero button:hover {
+.hero .btn:hover,
+.hero .btn:focus-visible {
   opacity: 0.8;
+  outline: 2px solid #fff;   /* visible focus */
+  outline-offset: 2px;
 }
 
 /* Features Section */
@@ -336,17 +363,29 @@ section {
   background: #111;
 }
 
+.features a.feature {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.features a.feature:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
 .feature {
   background: #191919;
   padding: 2rem;
   border-radius: 1rem;
-  transition: transform 0.3s;
+  border: 1px solid #2a2a2a;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
-
 .feature:hover {
   transform: translateY(-5px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+  border-color: #3a3a3a;
 }
-
 .feature h3 {
   margin-bottom: 1rem;
   font-size: 1.5rem;
@@ -373,10 +412,7 @@ section {
   transition: background-color 0.3s ease;
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
 }
-
-.social-icons a.icon:hover {
-  background-color: var(--accent);
-}
+.social-icons a.icon:hover { background-color: var(--accent); }
 
 .social-icons a.icon img {
   width: 24px;
@@ -384,25 +420,23 @@ section {
   filter: invert(100%);
   transition: filter 0.3s ease;
 }
-
 .social-icons a.icon:hover img {
   filter: invert(0%) sepia(100%) saturate(748%) hue-rotate(8deg) brightness(95%) contrast(92%);
 }
 
-/* Car image full-width at bottom */
-.cars {
+/* Join Community car anchored to the bottom of the section */
+.join-community .cars {
   position: absolute;
-  bottom: -150px;
+  bottom: 0;                       /* stays attached to bottom edge */
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   max-width: none;
   pointer-events: none;
   user-select: none;
-  z-index: 0;
+  z-index: 0;                      /* above the frame, behind text/icons */
 }
-
-.cars img {
+.join-community .cars img {
   width: 100%;
   height: auto;
   object-fit: cover;
@@ -410,6 +444,7 @@ section {
   filter: drop-shadow(0 8px 20px rgba(255, 76, 0, 0.4));
 }
 
+/* Footer */
 footer {
   margin-top: 10rem;
   padding: 3rem 2rem;
@@ -417,4 +452,31 @@ footer {
   color: #777;
   font-size: 0.9rem;
   border-top: 1px solid #333;
+}
+
+/* Keyboard focus styles (accessibility) */
+.hamburger:focus-visible,
+.menu .menu-close:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.menu a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Optional: if you want the close button area a bit larger for touch */
+.menu .menu-close {
+  padding: 8px; /* increases hit area without changing visuals */
+}
+
+/* Optional: reduce-motion users */
+@media (prefers-reduced-motion: reduce) {
+  .hamburger::before,
+  .hamburger::after,
+  .hamburger { transition: none !important; }
+  .menu { transition: none !important; }
 }

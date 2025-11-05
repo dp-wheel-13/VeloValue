@@ -15,22 +15,24 @@
     <h1 class="logo">VeloValue</h1>
     <div class="right-section">
       <div class="language-select">
-        <select id="languageSelect">
+        <select id="languageSelect" aria-label="Language">
           <option value="en">English</option>
           <option value="it">Italiano</option>
           <option value="de">Deutsch</option>
         </select>
       </div>
-      <div id="authSection"></div> <!-- JS will handle desktop/mobile button -->
+      <div id="authSection"></div>
     </div>
   </header>
 
   <!-- Hamburger menu -->
   <nav class="menu" id="hamburgerMenu" aria-hidden="true">
+    <button class="menu-close" aria-label="Close menu"></button>
     <a href="homepage.html">HOME</a>
     <a href="Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
     <a href="Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
     <a href="Velocharge beta/velocharge.html">DISCOVER VELOCHARGE</a>
+    <a href="smartsearch.html">SMART SEARCH</a>
     <a href="#careers">WORK WITH US</a>
     <a href="#about">ABOUT US</a>
   </nav>
@@ -38,33 +40,34 @@
 
   <!-- Hero Sections -->
   <section id="explore" class="hero">
-    <h2>DISCOVER THE VALUE OF EVERY DRIVE</h2>
-    <p>Search for your next car with elegance and precision.</p>
-    <button onclick="window.location.href='Explore new cars beta/explorenewcars.html'">EXPLORE NEW CARS</button>
-  </section>
+  <h2>DISCOVER THE VALUE OF EVERY DRIVE</h2>
+  <p>Search for your next car with elegance and precision.</p>
+  <a class="btn" href="Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+</section>
 
-  <section id="garage" class="hero">
-    <h2>INTRODUCING THE SMART GARAGE</h2>
-    <p>Keep all your car details, Driving License, documents, and records safe in one smart garage.</p>
-    <button onclick="window.location.href='Explore smart garage beta/smartgarage.html'">EXPLORE SMART GARAGE</button>
-  </section>
+<section id="garage" class="hero">
+  <h2>INTRODUCING THE SMART GARAGE</h2>
+  <p>Keep all your car details, Driving License, documents, and records safe in one smart garage.</p>
+  <a class="btn" href="Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+</section>
 
-  <section id="velocharge" class="hero">
-    <h2>EMPOWER YOUR DRIVE WITH VELOCHARGE</h2>
-    <p>Seamlessly locate, reserve, and track EV charging stations wherever your journey takes you.</p>
-    <button onclick="window.location.href='Velocharge beta/velocharge.html'">DISCOVER VELOCHARGE</button>
-  </section>
+<section id="velocharge" class="hero">
+  <h2>EMPOWER YOUR DRIVE WITH VELOCHARGE</h2>
+  <p>Seamlessly locate, reserve, and track EV charging stations wherever your journey takes you.</p>
+  <a class="btn" href="Velocharge beta/velocharge.html">DISCOVER VELOCHARGE</a>
+</section>
 
   <!-- Features Section -->
   <section id="features" class="features">
-    <div class="feature">
+    <a href="smartsearch.html" class="feature">
       <h3>🔍 Smart Search</h3>
       <p>Locate vehicles by license plate number or photograph using advanced AI technology.</p>
-    </div>
-    <div class="feature">
-      <h3>⌚ Reminders</h3>
+    </a>
+
+    <a href="reminders.html" class="feature">
+      <h3>⌚ Smart Reminders</h3>
       <p>Get notified before your PUC, insurance, or servicing expires.</p>
-    </div>
+    </a>
   </section>
 
   <!-- Join Community Section -->
@@ -92,58 +95,81 @@
 
   <!-- Scripts -->
   <script>
-    // Hamburger menu toggle
-    const hamburger = document.querySelector('.hamburger');
-    const menu = document.getElementById('hamburgerMenu');
-    const overlay = document.querySelector('.menu-overlay');
+  // Elements
+  const hamburger = document.querySelector('.hamburger');
+  const menu = document.getElementById('hamburgerMenu');
+  const overlay = document.querySelector('.menu-overlay');
+  const closeBtn = document.querySelector('.menu-close');
+  const menuLinks = document.querySelectorAll('.menu a');
+  let scrollY = 0;
 
-    function toggleMenu() {
-      const expanded = hamburger.getAttribute('aria-expanded') === 'true' || false;
-      hamburger.setAttribute('aria-expanded', !expanded);
-      menu.classList.toggle('active');
-      overlay.classList.toggle('active');
-      menu.setAttribute('aria-hidden', !menu.classList.contains('active'));
-      hamburger.textContent = '☰';
-    }
+  function openMenu() {
+    hamburger.setAttribute('aria-expanded', 'true');
+    hamburger.classList.add('is-active');
+    menu.classList.add('active');
+    overlay.classList.add('active');
+    menu.setAttribute('aria-hidden', 'false');
 
-    hamburger.addEventListener('click', toggleMenu);
-    overlay.addEventListener('click', toggleMenu);
+    // Lock background scroll
+    scrollY = window.scrollY || document.documentElement.scrollTop;
+    document.body.style.top = `-${scrollY}px`;
+    document.body.classList.add('menu-lock');
+  }
 
-    const menuLinks = document.querySelectorAll('.menu a');
-    menuLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        const href = link.getAttribute('href');
-        if (href.startsWith('#')) {
-          e.preventDefault();
-          const targetId = href.substring(1);
-          const targetSection = document.getElementById(targetId);
-          if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth' });
-          toggleMenu();
-        }
-      });
-    });
+  function closeMenu() {
+    hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.classList.remove('is-active');
+    menu.classList.remove('active');
+    overlay.classList.remove('active');
+    menu.setAttribute('aria-hidden', 'true');
 
-    window.addEventListener('resize', () => {
-      if (window.innerWidth > 768 && menu.classList.contains('active')) toggleMenu();
-    });
+    // Restore scroll
+    document.body.classList.remove('menu-lock');
+    document.body.style.top = '';
+    window.scrollTo(0, scrollY);
+  }
 
-    // Login/Logout handling with responsive icon
-    const authSection = document.getElementById('authSection');
+  function toggleMenu() {
+    if (menu.classList.contains('active')) closeMenu();
+    else openMenu();
+  }
 
-    function updateAuthButton() {
-      if (window.innerWidth <= 768) {
-        authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
-      } else {
-        authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
+  // Events
+  hamburger.addEventListener('click', toggleMenu);
+  overlay.addEventListener('click', closeMenu);
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu.classList.contains('active')) closeMenu();
+  });
+
+  // Close on link click + smooth scroll for hash links
+  menuLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href') || '';
+      if (href.startsWith('#')) {
+        e.preventDefault();
+        const target = document.getElementById(href.slice(1));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
       }
+      closeMenu();
+    });
+  });
+
+  // Login/Logout handling with responsive icon
+  const authSection = document.getElementById('authSection');
+  function updateAuthButton() {
+    if (window.innerWidth <= 768) {
+      authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+    } else {
+      authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
     }
+  }
+  updateAuthButton();
+  window.addEventListener('resize', updateAuthButton);
+</script>
 
-    // Initial load
-    updateAuthButton();
-
-    // Update on window resize
-    window.addEventListener('resize', updateAuthButton);
-  </script>
   <script src="js/auth.js"></script>
   <script src="js/translate.js"></script>
 
