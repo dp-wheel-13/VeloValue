@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VeloValue - Car Details</title>
+
+<!-- Header font (scoped to header only) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+
 <style>
 /* ===== Global ===== */
 * { box-sizing: border-box; margin:0; padding:0; }
@@ -23,6 +27,11 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
+
+/* NEW: reserve space for fixed header (auto-synced via JS below) */
+:root { --header-offset: 0px; }
+body { padding-top: var(--header-offset); }
+
 /* ===== Full viewport background fix ===== */
 body::before {
   content: "";
@@ -30,34 +39,110 @@ body::before {
   background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
   z-index: -1;
 }
-/* ===== Header ===== */
+
+/* ===== Header (same as Garage header; scoped fonts) ===== */
+header, header * { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
 header {
-  position: fixed; top: 0; left: 0; width: 100%;
-  padding: 1rem 2rem;
-  background: rgba(0,0,0,0.6);
   display: flex; justify-content: space-between; align-items: center;
-  z-index: 1000;
+  padding: 1rem 2rem; position: fixed; width: 100%; top: 0; background: rgba(0,0,0,0.6);
+  z-index: 2000; border-bottom: 1px solid #333;
 }
-header h1 { font-size: 24px; font-weight: 800; margin: 0; }
-header nav { display: flex; align-items: center; gap: 20px; }
-header nav a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; }
-header nav a:hover { text-decoration: underline; }
+.header-left { display:flex; align-items:center; gap:15px; }
+.header-right { display:flex; align-items:center; gap:15px; }
+header h1 a { font-size:1.8rem; font-weight:800; color:#fff; text-decoration:none; }
+
+/* Desktop nav */
+nav.desktop-nav { display:flex; gap:20px; }
+nav.desktop-nav a { color:#fff; font-weight:600; font-size:16px; text-decoration:none; white-space:nowrap; }
+nav.desktop-nav a:hover { text-decoration:underline; }
+
+/* Language select */
+.language-select { position:relative; }
 .language-select select {
-  background: #111; color: #fff; border: 1px solid #fff; border-radius: 6px;
-  padding: 4px 8px; font-size: 14px; cursor: pointer;
+  appearance:none; background:#111; color:#fff; border:1px solid #333; border-radius:6px;
+  padding:6px 30px 6px 10px; font-size:0.9rem; cursor:pointer;
 }
-#authSection button {
-  background: #fff; color: #111; border: 1px solid #333; border-radius: 20px;
-  padding: 6px 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+
+/* Auth button */
+#authSection .text-btn { display:inline-flex; background:#fff; color:#000; border:none; border-radius:999px; padding:8px 16px; font-weight:600; cursor:pointer; align-items:center; justify-content:center; }
+#authSection .icon-btn { display:none; }
+
+/* Hamburger */
+.hamburger {
+  font-size:1.8rem; background:none; border:none; color:#fff; cursor:pointer;
+  display:none; align-items:center; justify-content:center; z-index:2200; width:40px; height:40px;
 }
-#authSection button:hover { background: #444; color: #fff; }
+
+/* Mobile menu (slide-in) */
+.menu {
+  position: fixed; top:0; left:-300px; width:300px; height:100vh; background: rgba(17,17,17,0.95);
+  border-right:1px solid rgba(255,255,255,0.12); padding:3rem 2rem; display:flex; flex-direction:column; gap:2rem;
+  transition:left 0.3s ease; z-index:2100; backdrop-filter:blur(10px); border-radius:0 1rem 1rem 0;
+}
+.menu.active { left:0; }
+.menu a { color:#fff; font-size:1.6rem; font-weight:800; text-decoration:none; }
+
+/* Menu overlay */
+.menu-overlay { position:fixed; inset:0; background: rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:opacity 0.3s ease; z-index:2050; }
+.menu-overlay.active { opacity:1; pointer-events:auto; }
+
+/* Responsive header + Hamburger morph to X (mobile only) */
+@media(max-width:1024px){
+  nav.desktop-nav{display:none;}
+  .hamburger{display:flex;}
+
+  /* Morph hamburger to X */
+  .hamburger { position: relative; font-size: 0; } /* hide the ☰ glyph */
+  .hamburger::before,
+  .hamburger::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    width: 22px;
+    height: 2px;
+    background: currentColor;
+    transform: translateX(-50%);
+    transition: transform .25s ease, top .25s ease, opacity .2s ease;
+  }
+  .hamburger::before { top: calc(50% - 6px); } /* top line */
+  .hamburger::after  { top: calc(50% + 6px); } /* bottom line */
+  /* middle line via background */
+  .hamburger {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 22px 2px;
+  }
+  .hamburger.is-active { background-size: 0 0; } /* hide the middle line */
+  .hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
+  .hamburger.is-active::after  { top: 50%; transform: translateX(-50%) rotate(-45deg); }
+}
+
+@media(max-width:768px){
+  #authSection .text-btn{display:none;}
+  #authSection .icon-btn{
+    display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%;
+    font-size:1.2rem; background:#fff; color:#000; border:none; cursor:pointer; transition:transform 0.2s ease;
+  }
+  #authSection .icon-btn:active{transform:scale(0.95);}
+
+  .language-select{
+    width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff;
+    display:flex; align-items:center; justify-content:center; position: relative;
+  }
+  .language-select::before{content:"🌐"; font-size:1.2rem; color:#fff; position:absolute;}
+  .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
+}
 
 /* ===== Container Grid ===== */
 .container {
   display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
-  padding: 110px 0 50px; max-width: 1200px; margin: 0 auto;
+  padding: 110px 0 50px; /* ORIGINAL */
+  max-width: 1200px; margin: 0 auto;
   min-height: calc(100vh - 140px);
 }
+/* NEW: avoid double spacing when header height is added to body padding */
+.container { padding-top: 0; } /* we reserve space via body padding-top now */
 
 /* ===== Panels ===== */
 .left-panel, .right-panel {
@@ -130,7 +215,7 @@ header nav a:hover { text-decoration: underline; }
 .insurance-warning { background-color: #ff9800; color: #fff; box-shadow: 0 8px 20px rgba(255, 152, 0, 0.5); }
 .insurance-inactive { background-color: #dc3545; color: #fff; box-shadow: 0 8px 20px rgba(128, 0, 0, 0.5); }
 
-/* Responsive */
+/* Responsive (page layout) */
 @media (max-width: 900px) {
   .container { display: block; padding: 20px; }
   .left-panel, .right-panel { grid-column: auto; width: 100%; margin-bottom: 28px; }
@@ -139,19 +224,24 @@ header nav a:hover { text-decoration: underline; }
   .italian-plate { width: 280px; height: 50px; font-size: 22px; letter-spacing: 4px; }
   .italian-plate::before, .italian-plate::after { width: 32px; font-size: 16px; }
   .insurance-box { width: 100%; justify-content: space-between; }
-  header { padding: 12px 18px; }
 }
 </style>
 </head>
 <body>
 
+<!-- Responsive, fixed header -->
 <header>
-  <h1><a href="/homepage.html" style="color:white; text-decoration:none;">VeloValue</a></h1>
-  <nav>
-    <a href="/homepage.html">HOME</a>
-    <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
-    <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
-    <a href="#about">ABOUT US</a>
+  <div class="header-left">
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <h1><a href="/homepage.html">VeloValue</a></h1>
+  </div>
+  <div class="header-right">
+    <nav class="desktop-nav">
+      <a href="/homepage.html">HOME</a>
+      <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+      <a href="/Explore smart garage beta/smartgarage.html">SMART GARAGE</a>
+      <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+    </nav>
     <div class="language-select">
       <select id="languageSelect">
         <option value="en">🇬🇧 English</option>
@@ -160,10 +250,21 @@ header nav a:hover { text-decoration: underline; }
       </select>
     </div>
     <div id="authSection">
-      <button onclick="window.location.href='login.html'">Login / Register</button>
+      <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
     </div>
-  </nav>
+  </div>
 </header>
+
+<!-- Slide-in mobile menu + overlay -->
+<nav class="menu" id="hamburgerMenu" aria-hidden="true">
+  <a href="/homepage.html">HOME</a>
+  <a href="/Explore new cars beta/explorenewcars.html">EXPLORE NEW CARS</a>
+  <a href="/Explore smart garage beta/smartgarage.html">SMART GARAGE</a>
+  <a href="/Velocharge beta/velocharge.html">DISCOVER VELOCHARGE</a>
+  <a href="#careers">WORK WITH US</a>
+  <a href="#about">ABOUT US</a>
+</nav>
+<div class="menu-overlay"></div>
 
 <div class="container">
   <!-- LEFT PANEL -->
@@ -244,6 +345,61 @@ header nav a:hover { text-decoration: underline; }
 </div>
 
 <script>
+// Header: Hamburger + overlay + auth button swap (same as Garage)
+const hamburger = document.querySelector(".hamburger");
+const menu = document.getElementById("hamburgerMenu");
+const overlay = document.querySelector(".menu-overlay");
+
+function openMenu(){
+  hamburger.setAttribute("aria-expanded","true");
+  hamburger.classList.add("is-active");
+  if (window.innerWidth > 1024) hamburger.textContent = "✕";
+  menu.classList.add("active");
+  overlay.classList.add("active");
+  menu.setAttribute("aria-hidden","false");
+}
+function closeMenu(){
+  hamburger.setAttribute("aria-expanded","false");
+  hamburger.classList.remove("is-active");
+  if (window.innerWidth > 1024) hamburger.textContent = "☰";
+  menu.classList.remove("active");
+  overlay.classList.remove("active");
+  menu.setAttribute("aria-hidden","true");
+}
+function toggleMenu(){
+  if (menu.classList.contains("active")) closeMenu();
+  else openMenu();
+}
+hamburger.addEventListener("click", toggleMenu);
+overlay.addEventListener("click", closeMenu);
+window.addEventListener("resize", () => {
+  if(window.innerWidth > 1024 && menu.classList.contains("active")) closeMenu();
+});
+
+// Auth button toggle (text vs icon)
+const authSection = document.getElementById("authSection");
+function updateAuthButton() {
+  if(window.innerWidth <= 768) {
+    authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+  } else {
+    authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
+  }
+}
+updateAuthButton();
+window.addEventListener("resize", updateAuthButton);
+
+// NEW: sync body padding with actual header height so content starts below header
+(function(){
+  var header = document.querySelector('header');
+  function syncHeaderOffset(){
+    if (!header) return;
+    var h = header.offsetHeight;
+    document.documentElement.style.setProperty('--header-offset', h + 'px');
+  }
+  window.addEventListener('load', syncHeaderOffset);
+  window.addEventListener('resize', syncHeaderOffset);
+})();
+
 // Accordion Toggle
 document.querySelectorAll(".accordion-header").forEach(header => {
   header.addEventListener("click", () => {
@@ -340,7 +496,7 @@ document.querySelectorAll(".accordion-header").forEach(header => {
 })();
 
 // Insurance Check (static example; keep your dates as needed)
-const expiryDate = new Date("2025-03-30");
+const expiryDate = new Date("2026-03-30");
 const today = new Date();
 const box = document.getElementById("insuranceBox");
 const options = { day: "2-digit", month: "short", year: "numeric" };

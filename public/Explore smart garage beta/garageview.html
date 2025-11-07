@@ -197,9 +197,9 @@ nav.desktop-nav a:hover { text-decoration:underline; }
 .carousel-wrapper {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: 500px; /* match center column */
   margin: auto;
-  height: 420px;
+  height: 560px; /* taller cards */
   perspective: 2000px;
 }
 
@@ -208,7 +208,8 @@ nav.desktop-nav a:hover { text-decoration:underline; }
   width: 100%;
   height: 100%;
 }
-
+</style>
+<style>
 .carousel-card {
   position: absolute;
   width: 100%;
@@ -295,7 +296,7 @@ nav.desktop-nav a:hover { text-decoration:underline; }
 .car-model { font-size:18px; font-weight:600; color:#ccc; }
 .fuel-pill { display:inline-block; padding:4px 12px; border-radius:20px; background:rgba(242,201,76,0.15); border:1px solid rgba(242,201,76,0.4); color:#f2c94c; font-size:13px; font-weight:600; }
 /* Car image */
-.car-image-box { width:100%; height:340px; border-radius:18px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.02); border:2px solid rgba(255,255,255,0.08); }
+.car-image-box { width:100%; height:420px; border-radius:18px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.02); border:2px solid rgba(255,255,255,0.08); }
 .car-image { max-width:100%; max-height:100%; object-fit:contain; }
 /* Plate */
 .italian-plate {
@@ -374,6 +375,107 @@ nav.desktop-nav a:hover { text-decoration:underline; }
   .card-stack { height: 500px; }
 }
 </style>
+
+<!-- PATCH: additive styles (no edits to blocks above) -->
+<style>
+/* 1) Side cards a little closer to the main card */
+.carousel-card.left  { transform: translateX(-45%) translateZ(-80px) scale(0.95); opacity: .7; }
+.carousel-card.right { transform: translateX( 45%) translateZ(-80px) scale(0.95); opacity: .7; }
+
+/* 2) Dots indicator */
+.carousel-dots { display:flex; gap:8px; justify-content:center; align-items:center; margin-top:14px; }
+.carousel-dot {
+  width:8px; height:8px; border-radius:50%;
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.5);
+  cursor:pointer;
+  transition: transform .2s ease, background-color .2s ease, opacity .2s ease, border-color .2s ease;
+}
+.carousel-dot:hover { transform: scale(1.15); }
+.carousel-dot.active { background:#f2c94c; border-color: rgba(242,201,76,0.8); transform: scale(1.25); }
+
+/* 3) Stop at ends: show disabled state for arrows (kept for compatibility) */
+.carousel-btn:disabled { opacity:.35; filter:grayscale(20%); cursor:default; pointer-events:none; }
+
+/* 4) Drag/touch affordance */
+.carousel-wrapper, .carousel-track { touch-action: pan-y; }
+.carousel-wrapper.dragging { cursor: grabbing; }
+.carousel-wrapper.dragging .carousel-card.center { transform: translateZ(0) scale(0.985); }
+
+/* 5) Make mobile layout friendlier: pills 50/50 below Add, then cards */
+.garage-header { grid-template-areas: "left center right"; }
+.garage-left  { grid-area: left; }
+#garageDisplay { grid-area: center; }
+.garage-right { grid-area: right; }
+
+@media(max-width:900px){
+  .garage-header{
+    grid-template-columns: 1fr;
+    grid-template-areas: "left" "right" "center";
+    padding:120px 16px 20px;
+  }
+  /* Search already full-width on small; make Add pill full-width too */
+  .garage-left .add-car-pill { width:100%; text-align:center; }
+
+  /* Make Level and View pills 50-50 in one row */
+  .garage-right{
+    align-items:stretch; flex-direction:row; width:100%; gap:12px;
+  }
+  .garage-right .garage-level-pill,
+  .garage-right .view-toggle { flex:1; }
+  .garage-right .view-toggle select { width:100%; }
+
+  /* Card sizes on mobile/tablet */
+  .carousel-wrapper { max-width: 94vw; height: 540px; }
+  .car-image-box { height: 300px; }
+}
+@media(max-width:600px){
+  .carousel-wrapper { height: 520px; }
+  .car-image-box { height: 280px; }
+}
+@media(max-width:400px){
+  .carousel-wrapper { height: 500px; }
+  .car-image-box { height: 260px; }
+}
+
+/* 6) Extra polish transitions */
+.capsule-search, .add-car-pill, .garage-level-pill, .view-toggle select {
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.capsule-search:focus { outline:none; box-shadow:0 0 0 2px rgba(242,201,76,0.3); border-color:rgba(242,201,76,0.6); }
+.add-car-pill:hover { transform: translateY(-1px); }
+.garage-level-pill:hover, .view-toggle select:hover { border-color: rgba(255,255,255,0.35); }
+
+/* Fix non-standard scale on hover by overriding with transform */
+.carousel-btn:hover { transform: translateY(-50%) scale(1.08); }
+</style>
+
+<!-- PATCH 2: spacing + tablet responsiveness (additive overrides) -->
+<style>
+/* Reduce the gap between header and first row to a sane default */
+.garage-header { padding-top: clamp(84px, 10vh, 96px); row-gap: 16px; }
+
+/* Tablet: keep search width equal to Add pill */
+@media (max-width: 900px) {
+  .garage-left .capsule-search { width: 100%; display: block; }
+  .garage-left .add-car-pill   { width: 100%; }
+}
+
+/* Tablet: shrink cards and side offsets to avoid overlapping */
+@media (max-width: 1024px) { .carousel-wrapper { max-width: 460px; } }
+@media (max-width: 900px) {
+  .carousel-wrapper { max-width: min(560px, 94vw); }
+  .carousel-card.left  { transform: translateX(-34%) translateZ(-70px) scale(0.94); opacity:.68; }
+  .carousel-card.right { transform: translateX( 34%) translateZ(-70px) scale(0.94); opacity:.68; }
+}
+/* Small tablets/large phones */
+@media (max-width: 700px) {
+  .carousel-card.left  { transform: translateX(-28%) translateZ(-60px) scale(0.92); }
+  .carousel-card.right { transform: translateX( 28%) translateZ(-60px) scale(0.92); }
+}
+/* Tighten top padding further on smaller screens */
+@media (max-width: 600px) { .garage-header { padding-top: 80px; } }
+</style>
 </head>
 <body>
 
@@ -417,7 +519,10 @@ nav.desktop-nav a:hover { text-decoration:underline; }
     <input type="text" placeholder="Search for your car…" class="capsule-search" id="searchBox"/>
     <div class="add-car-pill" id="addCarBtn">+ Add a new car</div>
   </div>
-  <div></div>
+
+  <!-- Carousel starts right below header, aligned with search/pill -->
+  <div id="garageDisplay" class="slider-container"></div>
+
   <div class="garage-right">
     <div id="garage-level" class="garage-level-pill"></div>
     <div class="view-toggle">
@@ -429,8 +534,6 @@ nav.desktop-nav a:hover { text-decoration:underline; }
     </div>
   </div>
 </div>
-
-<div id="garageDisplay" class="slider-container"></div>
 
 <script>
 // Hamburger toggle + X morph (mobile), with desktop fallback glyph
@@ -656,6 +759,160 @@ function renderView(mode){ if(mode==="card") renderCardSlider(); if(mode==="tile
 searchBox.addEventListener("input",e=>{ const q=e.target.value.toLowerCase(); filteredCars=cars.filter(c=>c.isAddNew||(c.brand||c.name).toLowerCase().includes(q)); currentIndex=0; renderView(viewModeSelect.value); });
 viewModeSelect.addEventListener("change",()=>renderView(viewModeSelect.value));
 renderView("card");
+</script>
+
+<!-- PATCH: additive JS (hide arrows at ends, no-wrap, dots, drag) -->
+<script>
+(function(){
+  var dragBound = false, isDragging = false, dragStartX = 0, dragDeltaX = 0;
+  var DRAG_THRESHOLD = 40;
+
+  function getClientX(evt){
+    if (evt && evt.touches && evt.touches.length) return evt.touches[0].clientX;
+    if (evt && typeof evt.clientX === 'number') return evt.clientX;
+    return 0;
+  }
+
+  function goToIndex(idx, list){
+    list = list || filteredCars;
+    if (idx < 0 || idx >= list.length || idx === currentIndex) return;
+    currentIndex = idx; renderCardSlider(list);
+  }
+  function goPrev(list){
+    list = list || filteredCars;
+    if (currentIndex > 0){ currentIndex--; renderCardSlider(list); }
+  }
+  function goNext(list){
+    list = list || filteredCars;
+    if (currentIndex < list.length - 1){ currentIndex++; renderCardSlider(list); }
+  }
+
+  var originalRenderCarCard = renderCarCard;
+
+  // Override renderCardSlider to: no wrap, dots, drag, and HIDE arrows at ends
+  window.renderCardSlider = function(listParam){
+    var list = listParam || filteredCars;
+
+    garageDisplay.className = "carousel-wrapper";
+    garageDisplay.innerHTML = "";
+
+    if (list.length === 0 || (list.length === 1 && list[0].isAddNew)) {
+      garageDisplay.innerHTML = "<div style='text-align:center;color:#ccc;padding:40px;'>No cars found</div>";
+      garageLevel.textContent = "Garage Level - 0";
+      return;
+    }
+
+    var hasPrev = currentIndex > 0;
+    var hasNext = currentIndex < list.length - 1;
+    var prevIndex = currentIndex - 1;
+    var nextIndex = currentIndex + 1;
+
+    var carousel = document.createElement("div");
+    carousel.className = "carousel-track";
+
+    function makeCard(car, position){
+      var div = document.createElement("div");
+      div.className = "carousel-card " + position;
+
+      if (car.isAddNew) {
+        div.innerHTML = '<div class="add-car"><div class="add-plus">+</div><div class="add-text">Add new car</div></div>';
+        if (position === "center") div.onclick = function(){ if(!isDragging) goToAddCar(); };
+        return div;
+      }
+
+      div.innerHTML = originalRenderCarCard(car);
+      if (position === "center") {
+        div.tabIndex = 0;
+        div.onclick = function(){ if(!isDragging) openDetails(car); };
+        div.onkeydown = function(e){ if(e.key === "Enter") openDetails(car); };
+      }
+      return div;
+    }
+
+    if (hasPrev) carousel.appendChild(makeCard(list[prevIndex], "left"));
+    carousel.appendChild(makeCard(list[currentIndex], "center"));
+    if (hasNext) carousel.appendChild(makeCard(list[nextIndex], "right"));
+
+    garageDisplay.appendChild(carousel);
+
+    // Only append visible arrows
+    if (hasPrev) {
+      var prevBtn = document.createElement("button");
+      prevBtn.className = "carousel-btn left";
+      prevBtn.innerHTML = "‹";
+      prevBtn.onclick = function(){ goPrev(list); };
+      garageDisplay.appendChild(prevBtn);
+    }
+
+    if (hasNext) {
+      var nextBtn = document.createElement("button");
+      nextBtn.className = "carousel-btn right";
+      nextBtn.innerHTML = "›";
+      nextBtn.onclick = function(){ goNext(list); };
+      garageDisplay.appendChild(nextBtn);
+    }
+
+    // Dots
+    var dots = document.createElement("div");
+    dots.className = "carousel-dots";
+    for (var i=0;i<list.length;i++){
+      var dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "carousel-dot" + (i === currentIndex ? " active" : "");
+      dot.setAttribute("aria-label", "Go to card " + (i+1));
+      (function(ii){ dot.onclick = function(){ goToIndex(ii, list); }; })(i);
+      dots.appendChild(dot);
+    }
+    garageDisplay.appendChild(dots);
+
+    garageLevel.textContent = "Garage Level - " + (list.length - 1);
+
+    // Keyboard navigation
+    garageDisplay.setAttribute('tabindex','0');
+    garageDisplay.onkeydown = function(e){
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev(list); }
+      if (e.key === 'ArrowRight'){ e.preventDefault(); goNext(list); }
+    };
+
+    // Drag / swipe bind once
+    if (!dragBound) {
+      dragBound = true;
+
+      var onDown = function(e){
+        isDragging = true;
+        dragStartX = getClientX(e);
+        dragDeltaX = 0;
+        garageDisplay.classList.add('dragging');
+      };
+      var onMove = function(e){
+        if (!isDragging) return;
+        var x = getClientX(e);
+        dragDeltaX = x - dragStartX;
+      };
+      var onUp = function(){
+        if (!isDragging) return;
+        garageDisplay.classList.remove('dragging');
+        var delta = dragDeltaX;
+        isDragging = false; dragDeltaX = 0;
+        if (Math.abs(delta) > DRAG_THRESHOLD) {
+          if (delta < 0) goNext(list); else goPrev(list);
+        }
+      };
+
+      garageDisplay.addEventListener('pointerdown', onDown, {passive:true});
+      window.addEventListener('pointermove', onMove, {passive:true});
+      window.addEventListener('pointerup', onUp, {passive:true});
+
+      garageDisplay.addEventListener('touchstart', onDown, {passive:true});
+      window.addEventListener('touchmove', onMove, {passive:true});
+      window.addEventListener('touchend', onUp, {passive:true});
+      window.addEventListener('touchcancel', onUp, {passive:true});
+    }
+  };
+
+  // Re-render to apply the override immediately
+  renderView(viewModeSelect.value);
+})();
 </script>
 
 </body>

@@ -6,21 +6,21 @@
   <title>VeloValue – Explore Cars</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
-    :root { --bg:#000; --text:#fff; --accent:#1db954; --radius-xl:18px; --radius-lg:14px; --radius-md:10px; --shadow-1:0 8px 24px rgba(0,0,0,.45); --shadow-2:0 18px 50px rgba(0,0,0,.55); }
+    :root { --bg:#000; --text:#fff; --accent:#1db954; --radius-xl:18px; --radius-lg:14px; --radius-md:10px; --shadow-1:0 8px 24px rgba(0,0,0,.45); --shadow-2:0 18px 50px rgba(0,0,0,.55); --header-offset: 0px; }
     *{ margin:0; padding:0; box-sizing:border-box; }
     html{ scroll-behavior:smooth; } html,body{ height:100%; }
-    body{ font-family:'Inter',sans-serif; line-height:1.35; background:var(--bg); color:var(--text); }
+    body{ font-family:'Inter',sans-serif; line-height:1.35; background:var(--bg); color:var(--text); padding-top: var(--header-offset); }
     a{ color:var(--text); }
 
-    /* Header */
+    /* Original header styles (kept but overridden below) */
     header{ position:sticky; top:0; left:0; width:100%; padding:1rem 2rem; background:var(--bg); display:flex; justify-content:space-between; align-items:center; z-index:1000; border-bottom:1px solid rgba(255,255,255,.1); }
     header h1{ font-size:24px; font-weight:800; }
     header nav{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
     header nav a{ text-decoration:none; font-size:16px; font-weight:600; }
     header nav a:hover{ text-decoration:underline; }
-    .language-select select{ background:var(--bg); color:var(--text); border:1px solid rgba(255,255,255,.5); border-radius:6px; padding:4px 8px; font-size:14px; cursor:pointer; }
-    #authSection button{ background:var(--text); color:var(--bg); border:1px solid var(--text); border-radius:20px; padding:6px 12px; font-weight:600; cursor:pointer; transition:all .25s ease; }
-    #authSection button:hover{ background:transparent; color:var(--text); border-color:var(--accent); }
+    .language-select select{ background:#111; color:#fff; border:1px solid #333; border-radius:6px; padding:6px 30px 6px 10px; font-size:0.9rem; cursor:pointer; appearance:none; }
+    #authSection .text-btn{ background:#fff; color:#000; border:none; border-radius:999px; padding:8px 16px; font-weight:600; cursor:pointer; transition:all .25s ease; }
+    #authSection .text-btn:hover{ filter:brightness(1.05); }
 
     /* Wishlist in header */
     .wishlist{ position:relative; }
@@ -39,7 +39,7 @@
     .wish-title{ font-weight:700; font-size:13px; } .wish-sub{ font-size:12px; opacity:.75; }
     .remove-btn{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:12px; padding:6px 8px; cursor:pointer; }
 
-    /* Compare toggle (overlay like heart) */
+    /* Compare button on cards */
     .compare-btn{
       position:absolute; top:10px; left:10px;
       width:36px; height:36px; border-radius:999px;
@@ -91,8 +91,11 @@
     @keyframes scroll-left{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
     @media (prefers-reduced-motion:reduce){ .marquee .track{ animation:none; } }
 
-    /* Cards */
-    .car-card{ position:relative; min-width:260px; max-width:260px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:transform .25s, box-shadow .25s; box-shadow:0 8px 20px rgba(0,0,0,.35); }
+    /* Keep marquee cards consistent across all screens */
+    .marquee .car-card { min-width:260px; max-width:260px; margin-inline:0; }
+
+    /* Cards + grid */
+    .car-card{ position:relative; min-width:260px; max-width:260px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:transform .25s, box-shadow .25s; box-shadow:0 8px 20px rgba(0,0,0,.35); margin-inline:auto; }
     .car-card:hover{ transform:translateY(-4px); box-shadow:0 16px 36px rgba(0,0,0,.55); }
     .car-card .thumb{ aspect-ratio:16/10; width:100%; object-fit:cover; }
     .car-card .meta{ padding:12px 12px 14px; display:flex; justify-content:space-between; align-items:center; }
@@ -107,14 +110,23 @@
     @keyframes pop{ 0%{ transform:scale(1);} 50%{ transform:scale(1.15);} 100%{ transform:scale(1);} }
     .heart-btn.pop{ animation:pop .22s ease; }
 
-    /* Filters + Results */
+    /* Filters + Results layout */
     .filters-wrap{ display:grid; grid-template-columns:260px 1fr 280px; gap:16px; }
     @media (max-width:1060px){ .filters-wrap{ grid-template-columns:1fr; } }
     .panel{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-xl); box-shadow:var(--shadow-1); }
-    .left-filters{ padding:16px; position:sticky; top:78px; height:max-content; }
+    .left-filters{ padding:16px; position:sticky; top: calc(var(--header-offset, 72px) + 6px); height:max-content; }
     .left-filters h3{ margin:4px 0 12px; font-size:18px; }
     .f-group{ margin:14px 0; }
     .f-label{ display:block; font-size:12px; letter-spacing:.2px; color:var(--text); opacity:.7; margin-bottom:8px; text-transform:uppercase; }
+
+    /* Filter dropdown toggle */
+    .filters-toggle {
+      display:inline-flex; align-items:center; gap:8px; margin-bottom:10px;
+      background:#111; color:#fff; border:1px solid #333; border-radius:6px;
+      padding:6px 10px; font-size:0.9rem; cursor:pointer;
+    }
+    .filters-toggle:after { content:"▾"; opacity:.8; }
+    .left-filters.collapsed #filtersContent { display:none; }
 
     .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
     .chip{ padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.2); cursor:pointer; font-weight:600; color:var(--text); background:transparent; transition:border-color .15s, color .15s, background .15s; }
@@ -130,7 +142,21 @@
     .toolbar{ display:flex; justify-content:space-between; align-items:center; padding:8px 6px 10px; gap:8px; flex-wrap:wrap; }
     .toolbar .count{ opacity:.85; font-weight:600; }
     .toolbar-actions{ display:flex; align-items:center; gap:10px; }
+
+    /* Make #sortSel look like language select */
+    #sortSel{
+      appearance:none; background:#111; color:#fff; border:1px solid #333; border-radius:6px;
+      padding:6px 30px 6px 10px; font-size:0.9rem; cursor:pointer;
+    }
+
+    /* Grid + centering on mobile (original) */
     .grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
+    @media (max-width:900px){
+      .left-filters{ position:static; top:auto; }
+    }
+    @media (max-width:700px){
+      .grid{ grid-template-columns: minmax(260px, 1fr); max-width: 520px; margin: 0 auto; }
+    }
 
     .active-filters{ display:flex; align-items:center; flex-wrap:wrap; gap:8px; padding:6px 6px 12px; }
     .af-chip{ display:inline-flex; align-items:center; gap:8px; font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.2); background:transparent; }
@@ -158,73 +184,180 @@
 
     .sr-only{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
   </style>
+
+  <!-- Unified header overrides (fixed + mobile menu) -->
+  <style>
+    header, header * { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    header {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 2rem; background: rgba(0,0,0,0.6);
+      border-bottom: 1px solid #333; z-index: 2000; backdrop-filter: blur(6px);
+    }
+    .header-left { display:flex; align-items:center; gap:15px; }
+    .header-right { display:flex; align-items:center; gap:15px; }
+    header h1 a { font-size:1.8rem; font-weight:800; color:#fff; text-decoration:none; }
+
+    nav.desktop-nav { display:flex; gap:20px; }
+    nav.desktop-nav a { color:#fff; font-weight:600; font-size:16px; text-decoration:none; white-space:nowrap; }
+    nav.desktop-nav a:hover { text-decoration:underline; }
+
+    .language-select { position:relative; }
+    .language-select select {
+      appearance:none; background:#111; color:#fff; border:1px solid #333; border-radius:6px;
+      padding:6px 30px 6px 10px; font-size:0.9rem; cursor:pointer;
+    }
+
+    #authSection .text-btn { display:inline-flex; background:#fff; color:#000; border:none; border-radius:999px; padding:8px 16px; font-weight:600; cursor:pointer; align-items:center; justify-content:center; }
+    #authSection .icon-btn { display:none; }
+
+    .hamburger {
+      font-size:1.8rem; background:none; border:none; color:#fff; cursor:pointer;
+      display:none; align-items:center; justify-content:center; z-index:2200; width:40px; height:40px;
+    }
+
+    .menu {
+      position: fixed; top:0; left:-300px; width:300px; height:100vh; background: rgba(17,17,17,0.95);
+      border-right:1px solid rgba(255,255,255,0.12); padding:3rem 2rem; display:flex; flex-direction:column; gap:2rem;
+      transition:left 0.3s ease; z-index:2100; backdrop-filter:blur(10px); border-radius:0 1rem 1rem 0;
+    }
+    .menu.active { left:0; }
+    .menu a { color:#fff; font-size:1.6rem; font-weight:800; text-decoration:none; }
+
+    .menu-overlay { position:fixed; inset:0; background: rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:opacity 0.3s ease; z-index:2050; }
+    .menu-overlay.active { opacity:1; pointer-events:auto; }
+
+    @media(max-width:1024px){
+      nav.desktop-nav{display:none;}
+      .hamburger{display:flex;}
+      .hamburger { position: relative; font-size: 0; }
+      .hamburger::before, .hamburger::after {
+        content: ""; position: absolute; left: 50%; width: 22px; height: 2px; background: currentColor;
+        transform: translateX(-50%); transition: transform .25s ease, top .25s ease, opacity .2s ease;
+      }
+      .hamburger::before { top: calc(50% - 6px); }
+      .hamburger::after  { top: calc(50% + 6px); }
+      .hamburger {
+        background-image: linear-gradient(currentColor, currentColor);
+        background-repeat: no-repeat; background-position: center; background-size: 22px 2px;
+      }
+      .hamburger.is-active { background-size: 0 0; }
+      .hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
+      .hamburger.is-active::after  { top: 50%; transform: translateX(-50%) rotate(-45deg); }
+    }
+
+    @media(max-width:768px){
+      #authSection .text-btn{display:none;}
+      #authSection .icon-btn{
+        display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%;
+        font-size:1.2rem; background:#fff; color:#000; border:none; cursor:pointer; transition:transform 0.2s ease;
+      }
+      #authSection .icon-btn:active{transform:scale(0.95);}
+      .language-select{
+        width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff;
+        display:flex; align-items:center; justify-content:center; position: relative;
+      }
+      .language-select::before{content:"🌐"; font-size:1.2rem; color:#fff; position:absolute;}
+      .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
+    }
+  </style>
+
+  <!-- OVERRIDE: Force 2 cards per row on small screens (grid only, not marquee) -->
+  <style>
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        max-width: none !important;
+        margin: 0 !important;
+        gap: 10px;
+      }
+      .grid .car-card {
+        min-width: 0 !important;
+        max-width: none !important;
+        margin-inline: 0 !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Unified Header -->
   <header>
-    <h1><a href="/homepage.html" style="color:inherit; text-decoration:none;">VeloValue</a></h1>
-    <nav>
-  <a href="/homepage.html">HOME</a>
-  <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
-  <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
-  <a href="#about">ABOUT US</a>
+    <div class="header-left">
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <h1><a href="/homepage.html">VeloValue</a></h1>
+    </div>
+    <div class="header-right">
+      <nav class="desktop-nav">
+        <a href="/homepage.html">HOME</a>
+        <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+        <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+        <a href="#about">ABOUT US</a>
+      </nav>
 
-  <div class="language-select">
-    <select id="languageSelect">
-      <option value="en">🇬🇧 English</option>
-      <option value="it">🇮🇹 Italiano</option>
-      <option value="de">🇩🇪 Deutsch</option>
-    </select>
-  </div>
-
-  <!-- Wishlist dropdown -->
-  <div class="wishlist" id="wishlist">
-    <button id="wishlistBtn" class="icon-btn" aria-label="Wishlist" aria-expanded="false" aria-controls="wishlistMenu">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/>
-      </svg>
-      <span class="badge" id="wishlistBadge">0</span>
-    </button>
-    <div id="wishlistMenu" class="dropdown" role="menu" aria-label="Wishlist">
-      <div class="dropdown-head">
-        <strong>Wishlist</strong>
-        <button id="clearWishlist" class="text-btn">Clear all</button>
+      <div class="language-select">
+        <select id="languageSelect">
+          <option value="en">🇬🇧 English</option>
+          <option value="it">🇮🇹 Italiano</option>
+          <option value="de">🇩🇪 Deutsch</option>
+        </select>
       </div>
-      <div id="wishlistItems" class="dropdown-list">
-        <div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Your wishlist is empty.</div>
+
+      <!-- Wishlist dropdown -->
+      <div class="wishlist" id="wishlist">
+        <button id="wishlistBtn" class="icon-btn" aria-label="Wishlist" aria-expanded="false" aria-controls="wishlistMenu">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span class="badge" id="wishlistBadge">0</span>
+        </button>
+        <div id="wishlistMenu" class="dropdown" role="menu" aria-label="Wishlist">
+          <div class="dropdown-head">
+            <strong>Wishlist</strong>
+            <button id="clearWishlist" class="text-btn">Clear all</button>
+          </div>
+          <div id="wishlistItems" class="dropdown-list">
+            <div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Your wishlist is empty.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compare dropdown -->
+      <div class="wishlist compare" id="compare">
+        <button id="compareBtn" class="icon-btn" aria-label="Compare" aria-expanded="false" aria-controls="compareMenu" title="Compare">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/>
+          </svg>
+          <span class="badge" id="compareBadge">0</span>
+        </button>
+        <div id="compareMenu" class="dropdown" role="menu" aria-label="Compare">
+          <div class="dropdown-head">
+            <strong>Compare</strong>
+            <button id="clearCompare" class="text-btn">Clear all</button>
+          </div>
+          <div id="compareItems" class="dropdown-list">
+            <div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Nothing to compare.</div>
+          </div>
+          <div style="padding:10px; border-top:1px solid rgba(255,255,255,.1); display:flex; justify-content:flex-end;">
+            <button id="viewCompare" class="text-btn">View compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="authSection">
+        <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
       </div>
     </div>
-  </div>
-
-  <!-- Compare dropdown -->
-  <div class="wishlist compare" id="compare">
-    <button id="compareBtn" class="icon-btn" aria-label="Compare" aria-expanded="false" aria-controls="compareMenu" title="Compare">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/>
-      </svg>
-      <span class="badge" id="compareBadge">0</span>
-    </button>
-    <div id="compareMenu" class="dropdown" role="menu" aria-label="Compare">
-      <div class="dropdown-head">
-        <strong>Compare</strong>
-        <button id="clearCompare" class="text-btn">Clear all</button>
-      </div>
-      <div id="compareItems" class="dropdown-list">
-        <div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Nothing to compare.</div>
-      </div>
-      <div style="padding:10px; border-top:1px solid rgba(255,255,255,.1); display:flex; justify-content:flex-end;">
-        <button id="viewCompare" class="text-btn">View compare</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Auth section moved to end -->
-  <div id="authSection">
-    <button onclick="window.location.href='login.html'">Login / Register</button>
-  </div>
-</nav>
   </header>
+
+  <!-- Slide-in mobile menu + overlay -->
+  <nav class="menu" id="hamburgerMenu" aria-hidden="true">
+    <a href="/homepage.html">HOME</a>
+    <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+    <a href="/Velocharge beta/velocharge.html">DISCOVER VELOCHARGE</a>
+    <a href="#about">ABOUT US</a>
+  </nav>
+  <div class="menu-overlay"></div>
 
   <!-- Hero search -->
   <section class="hero" id="home">
@@ -250,28 +383,31 @@
   <section class="section" id="filters">
     <div class="filters-wrap">
       <!-- Left: filters -->
-      <aside class="panel left-filters">
+      <aside class="panel left-filters" id="leftFilters">
         <h3>Filter By</h3>
-        <div class="f-group">
-          <span class="f-label">Body Style</span>
-          <div class="chip-row" id="bodyChips"></div>
-        </div>
-        <div class="f-group">
-          <span class="f-label">Fuel</span>
-          <div class="chip-row" id="fuelChips"></div>
-        </div>
-        <div class="f-group">
-          <span class="f-label">Transmission</span>
-          <div class="chip-row" id="gearChips"></div>
-        </div>
-        <div class="f-group">
-          <span class="f-label">Price (EUR)</span>
-          <div class="range">
-            <input type="range" id="priceRange" min="10000" max="120000" value="120000" step="1000"/>
-            <span id="priceOut" class="muted">≤ €120,000</span>
+        <button id="filtersToggle" class="filters-toggle" aria-expanded="true" type="button">Filter By</button>
+        <div id="filtersContent">
+          <div class="f-group">
+            <span class="f-label">Body Style</span>
+            <div class="chip-row" id="bodyChips"></div>
           </div>
+          <div class="f-group">
+            <span class="f-label">Fuel</span>
+            <div class="chip-row" id="fuelChips"></div>
+          </div>
+          <div class="f-group">
+            <span class="f-label">Transmission</span>
+            <div class="chip-row" id="gearChips"></div>
+          </div>
+          <div class="f-group">
+            <span class="f-label">Price (EUR)</span>
+            <div class="range">
+              <input type="range" id="priceRange" min="10000" max="120000" value="120000" step="1000"/>
+              <span id="priceOut" class="muted">≤ €120,000</span>
+            </div>
+          </div>
+          <button class="apply-btn" id="applyFilters">Done</button>
         </div>
-        <button class="apply-btn" id="applyFilters">Done</button>
       </aside>
 
       <!-- Center: results grid -->
@@ -280,7 +416,7 @@
           <div class="count" id="resultCount" role="status" aria-live="polite">0 results</div>
           <div class="toolbar-actions">
             <label class="sr-only" for="sortSel">Sort</label>
-            <select id="sortSel">
+            <select id="sortSel" aria-label="Sort">
               <option value="relevance">Sort: Relevance</option>
               <option value="price_asc">Price: Low → High</option>
               <option value="price_desc">Price: High → Low</option>
@@ -319,6 +455,63 @@
   <!-- Toast container -->
   <div id="toastWrap" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
 
+  <!-- Header JS (hamburger + auth swap + offset sync) -->
+  <script>
+    (function(){
+      const hamburger = document.querySelector(".hamburger");
+      const menu = document.getElementById("hamburgerMenu");
+      const overlay = document.querySelector(".menu-overlay");
+
+      function openMenu(){
+        hamburger.setAttribute("aria-expanded","true");
+        hamburger.classList.add("is-active");
+        if (window.innerWidth > 1024) hamburger.textContent = "✕";
+        menu.classList.add("active");
+        overlay.classList.add("active");
+        menu.setAttribute("aria-hidden","false");
+      }
+      function closeMenu(){
+        hamburger.setAttribute("aria-expanded","false");
+        hamburger.classList.remove("is-active");
+        if (window.innerWidth > 1024) hamburger.textContent = "☰";
+        menu.classList.remove("active");
+        overlay.classList.remove("active");
+        menu.setAttribute("aria-hidden","true");
+      }
+      function toggleMenu(){
+        if (menu.classList.contains("active")) closeMenu();
+        else openMenu();
+      }
+      hamburger.addEventListener("click", toggleMenu);
+      overlay.addEventListener("click", closeMenu);
+      window.addEventListener("resize", () => {
+        if(window.innerWidth > 1024 && menu.classList.contains("active")) closeMenu();
+      });
+
+      // Auth button toggle
+      const authSection = document.getElementById("authSection");
+      function updateAuthButton() {
+        if(window.innerWidth <= 768) {
+          authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+        } else {
+          authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
+        }
+      }
+      updateAuthButton();
+      window.addEventListener("resize", updateAuthButton);
+
+      // Sync body padding with actual header height
+      function syncHeaderOffset(){
+        const header = document.querySelector('header');
+        if (!header) return;
+        const h = header.offsetHeight;
+        document.documentElement.style.setProperty('--header-offset', h + 'px');
+      }
+      window.addEventListener('load', syncHeaderOffset);
+      window.addEventListener('resize', syncHeaderOffset);
+    })();
+  </script>
+
   <script>
     // Data
     const cars = [
@@ -340,7 +533,7 @@
     const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
     const toEUR = n => `€${Number(n).toLocaleString()}`;
     const debounce = (fn, wait=280) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; };
-    const carId = c => `${c.brand}-${c.model}`.toLowerCase().replace(/\s+/g,'-'); // stable id (no year)
+    const carId = c => `${c.brand}-${c.model}`.toLowerCase().replace(/\s+/g,'-'); // stable id
     const carsById = new Map(cars.map(c=>[carId(c), c]));
     const showToast = msg => {
       const wrap = $('#toastWrap');
@@ -355,103 +548,12 @@
     const META_KEY = 'vv_compare_meta';
     const MAX_CMP = 4;
 
-    // ===== User-scoped storage helpers (paste at top of each page script) =====
-(function ensureUserKey(){ window.__vvUserKey = window.__vvUserKey || 'guest'; })();
+    // User-scoped helpers (kept; not altering your logic)
+    (function ensureUserKey(){ window.__vvUserKey = window.__vvUserKey || 'guest'; })();
+    function isLoggedIn(){ return window.__vvUserKey && window.__vvUserKey !== 'guest'; }
+    function requireLogin(action){ if(!isLoggedIn()){ showToast(`Please Login/Register to ${action}`); return false; } return true; }
 
-function scopeKey(base) {
-  const k = (window.__vvUserKey || 'guest').toLowerCase();
-  return `${base}::${k}`;
-}
-
-// User authentication helpers
-function isLoggedIn() {
-  return window.__vvUserKey && window.__vvUserKey !== 'guest';
-}
-
-function requireLogin(action) {
-  if (!isLoggedIn()) {
-    showToast(`Please Login/Register to ${action}`);
-    return false;
-  }
-  return true;
-}
-
-// Modified storage helpers
-function getStorageKey(base) {
-  const user = window.__vvUserKey || 'guest';
-  return `${base}_${user}`;
-}
-
-// Replace your existing storage functions with these:
-function loadWishlist() {
-  try {
-    const key = getStorageKey(WISHLIST_KEY);
-    return new Set(JSON.parse(localStorage.getItem(key) || '[]'));
-  } catch {
-    return new Set();
-  }
-}
-
-function saveWishlist() {
-  const key = getStorageKey(WISHLIST_KEY);
-  localStorage.setItem(key, JSON.stringify([...wishlist]));
-}
-
-function loadCompare() {
-  try {
-    const key = getStorageKey(CMP_KEY);
-    return new Set(JSON.parse(localStorage.getItem(key) || '[]'));
-  } catch {
-    return new Set();
-  }
-}
-
-function saveCompare(set) {
-  const key = getStorageKey(CMP_KEY);
-  localStorage.setItem(key, JSON.stringify([...set]));
-}
-
-function loadMeta() {
-  try {
-    const key = getStorageKey(META_KEY);
-    return JSON.parse(localStorage.getItem(key) || '{}');
-  } catch {
-    return {};
-  }
-}
-
-function saveMeta(obj) {
-  const key = getStorageKey(META_KEY);
-  localStorage.setItem(key, JSON.stringify(obj));
-}
-
-// One-time migration of legacy global keys into the current user scope (only if scoped is empty)
-function migrateLegacyOnce(base) {
-  const scoped = scopeKey(base);
-  const migratedFlag = `${scoped}::migrated`;
-  if (localStorage.getItem(migratedFlag)) return;
-
-  const legacy = localStorage.getItem(base);
-  if (legacy && !localStorage.getItem(scoped)) {
-    localStorage.setItem(scoped, legacy);
-  }
-  localStorage.setItem(migratedFlag, '1');
-}
-
-// Re-run UI when user changes (login/logout)
-document.addEventListener('vv:user-change', () => {
-  // Migrate keys for the new user if needed
-  ['velovalue_wishlist_v1', 'vv_compare_ids', 'vv_compare_meta'].forEach(migrateLegacyOnce);
-
-  // Refresh UI (guard functions if not present on this page)
-  if (typeof updateWishlistBadge === 'function') updateWishlistBadge();
-  if (typeof buildWishlistMenu === 'function') buildWishlistMenu();
-  if (typeof syncHeartButtons === 'function') syncHeartButtons();
-  if (typeof syncCompareButtons === 'function') syncCompareButtons();
-  if (typeof updateCompareBadge === 'function') updateCompareBadge();
-  if (typeof buildCompareMenu === 'function') buildCompareMenu();
-});
-
+    // Legacy (unscoped) compare storage used by this page
     function loadCompare(){ try { return new Set(JSON.parse(localStorage.getItem(CMP_KEY) || '[]')); } catch { return new Set(); } }
     function saveCompare(set){ localStorage.setItem(CMP_KEY, JSON.stringify([...set])); }
     function loadMeta(){ try { return JSON.parse(localStorage.getItem(META_KEY) || '{}'); } catch { return {}; } }
@@ -469,7 +571,6 @@ document.addEventListener('vv:user-change', () => {
       const set = loadCompare(); set.delete(id); saveCompare(set);
       const m = loadMeta(); delete m[id]; saveMeta(m); return set;
     }
-    function inCompare(id){ return loadCompare().has(id); }
 
     function compareButtonHTML(id){
       return `<button class="compare-btn" data-compare="${id}" aria-label="Add to compare" aria-pressed="false" title="Compare">
@@ -477,94 +578,97 @@ document.addEventListener('vv:user-change', () => {
       </button>`;
     }
 
-    // ===== Header compare helpers =====
-function updateCompareBadge(){
-  const n = loadCompare().size;
-  const b = document.getElementById('compareBadge');
-  if (!b) return;
-  if (n > 0) { b.style.display = 'grid'; b.textContent = n; }
-  else { b.style.display = 'none'; }
-}
-
-function buildCompareMenu(){
-  const listEl = document.getElementById('compareItems');
-  if (!listEl) return;
-  const ids = [...loadCompare()];
-  const meta = loadMeta();
-
-  if (!ids.length) {
-    listEl.innerHTML = `<div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Nothing to compare.</div>`;
-    return;
-  }
-
-  listEl.innerHTML = ids.map(id => {
-    const m = meta[id] || {};
-    const name = [m.brand, m.model].filter(Boolean).join(' ') || id;
-    const sub = [m.body, (m.price!=null ? '€'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' • ');
-    const img = m.img || '';
-    return `
-      <div class="wish-item" data-id="${id}">
-        ${img ? `<img src="${img}" alt="${name}">` : `<div style="width:44px;height:44px;border-radius:8px;background:#111;display:grid;place-items:center;opacity:.6">—</div>`}
-        <div class="wish-meta">
-          <div class="wish-title">${name}</div>
-          <div class="wish-sub">${sub || ''}</div>
-        </div>
-        <button class="remove-btn" data-remove="${id}">Remove</button>
-      </div>`;
-  }).join('');
-}
-
-// Open/close header compare dropdown
-(function wireCompareDropdown(){
-  const wrap = document.getElementById('compare');
-  const btn  = document.getElementById('compareBtn');
-  const menu = document.getElementById('compareMenu');
-  if (!wrap || !btn || !menu) return;
-
-  btn.addEventListener('click', ()=>{
-    const open = wrap.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  });
-  document.addEventListener('click', (e)=>{
-    if (!wrap.contains(e.target)) {
-      wrap.classList.remove('open');
-      btn.setAttribute('aria-expanded','false');
+    // Header compare helpers
+    function updateCompareBadge(){
+      const n = loadCompare().size;
+      const b = document.getElementById('compareBadge');
+      if (!b) return;
+      if (n > 0) { b.style.display = 'grid'; b.textContent = n; }
+      else { b.style.display = 'none'; }
     }
-  });
-  document.addEventListener('keydown', (e)=>{
-    if (e.key === 'Escape') {
-      wrap.classList.remove('open');
-      btn.setAttribute('aria-expanded','false');
+    function buildCompareMenu(){
+      const listEl = document.getElementById('compareItems');
+      if (!listEl) return;
+      const ids = [...loadCompare()];
+      const meta = loadMeta();
+      if (!ids.length) {
+        listEl.innerHTML = `<div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Nothing to compare.</div>`;
+        return;
+      }
+      listEl.innerHTML = ids.map(id => {
+        const m = meta[id] || {};
+        const name = [m.brand, m.model].filter(Boolean).join(' ') || id;
+        const sub = [m.body, (m.price!=null ? '€'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' • ');
+        const img = m.img || '';
+        return `
+          <div class="wish-item" data-id="${id}">
+            ${img ? `<img src="${img}" alt="${name}">` : `<div style="width:44px;height:44px;border-radius:8px;background:#111;display:grid;place-items:center;opacity:.6">—</div>`}
+            <div class="wish-meta">
+              <div class="wish-title">${name}</div>
+              <div class="wish-sub">${sub || ''}</div>
+            </div>
+            <button class="remove-btn" data-remove="${id}">Remove</button>
+          </div>`;
+      }).join('');
     }
-  });
+    (function wireCompareDropdown(){
+      const wrap = document.getElementById('compare');
+      const btn  = document.getElementById('compareBtn');
+      const menu = document.getElementById('compareMenu');
+      if (!wrap || !btn || !menu) return;
 
-  // Remove from compare (inside dropdown)
-  document.getElementById('compareItems').addEventListener('click', (e)=>{
-    const rm = e.target.closest('[data-remove]'); if(!rm) return;
-    const id = rm.getAttribute('data-remove');
-    removeFromCompare(id);
-    updateCompareBadge();
-    buildCompareMenu();
-    // Refresh buttons and sticky bar on the page
-    if (typeof syncCompareButtons === 'function') syncCompareButtons();
-  });
+      btn.addEventListener('click', ()=>{
+        const open = wrap.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      document.addEventListener('click', (e)=>{
+        if (!wrap.contains(e.target)) {
+          wrap.classList.remove('open');
+          btn.setAttribute('aria-expanded','false');
+        }
+      });
+      document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape') {
+          wrap.classList.remove('open');
+          btn.setAttribute('aria-expanded','false');
+        }
+      });
 
-  // Clear all compare
-  document.getElementById('clearCompare').addEventListener('click', ()=>{
-    saveCompare(new Set()); saveMeta({});
-    updateCompareBadge(); buildCompareMenu();
-    if (typeof syncCompareButtons === 'function') syncCompareButtons();
-  });
+      // Remove from compare (inside dropdown)
+      document.getElementById('compareItems').addEventListener('click', (e)=>{
+        const rm = e.target.closest('[data-remove]'); if(!rm) return;
+        const id = rm.getAttribute('data-remove');
+        removeFromCompare(id);
+        updateCompareBadge();
+        buildCompareMenu();
+        if (typeof syncCompareButtons === 'function') syncCompareButtons();
+      });
 
-  // View compare page
-  document.getElementById('viewCompare').addEventListener('click', ()=>{
-    location.href = buildCompareUrl(); // uses your existing helper
-  });
-})();
+      // Clear all compare
+      document.getElementById('clearCompare').addEventListener('click', ()=>{
+        saveCompare(new Set()); saveMeta({});
+        updateCompareBadge(); buildCompareMenu();
+        if (typeof syncCompareButtons === 'function') syncCompareButtons();
+      });
 
-    // Wire to details page (sessionStorage + URL id)
+      // View compare (block if < 2)
+      document.getElementById('viewCompare').addEventListener('click', ()=>{
+        const n = loadCompare().size;
+        if (n < 2) { alert('Add minimum of 2 cars to compare'); return; }
+        location.href = buildCompareUrl();
+      });
+    })();
+
+    function buildCompareUrl(){
+      const ids = [...loadCompare()];
+      const url = new URL('compare.html', location.href);
+      if (ids.length) url.searchParams.set('ids', ids.join(','));
+      return url.toString();
+    }
+
+    // Wire to details page
     const WIRE_KEY = 'vv_selected_car';
-    const DETAILS_PATH = 'cars.html'; // adjust if your cars.html is elsewhere
+    const DETAILS_PATH = 'cars.html';
     function openCarById(id) {
       const car = carsById.get(id);
       if (!car) return;
@@ -609,45 +713,46 @@ function buildCompareMenu(){
       });
     }
     function toggleWishlist(id) {
-  if (!requireLogin('wishlist your favourite car')) return;
-  
-  const c = carsById.get(id);
-  if (!c) return;
-  
-  const was = wishlist.has(id);
-  if (was) {
-    wishlist.delete(id);
-    showToast(`Removed: ${c.brand} ${c.model}`);
-  } else {
-    wishlist.add(id);
-    showToast(`Added: ${c.brand} ${c.model}`);
-  }
-  saveWishlist();
-  updateWishlistBadge();
-  buildWishlistMenu();
-  syncHeartButtons();
-  
-  const btn = document.querySelector(`.heart-btn[data-id="${id}"]`);
-  if (btn) {
-    btn.classList.remove('pop');
-    void btn.offsetWidth;
-    btn.classList.add('pop');
-  }
-}
+      if (!requireLogin('wishlist your favourite car')) return;
+
+      const c = carsById.get(id);
+      if (!c) return;
+
+      const was = wishlist.has(id);
+      if (was) {
+        wishlist.delete(id);
+        showToast(`Removed: ${c.brand} ${c.model}`);
+      } else {
+        wishlist.add(id);
+        showToast(`Added: ${c.brand} ${c.model}`);
+      }
+      saveWishlist();
+      updateWishlistBadge();
+      buildWishlistMenu();
+      syncHeartButtons();
+
+      // Heart pop animation
+      const btn = document.querySelector(`.heart-btn[data-id="${id}"]`);
+      if (btn) {
+        btn.classList.remove('pop');
+        void btn.offsetWidth;
+        btn.classList.add('pop');
+      }
+    }
 
     function syncCompareButtons(){
-  const set = loadCompare();
-  document.querySelectorAll('.compare-btn').forEach(btn=>{
-    const id = btn.getAttribute('data-compare');
-    const active = set.has(id);
-    btn.classList.toggle('active', active);
-    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
-    btn.setAttribute('aria-label', active ? 'Remove from compare' : 'Add to compare');
-  });
-  updateCompareBar();
-  updateCompareBadge();   // NEW
-  buildCompareMenu();     // NEW
-}
+      const set = loadCompare();
+      document.querySelectorAll('.compare-btn').forEach(btn=>{
+        const id = btn.getAttribute('data-compare');
+        const active = set.has(id);
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        btn.setAttribute('aria-label', active ? 'Remove from compare' : 'Add to compare');
+      });
+      updateCompareBar();
+      updateCompareBadge();
+      buildCompareMenu();
+    }
 
     function updateCompareBar(){
       const bar = document.getElementById('compareBar');
@@ -686,7 +791,7 @@ function buildCompareMenu(){
       activeFilters: $('#activeFilters'), clearFiltersBtn: $('#clearFiltersBtn')
     };
 
-    // Popular slider (with hearts + compare, data-id)
+    // Popular slider
     const popularCars = cars.filter(c=>c.popularIn.includes('IT'));
     const heartButtonHTML = id => `<button class="heart-btn" data-id="${id}" aria-label="Add to wishlist" aria-pressed="false" title="Wishlist">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
@@ -727,8 +832,9 @@ function buildCompareMenu(){
       const logo=document.createElement('div'); logo.className='brand-logo'; logo.textContent=name.split(' ').map(s=>s[0]).join('').slice(0,3).toUpperCase();
       const label=document.createElement('div'); label.className='brand-name'; label.textContent=name;
       tile.append(logo,label);
-      const toggle=()=>{ const active=tile.classList.toggle('active'); if(active) selected.brands.add(name); else selected.brands.delete(name); };
-      tile.addEventListener('click',toggle); tile.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); }});
+      const toggle=()=>{ const active=tile.classList.toggle('active'); if(active) selected.brands.add(name); else selected.brands.delete(name); applyFiltersNow(false); };
+      tile.addEventListener('click',toggle);
+      tile.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); }});
       brandTileMap.set(name,tile); return tile;
     }
     brands.forEach(b=>els.brandGrid.appendChild(makeBrandTile(b)));
@@ -773,6 +879,14 @@ function buildCompareMenu(){
       ['body','fuel','gear'].forEach(g=>{ selected[g].clear(); chipMap[g].forEach(el=>el.classList.remove('active')); });
       selected.maxPrice=120000; els.priceRange.value='120000'; els.priceOut.textContent='≤ €120,000';
       els.searchInput.value=''; applyFiltersNow();
+    });
+
+    // Filters dropdown toggle
+    const filtersToggle = document.getElementById('filtersToggle');
+    const leftFilters = document.getElementById('leftFilters');
+    filtersToggle.addEventListener('click', ()=>{
+      const collapsed = leftFilters.classList.toggle('collapsed');
+      filtersToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
     });
 
     // Relevance sort
@@ -837,102 +951,97 @@ function buildCompareMenu(){
       if(scroll) $('#filters').scrollIntoView({ behavior:'smooth', block:'start' });
     }
 
-      // Helper function to extract card metadata
-function extractCardMetadata(card) {
-    const name = card?.querySelector('.name')?.textContent || '';
-    const parts = name.split(' ');
-    const priceText = card?.querySelector('.muted')?.textContent || '';
-    
-    return {
+    // Extract metadata for compare
+    function extractCardMetadata(card) {
+      const name = card?.querySelector('.name')?.textContent || '';
+      const parts = name.split(' ');
+      const priceText = card?.querySelector('.muted')?.textContent || '';
+      return {
         brand: parts[0] || '',
         model: parts.slice(1).join(' ') || '',
         price: (() => {
-            const m = priceText.match(/€([\d.,]+)/);
-            return m ? Number(m[1].replace(/[.,](?=\d{3})/g,'').replace(',','.')) : null;
+          const m = priceText.match(/€([\d.,]+)/);
+          return m ? Number(m[1].replace(/[.,](?=\d{3})/g,'').replace(',','.')) : null;
         })(),
         img: card?.querySelector('img.thumb')?.getAttribute('src') || '',
         body: priceText.split('•')[0]?.trim() || '',
         fuel: '',
         gear: '',
         rating: (card?.querySelector('.pill')?.textContent||'').replace(/[^\d.]/g,'') || null
-    };
-}
-
-// Compare button clicks (delegation)
-function onCompareClick(e) {
-    if (!requireLogin('compare cars')) return;
-    
-    const btn = e.target.closest('.compare-btn');
-    if (!btn) return;
-    
-    e.preventDefault();
-    const id = btn.getAttribute('data-compare');
-    const card = btn.closest('.car-card');
-    
-    const meta = loadMeta();
-    meta[id] = meta[id] || extractCardMetadata(card);
-    
-    if (loadCompare().has(id)) {
-        removeFromCompare(id);
-    } else {
-        addToCompare(id, meta[id]);
+      };
     }
-    syncCompareButtons();
-}
 
-// Events
-els.applyBtn.addEventListener('click', () => applyFiltersNow(true));
-els.searchBtn.addEventListener('click', () => applyFiltersNow(true));
-els.searchInput.addEventListener('keydown', e => { if(e.key === 'Enter') applyFiltersNow(true); });
-els.searchInput.addEventListener('input', debounce(() => applyFiltersNow(false), 280));
-els.sortSel.addEventListener('change', () => applyFiltersNow(false));
+    // Compare clicks (delegation)
+    function onCompareClick(e) {
+      if (!requireLogin('compare cars')) return;
+      const btn = e.target.closest('.compare-btn');
+      if (!btn) return;
+      e.preventDefault();
+      const id = btn.getAttribute('data-compare');
+      const card = btn.closest('.car-card');
+      const meta = loadMeta();
+      meta[id] = meta[id] || extractCardMetadata(card);
+      if (loadCompare().has(id)) {
+        removeFromCompare(id);
+      } else {
+        addToCompare(id, meta[id]);
+      }
+      syncCompareButtons();
+    }
 
-// Heart clicks (delegation)
-function onHeartClick(e) {
-    const btn = e.target.closest('.heart-btn');
-    if (!btn) return;
-    e.preventDefault();
-    toggleWishlist(btn.dataset.id);
-}
-els.grid.addEventListener('click', onHeartClick);
-els.track.addEventListener('click', onHeartClick);
+    // Events
+    els.applyBtn.addEventListener('click', () => applyFiltersNow(true));
+    els.searchBtn.addEventListener('click', () => applyFiltersNow(true));
+    els.searchInput.addEventListener('keydown', e => { if(e.key === 'Enter') applyFiltersNow(true); });
+    els.searchInput.addEventListener('input', debounce(() => applyFiltersNow(false), 280));
+    els.sortSel.addEventListener('change', () => applyFiltersNow(false));
 
-// Compare clicks (delegation)
-els.grid.addEventListener('click', onCompareClick);
-els.track.addEventListener('click', onCompareClick);
+    // Heart clicks (delegation)
+    function onHeartClick(e) {
+      const btn = e.target.closest('.heart-btn');
+      if (!btn) return;
+      e.preventDefault();
+      toggleWishlist(btn.dataset.id);
+    }
+    els.grid.addEventListener('click', onHeartClick);
+    els.track.addEventListener('click', onHeartClick);
 
-// Card open (delegation) - works for current and future cards
-function onCardActivate(e, root) {
-    if (e.type === 'click' && (e.target.closest('.heart-btn') || e.target.closest('.compare-btn'))) return;
-    const card = e.target.closest('.car-card');
-    if (!card || !root.contains(card)) return;
-    openCarById(card.dataset.id);
-}
-els.grid.addEventListener('click', (e) => onCardActivate(e, els.grid));
-els.track.addEventListener('click', (e) => onCardActivate(e, els.track));
-els.grid.addEventListener('keydown', (e) => { if (e.key === 'Enter') onCardActivate(e, els.grid); });
-els.track.addEventListener('keydown', (e) => { if (e.key === 'Enter') onCardActivate(e, els.track); });
+    // Compare clicks (delegation)
+    els.grid.addEventListener('click', onCompareClick);
+    els.track.addEventListener('click', onCompareClick);
 
-// Sticky bar actions
-document.getElementById('compareChips').addEventListener('click', (e) => {
-    const x = e.target.closest('.x');
-    if (!x) return;
-    const id = x.closest('.chip').dataset.id;
-    removeFromCompare(id);
-    syncCompareButtons();
-});
+    // Card open (delegation)
+    function onCardActivate(e, root) {
+      if (e.type === 'click' && (e.target.closest('.heart-btn') || e.target.closest('.compare-btn'))) return;
+      const card = e.target.closest('.car-card');
+      if (!card || !root.contains(card)) return;
+      openCarById(card.dataset.id);
+    }
+    els.grid.addEventListener('click', (e) => onCardActivate(e, els.grid));
+    els.track.addEventListener('click', (e) => onCardActivate(e, els.track));
+    els.grid.addEventListener('keydown', (e) => { if (e.key === 'Enter') onCardActivate(e, els.grid); });
+    els.track.addEventListener('keydown', (e) => { if (e.key === 'Enter') onCardActivate(e, els.track); });
 
-document.getElementById('compareClearBtn').addEventListener('click', () => {
-    saveCompare(new Set());
-    saveMeta({});
-    syncCompareButtons();
-});
+    // Sticky bar actions
+    document.getElementById('compareChips').addEventListener('click', (e) => {
+      const x = e.target.closest('.x');
+      if (!x) return;
+      const id = x.closest('.chip').dataset.id;
+      removeFromCompare(id);
+      syncCompareButtons();
+    });
+    document.getElementById('compareClearBtn').addEventListener('click', () => {
+      saveCompare(new Set());
+      saveMeta({});
+      syncCompareButtons();
+    });
+    document.getElementById('compareGoBtn').addEventListener('click', () => {
+      const n = loadCompare().size;
+      if (n < 2) { alert('Add minimum of 2 cars to compare'); return; }
+      location.href = buildCompareUrl();
+    });
 
-document.getElementById('compareGoBtn').addEventListener('click', () => {
-    location.href = buildCompareUrl();
-});
-
-    // Wishlist dropdown
+    // Wishlist dropdown interactions
     $('#wishlistBtn').addEventListener('click', ()=>{
       const open = $('#wishlist').classList.toggle('open');
       $('#wishlistBtn').setAttribute('aria-expanded', open?'true':'false');
@@ -943,10 +1052,12 @@ document.getElementById('compareGoBtn').addEventListener('click', () => {
     document.addEventListener('keydown', e=>{
       if(e.key==='Escape'){ $('#wishlist').classList.remove('open'); $('#wishlistBtn').setAttribute('aria-expanded','false'); }
     });
-    // Remove from dropdown
+    // Remove/open from dropdown
     els.wishlistItems.addEventListener('click', e=>{
-      const btn=e.target.closest('[data-remove]'); if(!btn) return;
-      toggleWishlist(btn.getAttribute('data-remove'));
+      const removeBtn=e.target.closest('[data-remove]');
+      if (removeBtn) { toggleWishlist(removeBtn.getAttribute('data-remove')); return; }
+      const item = e.target.closest('.wish-item');
+      if (item) { openCarById(item.getAttribute('data-id')); }
     });
     // Clear all wishlist
     els.clearWishlist.addEventListener('click', ()=>{
@@ -959,7 +1070,7 @@ document.getElementById('compareGoBtn').addEventListener('click', () => {
       buildWishlistMenu();
       applyFiltersNow(false);
       syncHeartButtons();
-      syncCompareButtons(); // ensure buttons/bar reflect stored state
+      syncCompareButtons();
       updateCompareBadge();
       buildCompareMenu();
     })();
