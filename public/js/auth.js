@@ -9,7 +9,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const USER_API   = '/api/user';
   const LOGOUT_URL = '/logout';
-  const LOGIN_URL  = '/login';
+  const LOGIN_URL  = '/login.html';
 
   const $ = (s, r = document) => r.querySelector(s);
 

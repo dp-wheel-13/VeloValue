@@ -5,27 +5,27 @@
     <title>VeloValue • VeloCharge: Real Stations Near Me</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Fonts (match previous pages) -->
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
 
     <!-- Mapbox GL CSS -->
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
 
     <style>
-      :root { --header-h: 64px; } /* Fallback, updated dynamically via JS */
+      :root { --header-h: 64px; }
 
       /* ===== Reset / Global ===== */
       * { box-sizing: border-box; margin: 0; padding: 0; }
       html, body { height: 100%; }
       body {
         background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
-        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; /* match previous */
+        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         color: #fff;
         padding-top: var(--header-h);
-        font-size: 16px; /* match previous base size */
+        font-size: 16px;
       }
 
-      /* ===== Header (responsive) ===== */
+      /* ===== Header ===== */
       header {
         position: fixed;
         top: 0; left: 0; width: 100%;
@@ -43,30 +43,19 @@
       header h1 { font-size: 24px; font-weight: 800; margin: 0; }
       header h1 a { color: white; text-decoration: none; }
 
-      /* Desktop nav */
       nav.desktop-nav { display: flex; align-items: center; gap: 20px; }
       nav.desktop-nav a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; white-space: nowrap; }
       nav.desktop-nav a:hover { text-decoration: underline; }
 
-      /* Language select */
       .language-select { position: relative; }
       .language-select select {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background: #111;
-        color: #fff;
-        border: 1px solid #fff;
-        border-radius: 6px;
-        padding: 4px 8px;
-        font-size: 14px;
-        cursor: pointer;
+        -webkit-appearance: none; -moz-appearance: none; appearance: none;
+        background: #111; color: #fff; border: 1px solid #fff; border-radius: 6px;
+        padding: 4px 8px; font-size: 14px; cursor: pointer;
       }
 
-      /* Auth button (desktop) */
       #authSection .text-btn {
-        display: inline-flex;
-        align-items: center; justify-content: center;
+        display: inline-flex; align-items: center; justify-content: center;
         background: #fff; color: #111;
         border: 1px solid #333; border-radius: 20px;
         padding: 6px 12px; font-weight: 600; cursor: pointer;
@@ -75,35 +64,27 @@
       #authSection .text-btn:hover { background: #444; color: #fff; }
       #authSection .icon-btn { display: none; }
 
-      /* Hamburger (hidden on desktop) */
       .hamburger {
-        font-size: 1.8rem;
-        background: none; border: none; color: #fff; cursor: pointer;
-        display: none; align-items: center; justify-content: center;
-        width: 40px; height: 40px;
+        font-size: 1.8rem; background: none; border: none; color: #fff; cursor: pointer;
+        display: none; align-items: center; justify-content: center; width: 40px; height: 40px;
       }
 
-      /* Mobile drawer menu */
       .menu {
         position: fixed; top: 0; left: -300px;
         width: 300px; height: 100vh;
         background: rgba(17,17,17,0.95);
         border-right: 1px solid rgba(255,255,255,0.12);
-        padding: 5.5rem 2rem 2rem;  /* space for close X */
+        padding: 5.5rem 2rem 2rem;
         display: flex; flex-direction: column; gap: 2rem;
-        transition: left 0.3s ease;
-        z-index: 2100;
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
+        transition: left 0.3s ease; z-index: 2100;
+        -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
         border-radius: 0 1rem 1rem 0;
       }
       .menu.active { left: 0; }
       .menu a { color: #fff; font-size: 1.4rem; font-weight: 800; text-decoration: none; }
 
-      /* In-drawer close X */
       .menu .menu-close {
-        position: absolute; top: 1rem; right: 1rem;
-        width: 2.25rem; height: 2.25rem;
+        position: absolute; top: 1rem; right: 1rem; width: 2.25rem; height: 2.25rem;
         background: none; border: 0; color: #fff; cursor: pointer;
       }
       .menu .menu-close::before, .menu .menu-close::after {
@@ -113,19 +94,16 @@
       .menu .menu-close::before { transform: translate(-50%, -50%) rotate(45deg); }
       .menu .menu-close::after  { transform: translate(-50%, -50%) rotate(-45deg); }
 
-      /* Overlay */
       .menu-overlay {
         position: fixed; inset: 0; background: rgba(0,0,0,0.5);
         opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 2050;
       }
       .menu-overlay.active { opacity: 1; pointer-events: auto; }
 
-      /* Mobile behavior: show hamburger, hide desktop nav; morph hamburger to X; language as icon */
       @media (max-width: 1024px) {
         nav.desktop-nav { display: none; }
         .hamburger { display: flex; }
 
-        /* Morph hamburger to X */
         .hamburger { position: relative; font-size: 0; }
         .hamburger::before, .hamburger::after {
           content: ""; position: absolute; left: 50%;
@@ -139,7 +117,6 @@
         .hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
         .hamburger.is-active::after  { top: 50%; transform: translateX(-50%) rotate(-45deg); }
 
-        /* Auth button: icon on mobile */
         #authSection .text-btn { display: none; }
         #authSection .icon-btn {
           display: inline-flex; align-items: center; justify-content: center;
@@ -149,7 +126,6 @@
         }
         #authSection .icon-btn:active { transform: scale(0.95); }
 
-        /* Language becomes circular icon */
         .language-select {
           width: 40px; height: 40px; border-radius: 50%;
           background: #111; border: 1px solid #fff;
@@ -180,28 +156,27 @@
         box-shadow: 0 10px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
         border: 1px solid rgba(255,255,255,.12);
         font: 14px system-ui; cursor: pointer; display: none;
-        z-index: 900; /* above map, below header */
+        z-index: 900;
       }
       .search-area:hover { border-color: rgba(242,201,76,.35); }
 
       .credit {
         position: fixed; bottom: 8px; left: 8px;
         background: rgba(255,255,255,.9); padding: 4px 8px; border-radius: 4px;
-        font: 12px system-ui; color: #111;
-        z-index: 900;
+        font: 12px system-ui; color: #111; z-index: 900;
       }
 
       .popup { font: 13px system-ui; color: #111; }
       .popup .name { font-weight: 600; margin-bottom: 4px; }
 
-      /* ===== Left Filter Panel: desktop as left card ===== */
+      /* ===== Left Filter Panel ===== */
       .left-panel {
         position: fixed;
         top: calc(var(--header-h) + 12px);
         left: 12px;
         width: 360px;
         max-width: calc(100% - 24px);
-        z-index: 950; /* below header(1000), above map/search(900) */
+        z-index: 950;
         padding: 18px 18px 20px;
         border-radius: 24px;
         border: 1px solid transparent;
@@ -229,7 +204,6 @@
         text-align: left;
       }
 
-      /* Accordion base */
       .accordion {
         margin: 16px 6px;
         border-radius: 20px;
@@ -243,13 +217,8 @@
       }
       .accordion:hover { transform: translateY(-1px); box-shadow: 0 18px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07); }
       .accordion-header {
-        position: relative;
-        padding: 18px 24px;
-        font-size: 16px;
-        font-weight: 700;
-        color: #f5f5f5;
-        display: flex; justify-content: space-between; align-items: center;
-        cursor: pointer;
+        position: relative; padding: 18px 24px; font-size: 16px; font-weight: 700; color: #f5f5f5;
+        display: flex; justify-content: space-between; align-items: center; cursor: pointer;
         background:
           linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,0)),
           linear-gradient(160deg, rgba(20,22,28,0.85), rgba(14,15,20,0.9));
@@ -277,7 +246,6 @@
       }
       .accordion.open .accordion-content { max-height: 800px; padding: 16px 24px 18px; opacity: 1; }
 
-      /* Inputs & helpers */
       .filter-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 10px 0; }
       .filter-row label { font-size: 14px; color: #f5f5f5; font-weight: 600; }
       .pill {
@@ -299,7 +267,6 @@
 
       input[type="checkbox"], input[type="radio"] { accent-color: #f2c94c; }
 
-      /* Range slider styling + fill */
       input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: transparent; margin-top: 8px; }
       input[type="range"]::-webkit-slider-runnable-track {
         height: 8px; border-radius: 999px;
@@ -320,25 +287,21 @@
         box-shadow: 0 2px 8px rgba(242,201,76,0.5);
       }
 
-      /* Legend dots */
       .legend-item { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
       .legend-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.9); }
       .dot-green { background:#2ecc71; }
       .dot-amber { background:#f39c12; }
 
-      /* ===== Mobile: turn filters into bottom sheet ===== */
+      /* ===== Mobile bottom sheet ===== */
       .sheet-overlay {
         position: fixed; inset: 0; background: rgba(0,0,0,0.45);
         opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 940;
       }
       .sheet-overlay.active { opacity: 1; pointer-events: auto; }
 
-      .sheet-handle {
-        display: none;
-      }
+      .sheet-handle { display: none; }
 
       @media (max-width: 900px) {
-        /* Bottom sheet positioning */
         .left-panel {
           top: auto; bottom: 0; left: 50%;
           transform: translateX(-50%);
@@ -348,7 +311,6 @@
         }
         .panel-title { text-align: center; margin-top: 18px; }
 
-        /* Handle to drag/tap */
         .sheet-handle {
           display: block;
           position: absolute;
@@ -358,21 +320,9 @@
           background: rgba(255,255,255,.3);
         }
 
-        /* Collapsed: show only 2-3 filters */
-        .left-panel.sheet-collapsed .panel-scroll {
-          max-height: clamp(160px, 28vh, 320px);
-          overflow: hidden;
-        }
-
-        /* Expanded: fullscreen bottom sheet (leaving header space) */
-        .left-panel.sheet-open {
-          height: calc(100vh - var(--header-h));
-          max-height: calc(100vh - var(--header-h));
-        }
-        .left-panel.sheet-open .panel-scroll {
-          max-height: calc(100vh - var(--header-h) - 80px);
-          overflow: auto;
-        }
+        .left-panel.sheet-collapsed .panel-scroll { max-height: clamp(160px, 28vh, 320px); overflow: hidden; }
+        .left-panel.sheet-open { height: calc(100vh - var(--header-h)); max-height: calc(100vh - var(--header-h)); }
+        .left-panel.sheet-open .panel-scroll { max-height: calc(100vh - var(--header-h) - 80px); overflow: auto; }
       }
     </style>
   </head>
@@ -439,14 +389,10 @@
               </div>
 
               <div style="margin-top: 12px; font-weight:700;">Networks</div>
-              <div id="networksList" class="list-compact" style="margin-top:8px;">
-                <!-- dynamically populated -->
-              </div>
+              <div id="networksList" class="list-compact" style="margin-top:8px;"></div>
 
               <div style="margin-top: 12px; font-weight:700;">Connector types</div>
-              <div id="connectorsList" class="list-compact" style="margin-top:8px;">
-                <!-- dynamically populated -->
-              </div>
+              <div id="connectorsList" class="list-compact" style="margin-top:8px;"></div>
 
               <div style="margin-top: 12px; font-weight:700;">Cost</div>
               <div class="filter-row">
@@ -469,48 +415,20 @@
           </div>
         </div>
 
-        <!-- Simple headers for additional sections -->
-        <div class="accordion" id="paywithvelovalueAccordion">
-          <div class="accordion-header">Pay with VeloValue</div>
-          <div class="accordion-content"></div>
-        </div>
-        <div class="accordion" id="addstation">
-          <div class="accordion-header">Add Station</div>
-          <div class="accordion-content"></div>
-        </div>
-        <div class="accordion" id="tripplanner">
-          <div class="accordion-header">Trip Planner</div>
-          <div class="accordion-content"></div>
-        </div>
-        <div class="accordion" id="recentactivity">
-          <div class="accordion-header">Recent Activity</div>
-          <div class="accordion-content"></div>
-        </div>
-        <div class="accordion" id="settings">
-          <div class="accordion-header">Settings</div>
-          <div class="accordion-content"></div>
-        </div>
-        <div class="accordion" id="help">
-          <div class="accordion-header">Help</div>
-          <div class="accordion-content"></div>
-        </div>
-        <div class="accordion" id="submitfeedback">
-          <div class="accordion-header">Submit Feedback</div>
-          <div class="accordion-content"></div>
-        </div>
-        <div class="accordion" id="velovaluestore">
-          <div class="accordion-header">VeloValue Store</div>
-          <div class="accordion-content"></div>
-        </div>
-        <div class="accordion" id="downloadtheapp">
-          <div class="accordion-header">Download the App</div>
-          <div class="accordion-content"></div>
-        </div>
+        <!-- Other sections (placeholders) -->
+        <div class="accordion" id="paywithvelovalueAccordion"><div class="accordion-header">Pay with VeloValue</div><div class="accordion-content"></div></div>
+        <div class="accordion" id="addstation"><div class="accordion-header">Add Station</div><div class="accordion-content"></div></div>
+        <div class="accordion" id="tripplanner"><div class="accordion-header">Trip Planner</div><div class="accordion-content"></div></div>
+        <div class="accordion" id="recentactivity"><div class="accordion-header">Recent Activity</div><div class="accordion-content"></div></div>
+        <div class="accordion" id="settings"><div class="accordion-header">Settings</div><div class="accordion-content"></div></div>
+        <div class="accordion" id="help"><div class="accordion-header">Help</div><div class="accordion-content"></div></div>
+        <div class="accordion" id="submitfeedback"><div class="accordion-header">Submit Feedback</div><div class="accordion-content"></div></div>
+        <div class="accordion" id="velovaluestore"><div class="accordion-header">VeloValue Store</div><div class="accordion-content"></div></div>
+        <div class="accordion" id="downloadtheapp"><div class="accordion-header">Download the App</div><div class="accordion-content"></div></div>
 
       </div>
     </aside>
 
-    <!-- Sheet overlay (for mobile when expanded) -->
     <div class="sheet-overlay" id="sheetOverlay"></div>
 
     <!-- Map + UI -->
@@ -522,7 +440,7 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
 
     <script>
-      // Dynamically set CSS var for header height (handles responsive changes)
+      // Dynamically set CSS var for header height
       function setHeaderHeightVar() {
         const header = document.querySelector('header');
         const h = header ? header.offsetHeight : 64;
@@ -533,7 +451,7 @@
     </script>
 
     <script>
-      // Responsive header: hamburger toggle + auth button swap + language icon on mobile
+      // Header/menu/auth responsiveness
       const hamburger = document.querySelector('.hamburger');
       const menu = document.getElementById('hamburgerMenu');
       const overlay = document.querySelector('.menu-overlay');
@@ -580,7 +498,7 @@
     </script>
 
     <script>
-      // Bottom sheet logic for filters (mobile)
+      // Bottom sheet logic
       const leftPanel = document.querySelector('.left-panel');
       const sheetHandle = document.getElementById('sheetHandle');
       const sheetOverlay = document.getElementById('sheetOverlay');
@@ -599,48 +517,45 @@
       }
       function updateSheetMode() {
         if (window.innerWidth <= 900) {
-          // Enable sheet (collapsed) on mobile
           if (!leftPanel.classList.contains('sheet-open')) {
             leftPanel.classList.add('sheet-collapsed');
           }
         } else {
-          // Desktop: ensure sheet classes removed
           leftPanel.classList.remove('sheet-open', 'sheet-collapsed');
           sheetOverlay.classList.remove('active');
           sheetHandle.setAttribute('aria-expanded', 'false');
         }
       }
-      // Init
       updateSheetMode();
 
-      // Toggle by handle and overlay
       sheetHandle.addEventListener('click', () => {
         if (leftPanel.classList.contains('sheet-open')) closeSheet();
         else openSheet();
       });
       sheetOverlay.addEventListener('click', closeSheet);
 
-      // Also close sheet when opening hamburger menu (optional)
       hamburger.addEventListener('click', () => {
         if (leftPanel.classList.contains('sheet-open')) closeSheet();
       });
     </script>
 
     <script>
-      // Map + OCM + Filters
+      // ===== Map + OCM + Filters + Custom Markers + User Geolocation =====
       mapboxgl.accessToken = 'pk.eyJ1IjoidmVsb3ZhbHVlIiwiYSI6ImNtZ2NzYm02azE4em0ybHI1djQxaHQ3OG4ifQ.Vw4oGZE7eDxW1e-bJDdypA';
-      const OCM_API_KEY = 'YOUR_OCM_API_KEY'; // get one at openchargemap.org
+      const OCM_API_KEY = "c1d74dad-71ca-4e23-9df6-401af3b84071"; // OpenChargeMap key
 
-      const defaultCenter = [77.5946, 12.9716];
+      // Start with Italy (Rome) as a nicer fallback than Bangalore
+      const fallbackCenter = [12.4964, 41.9028];
       const map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v12', // change to 'mapbox://styles/mapbox/dark-v11' for full dark theme
-        center: defaultCenter,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: fallbackCenter,
         zoom: 12
       });
 
       map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
+      // Geolocate control (for re-centering)
       const geolocate = new mapboxgl.GeolocateControl({
         positionOptions: { enableHighAccuracy: true, timeout: 10000 },
         trackUserLocation: false,
@@ -656,21 +571,60 @@
       const filterState = {
         operationalOnly: false,
         minKw: 0,
-        networks: new Set(),     // string titles
-        connectors: new Set(),   // string titles
-        cost: 'all'              // 'all' | 'free' | 'paid'
+        networks: new Set(),
+        connectors: new Set(),
+        cost: 'all'
       };
 
+      // Load a custom SDF pin (so we can tint by status)
+      const PIN_SVG = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+          <path d="M32 2C18.75 2 8 12.75 8 26c0 16.5 18.25 33.25 22.9 37.5a2.5 2.5 0 0 0 3.2 0C37.75 59.25 56 42.5 56 26 56 12.75 45.25 2 32 2zM32 36a10 10 0 1 1 0-20 10 10 0 0 1 0 20z" fill="white"/>
+        </svg>`;
+      const pinURL = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(PIN_SVG);
+
       map.on('load', () => {
-        addStationsLayers();
-        initAccordions();
-        initFiltersUI();
-        geolocate.trigger(); // auto-jump to user
+        geolocate.trigger(); 
+        // Add SDF image so we can use icon-color
+        map.loadImage('/Multimedia/charger.png', (err, image) => {
+          if (!err && !map.hasImage('charger-pin')) {
+            map.addImage('charger-pin', image, { sdf: true });
+          }
+          addStationsLayers();
+          initAccordions();
+          initFiltersUI();
+
+          // Try immediate browser geolocation (no API key required)
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                const userLng = pos.coords.longitude;
+                const userLat = pos.coords.latitude;
+                map.jumpTo({ center: [userLng, userLat], zoom: 13 });
+                refreshStations(); // fetch around user
+              },
+              (err) => {
+                console.warn('Geolocation error:', err);
+                refreshStations();      // fetch around fallback
+              },
+              { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+            );
+          } else {
+            refreshStations();
+          }
+        });
       });
 
-      geolocate.once('geolocate', () => {
-        refreshStations();
-      });
+      geolocate.on('geolocate', (pos) => {
+  const userLng = pos.coords.longitude;
+  const userLat = pos.coords.latitude;
+
+  // center map + show blue dot
+  map.jumpTo({ center: [userLng, userLat], zoom: 13 });
+
+  refreshStations();
+});
+
 
       map.on('moveend', () => {
         searchBtn.style.display = 'block';
@@ -681,56 +635,72 @@
       });
 
       function addStationsLayers() {
-        map.addSource('stations', {
-          type: 'geojson',
-          data: emptyGeoJSON(),
-          cluster: true,
-          clusterRadius: 60,
-          clusterMaxZoom: 14
-        });
+        if (!map.getSource('stations')) {
+          map.addSource('stations', {
+            type: 'geojson',
+            data: emptyGeoJSON(),
+            cluster: true,
+            clusterRadius: 60,
+            clusterMaxZoom: 14
+          });
+        }
 
-        map.addLayer({
-          id: 'clusters',
-          type: 'circle',
-          source: 'stations',
-          filter: ['has', 'point_count'],
-          paint: {
-            'circle-color': [
-              'step', ['get', 'point_count'],
-              '#68B5FB', 10,
-              '#3A8EE6', 50,
-              '#1F6FDB', 100,
-              '#1254B3'
-            ],
-            'circle-radius': [
-              'step', ['get', 'point_count'],
-              16, 10, 22, 50, 28, 100, 34
-            ]
-          }
-        });
+        // Cluster circles
+        if (!map.getLayer('clusters')) {
+          map.addLayer({
+            id: 'clusters',
+            type: 'circle',
+            source: 'stations',
+            filter: ['has', 'point_count'],
+            paint: {
+              'circle-color': [
+                'step', ['get', 'point_count'],
+                '#68B5FB', 10,
+                '#3A8EE6', 50,
+                '#1F6FDB', 100,
+                '#1254B3'
+              ],
+              'circle-radius': [
+                'step', ['get', 'point_count'],
+                16, 10, 22, 50, 28, 100, 34
+              ]
+            }
+          });
+        }
 
-        map.addLayer({
-          id: 'cluster-count',
-          type: 'symbol',
-          source: 'stations',
-          filter: ['has', 'point_count'],
-          layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12 },
-          paint: { 'text-color': '#fff' }
-        });
+        if (!map.getLayer('cluster-count')) {
+          map.addLayer({
+            id: 'cluster-count',
+            type: 'symbol',
+            source: 'stations',
+            filter: ['has', 'point_count'],
+            layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12 },
+            paint: { 'text-color': '#fff' }
+          });
+        }
 
-        map.addLayer({
-          id: 'unclustered',
-          type: 'circle',
-          source: 'stations',
-          filter: ['!', ['has', 'point_count']],
-          paint: {
-            'circle-color': ['case', ['get', 'has_available'], '#2ecc71', '#f39c12'],
-            'circle-radius': 7,
-            'circle-stroke-width': 1.5,
-            'circle-stroke-color': '#fff'
-          }
-        });
+        // Unclustered: custom SDF pin symbol with color by status
+        if (!map.getLayer('unclustered-symbol')) {
+          map.addLayer({
+            id: 'unclustered-symbol',
+            type: 'symbol',
+            source: 'stations',
+            filter: ['!', ['has', 'point_count']],
+            layout: {
+              'icon-image': 'charger-pin',
+              'icon-size': 0.9,
+              'icon-allow-overlap': true,
+              'icon-anchor': 'bottom'
+            },
+            paint: {
+              // Green if has_available true, else amber
+              'icon-color': ['case', ['get', 'has_available'], '#2ecc71', '#f39c12'],
+              'icon-opacity': 0.95
+            }
+          });
+        }
 
+        // Cluster expand on click
         map.on('click', 'clusters', (e) => {
           const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
           const clusterId = features[0].properties.cluster_id;
@@ -740,7 +710,9 @@
           });
         });
 
-        map.on('click', 'unclustered', (e) => {
+        // Popups for stations
+        const popupLayer = 'unclustered-symbol';
+        map.on('click', popupLayer, (e) => {
           const f = e.features[0];
           const p = f.properties;
           const html = `
@@ -748,7 +720,7 @@
               <div class="name">${p.name}</div>
               <div>${p.network || '—'} • ${p.max_power ? p.max_power + ' kW' : 'kW ?'} • ${p.total_connectors || '?'} ports</div>
               <div>${p.has_available ? '✅ Operational' : '⚠️ Unknown'} ${p.usage_cost ? '• ' + p.usage_cost : ''}</div>
-              ${Array.isArray(p.connectors) && p.connectors.length ? `<div style="margin-top:6px; font-size:12px; color:#333;">${p.connectors.join(', ')}</div>` : ''}
+              ${Array.isArray(p.connectors) && p.connectors.length ? `<div style="margin-top:6px; font-size:12px; color:#333;">${JSON.parse(p.connectors).join(', ')}</div>` : ''}
             </div>`;
           new mapboxgl.Popup({ offset: 12 })
             .setLngLat(f.geometry.coordinates)
@@ -758,8 +730,8 @@
 
         map.on('mouseenter', 'clusters', () => map.getCanvas().style.cursor = 'pointer');
         map.on('mouseleave', 'clusters', () => map.getCanvas().style.cursor = '');
-        map.on('mouseenter', 'unclustered', () => map.getCanvas().style.cursor = 'pointer');
-        map.on('mouseleave', 'unclustered', () => map.getCanvas().style.cursor = '');
+        map.on('mouseenter', 'unclustered-symbol', () => map.getCanvas().style.cursor = 'pointer');
+        map.on('mouseleave', 'unclustered-symbol', () => map.getCanvas().style.cursor = '');
       }
 
       function emptyGeoJSON() {
@@ -768,7 +740,7 @@
 
       async function refreshStations() {
         const center = map.getCenter();
-        const radiusKm = clamp(approxRadiusKm(map), 2, 25); // fetch ~viewport radius, 2–25 km
+        const radiusKm = clamp(approxRadiusKm(map), 2, 25);
         const geojson = await fetchOCMStations(center.lng, center.lat, radiusKm);
         allStationsGeoJSON = geojson;
 
@@ -838,9 +810,13 @@
                 network: ops.Title || null,
                 max_power: maxPower,
                 total_connectors: totalConnectors || conns.length || null,
-                has_available: status.IsOperational === true, // operational, not real-time availability
+                has_available:
+                status.IsOperational === true ||
+                status.ID === 50 ||    // Operational
+                status.ID === 75,      // Partially operational (optional)status.IsOperational === true,
                 usage_cost: item.UsageCost || null,
-                connectors: connectorTitles
+                // store connectors as JSON string to pass safely into popup (Mapbox props must be string/number/bool)
+                connectors: JSON.stringify(connectorTitles)
               }
             };
           }).filter(f =>
@@ -866,7 +842,6 @@
         const operational = document.getElementById('filterOperational');
         const resetBtn = document.getElementById('resetFiltersBtn');
 
-        // Range fill paint
         function paintRangeFill(el) {
           const percent = (100 * (el.value - el.min)) / (el.max - el.min);
           el.style.setProperty('--fill', percent + '%');
@@ -891,7 +866,6 @@
           }
         });
 
-        // Delegated handling for dynamic checkboxes
         document.getElementById('networksList').addEventListener('change', (e) => {
           if (e.target && e.target.type === 'checkbox') {
             const val = e.target.value;
@@ -910,31 +884,26 @@
         });
 
         resetBtn.addEventListener('click', () => {
-  filterState.operationalOnly = false;
-  filterState.minKw = 0;
-  filterState.networks.clear();
-  filterState.connectors.clear();
-  filterState.cost = 'all';
+          filterState.operationalOnly = false;
+          filterState.minKw = 0;
+          filterState.networks.clear();
+          filterState.connectors.clear();
+          filterState.cost = 'all';
 
-  operational.checked = false;
-  minKw.value = 0;
-  minKwValue.textContent = '0';
-  paintRangeFill(minKw);
+          operational.checked = false;
+          minKw.value = 0;
+          minKwValue.textContent = '0';
+          paintRangeFill(minKw);
 
-  document.querySelectorAll('input[name="cost"]').forEach(r => {
-    r.checked = (r.value === 'all');
-  });
+          document.querySelectorAll('input[name="cost"]').forEach(r => {
+            r.checked = (r.value === 'all');
+          });
 
-  document.querySelectorAll('#networksList input[type="checkbox"]').forEach(cb => {
-    cb.checked = false;
-  });
+          document.querySelectorAll('#networksList input[type="checkbox"]').forEach(cb => { cb.checked = false; });
+          document.querySelectorAll('#connectorsList input[type="checkbox"]').forEach(cb => { cb.checked = false; });
 
-  document.querySelectorAll('#connectorsList input[type="checkbox"]').forEach(cb => {
-    cb.checked = false;
-  });
-
-  applyFilters();
-});
+          applyFilters();
+        });
       }
 
       function populateDynamicFilterOptions() {
@@ -944,11 +913,8 @@
         for (const f of allStationsGeoJSON.features) {
           const p = f.properties || {};
           if (p.network) nets.set(p.network, (nets.get(p.network) || 0) + 1);
-          if (Array.isArray(p.connectors)) {
-            p.connectors.forEach(t => {
-              cons.set(t, (cons.get(t) || 0) + 1);
-            });
-          }
+          const connList = JSON.parse(p.connectors || '[]');
+          connList.forEach(t => cons.set(t, (cons.get(t) || 0) + 1));
         }
 
         const networksList = document.getElementById('networksList');
@@ -981,6 +947,7 @@
           type: 'FeatureCollection',
           features: allStationsGeoJSON.features.filter(f => {
             const p = f.properties || {};
+            const connectorsArr = JSON.parse(p.connectors || '[]');
 
             if (filterState.operationalOnly && !p.has_available) return false;
             if (filterState.minKw && (p.max_power || 0) < filterState.minKw) return false;
@@ -998,8 +965,7 @@
               if (!net || !filterState.networks.has(net)) return false;
             }
             if (filterState.connectors.size > 0) {
-              const list = Array.isArray(p.connectors) ? p.connectors : [];
-              const hit = list.some(t => filterState.connectors.has(t));
+              const hit = connectorsArr.some(t => filterState.connectors.has(t));
               if (!hit) return false;
             }
 

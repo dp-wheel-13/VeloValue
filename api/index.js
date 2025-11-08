@@ -50,26 +50,48 @@ const Translation = mongoose.model("Translation", translationSchema);
 // ------------------- API ROUTES -------------------
 
 // Translation
+// ✅ Batch Translation Route (compatible with new frontend)
 app.post("/api/translate", async (req, res) => {
   try {
-    const { text, targetLang } = req.body;
-    if (!text || !targetLang) return res.status(400).json({ error: "Missing text or target language" });
+    const { texts, targetLang } = req.body;
 
-    const cached = await Translation.findOne({ text, targetLang });
-    if (cached) return res.json({ translatedText: cached.translatedText, source: "cache" });
+    if (!texts || !Array.isArray(texts) || texts.length === 0) {
+      return res.status(400).json({ error: "Missing texts array" });
+    }
 
-    const deeplRes = await axios.post(
-      "https://api-free.deepl.com/v2/translate",
-      new URLSearchParams({ auth_key: process.env.DEEPL_API_KEY, text, target_lang: targetLang.toUpperCase() }),
-      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-    );
+    const translations = {};
 
-    const translatedText = deeplRes.data.translations[0].text;
-    await Translation.create({ text, targetLang, translatedText });
-    res.json({ translatedText, source: "deepl" });
+    for (const text of texts) {
+      // 1. Check cache
+      const cached = await Translation.findOne({ text, targetLang });
+      if (cached) {
+        translations[text] = cached.translatedText;
+        continue;
+      }
+
+      // 2. Call DeepL
+      const deeplRes = await axios.post(
+        "https://api-free.deepl.com/v2/translate",
+        new URLSearchParams({
+          auth_key: process.env.DEEPL_API_KEY,
+          text,
+          target_lang: targetLang.toUpperCase(),
+        }),
+        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+      );
+
+      const translatedText = deeplRes.data.translations[0].text;
+      translations[text] = translatedText;
+
+      // 3. Store in database
+      await Translation.create({ text, targetLang, translatedText });
+    }
+
+    return res.json({ translations });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Translation failed" });
+    console.error("Translation error:", err);
+    res.status(500).json({ translations: {} });
   }
 });
 

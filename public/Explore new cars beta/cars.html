@@ -6,15 +6,15 @@
   <title>VeloValue – Car Details</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
   <style>
-    :root { --bg:#000; --text:#fff; --accent:#1db954; --radius-xl:18px; --radius-lg:14px; --shadow-1:0 8px 24px rgba(0,0,0,.45); --shadow-2:0 18px 50px rgba(0,0,0,.55); }
+    :root { --bg:#000; --text:#fff; --accent:#1db954; --radius-xl:18px; --radius-lg:14px; --shadow-1:0 8px 24px rgba(0,0,0,.45); --shadow-2:0 18px 50px rgba(0,0,0,.55); --header-offset: 0px; }
 
     *{ margin:0; padding:0; box-sizing:border-box; }
     html{ scroll-behavior:smooth; }
     html,body{ height:100%; }
-    body{ font-family:'Inter',sans-serif; line-height:1.35; background: var(--bg); color: var(--text); }
+    body{ font-family:'Inter',sans-serif; line-height:1.35; background: var(--bg); color: var(--text); padding-top: var(--header-offset); }
     a{ color: var(--text); }
 
-    /* Header */
+    /* Original header (kept, overridden below) */
     header{ position:sticky; top:0; left:0; width:100%; padding:1rem 2rem; background:var(--bg); display:flex; justify-content:space-between; align-items:center; z-index:1000; border-bottom:1px solid rgba(255,255,255,.1); }
     header h1{ font-size:24px; font-weight:800; }
     header nav{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
@@ -42,12 +42,12 @@
     .remove-btn{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:12px; padding:6px 8px; cursor:pointer; }
 
     /* Layout */
-    .container{ width:min(1200px,94vw); margin:0 auto; padding:24px 0 40px; display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start; } /* prevent stretch */
+    .container{ width:min(1200px,94vw); margin:0 auto; padding:24px 0 40px; display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start; }
     @media (max-width:980px){ .container{ grid-template-columns: 1fr; padding:18px 0 28px; } }
     .panel{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-xl); box-shadow:var(--shadow-1); padding:22px; }
 
     /* LEFT: Image + brand/model/fuel/price */
-    .left{ position:relative; align-self:start; } /* independent height + anchor share btn */
+    .left{ position:relative; align-self:start; }
     .left .car-header{ display:flex; align-items:center; gap:18px; margin-bottom:14px; }
     .car-logo{ width:90px; height:90px; border-radius:12px; object-fit:contain; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); padding:8px; }
     .title-stack{ display:flex; flex-direction:column; gap:4px; }
@@ -56,7 +56,7 @@
     .pill{ display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border:1px solid rgba(255,255,255,.2); border-radius:999px; background:transparent; font-weight:700; width:max-content; }
     .price{ margin-top:8px; font-size:18px; font-weight:800; }
 
-    .hero-wrap{ position:relative; width:100%; max-width:720px; margin:10px auto 0; height:420px; } /* fixed box */
+    .hero-wrap{ position:relative; width:100%; max-width:720px; margin:10px auto 0; height:420px; }
     .hero{ width:100%; height:100%; border-radius:16px; display:block; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.02); box-shadow:var(--shadow-1); object-fit:contain; }
     .img-heart{ position:absolute; top:10px; right:10px; width:40px; height:40px; border-radius:999px; display:grid; place-items:center; background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.25); color:var(--text); cursor:pointer; transition:transform .12s, border-color .2s, color .2s, background .2s; }
     .img-heart:hover{ border-color:var(--accent); }
@@ -65,7 +65,7 @@
     @keyframes pop{ 0%{transform:scale(1);} 50%{transform:scale(1.12);} 100%{transform:scale(1);} }
     .img-heart.pop{ animation:pop .22s ease; }
 
-    /* NEW: Compare button on left of image */
+    /* Compare button on left of image */
     .img-compare{
       position:absolute; top:10px; left:10px;
       width:40px; height:40px; border-radius:999px;
@@ -79,7 +79,7 @@
     .img-compare.active{ border-color:var(--accent); color:var(--accent); background:rgba(29,185,84,.1); }
     .img-compare svg{ width:20px; height:20px; stroke:currentColor; fill:transparent; stroke-width:1.8; }
 
-    /* NEW: Share button at top-right of left box */
+    /* Share button */
     .share-btn{
       position:absolute; top:12px; right:12px;
       width:36px; height:36px; border-radius:50%;
@@ -117,18 +117,103 @@
     @keyframes toast-in{ to{ transform:translateY(0); opacity:1; } }
 
     .sr-only{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+    /* Clickable wishlist items affordance */
+    .wishlist .dropdown .wish-item { cursor: pointer; }
+  </style>
+
+  <!-- Unified responsive header overrides -->
+  <style>
+    header, header * { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    header {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 2rem; background: rgba(0,0,0,0.6);
+      border-bottom: 1px solid #333; z-index: 2000; backdrop-filter: blur(6px);
+    }
+    .header-left { display:flex; align-items:center; gap:15px; }
+    .header-right { display:flex; align-items:center; gap:15px; }
+    header h1 a { font-size:1.8rem; font-weight:800; color:#fff; text-decoration:none; }
+
+    nav.desktop-nav { display:flex; gap:20px; }
+    nav.desktop-nav a { color:#fff; font-weight:600; font-size:16px; text-decoration:none; white-space:nowrap; }
+    nav.desktop-nav a:hover { text-decoration:underline; }
+
+    .language-select { position:relative; }
+    .language-select select {
+      appearance:none; background:#111; color:#fff; border:1px solid #333; border-radius:6px;
+      padding:6px 30px 6px 10px; font-size:0.9rem; cursor:pointer;
+    }
+
+    #authSection .text-btn { display:inline-flex; background:#fff; color:#000; border:none; border-radius:999px; padding:8px 16px; font-weight:600; cursor:pointer; align-items:center; justify-content:center; }
+    #authSection .icon-btn { display:none; }
+
+    .hamburger {
+      font-size:1.8rem; background:none; border:none; color:#fff; cursor:pointer;
+      display:none; align-items:center; justify-content:center; z-index:2200; width:40px; height:40px;
+    }
+
+    .menu {
+      position: fixed; top:0; left:-300px; width:300px; height:100vh; background: rgba(17,17,17,0.95);
+      border-right:1px solid rgba(255,255,255,0.12); padding:3rem 2rem; display:flex; flex-direction:column; gap:2rem;
+      transition:left 0.3s ease; z-index:2100; backdrop-filter:blur(10px); border-radius:0 1rem 1rem 0;
+    }
+    .menu.active { left:0; }
+    .menu a { color:#fff; font-size:1.6rem; font-weight:800; text-decoration:none; }
+
+    .menu-overlay { position:fixed; inset:0; background: rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:opacity 0.3s ease; z-index:2050; }
+    .menu-overlay.active { opacity:1; pointer-events:auto; }
+
+    @media(max-width:1024px){
+      nav.desktop-nav{display:none;}
+      .hamburger{display:flex;}
+      .hamburger { position: relative; font-size: 0; }
+      .hamburger::before, .hamburger::after {
+        content: ""; position: absolute; left: 50%; width: 22px; height: 2px; background: currentColor;
+        transform: translateX(-50%); transition: transform .25s ease, top .25s ease, opacity .2s ease;
+      }
+      .hamburger::before { top: calc(50% - 6px); }
+      .hamburger::after  { top: calc(50% + 6px); }
+      .hamburger {
+        background-image: linear-gradient(currentColor, currentColor);
+        background-repeat: no-repeat; background-position: center; background-size: 22px 2px;
+      }
+      .hamburger.is-active { background-size: 0 0; }
+      .hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
+      .hamburger.is-active::after  { top: 50%; transform: translateX(-50%) rotate(-45deg); }
+    }
+
+    @media(max-width:768px){
+      #authSection .text-btn{display:none;}
+      #authSection .icon-btn{
+        display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%;
+        font-size:1.2rem; background:#fff; color:#000; border:none; cursor:pointer; transition:transform 0.2s ease;
+      }
+      #authSection .icon-btn:active{transform:scale(0.95);}
+      .language-select{
+        width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff;
+        display:flex; align-items:center; justify-content:center; position: relative;
+      }
+      .language-select::before{content:"🌐"; font-size:1.2rem; color:#fff; position:absolute;}
+      .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
+    }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Unified Header -->
   <header>
-    <h1><a href="/homepage.html" style="color:inherit; text-decoration:none;">VeloValue</a></h1>
-    <nav>
-      <a href="/homepage.html">HOME</a>
-      <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
-      <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
-      <a href="#about">ABOUT US</a>
+    <div class="header-left">
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <h1><a href="/homepage.html">VeloValue</a></h1>
+    </div>
+    <div class="header-right">
+      <nav class="desktop-nav">
+        <a href="/homepage.html">HOME</a>
+        <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+        <a href="/Velocharge beta/velocharge.html">VELOCHARGE</a>
+        <a href="#about">ABOUT US</a>
+      </nav>
 
       <div class="language-select">
         <select id="languageSelect">
@@ -136,10 +221,6 @@
           <option value="it">🇮🇹 Italiano</option>
           <option value="de">🇩🇪 Deutsch</option>
         </select>
-      </div>
-
-      <div id="authSection">
-        <button onclick="window.location.href='login.html'">Login / Register</button>
       </div>
 
       <!-- Wishlist dropdown -->
@@ -160,17 +241,51 @@
           </div>
         </div>
       </div>
-    </nav>
+
+      <!-- Compare dropdown -->
+      <div class="wishlist compare" id="compare">
+        <button id="compareBtn" class="icon-btn" aria-label="Compare" aria-expanded="false" aria-controls="compareMenu" title="Compare">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/>
+          </svg>
+          <span class="badge" id="compareBadge">0</span>
+        </button>
+        <div id="compareMenu" class="dropdown" role="menu" aria-label="Compare">
+          <div class="dropdown-head">
+            <strong>Compare</strong>
+            <button id="clearCompare" class="text-btn">Clear all</button>
+          </div>
+          <div id="compareItems" class="dropdown-list">
+            <div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Nothing to compare.</div>
+          </div>
+          <div style="padding:10px; border-top:1px solid rgba(255,255,255,.1); display:flex; justify-content:flex-end;">
+            <button id="viewCompare" class="text-btn">View compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="authSection">
+        <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
+      </div>
+    </div>
   </header>
+
+  <!-- Slide-in mobile menu + overlay -->
+  <nav class="menu" id="hamburgerMenu" aria-hidden="true">
+    <a href="/homepage.html">HOME</a>
+    <a href="/Explore smart garage beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+    <a href="/Velocharge beta/velocharge.html">DISCOVER VELOCHARGE</a>
+    <a href="#about">ABOUT US</a>
+  </nav>
+  <div class="menu-overlay"></div>
 
   <!-- Content -->
   <main class="container">
     <!-- LEFT: image + brand/model/fuel/price -->
     <section class="panel left">
-      <!-- Share button (top-right of left box) -->
+      <!-- Share button -->
       <button id="shareBtn" class="share-btn" aria-label="Share">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <!-- curved share arrow -->
           <path d="M14 5l5 5-5 5M19 10H9a5 5 0 100 10" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
@@ -248,6 +363,63 @@
   <!-- Toast container -->
   <div id="toastWrap" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
 
+  <!-- Header JS: hamburger/menu/auth + header offset -->
+  <script>
+    (function(){
+      const hamburger = document.querySelector(".hamburger");
+      const menu = document.getElementById("hamburgerMenu");
+      const overlay = document.querySelector(".menu-overlay");
+
+      function openMenu(){
+        hamburger.setAttribute("aria-expanded","true");
+        hamburger.classList.add("is-active");
+        if (window.innerWidth > 1024) hamburger.textContent = "✕";
+        menu.classList.add("active");
+        overlay.classList.add("active");
+        menu.setAttribute("aria-hidden","false");
+      }
+      function closeMenu(){
+        hamburger.setAttribute("aria-expanded","false");
+        hamburger.classList.remove("is-active");
+        if (window.innerWidth > 1024) hamburger.textContent = "☰";
+        menu.classList.remove("active");
+        overlay.classList.remove("active");
+        menu.setAttribute("aria-hidden","true");
+      }
+      function toggleMenu(){
+        if (menu.classList.contains("active")) closeMenu();
+        else openMenu();
+      }
+      hamburger.addEventListener("click", toggleMenu);
+      overlay.addEventListener("click", closeMenu);
+      window.addEventListener("resize", () => {
+        if(window.innerWidth > 1024 && menu.classList.contains("active")) closeMenu();
+      });
+
+      // Auth button toggle
+      const authSection = document.getElementById("authSection");
+      function updateAuthButton() {
+        if(window.innerWidth <= 768) {
+          authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+        } else {
+          authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
+        }
+      }
+      updateAuthButton();
+      window.addEventListener("resize", updateAuthButton);
+
+      // Sync body padding with actual header height
+      function syncHeaderOffset(){
+        const header = document.querySelector('header');
+        if (!header) return;
+        const h = header.offsetHeight;
+        document.documentElement.style.setProperty('--header-offset', h + 'px');
+      }
+      window.addEventListener('load', syncHeaderOffset);
+      window.addEventListener('resize', syncHeaderOffset);
+    })();
+  </script>
+
   <script>
     // ---------- Inline fallback data (only used if sessionStorage is empty) ----------
     const cars = [
@@ -314,40 +486,26 @@
     const CMP_KEY = 'vv_compare_ids';
     const META_KEY = 'vv_compare_meta';
 
-    // ===== User-scoped storage helpers (paste at top of each page script) =====
-(function ensureUserKey(){ window.__vvUserKey = window.__vvUserKey || 'guest'; })();
-
-function scopeKey(base) {
-  const k = (window.__vvUserKey || 'guest').toLowerCase();
-  return `${base}::${k}`;
-}
-
-// One-time migration of legacy global keys into the current user scope (only if scoped is empty)
-function migrateLegacyOnce(base) {
-  const scoped = scopeKey(base);
-  const migratedFlag = `${scoped}::migrated`;
-  if (localStorage.getItem(migratedFlag)) return;
-
-  const legacy = localStorage.getItem(base);
-  if (legacy && !localStorage.getItem(scoped)) {
-    localStorage.setItem(scoped, legacy);
-  }
-  localStorage.setItem(migratedFlag, '1');
-}
-
-// Re-run UI when user changes (login/logout)
-document.addEventListener('vv:user-change', () => {
-  // Migrate keys for the new user if needed
-  ['velovalue_wishlist_v1', 'vv_compare_ids', 'vv_compare_meta'].forEach(migrateLegacyOnce);
-
-  // Refresh UI (guard functions if not present on this page)
-  if (typeof updateWishlistBadge === 'function') updateWishlistBadge();
-  if (typeof buildWishlistMenu === 'function') buildWishlistMenu();
-  if (typeof syncHeartButtons === 'function') syncHeartButtons();
-  if (typeof syncCompareButtons === 'function') syncCompareButtons();
-  if (typeof updateCompareBadge === 'function') updateCompareBadge();
-  if (typeof buildCompareMenu === 'function') buildCompareMenu();
-});
+    (function ensureUserKey(){ window.__vvUserKey = window.__vvUserKey || 'guest'; })();
+    function scopeKey(base) {
+      const k = (window.__vvUserKey || 'guest').toLowerCase();
+      return `${base}::${k}`;
+    }
+    function migrateLegacyOnce(base) {
+      const scoped = scopeKey(base);
+      const migratedFlag = `${scoped}::migrated`;
+      if (localStorage.getItem(migratedFlag)) return;
+      const legacy = localStorage.getItem(base);
+      if (legacy && !localStorage.getItem(scoped)) localStorage.setItem(scoped, legacy);
+      localStorage.setItem(migratedFlag, '1');
+    }
+    document.addEventListener('vv:user-change', () => {
+      ['velovalue_wishlist_v1', 'vv_compare_ids', 'vv_compare_meta'].forEach(migrateLegacyOnce);
+      if (typeof updateWishlistBadge === 'function') updateWishlistBadge();
+      if (typeof buildWishlistMenu === 'function') buildWishlistMenu();
+      if (typeof updateCompareBadge === 'function') updateCompareBadge();
+      if (typeof buildCompareMenu === 'function') buildCompareMenu();
+    });
 
     function loadCompare(){ try { return new Set(JSON.parse(localStorage.getItem(CMP_KEY) || '[]')); } catch { return new Set(); } }
     function saveCompare(set){ localStorage.setItem(CMP_KEY, JSON.stringify([...set])); }
@@ -375,6 +533,8 @@ document.addEventListener('vv:user-change', () => {
         setCompareActive(true);
         showToast('Added to compare');
       }
+      if (typeof updateCompareBadge === 'function') updateCompareBadge();
+      if (typeof buildCompareMenu === 'function') buildCompareMenu();
     }
     function buildCompareUrl(){
       const ids = [...loadCompare()];
@@ -382,6 +542,81 @@ document.addEventListener('vv:user-change', () => {
       if (ids.length) url.searchParams.set('ids', ids.join(','));
       return url.toString();
     }
+    function updateCompareBadge(){
+      const n = loadCompare().size;
+      const b = document.getElementById('compareBadge');
+      if (!b) return;
+      if (n > 0) { b.style.display = 'grid'; b.textContent = n; }
+      else { b.style.display = 'none'; }
+    }
+    function buildCompareMenu(){
+      const listEl = document.getElementById('compareItems');
+      if (!listEl) return;
+      const ids = [...loadCompare()];
+      const meta = loadMeta();
+      if (!ids.length) {
+        listEl.innerHTML = `<div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Nothing to compare.</div>`;
+        return;
+      }
+      listEl.innerHTML = ids.map(id => {
+        const m = meta[id] || {};
+        const name = [m.brand, m.model].filter(Boolean).join(' ') || id;
+        const sub = [m.body, (m.price!=null ? '€'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' • ');
+        const img = m.img || '';
+        return `
+          <div class="wish-item" data-id="${id}">
+            ${img ? `<img src="${img}" alt="${name}">` : `<div style="width:44px;height:44px;border-radius:8px;background:#111;display:grid;place-items:center;opacity:.6">—</div>`}
+            <div class="wish-meta">
+              <div class="wish-title">${name}</div>
+              <div class="wish-sub">${sub || ''}</div>
+            </div>
+            <button class="remove-btn" data-remove="${id}">Remove</button>
+          </div>`;
+      }).join('');
+    }
+    (function wireHeaderCompare(){
+      const wrap = document.getElementById('compare');
+      const btn  = document.getElementById('compareBtn');
+      const items = document.getElementById('compareItems');
+      const clearBtn = document.getElementById('clearCompare');
+      const viewBtn = document.getElementById('viewCompare');
+      if (!wrap || !btn) return;
+      btn.addEventListener('click', ()=>{
+        const open = wrap.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      document.addEventListener('click', (e)=>{
+        if (!wrap.contains(e.target)) {
+          wrap.classList.remove('open');
+          btn.setAttribute('aria-expanded','false');
+        }
+      });
+      document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape') {
+          wrap.classList.remove('open');
+          btn.setAttribute('aria-expanded','false');
+        }
+      });
+      if (items) {
+        items.addEventListener('click', (e)=>{
+          const rm = e.target.closest('[data-remove]'); if(!rm) return;
+          const id = rm.getAttribute('data-remove');
+          const m = loadMeta();
+          const set = loadCompare(); set.delete(id); delete m[id];
+          saveCompare(set); saveMeta(m);
+          updateCompareBadge(); buildCompareMenu();
+        });
+      }
+      if (clearBtn) clearBtn.addEventListener('click', ()=>{
+        saveCompare(new Set()); saveMeta({});
+        updateCompareBadge(); buildCompareMenu();
+      });
+      if (viewBtn) viewBtn.addEventListener('click', ()=>{
+        const n = loadCompare().size;
+        if (n < 2) { alert('Add minimum of 2 cars to compare'); return; }
+        location.href = buildCompareUrl();
+      });
+    })();
 
     // ---------- Share ----------
     async function shareCurrent(url, title){
@@ -536,7 +771,7 @@ document.addEventListener('vv:user-change', () => {
         shareCurrent(url, title);
       });
 
-      // Header dropdown events
+      // Header dropdown: wishlist (open/remove + OPEN CAR)
       $('#wishlistBtn').addEventListener('click', ()=>{
         const open = $('#wishlist').classList.toggle('open');
         $('#wishlistBtn').setAttribute('aria-expanded', open?'true':'false');
@@ -547,18 +782,32 @@ document.addEventListener('vv:user-change', () => {
       document.addEventListener('keydown', (e)=>{
         if(e.key==='Escape'){ $('#wishlist').classList.remove('open'); $('#wishlistBtn').setAttribute('aria-expanded','false'); }
       });
+      // Make wishlist items clickable to open the car
       $('#wishlistItems').addEventListener('click', (e)=>{
-        const btn = e.target.closest('[data-remove]'); if(!btn) return;
-        toggleWishlist(btn.getAttribute('data-remove'));
+        const removeBtn = e.target.closest('[data-remove]');
+        if (removeBtn) {
+          toggleWishlist(removeBtn.getAttribute('data-remove'));
+          return;
+        }
+        const item = e.target.closest('.wish-item');
+        if (item) {
+          const id = item.getAttribute('data-id');
+          if (id) location.href = `cars.html?id=${encodeURIComponent(id)}`;
+        }
       });
       $('#clearWishlist').addEventListener('click', ()=>{
         localStorage.setItem(WISHLIST_KEY, '[]');
         updateWishlistBadge(); buildWishlistMenu(); setHeartActive(false); showToast('Wishlist cleared');
       });
+
+      // Build/refresh header compare UI
+      updateCompareBadge();
+      buildCompareMenu();
     })();
   </script>
 
   <!-- Remove this if you don’t have auth.js -->
   <script src="/js/auth.js"></script>
+  <script src="js/translate.js"></script>
 </body>
 </html>

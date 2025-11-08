@@ -43,58 +43,73 @@ const translationSchema = new mongoose.Schema({
 });
 const Translation = mongoose.model("Translation", translationSchema);
 
+// ------------------- IN-MEMORY TRANSLATION CACHE -------------------
+const translationCache = new Map();
+
+// ------------------- TRANSLATION FUNCTION -------------------
+async function translateBatch(texts, targetLang) {
+  const results = {};
+
+  for (const text of texts) {
+    const key = `${text}|${targetLang}`;
+    if (translationCache.has(key)) {
+      results[text] = translationCache.get(key);
+      continue;
+    }
+
+    // Check MongoDB cache
+    const cached = await Translation.findOne({ text, targetLang });
+    if (cached) {
+      translationCache.set(key, cached.translatedText);
+      results[text] = cached.translatedText;
+      continue;
+    }
+
+    // Call DeepL API
+    const params = new URLSearchParams();
+    params.append("text", text);
+    params.append("target_lang", targetLang.toUpperCase());
+
+    const deeplRes = await axios.post(
+      "https://api-free.deepl.com/v2/translate",
+      params,
+      {
+        headers: {
+          "Authorization": `DeepL-Auth-Key ${process.env.DEEPL_API_KEY}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    const translated = deeplRes.data.translations[0].text;
+
+    // Save in memory & MongoDB
+    translationCache.set(key, translated);
+    await Translation.create({ text, targetLang, translatedText: translated });
+
+    results[text] = translated;
+  }
+
+  return results;
+}
+
 // ------------------- TRANSLATION ROUTE -------------------
 app.post("/api/translate", async (req, res) => {
   try {
-    const { text, targetLang } = req.body;
-    console.log("🧠 Translation request received:", text, targetLang);
+    const { texts, targetLang } = req.body;
 
-    if (!text || !targetLang) {
-      return res.status(400).json({ error: "Missing text or target language" });
+    if (!texts || !Array.isArray(texts) || !targetLang) {
+      return res.status(400).json({ error: "Missing texts array or targetLang" });
     }
 
-    // Step 1: Check cache
-    const cached = await Translation.findOne({ text, targetLang });
-    if (cached) {
-      console.log("✅ Translation served from MongoDB cache");
-      return res.json({ translatedText: cached.translatedText, source: "cache" });
-    }
+    console.log("🧠 Translation request:", texts, targetLang);
 
-    // Step 2: Fetch from DeepL
-    const deeplRes = await axios.post(
-      "https://api-free.deepl.com/v2/translate",
-      new URLSearchParams({
-        auth_key: process.env.DEEPL_API_KEY,
-        text,
-        target_lang: targetLang.toUpperCase(),
-      }),
-      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-    );
-
-    const translatedText = deeplRes.data.translations[0].text;
-
-    // Step 3: Save in Mongo
-    await Translation.create({ text, targetLang, translatedText });
-
-    console.log("🌐 Translation fetched from DeepL and saved to DB");
-    res.json({ translatedText, source: "deepl" });
-  } catch (error) {
-    console.error("❌ Translation Error:", error.message);
+    const translations = await translateBatch(texts, targetLang);
+    res.json({ translations });
+  } catch (err) {
+    console.error("❌ Translation error:", err.message);
     res.status(500).json({ error: "Translation failed" });
   }
-});
-
-// ------------------- STATIC ROUTES -------------------
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "register.html"));
-});
-
-app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "login.html"));
-});
-
-app.get("/homepage.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "homepage.html"));
 });
 
 // ------------------- AUTH ROUTES -------------------
