@@ -480,3 +480,56 @@ footer {
   .hamburger { transition: none !important; }
   .menu { transition: none !important; }
 }
+/* ===================== */
+/* FINAL MOBILE HEADER FIX */
+/* ===================== */
+
+@media (max-width: 768px) {
+
+  /* Shrink header height + spacing */
+  header {
+    padding: 0.4rem 0.8rem;
+    height: 58px;
+  }
+
+  /* Shrink hamburger */
+  .hamburger {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+  .hamburger::before,
+  .hamburger::after {
+    width: 16px;
+  }
+  .hamburger {
+    background-size: 16px 2px;
+  }
+
+  /* Shrink center logo */
+  .logo {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  /* Shrink right-side gap */
+  .right-section {
+    gap: 0.6rem;
+  }
+
+  /* Shrink auth icon */
+  #authSection .icon-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+
+  /* Shrink language selector */
+  .language-select select {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+  }
+  .language-select::before {
+    font-size: 0.9rem;
+  }
+}

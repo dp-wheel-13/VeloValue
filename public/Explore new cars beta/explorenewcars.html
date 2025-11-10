@@ -277,7 +277,83 @@
         margin-inline: 0 !important;
       }
     }
-  </style>
+  
+  /* ============================== */
+/* FINAL MOBILE HEADER FIX        */
+/* ============================== */
+@media (max-width: 768px) {
+
+  /* Overall header shrink */
+  header {
+    padding: 0.5rem 0.8rem !important;
+    height: 60px;
+    gap: 10px;
+  }
+
+  .header-left,
+  .header-right {
+    gap: 10px !important;
+  }
+
+  /* Hamburger shrink */
+  .hamburger {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  .hamburger::before,
+  .hamburger::after {
+    width: 16px !important;
+  }
+  .hamburger {
+    background-size: 16px 2px !important;
+  }
+
+  /* Logo shrink */
+  header h1 a {
+    font-size: 1.3rem !important;
+  }
+
+  /* Auth icon shrink */
+  #authSection .icon-btn {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 1rem !important;
+  }
+
+  /* Language selector shrink */
+  .language-select {
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 50% !important;
+  }
+  .language-select::before {
+    font-size: 1rem !important;
+  }
+
+  /* Wishlist button shrink */
+  .wishlist .icon-btn {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  .wishlist .icon-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  .wishlist .badge {
+    top: -4px !important;
+    right: -4px !important;
+    min-width: 14px !important;
+    height: 14px !important;
+    font-size: 9px !important;
+  }
+
+  /* Prevent overflow */
+  .header-right {
+    overflow: visible;
+    flex-shrink: 1;
+  }
+}
+</style>
 </head>
 <body>
 
