@@ -22,9 +22,16 @@
       <h2>Welcome Back</h2>
 
       <!-- Social login buttons -->
-      <button type="button" class="social-btn">Continue with Google</button>
-      <button type="button" class="social-btn">Continue with Facebook</button>
-      <button type="button" class="social-btn">Continue with Apple</button>
+      <button type="button" class="social-btn" onclick="window.location.href='/auth/google'">
+        Continue with Google
+      </button>
+      <!-- Facebook/Apple login: implement later via Passport strategies -->
+      <button type="button" class="social-btn" onclick="window.location.href='/auth/facebook'">
+        Continue with Facebook
+      </button>
+      <button type="button" class="social-btn" disabled>
+        Continue with Apple (Coming Soon)
+      </button>
 
       <div class="divider"><span>or</span></div>
 
@@ -50,7 +57,7 @@ const loginForm = document.getElementById('loginForm');
 const errorMsg = document.getElementById('errorMsg');
 
 loginForm.addEventListener('submit', async (e) => {
-  e.preventDefault(); // prevent default form submission
+  e.preventDefault();
 
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
@@ -59,16 +66,17 @@ loginForm.addEventListener('submit', async (e) => {
     const res = await fetch('/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
+      credentials: 'include' // important: store session cookie
     });
 
-    const data = await res.json(); // parse JSON response
+    const data = await res.json();
 
-    if (data.success) {
-      // ✅ Redirect to homepage after successful login
-      window.location.href = `/homepage.html?user=${encodeURIComponent(data.username)}`;
+    if (data.loggedIn) {
+      // Redirect to main app page safely
+      window.location.href = '/garageview.html';
     } else {
-      errorMsg.textContent = data.message || '❌ Login failed';
+      errorMsg.textContent = data.error || '❌ Login failed';
     }
   } catch (err) {
     console.error(err);

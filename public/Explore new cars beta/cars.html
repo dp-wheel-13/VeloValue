@@ -1291,6 +1291,64 @@ nav.desktop-nav a:hover { text-decoration:underline; }
     })();
   </script>
 
+  <script>
+const BACKEND = "http://localhost:3000";
+
+function escapeHtml(s){ if(s==null) return ""; return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+async function renderCarSpecs() {
+  let car = null;
+  try {
+    const stored = localStorage.getItem("selectedCar");
+    if (stored) car = JSON.parse(stored);
+  } catch (e){ car = null; }
+
+  // fallback to URL params if no stored object
+  if (!car) {
+    const params = new URLSearchParams(window.location.search);
+    const brand = params.get("brand");
+    const model = params.get("model");
+    if (brand && model) {
+      try {
+        const res = await fetch(`${BACKEND}/api/explore?brand=${encodeURIComponent(brand)}&model=${encodeURIComponent(model)}`);
+        if (res.ok) car = await res.json();
+      } catch (err) {
+        console.warn("Specs fetch failed:", err);
+      }
+    }
+  }
+
+  // If still no car, show friendly message
+  if (!car) {
+    const el = document.getElementById("specs-root");
+    if (el) el.innerHTML = "<p>No car selected. Please go back to explore and click a card.</p>";
+    return;
+  }
+
+  // render into your page - put fields where you like or into a container id="specs-root"
+  const root = document.getElementById("specs-root") || document.body;
+  const html = `
+    <h1>${escapeHtml(car.brand)} ${escapeHtml(car.model)}</h1>
+    <img src="${escapeHtml(car.image || car.carImage || '')}" alt="" style="max-width:600px;width:100%;height:auto;border-radius:8px;">
+    <h3>Key specs</h3>
+    <ul>
+      <li>Price: ${escapeHtml(car.price || 'N/A')}</li>
+      <li>Power: ${escapeHtml(car.power || 'N/A')}</li>
+      <li>Torque: ${escapeHtml(car.torque || 'N/A')}</li>
+      <li>0-100 km/h: ${escapeHtml(car['0-100 km/h'] || car.zeroToHundred || 'N/A')}</li>
+      <li>Top speed: ${escapeHtml(car['top speed'] || car.topSpeed || 'N/A')}</li>
+      <li>Fuel: ${escapeHtml(car.fuel || 'N/A')}</li>
+    </ul>
+  `;
+  root.innerHTML = html;
+
+  // optional: clear selectedCar so back button won't reuse stale object
+  try { localStorage.removeItem("selectedCar"); } catch(_) {}
+}
+
+document.addEventListener("DOMContentLoaded", renderCarSpecs);
+</script>
+
   <!-- Remove this if you don’t have auth.js -->
   <script src="/js/auth.js"></script>
   <script src="js/translate.js"></script>

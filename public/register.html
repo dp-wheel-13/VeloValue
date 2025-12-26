@@ -20,9 +20,15 @@
       <h2>Create Account</h2>
 
       <!-- Social Signup Buttons -->
-      <button type="button" class="social-btn">Sign up with Google</button>
-      <button type="button" class="social-btn">Sign up with Facebook</button>
-      <button type="button" class="social-btn">Sign up with Apple</button>
+      <button type="button" class="social-btn" onclick="window.location.href='/auth/google'">
+        Sign up with Google
+      </button>
+      <button type="button" class="social-btn" onclick="window.location.href='/auth/facebook'">
+        Sign up with Facebook
+      </button>
+      <button type="button" class="social-btn" disabled>
+        Sign up with Apple (Coming Soon)
+      </button>
 
       <div class="divider"><span>or</span></div>
 
@@ -67,19 +73,20 @@
       }
 
       try {
-        const res = await fetch('/signup', {
+        const res = await fetch('/register', {  // <-- updated route
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fullname, email, password, confirmPassword })
+          body: JSON.stringify({ name: fullname, email, password }), // name field matches backend
+          credentials: 'include' // important: store session cookie
         });
 
         const data = await res.json();
 
-        if (data.success) {
-          // Redirect to homepage with user info in query string
-          window.location.href = `/homepage.html?user=${encodeURIComponent(data.username)}`;
+        if (data.loggedIn) {
+          // Redirect to main app safely
+          window.location.href = '/garageview.html';
         } else {
-          alert(data.message || "❌ Something went wrong. Please try again.");
+          alert(data.error || "❌ Something went wrong. Please try again.");
         }
       } catch (err) {
         console.error(err);

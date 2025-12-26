@@ -1,30 +1,53 @@
 // ------------------- ENV CONFIG -------------------
 require('dotenv').config();
-console.log("✅ Your DeepL key loaded:", process.env.DEEPL_API_KEY ? "Yes" : "No");
+
+// ------------------- DEBUG ENV -------------------
+console.log("✅ DeepL Key loaded:", process.env.DEEPL_API_KEY ? "Yes" : "No");
+console.log("✅ API Ninja Key loaded:", process.env.API_NINJA_KEY ? "Yes" : "No");
+console.log("✅ SESSION_SECRET loaded:", process.env.SESSION_SECRET ? "Yes" : "No");
 
 // ------------------- IMPORTS -------------------
+const passport = require('passport');
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
-const axios = require("axios"); // For DeepL API
+const cors = require('cors'); 
 const User = require("./models/User");
 const garageRoutes = require("./routes/garageRoutes");
+const exploreRoutes = require("./routes/exploreRoutes");
+const infotargaRoutes = require("./routes/infotarga");
 const app = express();
 
 // ------------------- MIDDLEWARE -------------------
+app.use(cors()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || "dev_secret",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false, // set true if using HTTPS
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
   })
 );
-app.use("/", garageRoutes);
+
+// ------------------- ROUTES -------------------
+app.use(passport.initialize());
+app.use(passport.session());
+app.use('/', require('./routes/authSocial'));
+app.use('/', require('./routes/authGoogle'));
+app.use("/", garageRoutes); 
+app.use("/api", require("./routes/exploreRoutes")); // Explore Cars uses /api/explore
+
+app.use("/api", infotargaRoutes); // InfoTarga routes
 
 // ------------------- MONGO CONNECTION -------------------
 const MONGO_URI =
@@ -47,17 +70,19 @@ const Translation = mongoose.model("Translation", translationSchema);
 const translationCache = new Map();
 
 // ------------------- TRANSLATION FUNCTION -------------------
+const axios = require("axios");
+
 async function translateBatch(texts, targetLang) {
   const results = {};
 
   for (const text of texts) {
     const key = `${text}|${targetLang}`;
+
     if (translationCache.has(key)) {
       results[text] = translationCache.get(key);
       continue;
     }
 
-    // Check MongoDB cache
     const cached = await Translation.findOne({ text, targetLang });
     if (cached) {
       translationCache.set(key, cached.translatedText);
@@ -65,7 +90,9 @@ async function translateBatch(texts, targetLang) {
       continue;
     }
 
-    // Call DeepL API
+    if (!process.env.DEEPL_API_KEY)
+      throw new Error("Missing DEEPL_API_KEY in .env");
+
     const params = new URLSearchParams();
     params.append("text", text);
     params.append("target_lang", targetLang.toUpperCase());
@@ -75,7 +102,7 @@ async function translateBatch(texts, targetLang) {
       params,
       {
         headers: {
-          "Authorization": `DeepL-Auth-Key ${process.env.DEEPL_API_KEY}`,
+          Authorization: `DeepL-Auth-Key ${process.env.DEEPL_API_KEY}`,
           "Content-Type": "application/x-www-form-urlencoded",
         },
       }
@@ -83,8 +110,8 @@ async function translateBatch(texts, targetLang) {
 
     const translated = deeplRes.data.translations[0].text;
 
-    // Save in memory & MongoDB
     translationCache.set(key, translated);
+
     await Translation.create({ text, targetLang, translatedText: translated });
 
     results[text] = translated;
@@ -99,10 +126,10 @@ app.post("/api/translate", async (req, res) => {
     const { texts, targetLang } = req.body;
 
     if (!texts || !Array.isArray(texts) || !targetLang) {
-      return res.status(400).json({ error: "Missing texts array or targetLang" });
+      return res
+        .status(400)
+        .json({ error: "Missing texts array or targetLang" });
     }
-
-    console.log("🧠 Translation request:", texts, targetLang);
 
     const translations = await translateBatch(texts, targetLang);
     res.json({ translations });
@@ -113,93 +140,107 @@ app.post("/api/translate", async (req, res) => {
 });
 
 // ------------------- AUTH ROUTES -------------------
-app.post("/signup", async (req, res) => {
+
+// Signup
+app.post("/register", async (req, res) => {
   try {
-    const { fullname, email, password, confirmPassword } = req.body;
+    const { name, email, password } = req.body;
+    if (!name || !email || !password)
+      return res.json({ loggedIn: false, error: "All fields are required" });
 
-    if (!fullname || !email || !password || !confirmPassword) {
-      return res.json({ success: false, message: "All fields are required" });
-    }
-
-    if (password !== confirmPassword) {
-      return res.json({ success: false, message: "Passwords do not match" });
-    }
-
-    const existingUser = await User.findOne({
-      email: email.trim().toLowerCase(),
-    });
-    if (existingUser) {
-      return res.json({ success: false, message: "Email already exists" });
-    }
+    const existingUser = await User.findOne({ email: email.trim().toLowerCase() });
+    if (existingUser)
+      return res.json({ loggedIn: false, error: "Email already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
-      fullName: fullname,
+    const newUser = await User.create({
+      name: name.trim(),
       email: email.trim().toLowerCase(),
       password: hashedPassword,
     });
 
-    await newUser.save();
     req.session.userId = newUser._id;
-    req.session.username = newUser.fullName;
+    req.session.user = {
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      avatar: null
+    };
 
-    res.json({ success: true, username: newUser.fullName });
+    res.json({
+  loggedIn: true,
+  user: req.session.user,
+  avatar: req.session.user.avatar   // ✅ SEND IMAGE TO FRONTEND
+});
   } catch (err) {
-    console.error("Signup Error:", err);
-    res.json({ success: false, message: "Error registering user" });
+    console.error("❌ Register Error:", err);
+    res.json({ loggedIn: false, error: "Error registering user" });
   }
 });
 
+// Login
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password)
-      return res.json({ success: false, message: "Email and password required" });
+      return res.json({ loggedIn: false, error: "Email and password required" });
 
     const user = await User.findOne({ email: email.trim().toLowerCase() });
-    if (!user)
-      return res.json({ success: false, message: "User not found" });
+    if (!user) return res.json({ loggedIn: false, error: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.json({ success: false, message: "Incorrect password" });
+    if (!isMatch) return res.json({ loggedIn: false, error: "Incorrect password" });
 
     req.session.userId = user._id;
-    req.session.username = user.fullName;
+    req.session.user = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: null
+    };
 
-    res.json({ success: true, username: user.fullName });
+    res.json({
+  loggedIn: true,
+  user: req.session.user,
+  avatar: req.session.user.avatar   // ✅ SEND IMAGE TO FRONTEND
+});
+
   } catch (err) {
-    console.error("Login Error:", err);
-    res.json({ success: false, message: "Error logging in" });
+    console.error("❌ Login Error:", err);
+    res.json({ loggedIn: false, error: "Error logging in" });
   }
 });
 
-// ------------------- SESSION ROUTES -------------------
+// Logout
+app.post("/logout", (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error("❌ Logout Error:", err);
+      return res.status(500).json({ error: "Logout failed" });
+    }
+    res.clearCookie("connect.sid");
+    res.json({ loggedIn: false });
+  });
+});
+
+// Get current user
 app.get("/api/user", (req, res) => {
-  if (req.session.userId) {
-    res.json({ loggedIn: true, username: req.session.username });
+  if (req.session.user) {
+    res.json({
+  loggedIn: true,
+  user: req.session.user,
+  avatar: req.session.user.avatar   // ✅ SEND IMAGE TO FRONTEND
+});
+
   } else {
     res.json({ loggedIn: false });
   }
 });
 
-app.post("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) return res.json({ success: false, message: "Logout failed" });
-    res.clearCookie("connect.sid");
-    res.json({ success: true });
-  });
-});
-
-// ------------------- CHARGING STATIONS -------------------
-const stations = [
-  { id: 1, name: "Station A", lat: 37.7749, lng: -122.4194 },
-  { id: 2, name: "Station B", lat: 37.7849, lng: -122.4094 },
-  { id: 3, name: "Station C", lat: 37.7949, lng: -122.4294 }
-];
-
-app.get("/api/stations", (req, res) => {
-  res.json(stations);
+// ------------------- GLOBAL ERROR HANDLER -------------------
+app.use((err, req, res, next) => {
+  console.error("🔥 SERVER ERROR:", err);
+  res.status(500).json({ error: "Internal server error", details: err.message });
 });
 
 // ------------------- START SERVER -------------------

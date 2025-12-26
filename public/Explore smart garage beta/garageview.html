@@ -580,342 +580,228 @@ function updateAuthButton() {
 updateAuthButton();
 window.addEventListener("resize", updateAuthButton);
 
-// ===== Garage JS =====
-let cars = [
-  { brand:"Hyundai", model:"i20", fuel:"Petrol", img:"hyundai_i20.jpg", logo:"hyundai_logo.png" },
-  { brand:"Fiat", model:"500", fuel:"Hybrid", img:"abarth_500.jpg", logo:"fiat_logo.png" },
-  { brand:"BMW", model:"X5", fuel:"Diesel", img:"bmw_x5.jpg", logo:"bmw_logo.png" },
-  { name:"Add a new car", img:"", logo:"", isAddNew:true }
-];
-const WIRE_KEYS = { DETAILS:'vv_selected_car' };
-const PATHS = { DETAILS:'cardetailsview.html' };
-const ADD_CAR_PATH='garagesearch.html';
-function goToAddCar(){ location.href=ADD_CAR_PATH; }
-function slugify(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
-function ensureIds(){ cars = cars.map((c,i)=>c.isAddNew?c:{...c,id:c.id||`${slugify(c.brand||c.name||'car')}-${slugify(c.model||String(i+1))}`}); }
-ensureIds();
-function normalizeFromGarage(car){ return { id:car.id, brand:car.brand||car.name||'', model:car.model??null, fuel:car.fuel??null, image:car.img||'', logo:car.logo||'' }; }
-function wireToPage(car,{path,key,pick}={}){ const normalized=normalizeFromGarage(car); let payload=normalized; if(Array.isArray(pick)&&pick.length){ payload={}; for(const k of pick) payload[k]=normalized[k]??null; } sessionStorage.setItem(key,JSON.stringify(payload)); const url=new URL(path,location.href); url.searchParams.set('id',normalized.id); location.href=url.toString(); }
-function openDetails(car){ wireToPage(car,{path:PATHS.DETAILS,key:WIRE_KEYS.DETAILS,pick:['id','brand','model','image','logo','fuel']}); }
+  // ===== Garage JS Dynamic (FIXED FOR MOCKAPI) =====
+let cars = [];
 
-const garageDisplay=document.getElementById("garageDisplay");
-const viewModeSelect=document.getElementById("viewMode");
-const garageLevel=document.getElementById("garage-level");
-const addCarBtn=document.getElementById("addCarBtn");
-const searchBox=document.getElementById("searchBox");
+(function() {
 
-let currentIndex=0;
-let filteredCars=[...cars];
-addCarBtn.addEventListener("click", goToAddCar);
+  // 1️⃣ Fetch selected car from localStorage
+  const raw = localStorage.getItem("selectedCar");
+  let selectedCar = null;
 
-function renderCarCard(car){
-  return `
-    <div class="car-header">
-      ${car.logo?`<img src="${car.logo}" class="car-logo">`:""}
-      <div class="car-info">
-        <div class="car-name">${car.brand||car.name}</div>
-        ${car.model?`<div class="car-model">${car.model}</div>`:""}
-        ${car.fuel?`<div class="fuel-pill">${car.fuel}</div>`:""}
-      </div>
-    </div>
-    <div class="car-image-box">
-      ${car.img?`<img src="${car.img}" class="car-image">`:`<div style="color:#bbb;">No image</div>`}
-    </div>
-    <div class="italian-plate">AA 111AA</div>`;
-}
+  if (raw) {
+    const apiResponse = JSON.parse(raw);
 
-function renderCardSlider(list = filteredCars) {
-  garageDisplay.className = "carousel-wrapper";
-  garageDisplay.innerHTML = "";
-
-  if (list.length === 0 || (list.length === 1 && list[0].isAddNew)) {
-    garageDisplay.innerHTML = "<div style='text-align:center;color:#ccc;padding:40px;'>No cars found</div>";
-    garageLevel.textContent = "Garage Level - 0";
-    return;
-  }
-
-  const carousel = document.createElement("div");
-  carousel.className = "carousel-track";
-
-  const prevIndex = (currentIndex - 1 + list.length) % list.length;
-  const nextIndex = (currentIndex + 1) % list.length;
-
-  function makeCard(car, position) {
-    const div = document.createElement("div");
-    div.className = `carousel-card ${position}`;
-
-    if (car.isAddNew) {
-      div.innerHTML = `
-      <div class="add-car">
-        <div class="add-plus">+</div>
-        <div class="add-text">Add new car</div>
-      </div>`;
-      if (position === "center") div.onclick = goToAddCar;
-      return div;
-    }
-
-    div.innerHTML = renderCarCard(car);
-
-    if (position === "center") {
-      div.tabIndex = 0;
-      div.onclick = () => openDetails(car);
-      div.onkeydown = e => { if (e.key === "Enter") openDetails(car); };
-    }
-    return div;
-  }
-
-  carousel.appendChild(makeCard(list[prevIndex], "left"));
-  carousel.appendChild(makeCard(list[currentIndex], "center"));
-  carousel.appendChild(makeCard(list[nextIndex], "right"));
-
-  garageDisplay.appendChild(carousel);
-
-  const prevBtn = document.createElement("button");
-  prevBtn.className = "carousel-btn left";
-  prevBtn.innerHTML = "‹";
-  prevBtn.onclick = () => {
-    currentIndex = prevIndex;
-    renderCardSlider(list);
-  };
-
-  const nextBtn = document.createElement("button");
-  nextBtn.className = "carousel-btn right";
-  nextBtn.innerHTML = "›";
-  nextBtn.onclick = () => {
-    currentIndex = nextIndex;
-    renderCardSlider(list);
-  };
-
-  garageDisplay.appendChild(prevBtn);
-  garageDisplay.appendChild(nextBtn);
-  garageLevel.textContent = `Garage Level - ${list.length - 1}`;
-}
-
-function updateStackPositions(list) {
-  const cards = document.querySelectorAll(".card-slider");
-  const arrows = document.querySelectorAll(".slider-arrow");
-  
-  cards.forEach((card, index) => {
-    // Remove position classes
-    card.classList.remove("position-0", "position-1", "position-2", "position-hidden");
-    
-    // Remove old event listeners by cloning
-    const newCard = card.cloneNode(true);
-    card.parentNode.replaceChild(newCard, card);
-    
-    const relativePos = index - currentIndex;
-    const car = list[index];
-    
-    // Add new position class
-    if (relativePos < 0) {
-      newCard.classList.add("position-hidden");
-    } else if (relativePos === 0) {
-      newCard.classList.add("position-0");
-      if(!car.isAddNew) {
-        newCard.tabIndex = 0;
-        newCard.addEventListener('click', () => openDetails(car));
-        newCard.addEventListener('keydown', e => {if(e.key==='Enter') openDetails(car);});
-      } else {
-        newCard.addEventListener("click", goToAddCar);
-      }
-    } else if (relativePos === 1) {
-      newCard.classList.add("position-1");
-    } else if (relativePos === 2) {
-      newCard.classList.add("position-2");
+    // Check if the API call was successful
+    if (apiResponse.success) {
+      // Correctly map the nested API fields to your UI fields
+      selectedCar = {
+        id: apiResponse.plate, // Use the plate as a unique ID
+        brand: apiResponse.info.marca || 'N/A',
+        model: apiResponse.info.modello || 'N/A',
+        fuel: apiResponse.info.alimentazione || 'N/A',
+        year: apiResponse.info.anno_immatricolazione || 'N/A',
+        color: 'N/A', // Color is not provided by Infotarga
+        plate: apiResponse.plate,
+        img: "", // Placeholder for now
+        logo: "" // Placeholder for now
+      };
+      cars.push(selectedCar);
     } else {
-      newCard.classList.add("position-hidden");
+      // Handle cases where the API returned an error
+      console.error("Error in stored car data:", apiResponse.message);
+      // Optionally, display an error message to the user on the page
+      const garageDisplay = document.getElementById("garageDisplay");
+      garageDisplay.innerHTML = `<div style='color:#ff6b6b;text-align:center;padding:40px;'>Error loading car: ${apiResponse.message}</div>`;
     }
+  }
+
+  // 2️⃣ Add the + Add new car button
+  cars.push({
+    name: "Add a new car",
+    img: "",
+    logo: "",
+    isAddNew: true
   });
 
-  // Update arrow visibility
-  arrows[0].style.display = currentIndex === 0 ? "none" : "flex";
-  arrows[1].style.display = currentIndex === list.length - 1 ? "none" : "flex";
-}
+  // ===== Grab DOM elements =====
+  const garageDisplay = document.getElementById("garageDisplay");
+  const viewModeSelect = document.getElementById("viewMode");
+  const garageLevel = document.getElementById("garage-level");
+  const addCarBtn = document.getElementById("addCarBtn");
+  const searchBox = document.getElementById("searchBox");
 
-function renderTiles(list=filteredCars){
-  garageDisplay.className="tiles-view"; garageDisplay.innerHTML="";
-  list.forEach(car=>{
-    const tile=document.createElement("div"); tile.className="tile-card";
-    if(car.isAddNew){ tile.innerHTML=`<div class="car-name">+ Add a new car</div>`; tile.addEventListener("click",goToAddCar);}
-    else{ tile.innerHTML=`${car.img?`<img src="${car.img}" alt="${car.name}">`:`<div style="height:150px;display:flex;align-items:center;justify-content:center;color:#bbb">No image</div>`}<div class="tile-info">${car.logo?`<img src="${car.logo}" class="car-logo">`:""}<div class="car-meta"><span class="car-name">${car.brand}</span>${car.model?`<span class="car-model">${car.model}</span>`:""}${car.fuel?`<span class="fuel-pill">${car.fuel}</span>`:""}</div></div>`; tile.dataset.id=car.id; tile.tabIndex=0; tile.style.cursor='pointer'; tile.addEventListener("click",()=>openDetails(car)); tile.addEventListener("keydown",e=>{if(e.key==='Enter') openDetails(car);});}
-    garageDisplay.appendChild(tile);
-  });
-  garageLevel.textContent=`Garage Level - ${list.length-1}`;
-}
+  let currentIndex = 0;
+  let filteredCars = [...cars];
 
-function renderList(list=filteredCars){
-  garageDisplay.className="list-view"; garageDisplay.innerHTML="";
-  list.forEach(car=>{
-    const item=document.createElement("div"); item.className="list-card";
-    if(car.isAddNew){ item.innerHTML=`<div class="car-name">+ Add a new car</div>`; item.addEventListener("click",goToAddCar);}
-    else{ item.innerHTML=`${car.logo?`<img src="${car.logo}" class="car-logo">`:""}<div class="car-meta"><span class="car-name">${car.brand}</span>${car.model?`<span class="car-model">${car.model}</span>`:""}${car.fuel?`<span class="fuel-pill">${car.fuel}</span>`:""}</div>`; item.dataset.id=car.id; item.tabIndex=0; item.style.cursor='pointer'; item.addEventListener("click",()=>openDetails(car)); item.addEventListener("keydown",e=>{if(e.key==='Enter') openDetails(car);}); }
-    garageDisplay.appendChild(item);
-  });
-  garageLevel.textContent=`Garage Level - ${list.length-1}`;
-}
+  // 3️⃣ Add new car button → redirect
+  addCarBtn.onclick = () => location.href = "garagesearch.html";
 
-function renderView(mode){ if(mode==="card") renderCardSlider(); if(mode==="tiles") renderTiles(); if(mode==="list") renderList(); }
-
-searchBox.addEventListener("input",e=>{ const q=e.target.value.toLowerCase(); filteredCars=cars.filter(c=>c.isAddNew||(c.brand||c.name).toLowerCase().includes(q)); currentIndex=0; renderView(viewModeSelect.value); });
-viewModeSelect.addEventListener("change",()=>renderView(viewModeSelect.value));
-renderView("card");
-</script>
-
-<!-- PATCH: additive JS (hide arrows at ends, no-wrap, dots, drag) -->
-<script>
-(function(){
-  var dragBound = false, isDragging = false, dragStartX = 0, dragDeltaX = 0;
-  var DRAG_THRESHOLD = 40;
-
-  function getClientX(evt){
-    if (evt && evt.touches && evt.touches.length) return evt.touches[0].clientX;
-    if (evt && typeof evt.clientX === 'number') return evt.clientX;
-    return 0;
+  // Helper: open details page
+  function openDetails(car) {
+    sessionStorage.setItem("vv_selected_car", JSON.stringify(car));
+    const url = new URL("cardetailsview.html", location.href);
+    url.searchParams.set("id", car.id);
+    location.href = url.toString();
   }
 
-  function goToIndex(idx, list){
-    list = list || filteredCars;
-    if (idx < 0 || idx >= list.length || idx === currentIndex) return;
-    currentIndex = idx; renderCardSlider(list);
-  }
-  function goPrev(list){
-    list = list || filteredCars;
-    if (currentIndex > 0){ currentIndex--; renderCardSlider(list); }
-  }
-  function goNext(list){
-    list = list || filteredCars;
-    if (currentIndex < list.length - 1){ currentIndex++; renderCardSlider(list); }
+  // Render a single card
+  function renderCarCard(car) {
+    return `
+      <div class="car-header">
+        ${car.logo ? `<img src="${car.logo}" class="car-logo">` : ""}
+        <div class="car-info">
+          <div class="car-name">${car.brand}</div>
+          ${car.model ? `<div class="car-model">${car.model}</div>` : ""}
+          ${car.fuel ? `<div class="fuel-pill">${car.fuel}</div>` : ""}
+        </div>
+      </div>
+      <div class="car-image-box">
+        ${car.img 
+          ? `<img src="${car.img}" class="car-image">` 
+          : `<div style="color:#bbb;height:140px;display:flex;align-items:center;justify-content:center;">No image</div>`}
+      </div>
+      <div class="italian-plate">${car.plate}</div>
+    `;
   }
 
-  var originalRenderCarCard = renderCarCard;
-
-  // Override renderCardSlider to: no wrap, dots, drag, and HIDE arrows at ends
-  window.renderCardSlider = function(listParam){
-    var list = listParam || filteredCars;
-
+  // ===== Render in carousel mode =====
+  function renderCardSlider(list = filteredCars) {
     garageDisplay.className = "carousel-wrapper";
     garageDisplay.innerHTML = "";
 
     if (list.length === 0 || (list.length === 1 && list[0].isAddNew)) {
-      garageDisplay.innerHTML = "<div style='text-align:center;color:#ccc;padding:40px;'>No cars found</div>";
+      garageDisplay.innerHTML = "<div style='color:#ccc;text-align:center;padding:40px;'>No cars found</div>";
       garageLevel.textContent = "Garage Level - 0";
       return;
     }
 
-    var hasPrev = currentIndex > 0;
-    var hasNext = currentIndex < list.length - 1;
-    var prevIndex = currentIndex - 1;
-    var nextIndex = currentIndex + 1;
-
-    var carousel = document.createElement("div");
+    const carousel = document.createElement("div");
     carousel.className = "carousel-track";
 
-    function makeCard(car, position){
-      var div = document.createElement("div");
-      div.className = "carousel-card " + position;
+    const prevIndex = (currentIndex - 1 + list.length) % list.length;
+    const nextIndex = (currentIndex + 1) % list.length;
+
+    function makeCard(car, pos) {
+      const div = document.createElement("div");
+      div.className = `carousel-card ${pos}`;
 
       if (car.isAddNew) {
         div.innerHTML = '<div class="add-car"><div class="add-plus">+</div><div class="add-text">Add new car</div></div>';
-        if (position === "center") div.onclick = function(){ if(!isDragging) goToAddCar(); };
+        if (pos === "center") div.onclick = () => location.href = "garagesearch.html";
         return div;
       }
 
-      div.innerHTML = originalRenderCarCard(car);
-      if (position === "center") {
-        div.tabIndex = 0;
-        div.onclick = function(){ if(!isDragging) openDetails(car); };
-        div.onkeydown = function(e){ if(e.key === "Enter") openDetails(car); };
+      div.innerHTML = renderCarCard(car);
+      if (pos === "center") {
+        div.onclick = () => openDetails(car);
       }
+
       return div;
     }
 
-    if (hasPrev) carousel.appendChild(makeCard(list[prevIndex], "left"));
+    carousel.appendChild(makeCard(list[prevIndex], "left"));
     carousel.appendChild(makeCard(list[currentIndex], "center"));
-    if (hasNext) carousel.appendChild(makeCard(list[nextIndex], "right"));
+    carousel.appendChild(makeCard(list[nextIndex], "right"));
 
     garageDisplay.appendChild(carousel);
 
-    // Only append visible arrows
-    if (hasPrev) {
-      var prevBtn = document.createElement("button");
-      prevBtn.className = "carousel-btn left";
-      prevBtn.innerHTML = "‹";
-      prevBtn.onclick = function(){ goPrev(list); };
-      garageDisplay.appendChild(prevBtn);
-    }
+    garageLevel.textContent = `Garage Level - ${list.length - 1}`;
+  }
 
-    if (hasNext) {
-      var nextBtn = document.createElement("button");
-      nextBtn.className = "carousel-btn right";
-      nextBtn.innerHTML = "›";
-      nextBtn.onclick = function(){ goNext(list); };
-      garageDisplay.appendChild(nextBtn);
-    }
+  // ===== Tiles view =====
+  function renderTiles(list = filteredCars) {
+    garageDisplay.className = "tiles-view";
+    garageDisplay.innerHTML = "";
 
-    // Dots
-    var dots = document.createElement("div");
-    dots.className = "carousel-dots";
-    for (var i=0;i<list.length;i++){
-      var dot = document.createElement("button");
-      dot.type = "button";
-      dot.className = "carousel-dot" + (i === currentIndex ? " active" : "");
-      dot.setAttribute("aria-label", "Go to card " + (i+1));
-      (function(ii){ dot.onclick = function(){ goToIndex(ii, list); }; })(i);
-      dots.appendChild(dot);
-    }
-    garageDisplay.appendChild(dots);
+    list.forEach(car => {
+      const tile = document.createElement("div");
+      tile.className = "tile-card";
 
-    garageLevel.textContent = "Garage Level - " + (list.length - 1);
+      if (car.isAddNew) {
+        tile.innerHTML = `<div class="car-name">+ Add new car</div>`;
+        tile.onclick = () => location.href = "garagesearch.html";
+      } else {
+        tile.innerHTML = `
+          ${car.img 
+            ? `<img src="${car.img}" alt="${car.brand}">` 
+            : `<div style="height:150px;background:#222;display:flex;align-items:center;justify-content:center;color:#999;">No image</div>`}
+          <div class="tile-info">
+            ${car.logo ? `<img src="${car.logo}" class="car-logo">` : ""}
+            <div class="car-meta">
+              <span class="car-name">${car.brand}</span>
+              ${car.model ? `<span class="car-model">${car.model}</span>` : ""}
+              ${car.fuel ? `<span class="fuel-pill">${car.fuel}</span>` : ""}
+            </div>
+          </div>
+        `;
+        tile.onclick = () => openDetails(car);
+      }
 
-    // Keyboard navigation
-    garageDisplay.setAttribute('tabindex','0');
-    garageDisplay.onkeydown = function(e){
-      if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev(list); }
-      if (e.key === 'ArrowRight'){ e.preventDefault(); goNext(list); }
-    };
+      garageDisplay.appendChild(tile);
+    });
 
-    // Drag / swipe bind once
-    if (!dragBound) {
-      dragBound = true;
+    garageLevel.textContent = `Garage Level - ${list.length - 1}`;
+  }
 
-      var onDown = function(e){
-        isDragging = true;
-        dragStartX = getClientX(e);
-        dragDeltaX = 0;
-        garageDisplay.classList.add('dragging');
-      };
-      var onMove = function(e){
-        if (!isDragging) return;
-        var x = getClientX(e);
-        dragDeltaX = x - dragStartX;
-      };
-      var onUp = function(){
-        if (!isDragging) return;
-        garageDisplay.classList.remove('dragging');
-        var delta = dragDeltaX;
-        isDragging = false; dragDeltaX = 0;
-        if (Math.abs(delta) > DRAG_THRESHOLD) {
-          if (delta < 0) goNext(list); else goPrev(list);
-        }
-      };
+  // ===== List view =====
+  function renderList(list = filteredCars) {
+    garageDisplay.className = "list-view";
+    garageDisplay.innerHTML = "";
 
-      garageDisplay.addEventListener('pointerdown', onDown, {passive:true});
-      window.addEventListener('pointermove', onMove, {passive:true});
-      window.addEventListener('pointerup', onUp, {passive:true});
+    list.forEach(car => {
+      const item = document.createElement("div");
+      item.className = "list-card";
 
-      garageDisplay.addEventListener('touchstart', onDown, {passive:true});
-      window.addEventListener('touchmove', onMove, {passive:true});
-      window.addEventListener('touchend', onUp, {passive:true});
-      window.addEventListener('touchcancel', onUp, {passive:true});
-    }
-  };
+      if (car.isAddNew) {
+        item.innerHTML = `<div class="car-name">+ Add new car</div>`;
+        item.onclick = () => location.href = "garagesearch.html";
+      } else {
+        item.innerHTML = `
+          ${car.logo ? `<img src="${car.logo}" class="car-logo">` : ""}
+          <div class="car-meta">
+            <span class="car-name">${car.brand}</span>
+            ${car.model ? `<span class="car-model">${car.model}</span>` : ""}
+            ${car.fuel ? `<span class="fuel-pill">${car.fuel}</span>` : ""}
+          </div>
+        `;
+        item.onclick = () => openDetails(car);
+      }
 
-  // Re-render to apply the override immediately
+      garageDisplay.appendChild(item);
+    });
+
+    garageLevel.textContent = `Garage Level - ${list.length - 1}`;
+  }
+
+  // View switch
+  function renderView(mode) {
+    if (mode === "card") return renderCardSlider();
+    if (mode === "tiles") return renderTiles();
+    if (mode === "list") return renderList();
+  }
+
+  // Search filter
+  searchBox.addEventListener("input", e => {
+    const q = e.target.value.toLowerCase();
+    filteredCars = cars.filter(c =>
+      c.isAddNew || (c.brand || "").toLowerCase().includes(q)
+    );
+    currentIndex = 0;
+    renderView(viewModeSelect.value);
+  });
+
+  viewModeSelect.addEventListener("change", () => renderView(viewModeSelect.value));
+
+  // Initial render
   renderView(viewModeSelect.value);
+
 })();
+// DOMContentLoaded
 </script>
 
-<script src="/js/auth.js"></script>
+
+<script src="js/auth.js"></script>
 <script src="js/translate.js"></script>
 </body>
 </html>

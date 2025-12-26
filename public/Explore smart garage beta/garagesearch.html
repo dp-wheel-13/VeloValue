@@ -309,49 +309,52 @@
     loadWelcome(); // execute when page loads
   </script>
 
-  <script>
-    const proceedBtn = document.getElementById("proceedBtn");
-    const plateInput = document.getElementById("numberPlateInput");
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+const proceedBtn = document.getElementById("proceedBtn");
+const plateInput = document.getElementById("numberPlateInput");
 
-    proceedBtn.addEventListener("click", async () => {
-      const plate = plateInput.value.trim().toUpperCase();
-      if (!plate) {
-        alert("Please enter your number plate.");
-        return;
-      }
-      try {
-        const res = await fetch("/garage/search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plate })
-        });
-        const data = await res.json();
-        if (data.success) {
-          // ✅ Car details found → redirect to garage view
-          window.location.href = "/Explore smart garage beta/garageview.html";
-        } else {
-          // ❌ Car not found → show message on this page
-          const container = document.querySelector(".garage-container");
-          let msgEl = document.getElementById("errorMsg");
-          if (!msgEl) {
-            msgEl = document.createElement("p");
-            msgEl.id = "errorMsg";
-            msgEl.style.color = "#ff6b6b";
-            msgEl.style.fontSize = "18px";
-            msgEl.style.marginTop = "20px";
-            container.appendChild(msgEl);
-          }
-          msgEl.innerHTML =
-            `Car details not found. <a href="/Explore smart garage beta/manual-upload.html" style="color:#f2c94c; text-decoration:underline;">Enter details manually</a>`;
-        }
-      } catch (err) {
-        console.error("Error contacting backend:", err);
-        alert("Server error, please try again.");
-      }
-    });
-  </script>
+proceedBtn.addEventListener("click", async () => {
+  const plate = plateInput.value.trim().toUpperCase();
+  if (!plate) {
+    alert("Please enter your number plate.");
+    return;
+  }
 
-  <script src="/js/auth.js"></script>
+   try {
+    // Call YOUR backend endpoint instead of MockAPI
+    const res = await axios.get(`/api/lookup/${encodeURIComponent(plate)}`);
+    const data = res.data;
+
+    // Check if your backend returned a successful result
+    if (data.success) {
+      // Store the entire car data object from your backend
+      localStorage.setItem("selectedCar", JSON.stringify(data));
+      
+      // Redirect to the garage view page
+      window.location.href = "/Explore smart garage beta/garageview.html";
+    } else {
+      // Display the error message from your backend
+      const container = document.querySelector(".garage-container");
+      let msgEl = document.getElementById("errorMsg");
+      if (!msgEl) {
+        msgEl = document.createElement("p");
+        msgEl.id = "errorMsg";
+        msgEl.style.color = "#ff6b6b";
+        msgEl.style.fontSize = "18px";
+        msgEl.style.marginTop = "20px";
+        container.appendChild(msgEl);
+      }
+     msgEl.innerHTML = `Error: ${data.message}. <a href="/Explore smart garage beta/manual-upload.html" style="color:#f2c94c; text-decoration:underline;">Enter details manually</a>`;
+    }
+  } catch (err) {
+    console.error("Error fetching from your backend:", err);
+    alert("Could not connect to the server. Please try again later.");
+  }
+});
+</script>
+
+  <script src="js/auth.js"></script>
   <script src="js/translate.js"></script>
 </body>
 </html>

@@ -404,7 +404,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/>
           </svg>
-          <span class="badge" id="compareBadge">0</span>
+        <span class="badge" id="compareBadge">0</span>
         </button>
         <div id="compareMenu" class="dropdown" role="menu" aria-label="Compare">
           <div class="dropdown-head">
@@ -589,20 +589,6 @@
   </script>
 
   <script>
-    // Data
-    const cars = [
-      {brand:'Fiat', model:'500', body:'Hatchback', fuel:'Petrol', gear:'Manual', price:16500, rating:4.5, popularIn:['IT'], img:'https://images.unsplash.com/photo-1615089000191-3b82ba9fb3a5?q=80&w=1400&auto=format&fit=crop'},
-      {brand:'Fiat', model:'Panda', body:'Hatchback', fuel:'Petrol', gear:'Manual', price:14500, rating:4.2, popularIn:['IT'], img:'https://images.unsplash.com/photo-1658580776761-19e3f3323cf8?q=80&w=1400&auto=format&fit=crop'},
-      {brand:'Alfa Romeo', model:'Giulia', body:'Sedan', fuel:'Petrol', gear:'Auto', price:45900, rating:4.7, popularIn:['IT'], img:'https://images.unsplash.com/photo-1616008042387-0a44a0a24e69?q=80&w=1400&auto=format&fit=crop'},
-      {brand:'Alfa Romeo', model:'Tonale', body:'SUV', fuel:'Hybrid', gear:'Auto', price:39900, rating:4.4, popularIn:['IT'], img:'https://images.unsplash.com/photo-1683707664244-1e5924c4ea02?q=80&w=1400&auto=format&fit=crop'},
-      {brand:'Ferrari', model:'Roma', body:'Coupe', fuel:'Petrol', gear:'Auto', price:210000, rating:4.9, popularIn:['IT'], img:'https://images.unsplash.com/photo-1603386329225-868f9b1ee4fd?q=80&w=1400&auto=format&fit=crop'},
-      {brand:'Maserati', model:'Grecale', body:'SUV', fuel:'Hybrid', gear:'Auto', price:76000, rating:4.6, popularIn:['IT'], img:'https://images.unsplash.com/photo-1707345520629-83d6e1bb4be1?q=80&w=1400&auto=format&fit=crop'},
-      {brand:'Lancia', model:'Ypsilon', body:'Hatchback', fuel:'Hybrid', gear:'Manual', price:18900, rating:4.1, popularIn:['IT'], img:'https://images.unsplash.com/photo-1550355291-bbee04a92027?q=80&w=1400&auto=format&fit=crop'},
-      {brand:'Dacia', model:'Sandero', body:'Hatchback', fuel:'Petrol', gear:'Manual', price:12900, rating:3.9, popularIn:['IT'], img:'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=1400&auto=format&fit=crop'},
-      {brand:'Volkswagen', model:'Golf', body:'Hatchback', fuel:'Hybrid', gear:'Auto', price:29900, rating:4.5, popularIn:['IT'], img:'https://images.unsplash.com/photo-1622551247632-3f2b2df10dea?q=80&w=1400&auto=format&fit=crop'},
-      {brand:'BMW', model:'X1', body:'SUV', fuel:'Diesel', gear:'Auto', price:42900, rating:4.4, popularIn:['IT'], img:'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1400&auto=format&fit=crop'},
-      {brand:'Audi', model:'A3', body:'Hatchback', fuel:'Petrol', gear:'Auto', price:30900, rating:4.3, popularIn:['IT'], img:'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1400&auto=format&fit=crop'}
-    ];
 
     // Helpers
     const $ = (s, r=document) => r.querySelector(s);
@@ -936,9 +922,9 @@
       if(q) chips.push({group:'q', value:q, label:`Search: ${q}`});
       if(selected.maxPrice<120000) chips.push({group:'price', value:String(selected.maxPrice), label:`≤ ${toEUR(selected.maxPrice)}`});
       selected.brands.forEach(v=>chips.push({group:'brands', value:v, label:`Brand: ${v}`}));
-      selected.body.forEach(v=>chips.push({group:'body', value:v, label:v}));
-      selected.fuel.forEach(v=>chips.push({group:'fuel', value:v, label:v}));
-      selected.gear.forEach(v=>chips.push({group:'gear', value:v, label:v}));
+      selected.body.forEach(v=>chips.push({group:'body', value=v, label:v}));
+      selected.fuel.forEach(v=>chips.push({group:'fuel', value=v, label=v}));
+      selected.gear.forEach(v=>chips.push({group:'gear', value=v, label=v}));
       els.activeFilters.innerHTML = chips.map(c=>`<span class="af-chip" data-group="${c.group}" data-value="${c.value}">${c.label} <button class="x" aria-label="Remove ${c.label}">×</button></span>`).join('');
     }
     els.activeFilters.addEventListener('click', e=>{
@@ -1152,7 +1138,245 @@
     })();
   </script>
 
+  <script src="/services/WikiCarService.js"></script>
+<script>
+/* Backend loader (http://localhost:3000) — renders proper car cards with icons */
+async function loadCars() {
+  try {
+    const res = await fetch("http://localhost:3000/api/explore?brand=all");
+    const data = await res.json();
+
+    // Accept array or wrapped shapes
+    const list = Array.isArray(data)
+      ? data
+      : Array.isArray(data.cars)    ? data.cars
+      : Array.isArray(data.results) ? data.results
+      : Array.isArray(data.data)    ? data.data
+      : [];
+
+    const container = document.getElementById("resultsGrid");
+    if (!container) return;
+    container.innerHTML = "";
+
+    list.forEach(car => {
+      const brand = car.brand || car.make || "Unknown";
+      const model = car.model || "";
+      const body  = car.body || "";
+      const priceNum = Number(car.price ?? car.priceFromEur);
+      const priceText = isNaN(priceNum) ? "Price N/A" : `€${priceNum.toLocaleString()}`;
+      const ratingText = car.rating != null ? car.rating : "N/A";
+      const img = car.image || car.img || "default.jpg";
+
+      const id = (typeof carId === "function")
+        ? carId({ brand, model })
+        : (`${brand}-${model}`).toLowerCase().replace(/\s+/g,'-');
+
+      try {
+        if (typeof carsById?.set === "function") {
+          carsById.set(id, { brand, model, body, price: isNaN(priceNum) ? 0 : priceNum, rating: ratingText === "N/A" ? 0 : Number(ratingText), img });
+        }
+      } catch {}
+
+      const heart = (typeof heartButtonHTML === "function")
+        ? heartButtonHTML(id)
+        : `<button class="heart-btn" data-id="${id}" aria-label="Add to wishlist" aria-pressed="false" title="Wishlist">
+             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+           </button>`;
+
+      const compare = (typeof compareButtonHTML === "function")
+        ? compareButtonHTML(id)
+        : `<button class="compare-btn" data-compare="${id}" aria-label="Add to compare" aria-pressed="false" title="Compare">
+             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+           </button>`;
+
+      const card = document.createElement('article');
+      card.className = 'car-card';
+      card.dataset.id = id;
+      card.tabIndex = 0;
+      card.setAttribute('role','link');
+      card.setAttribute('aria-label', `${brand} ${model}`);
+      card.innerHTML = `
+        ${heart}
+        ${compare}
+        <img class="thumb" src="${img}" alt="${brand} ${model}">
+        <div class="meta">
+          <div>
+            <div class="name">${brand} ${model}</div>
+            <div class="muted" style="font-size:12px">${body} • ${priceText}</div>
+          </div>
+          <div class="pill">★ ${ratingText}</div>
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+
+    if (typeof syncHeartButtons === "function") syncHeartButtons();
+    if (typeof syncCompareButtons === "function") syncCompareButtons();
+  } catch (err) {
+    console.error("loadCars error:", err);
+  }
+}
+
+function openSpecs(make, model, year) {
+  window.location.href = `cars.html?make=${make}&model=${model}&year=${year}`;
+}
+
+loadCars();
+</script>
+
+<script>
+const BACKEND = "http://localhost:3000"; // your backend
+
+// Escape HTML to avoid XSS
+function escapeHtml(s) {
+  if (!s) return "";
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// Add a car card to #resultsGrid — use same structure + icons
+function addCarCard(car) {
+  const container = document.getElementById("resultsGrid");
+  if (!container) return;
+
+  const brand = car.brand || car.make || "Unknown";
+  const model = car.model || "";
+  const body  = car.body || "";
+  const img   = car.image || car.img || "https://via.placeholder.com/220x140?text=No+Image";
+  const priceNum = Number(car.price ?? car.priceFromEur);
+  const priceText = isNaN(priceNum) ? "N/A" : `€${priceNum.toLocaleString()}`;
+  const ratingText = car.rating != null ? car.rating : "N/A";
+
+  const id = (typeof carId === "function")
+    ? carId({ brand, model })
+    : (`${brand}-${model}`).toLowerCase().replace(/\s+/g,'-');
+
+  // Avoid duplicate by data-id
+  if (container.querySelector(`.car-card[data-id="${id}"]`)) return;
+
+  try {
+    if (typeof carsById?.set === "function") {
+      carsById.set(id, { brand, model, body, price: isNaN(priceNum) ? 0 : priceNum, rating: ratingText === "N/A" ? 0 : Number(ratingText), img });
+    }
+  } catch {}
+
+  const heart = (typeof heartButtonHTML === "function")
+    ? heartButtonHTML(id)
+    : `<button class="heart-btn" data-id="${id}" aria-label="Add to wishlist" aria-pressed="false" title="Wishlist">
+         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+       </button>`;
+
+  const compare = (typeof compareButtonHTML === "function")
+    ? compareButtonHTML(id)
+    : `<button class="compare-btn" data-compare="${id}" aria-label="Add to compare" aria-pressed="false" title="Compare">
+         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+       </button>`;
+
+  const card = document.createElement("article");
+  card.className = "car-card";
+  card.dataset.id = id;
+  card.tabIndex = 0;
+  card.setAttribute('role','link');
+  card.setAttribute('aria-label', `${brand} ${model}`);
+  card.innerHTML = `
+    ${heart}
+    ${compare}
+    <img class="thumb" src="${escapeHtml(img)}" alt="${escapeHtml(brand)} ${escapeHtml(model)}">
+    <div class="meta">
+      <div>
+        <div class="name">${escapeHtml(brand)} ${escapeHtml(model)}</div>
+        <div class="muted" style="font-size:12px">${escapeHtml(body)} • ${escapeHtml(priceText)}</div>
+      </div>
+      <div class="pill">★ ${escapeHtml(ratingText)}</div>
+    </div>
+  `;
+
+  container.prepend(card);
+
+  const countEl = document.getElementById("resultCount");
+  if (countEl) countEl.textContent = `${container.querySelectorAll('.car-card').length} results`;
+
+  if (typeof syncHeartButtons === "function") syncHeartButtons();
+  if (typeof syncCompareButtons === "function") syncCompareButtons();
+}
+
+// Load all cached cars from backend
+async function loadCachedCars() {
+  try {
+    const res = await fetch(`${BACKEND}/api/cachedCars`);
+    if (!res.ok) throw new Error(`Status ${res.status}`);
+    const cars = await res.json();
+    if (Array.isArray(cars)) cars.forEach(addCarCard);
+  } catch (err) {
+    console.warn("Failed to load cached cars:", err);
+  }
+}
+
+// Search function
+async function doSearch() {
+  const input = document.getElementById("searchInput");
+  const text = input.value.trim();
+  if (!text) return alert("Please enter a car (brand + model).");
+
+  const [brand, ...modelParts] = text.split(" ");
+  const model = modelParts.join(" ");
+  if (!brand || !model) return alert("Please enter both brand and model.");
+
+  try {
+    const res = await fetch(`${BACKEND}/api/explore?brand=${encodeURIComponent(brand)}&model=${encodeURIComponent(model)}`);
+    if (!res.ok) throw new Error(`Backend ${res.status}`);
+    const car = await res.json();
+    addCarCard(car);
+    input.value = "";
+  } catch (err) {
+    console.error("Search error:", err);
+    alert("Failed to fetch car from backend. Showing demo only.");
+  }
+}
+
+// Init
+document.addEventListener("DOMContentLoaded", () => {
+  loadCachedCars();
+
+  document.getElementById("searchBtn").addEventListener("click", doSearch);
+  document.getElementById("searchInput").addEventListener("keypress", (e) => {
+    if (e.key === "Enter") doSearch();
+  });
+});
+
+// --- SEARCH BAR INTEGRATION (use port 3000 and same renderer) ---
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const resultsGrid = document.getElementById('resultsGrid');
+
+searchBtn.addEventListener('click', async () => {
+  const query = searchInput.value.trim();
+  if (!query) return;
+
+  const [brand, ...modelParts] = query.split(' ');
+  const model = modelParts.join(' ') || 'Unknown';
+
+  try {
+    const res = await fetch(`${BACKEND}/api/explore?brand=${encodeURIComponent(brand)}&model=${encodeURIComponent(model)}`);
+    if (!res.ok) throw new Error('Car not found');
+
+    const car = await res.json();
+    addCarCard(car); // keep icons/styles consistent
+
+  } catch (err) {
+    console.error(err);
+    alert('Car not found. Showing demo only.');
+  }
+});
+</script>
+
+  <script src="explorenewcars.js"></script>
   <script src="/js/auth.js"></script>
-  <script src="js/translate.js"></script>
+  <script src="/js/translate.js"></script>
 </body>
 </html>
