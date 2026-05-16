@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VeloValue – Discover Your Drive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="homepage.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <h1 class="logo">VeloValue</h1>
+    <div class="right-section">
+      <div class="language-select">
+        <select id="languageSelect" aria-label="Language">
+          <option value="en">English</option>
+          <option value="it">Italiano</option>
+          <option value="de">Deutsch</option>
+        </select>
+      </div>
+      <div id="authSection"></div>
+    </div>
+  </header>
+
+  <!-- Hamburger menu -->
+  <nav class="menu" id="hamburgerMenu" aria-hidden="true">
+    <button class="menu-close" aria-label="Close menu"></button>
+    <a href="homepage.html">HOME</a>
+    <a href="explore-new-cars-beta/explorenewcarsnew.html">EXPLORE NEW CARS</a>
+    <a href="explore-smart-garage-beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+    <a href="velocharge-beta/velocharge.html">DISCOVER VELOCHARGE</a>
+    <a href="smartsearch.html">SMART SEARCH</a>
+    <a href="#careers">WORK WITH US</a>
+    <a href="#about">ABOUT US</a>
+  </nav>
+  <div class="menu-overlay"></div>
+
+  <!-- Hero Sections -->
+  <section id="explore" class="hero">
+  <h2>DISCOVER THE VALUE OF EVERY DRIVE</h2>
+  <p>Search for your next car with elegance and precision.</p>
+  <a class="btn" href="explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+</section>
+
+<section id="garage" class="hero">
+  <h2>INTRODUCING THE SMART GARAGE</h2>
+  <p>Keep all your car details, Driving License, documents, and records safe in one smart garage.</p>
+  <a class="btn" href="explore-smart-garage-beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+</section>
+
+<section id="velocharge" class="hero">
+  <h2>EMPOWER YOUR DRIVE WITH VELOCHARGE</h2>
+  <p>Seamlessly locate, reserve, and track EV charging stations wherever your journey takes you.</p>
+  <a class="btn" href="velocharge-beta/velocharge.html">DISCOVER VELOCHARGE</a>
+</section>
+
+  <!-- Features Section -->
+  <section id="features" class="features">
+    <a href="smartsearch.html" class="feature">
+      <h3>🔍 Smart Search</h3>
+      <p>Locate vehicles by license plate number or photograph using advanced AI technology.</p>
+    </a>
+
+    <div id="smartReminderBox" class="feature smart-reminder-dynamic">
+  <!-- Content injected dynamically by JavaScript -->
+  <div class="reminder-loading">
+    <span>⏳</span>
+    <p>Loading...</p>
+  </div>
+</div>
+  </section>
+
+  <!-- Join Community Section -->
+  <section id="about" class="join-community">
+    <h2>JOIN OUR COMMUNITY</h2>
+    <div class="social-icons">
+      <a href="#" aria-label="Facebook" class="icon fb"><img src="Multimedia/facebook.svg" alt="Facebook" /></a>
+      <a href="#" aria-label="X (Twitter)" class="icon x"><img src="Multimedia/x.svg" alt="X" /></a>
+      <a href="#" aria-label="Instagram" class="icon insta"><img src="Multimedia/instagram.svg" alt="Instagram" /></a>
+      <a href="#" aria-label="YouTube" class="icon yt"><img src="Multimedia/youtube.svg" alt="YouTube" /></a>
+      <a href="#" aria-label="LinkedIn" class="icon linkedin"><img src="Multimedia/linkedin.svg" alt="LinkedIn" /></a>
+      <a href="#" aria-label="TikTok" class="icon tiktok"><img src="Multimedia/tiktok.svg" alt="TikTok" /></a>
+    </div>
+
+    <div class="cars">
+      <img src="Multimedia/join-our-community-5-cars.png" alt="Collection of 5 cars" />
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+  <p><strong>Managing vehicles for your company?</strong></p>
+  
+  <p>
+    Explore <a href="velovaluefleetmvp.html">VeloValue Fleet &rarr;</a>
+  </p>
+  
+  <p>
+    &copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.
+  </p>
+  
+  <p>
+    Contact: <a href="mailto:debanjan.pal@community.unipa.it">debanjan.pal@community.unipa.it</a>
+  </p>
+</footer>
+
+  <!-- Scripts -->
+  <script>
+  // Elements
+  const hamburger = document.querySelector('.hamburger');
+  const menu = document.getElementById('hamburgerMenu');
+  const overlay = document.querySelector('.menu-overlay');
+  const closeBtn = document.querySelector('.menu-close');
+  const menuLinks = document.querySelectorAll('.menu a');
+  let scrollY = 0;
+
+  function openMenu() {
+    hamburger.setAttribute('aria-expanded', 'true');
+    hamburger.classList.add('is-active');
+    menu.classList.add('active');
+    overlay.classList.add('active');
+    menu.setAttribute('aria-hidden', 'false');
+
+    // Lock background scroll
+    scrollY = window.scrollY || document.documentElement.scrollTop;
+    document.body.style.top = `-${scrollY}px`;
+    document.body.classList.add('menu-lock');
+  }
+
+  function closeMenu() {
+    hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.classList.remove('is-active');
+    menu.classList.remove('active');
+    overlay.classList.remove('active');
+    menu.setAttribute('aria-hidden', 'true');
+
+    // Restore scroll
+    document.body.classList.remove('menu-lock');
+    document.body.style.top = '';
+    window.scrollTo(0, scrollY);
+  }
+
+  function toggleMenu() {
+    if (menu.classList.contains('active')) closeMenu();
+    else openMenu();
+  }
+
+  // Events
+  hamburger.addEventListener('click', toggleMenu);
+  overlay.addEventListener('click', closeMenu);
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu.classList.contains('active')) closeMenu();
+  });
+
+  // Close on link click + smooth scroll for hash links
+  menuLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href') || '';
+      if (href.startsWith('#')) {
+        e.preventDefault();
+        const target = document.getElementById(href.slice(1));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      }
+      closeMenu();
+    });
+  });
+
+  // Login/Logout handling with responsive icon
+  const authSection = document.getElementById('authSection');
+  function updateAuthButton() {
+    if (window.innerWidth <= 768) {
+      authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+    } else {
+      authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
+    }
+  }
+  updateAuthButton();
+  window.addEventListener('resize', updateAuthButton);
+</script>
+
+  <!-- Smart Reminder Dynamic Box Logic -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    initSmartReminderHero();
+  });
+
+  async function initSmartReminderHero() {
+    const box = document.getElementById('smartReminderBox');
+    if (!box) return;
+
+    try {
+      // Check authentication
+      const statusRes = await fetch("/garage-entry", { 
+        method: "GET", 
+        credentials: "include" 
+      });
+      const statusData = await statusRes.json();
+
+      // STATE 1: Not Logged In
+      if (statusData.status === "NOT_AUTHENTICATED") {
+        renderLoginRequired(box);
+        return;
+      }
+
+      // Check if user has cars
+      const vehRes = await fetch("/api/garage/vehicles", { 
+        credentials: "include" 
+      });
+      const vehData = await vehRes.json();
+
+      // STATE 2: Logged In But No Cars
+      if (!vehData.success || !vehData.vehicles || vehData.vehicles.length === 0) {
+        renderNoCars(box);
+        return;
+      }
+
+      // STATE 3: Logged In + Has Cars → Ready!
+      const carCount = vehData.vehicles.length;
+      renderReady(box, carCount);
+
+    } catch (error) {
+      console.error("[Smart Reminder Hero] Error:", error);
+      renderLoginRequired(box); // Fallback to login prompt
+    }
+  }
+
+  function renderLoginRequired(container) {
+    container.className = 'feature smart-reminder-dynamic state-login';
+    container.innerHTML = `
+      <span class="reminder-icon">🔒</span>
+      <h3>Smart Reminders</h3>
+      <p class="reminder-desc">Never miss a vehicle deadline again!</p>
+      <div class="reminder-status status-login-required">Login Required</div>
+      <a href="login.html" class="reminder-btn primary">🔐 Login to Access</a>
+    `;
+  }
+
+  function renderNoCars(container) {
+    container.className = 'feature smart-reminder-dynamic state-no-cars';
+    container.innerHTML = `
+      <span class="reminder-icon">🚗</span>
+      <h3>Smart Reminders</h3>
+      <p class="reminder-desc">You're logged in! Add vehicles to get reminders.</p>
+      <div class="reminder-status status-no-cars">No Cars Yet</div>
+      <a href="explore-smart-garage-beta/garagesearch.html" class="reminder-btn primary">➕ Add Your First Car</a>
+    `;
+  }
+
+  function renderReady(container, carCount) {
+    container.className = 'feature smart-reminder-dynamic state-ready';
+    container.innerHTML = `
+      <span class="reminder-icon">🔔</span>
+      <h3>Smart Reminders</h3>
+      <p class="reminder-desc">You have <strong>${carCount}</strong> vehicle${carCount > 1 ? 's' : ''} with active reminders!</p>
+      <div class="reminder-status status-ready">✅ Ready</div>
+      <a href="smartreminders.html" class="reminder-btn primary">📅 View Reminders</a>
+      <div style="margin-top: 12px;">
+        <a href="explore-smart-garage-beta/smartgarage.html" class="reminder-btn secondary">Manage Garage</a>
+      </div>
+    `;
+  }
+  </script>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/translate.js"></script>
+
+</body>
+</html>

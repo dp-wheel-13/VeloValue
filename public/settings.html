@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VeloValue – Profile </title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --bg:#000; --text:#fff; --accent:#1db954; --radius-xl:18px; --shadow-1:0 8px 24px rgba(0,0,0,.45); --shadow-2:0 18px 50px rgba(0,0,0,.55); }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html,body{ height:100%; }
+    body{ font-family:Inter,system-ui,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.35; }
+
+    /* Header */
+    header{ position:sticky; top:0; width:100%; z-index:1000; background:var(--bg); border-bottom:1px solid rgba(255,255,255,.1); }
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px; }
+    .nav a{ color:var(--text); text-decoration:none; font-weight:600; }
+    .nav a:hover{ text-decoration:underline; }
+
+    /* Layout */
+    .container{ width:min(1100px,94vw); margin:0 auto; padding:24px 0 40px; display:grid; grid-template-columns: 320px 1fr; gap:18px; }
+    @media (max-width: 900px){ .container{ grid-template-columns: 1fr; } }
+
+    .panel{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-xl); box-shadow:var(--shadow-1); }
+    .panel h2{ font-size:16px; font-weight:800; margin:0 0 10px; }
+    .panel .sub{ opacity:.75; font-size:13px; margin-bottom:10px; }
+
+    .side{ padding:14px; }
+    .main{ padding:14px; display:grid; gap:12px; }
+
+    .group{ padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:12px; display:grid; gap:10px; background:rgba(255,255,255,.02); }
+    .row{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    @media (max-width: 600px){ .row{ grid-template-columns: 1fr; } }
+
+    label{ font-size:12px; opacity:.8; display:block; margin-bottom:4px; }
+    input, select{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:#101010; color:#fff; outline:none; }
+    input::placeholder{ color:#aaa; }
+
+    .btn{ padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:transparent; color:#fff; cursor:pointer; font-weight:800; }
+    .btn:hover{ border-color:var(--accent); color:var(--accent); }
+    .btn.primary{ background:var(--accent); color:var(--bg); border-color:#178b42; }
+    .btn.primary:hover{ filter:brightness(1.05); }
+    .btn.danger{ border-color:rgba(255,255,255,.18); color:#ff6b6b; }
+    .muted{ opacity:.75; }
+
+    /* Avatar */
+    .avatar-wrap{ display:flex; align-items:center; gap:14px; }
+    .avatar{
+      width:72px; height:72px; border-radius:50%;
+      border:1px solid rgba(255,255,255,.2);
+      background:#111; color:#fff; display:grid; place-items:center;
+      font-weight:900; font-size:22px; overflow:hidden;
+    }
+    .avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* Toast */
+    .toast-wrap{ position:fixed; right:16px; bottom:16px; display:grid; gap:10px; z-index:2000; }
+    .toast{ background:var(--accent); color:var(--bg); border-radius:12px; padding:10px 12px; box-shadow:var(--shadow-2); transform:translateY(10px); opacity:0; animation:toast-in .2s ease forwards; font-weight:800; }
+    @keyframes toast-in{ to{ transform:translateY(0); opacity:1; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="homepage.html"><strong>VeloValue</strong></a>
+    <nav style="display:flex;gap:16px;align-items:center">
+      <a href="homepage.html">HOME</a>
+      <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+      <a href="garageview.html">SMART GARAGE</a>
+      <div id="authSection"><button class="btn">Login / Register</button></div>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <!-- Sidebar -->
+  <aside class="panel side">
+    <h2>Settings</h2>
+    <div class="sub">Manage your profile and preferences.</div>
+    <div class="group">
+      <div class="avatar-wrap">
+        <div class="avatar" id="avatarPreview" aria-label="Profile avatar">U</div>
+        <div style="display:grid; gap:6px;">
+          <label for="avatarInput">Profile picture</label>
+          <input id="avatarInput" type="file" accept="image/*"/>
+          <button class="btn danger" id="removeAvatarBtn">Remove picture</button>
+        </div>
+      </div>
+      <div class="muted" style="font-size:12px">For beta, your picture is stored only in this browser.</div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <section class="panel main">
+    <!-- Profile info -->
+    <div class="group">
+      <h2>Edit Personal Information</h2>
+      <div class="row">
+        <div>
+          <label for="userName">Username</label>
+          <input id="displayName" type="text" placeholder="Search Available Username"/>
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="you@example.com"/>
+        </div>
+        <div>
+          <label for="sex">Sex</label>
+          <select id="sex">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="others">Others</option>
+            <option value="prefernottosay">Prefer not to say</option>
+            <option value="pokemon">Pokemon</option>
+            <option value="transformers">Transformers</option>
+            <option value="anime">Anime</option>
+            <option value="cartoon">Cartoon</option>
+            <option value="avengers">Avengers</option>
+            <option value="jet">Fighter Jet</option>
+            <option value="helicopter">Fighter Helicopter</option>
+          </select>
+        </div>
+        <div>
+          <label for="dateofbirth">Date of birth</label>
+          <input id="dateofbirth" type="date" />
+        </div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn primary" id="saveProfileBtn">Save profile</button>
+        <span class="muted" id="profileStatus"></span>
+      </div>
+    </div>
+
+    <!-- Password (beta-safe) -->
+    <div class="group">
+      <h2>Password</h2>
+      <div class="row">
+        <div>
+          <label for="currentPwd">Current password</label>
+          <input id="currentPwd" type="password" placeholder="••••••••"/>
+        </div>
+        <div>
+          <label for="newPwd">New password</label>
+          <input id="newPwd" type="password" placeholder="New password"/>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="confirmPwd">Confirm new password</label>
+          <input id="confirmPwd" type="password" placeholder="Confirm new password"/>
+        </div>
+        <div></div>
+      </div>
+      <button class="btn" id="changePwdBtn">Change password</button>
+      <div class="muted" style="font-size:12px">For security, password changes will be enabled when the backend is ready.</div>
+    </div>
+
+    <!-- Preferences -->
+    <div class="group">
+      <h2>Preferences</h2>
+      <div class="row">
+        <div>
+          <label for="country">Country or Region</label>
+          <select id="country">
+            <option value="it">Italia</option>
+          </select>
+        </div>
+        <div>
+          <label for="language">Language</label>
+          <select id="language">
+            <option value="en">English</option>
+            <option value="it">Italiano</option>
+            <option value="de">Deutsch</option>
+          </select>
+        </div>
+        <div>
+          <label for="notifications">Email notifications</label>
+          <select id="notifications">
+            <option value="on">On</option>
+            <option value="off">Off</option>
+          </select>
+        </div>
+        <div>
+          <label for="currency">Currency</label>
+          <select id="currency">
+            <option value="EUR">EUR (€)</option>
+            <option value="USD">USD ($)</option>
+            <option value="GBP">INR (₹)</option>
+          </select>
+        </div>
+      </div>
+        <div></div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn primary" id="savePrefsBtn">Save preferences</button>
+        <span class="muted" id="prefsStatus"></span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="toastWrap" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+  // Local storage keys (beta storage)
+  const PROFILE_KEY = 'vv_user_profile_override_v1';
+  const PREFS_KEY   = 'vv_user_prefs_v1';
+
+  const $ = (s, r=document) => r.querySelector(s);
+  const toast = (msg) => {
+    const w = $('#toastWrap'); const el = document.createElement('div');
+    el.className='toast'; el.textContent = msg; w.appendChild(el);
+    setTimeout(()=>{ el.style.transition='opacity .2s, transform .2s'; el.style.opacity='0'; el.style.transform='translateY(8px)'; },1200);
+    setTimeout(()=> w.contains(el) && w.removeChild(el),1500);
+  };
+
+  function loadJSON(key, fallback=null){
+    try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback; }
+    catch { return fallback; }
+  }
+  function saveJSON(key, value){
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  // Avatar helpers
+  function initials(name=''){
+    return name.trim().split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase() || 'U';
+  }
+  function renderAvatar(name, dataUrl){
+    const el = $('#avatarPreview');
+    if (dataUrl) {
+      el.innerHTML = `<img alt="Avatar">`;
+      el.querySelector('img').src = dataUrl;
+    } else {
+      el.textContent = initials(name);
+    }
+  }
+
+  // Init
+  (function init(){
+    const profile = loadJSON(PROFILE_KEY, { name:'', email:'', avatar:null });
+    const prefs   = loadJSON(PREFS_KEY, { language:'en', currency:'EUR', notifications:'on' });
+
+    $('#displayName').value = profile.name || '';
+    $('#email').value = profile.email || '';
+    $('#language').value = prefs.language || 'en';
+    $('#currency').value = prefs.currency || 'EUR';
+    $('#notifications').value = prefs.notifications || 'on';
+
+    renderAvatar(profile.name, profile.avatar || null);
+  })();
+
+  // Avatar upload/remove
+  $('#avatarInput').addEventListener('change', (e)=>{
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { alert('Please select an image.'); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const profile = loadJSON(PROFILE_KEY, { name:'', email:'', avatar:null });
+      profile.avatar = reader.result; // data URL
+      saveJSON(PROFILE_KEY, profile);
+      renderAvatar(profile.name, profile.avatar);
+      toast('Profile picture updated');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  $('#removeAvatarBtn').addEventListener('click', ()=>{
+    const profile = loadJSON(PROFILE_KEY, { name:'', email:'', avatar:null });
+    profile.avatar = null;
+    saveJSON(PROFILE_KEY, profile);
+    renderAvatar(profile.name, null);
+    toast('Profile picture removed');
+  });
+
+  // Save profile
+  $('#saveProfileBtn').addEventListener('click', ()=>{
+    const name = $('#displayName').value.trim();
+    const email = $('#email').value.trim();
+    const profile = loadJSON(PROFILE_KEY, { name:'', email:'', avatar:null });
+    profile.name = name;
+    profile.email = email;
+    saveJSON(PROFILE_KEY, profile);
+    renderAvatar(profile.name, profile.avatar || null);
+    $('#profileStatus').textContent = 'Saved';
+    toast('Profile saved');
+    setTimeout(()=> $('#profileStatus').textContent = '', 1200);
+  });
+
+  // Change password (beta)
+  $('#changePwdBtn').addEventListener('click', ()=>{
+    alert('For security, password change will be enabled when the backend is ready.');
+  });
+
+  // Save preferences
+  $('#savePrefsBtn').addEventListener('click', ()=>{
+    const prefs = {
+      language: $('#language').value,
+      currency: $('#currency').value,
+      notifications: $('#notifications').value
+    };
+    saveJSON(PREFS_KEY, prefs);
+    $('#prefsStatus').textContent = 'Saved';
+    toast('Preferences saved');
+    setTimeout(()=> $('#prefsStatus').textContent = '', 1200);
+  });
+</script>
+
+<script src="/js/auth.js"></script>
+</body>
+</html>

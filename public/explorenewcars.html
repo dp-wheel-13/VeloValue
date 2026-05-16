@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Car Explorer</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+    }
+    header {
+      background: #111827;
+      color: white;
+      padding: 1rem 2rem;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    main {
+      padding: 1.5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    #controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    button, input {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.95rem;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    input {
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+    }
+    #status {
+      min-height: 1.5rem;
+      margin-bottom: 1rem;
+      color: #374151;
+      font-size: 0.95rem;
+    }
+    #carsContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .car-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .car-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      background: #e5e7eb;
+    }
+    .car-content {
+      padding: 0.75rem 1rem 1rem;
+    }
+    .car-title {
+      font-weight: 600;
+      margin: 0 0 0.35rem;
+    }
+    .car-subtitle {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+    .car-field {
+      font-size: 0.85rem;
+      color: #374151;
+      margin: 0.1rem 0;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.15rem 0.4rem;
+      font-size: 0.7rem;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      margin-right: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Car Explorer</h1>
+  </header>
+
+  <main>
+    <section id="controls">
+      <button id="loadAllBtn">Load All Cars</button>
+
+      <form id="searchForm">
+        <input
+          id="brandInput"
+          type="text"
+          placeholder="Brand (e.g. Toyota)"
+          required
+        />
+        <input
+          id="modelInput"
+          type="text"
+          placeholder="Model (e.g. Corolla)"
+          required
+        />
+        <button type="submit">Search Car</button>
+      </form>
+    </section>
+
+    <div id="status"></div>
+
+    <section id="carsContainer"></section>
+  </main>
+
+  <script>
+    // Adjust this to match your backend base URL
+    const API_BASE_URL = 'http://localhost:5000';
+
+    const statusEl = document.getElementById('status');
+    const carsContainer = document.getElementById('carsContainer');
+    const loadAllBtn = document.getElementById('loadAllBtn');
+    const searchForm = document.getElementById('searchForm');
+    const brandInput = document.getElementById('brandInput');
+    const modelInput = document.getElementById('modelInput');
+
+    function setStatus(msg, isError = false) {
+      statusEl.textContent = msg;
+      statusEl.style.color = isError ? '#b91c1c' : '#374151';
+    }
+
+    function clearCars() {
+      carsContainer.innerHTML = '';
+    }
+
+    function renderCarCard(car) {
+      const card = document.createElement('div');
+      card.className = 'car-card';
+
+      const img = document.createElement('img');
+      img.src = car.image || '';
+      img.alt = `${car.brand} ${car.model}`;
+      img.onerror = () => {
+        img.src = '';
+      };
+
+      const content = document.createElement('div');
+      content.className = 'car-content';
+
+      const title = document.createElement('h3');
+      title.className = 'car-title';
+      title.textContent = `${car.brand || ''} ${car.model || ''}`.trim();
+
+      const subtitle = document.createElement('div');
+      subtitle.className = 'car-subtitle';
+      subtitle.textContent = car.year || '';
+
+      const fields = document.createElement('div');
+
+      const fieldDefs = [
+        { label: 'Fuel', key: 'fuel' },
+        { label: 'Transmission', key: 'transmission' },
+        { label: 'Drive', key: 'driveType' },
+        { label: 'Top Speed', key: 'topSpeed' },
+        { label: '0–100 km/h', key: 'zeroToHundred' },
+        { label: 'Horsepower', key: 'horsepower' },
+        { label: 'Torque', key: 'torque' },
+        { label: 'Weight', key: 'weight' },
+        { label: 'Price', key: 'price' }
+      ];
+
+      fieldDefs.forEach(f => {
+        const value = car[f.key];
+        if (!value || value === 'Not available') return;
+        const p = document.createElement('p');
+        p.className = 'car-field';
+        p.textContent = `${f.label}: ${value}`;
+        fields.appendChild(p);
+      });
+
+      // Badges for extras (seating, cargo, etc.)
+      const badgesRow = document.createElement('div');
+      if (car.seatingCapacity && car.seatingCapacity !== 'Not available') {
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.textContent = `${car.seatingCapacity} seats`;
+        badgesRow.appendChild(badge);
+      }
+      if (car.cargoCapacity && car.cargoCapacity !== 'Not available') {
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.textContent = `Cargo: ${car.cargoCapacity}`;
+        badgesRow.appendChild(badge);
+      }
+      if (car.emissions && car.emissions !== 'Not available') {
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.textContent = `Emissions: ${car.emissions}`;
+        badgesRow.appendChild(badge);
+      }
+
+      content.appendChild(title);
+      content.appendChild(subtitle);
+      content.appendChild(fields);
+      content.appendChild(badgesRow);
+
+      card.appendChild(img);
+      card.appendChild(content);
+      carsContainer.appendChild(card);
+    }
+
+    function renderCars(cars) {
+      clearCars();
+      if (!cars || !cars.length) {
+        setStatus('No cars found.');
+        return;
+      }
+      cars.forEach(renderCarCard);
+      setStatus(`Loaded ${cars.length} car(s).`);
+    }
+
+    async function loadAllCars() {
+      try {
+        setStatus('Loading all cars...');
+        clearCars();
+        const res = await fetch(`${API_BASE_URL}/api/cars`);
+        if (!res.ok) {
+          throw new Error(`Backend responded with status ${res.status}`);
+        }
+        const data = await res.json();
+        renderCars(data);
+      } catch (err) {
+        console.error(err);
+        setStatus('Failed to load cars: ' + err.message, true);
+      }
+    }
+
+    async function searchCar(brand, model) {
+      try {
+        setStatus('Searching car...');
+        clearCars();
+        // Assumes backend route: /api/car?brand=...&name=Brand%20Model
+        const name = `${brand} ${model}`.trim();
+        const url = `${API_BASE_URL}/api/car?brand=${encodeURIComponent(
+          brand
+        )}&name=${encodeURIComponent(name)}`;
+
+        const res = await fetch(url);
+        if (!res.ok) {
+          throw new Error(`Backend responded with status ${res.status}`);
+        }
+        const car = await res.json();
+        if (car.error) {
+          setStatus('Error from backend: ' + car.error, true);
+          return;
+        }
+        renderCars([car]);
+      } catch (err) {
+        console.error(err);
+        setStatus('Failed to search car: ' + err.message, true);
+      }
+    }
+
+    // Event listeners
+    loadAllBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      loadAllCars();
+    });
+
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const brand = brandInput.value.trim();
+      const model = modelInput.value.trim();
+      if (!brand || !model) return;
+      searchCar(brand, model);
+    });
+
+    // Optional: automatically load all cars on page load
+    window.addEventListener('DOMContentLoaded', loadAllCars);
+  </script>
+</body>
+</html>

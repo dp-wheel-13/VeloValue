@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Garage – VeloValue</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: url('/Multimedia/welcome_to_smart_garage.png') no-repeat center center fixed;
+    background-size: cover;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: -1;
+  }
+
+  /* Header */
+  header {
+    position: fixed;
+    top: 0; left: 0; width: 100%;
+    padding: 1rem 2rem;
+    background: rgba(0,0,0,0.6);
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 1000; box-sizing: border-box;
+    border-bottom: 1px solid #333;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+
+  header h1 { font-size: 24px; font-weight: 800; margin: 0; }
+  header h1 a { color: white; text-decoration: none; }
+
+  /* Desktop nav */
+  nav.desktop-nav { display: flex; align-items: center; gap: 20px; }
+  nav.desktop-nav a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; }
+  nav.desktop-nav a:hover { text-decoration: underline; }
+
+  /* Language select */
+  .language-select { position: relative; }
+  .language-select select {
+    background: #111; color: #fff; border: 1px solid #fff; border-radius: 6px;
+    padding: 4px 8px; font-size: 14px; cursor: pointer;
+  }
+
+  /* Auth button */
+  #authSection .text-btn {
+    background: #fff; color: #111; border: 1px solid #333;
+    border-radius: 20px; padding: 6px 12px; font-weight: 600; cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  #authSection .text-btn:hover { background: #444; color: #fff; }
+  #authSection .icon-btn { display: none; }
+
+  /* Hamburger (hidden on desktop) */
+  .hamburger {
+    font-size: 1.8rem;
+    background: none; border: none; color: #fff; cursor: pointer;
+    display: none; align-items: center; justify-content: center;
+    width: 40px; height: 40px; z-index: 1100;
+  }
+
+  /* Mobile drawer menu */
+  .menu {
+    position: fixed; top: 0; left: 0;
+    width: 300px; height: 100vh;
+    background: rgba(17,17,17,0.95);
+    border-right: 1px solid rgba(255,255,255,0.12);
+    padding: 5.5rem 2rem 2rem;
+    display: flex; flex-direction: column; gap: 2rem;
+    transition: transform 0.3s ease;
+    z-index: 1090;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 0 1rem 1rem 0;
+    transform: translateX(-100%);
+    will-change: transform;
+  }
+  .menu.active { transform: translateX(0); }
+  .menu a { color: #fff; font-size: 1.4rem; font-weight: 800; text-decoration: none; }
+
+  /* In-drawer close X */
+  .menu .menu-close {
+    position: absolute; top: 1rem; right: 1rem;
+    width: 2.25rem; height: 2.25rem;
+    background: none; border: 0; color: #fff; cursor: pointer;
+  }
+  .menu .menu-close::before, .menu .menu-close::after {
+    content: ""; position: absolute; top: 50%; left: 50%;
+    width: 22px; height: 2px; background: currentColor; transform-origin: center;
+  }
+  .menu .menu-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+  .menu .menu-close::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+  /* Menu overlay */
+  .menu-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 1080;
+  }
+  .menu-overlay.active { opacity: 1; pointer-events: auto; }
+
+  /* Mobile: hide desktop nav, show hamburger; morph hamburger to X; show language+login */
+  @media (max-width: 1024px) {
+    nav.desktop-nav { display: none; }
+    .hamburger { display: flex; }
+
+    .language-select {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #111; border: 1px solid #fff;
+      display: flex; align-items: center; justify-content: center; position: relative;
+    }
+    .language-select::before { content:"🌐"; font-size:1.2rem; color:#fff; position:absolute; }
+    .language-select select { opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer; }
+
+    #authSection .text-btn { display: none; }
+    #authSection .icon-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 50%;
+      font-size: 1.2rem; background: #fff; color: #000; border: none; cursor: pointer;
+    }
+
+    .hamburger { position: relative; font-size: 0; }
+    .hamburger::before, .hamburger::after {
+      content: ""; position: absolute; left: 50%;
+      width: 22px; height: 2px; background: currentColor;
+      transform: translateX(-50%);
+      transition: transform .25s ease, top .25s ease, opacity .2s ease;
+    }
+    .hamburger::before { top: calc(50% - 6px); }
+    .hamburger::after  { top: calc(50% + 6px); }
+    .hamburger {
+      background-image: linear-gradient(currentColor, currentColor);
+      background-repeat: no-repeat; background-position: center; background-size: 22px 2px;
+    }
+    .hamburger.is-active { background-size: 0 0; }
+    .hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
+    .hamburger.is-active::after  { top: 50%; transform: translateX(-50%) rotate(-45deg); }
+  }
+
+  .garage-container { max-width: 600px; margin: 140px auto 0; text-align: center; }
+  #welcomeText { font-weight: 800; font-size: 26px; line-height: 1.5; margin-bottom: 15px; }
+  .instruction { font-size: 18px; color: #ddd; margin-bottom: 30px; }
+
+  .italian-plate {
+    position: relative; width: 100%; max-width: 500px; height: 90px;
+    margin: 0 auto 25px; background: #fff; border: 2px solid #000; border-radius: 10px;
+    display: flex; align-items: center;
+    box-shadow: inset 0 0 10px rgba(91, 81, 81, 0.2), 0 8px 20px rgba(0,0,0,0.6);
+    font-family: 'OCR A Std', monospace;
+  }
+  .plate-left, .plate-right {
+    background: #003399; color: #fff; font-weight: 900; font-size: 22px;
+    width: 70px; height: 100%; display: flex; justify-content: center; align-items: center;
+  }
+  .italian-plate input {
+    flex: 1; border: none; outline: none; height: 100%;
+    font-size: 36px; font-weight: 900; text-align: center; letter-spacing: 8px;
+    color: #000; background: transparent; text-transform: uppercase; min-width: 0;
+  }
+
+  .proceed-btn {
+    display: block; width: 100%; max-width: 500px; margin: 0 auto;
+    height: 90px; border-radius: 10px; font-size: 22px; font-weight: 700; border: none; cursor: pointer;
+    background: linear-gradient(135deg, #f2c94c, #f39c12); color: #000;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6); transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .proceed-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
+</style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <h1><a href="/homepage.html">VeloValue</a></h1>
+    </div>
+    <div class="header-right">
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="/homepage.html">HOME</a>
+        <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+        <a href="/velocharge-beta/velocharge.html">VELOCHARGE</a>
+        <a href="#about">ABOUT US</a>
+      </nav>
+      <div class="language-select">
+        <select id="languageSelect" aria-label="Language">
+          <option value="en">🇬🇧 English</option>
+          <option value="it">🇮🇹 Italiano</option>
+          <option value="de">🇩🇪 Deutsch</option>
+        </select>
+      </div>
+      <div id="authSection">
+        <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
+      </div>
+      
+    </div>
+  </header>
+
+  <nav class="menu" id="hamburgerMenu" aria-hidden="true">
+    <button class="menu-close" aria-label="Close menu"></button>
+    <a href="/homepage.html">HOME</a>
+    <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+    <a href="/velocharge-beta/velocharge.html">VELOCHARGE</a>
+    <a href="#about">ABOUT US</a>
+  </nav>
+  <div class="menu-overlay"></div>
+
+  <main class="garage-container">
+    <h2 id="welcomeText">Hello username,<br>Welcome to Smart Garage</h2>
+    <p class="instruction">Please enter your vehicle number to proceed...</p>
+    <div class="italian-plate">
+      <div class="plate-left">I</div>
+      <input type="text" id="numberPlateInput" placeholder="AA 123 AA" maxlength="10" />
+      <div class="plate-right">EU</div>
+    </div>
+    <button class="proceed-btn" id="proceedBtn">Proceed →</button>
+  </main>
+
+  <!-- Hamburger JS -->
+  <script>
+  (function(){
+    const hamburger = document.querySelector(".hamburger");
+    const menu = document.getElementById("hamburgerMenu");
+    const overlay = document.querySelector(".menu-overlay");
+    const closeBtn = document.querySelector(".menu-close");
+    const authSection = document.getElementById("authSection");
+
+    function openMenu() { hamburger.setAttribute("aria-expanded","true"); hamburger.classList.add("is-active"); menu.classList.add("active"); overlay.classList.add("active"); menu.setAttribute("aria-hidden","false"); if(window.innerWidth>1024) hamburger.textContent="✕"; }
+    function closeMenu() { hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); if(window.innerWidth>1024) hamburger.textContent="☰"; }
+    function toggleMenu() { if(menu.classList.contains("active")) closeMenu(); else openMenu(); }
+    hamburger.addEventListener("click",toggleMenu); overlay.addEventListener("click",closeMenu); if(closeBtn) closeBtn.addEventListener("click",closeMenu);
+
+    function updateAuthButton() {
+      if(window.innerWidth<=768) authSection.innerHTML='<button class="icon-btn" onclick="window.location.href=\'/login.html\'">👤</button>';
+      else authSection.innerHTML='<button class="text-btn" onclick="window.location.href=\'/login.html\'">Login / Register</button>';
+    }
+    updateAuthButton();
+    window.addEventListener("resize",()=>{ if(window.innerWidth>1024&&menu.classList.contains("active")) closeMenu(); updateAuthButton(); });
+  })();
+
+  // Fetch user login status from backend
+  window.__vvUserKey = window.__vvUserKey || 'guest';
+  fetch('/api/user-status', { method: 'POST', credentials: 'include' })
+    .then(res => res.json())
+    .then(data => {
+      console.log('User status response:', data);
+      if (data.loggedIn && data.user) {
+        window.__vvUserKey = data.user.id || 'guest';
+        console.log('User logged in:', window.__vvUserKey);
+      } else {
+        console.log('User not logged in');
+      }
+    })
+    .catch(err => console.error('Failed to fetch user status:', err));
+  </script>
+
+  <!-- Load welcome username & redirect if user has cars -->
+  <script>
+  // Note: /garage-entry is the entry point route - no need to call it again here
+  // The middleware already validated access, so we can safely stay on this page
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+const proceedBtn = document.getElementById("proceedBtn");
+const plateInput = document.getElementById("numberPlateInput");
+
+proceedBtn.addEventListener("click", async () => {
+  const plate = plateInput.value.trim().toUpperCase();
+  if (!plate) { alert("Please enter your number plate."); return; }
+
+  try {
+    // 1. Fetch from InfoTarga API
+    const res = await axios.get(`/api/lookup/${encodeURIComponent(plate)}`);
+    const data = res.data;
+    
+    console.log("✅ InfoTarga API Response:", data);
+
+    if (data.success) {
+      
+      // 2. Extract details directly from the nested "info" object
+      const brand = (data.info && data.info.brand) ? data.info.brand : "Unknown";
+      const model = (data.info && data.info.model) ? data.info.model : "Unknown";
+      const fuel = (data.info && data.info.engine) ? data.info.engine.fuel : null;
+
+      console.log("🔄 Parsed Data to send:", { plate, brand, model, fuel });
+
+      // 3. Save car to backend database
+      const saveRes = await fetch("/garage/search", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          plate: plate,
+          brand: brand,
+          model: model,
+          fuel: fuel,
+          img: null,   // API doesn't provide this
+          logo: null   // API doesn't provide this
+        })
+      });
+
+      const saveData = await saveRes.json();
+      console.log("✅ Backend Save Response:", saveData);
+
+      if (saveData.success) {
+        // SUCCESS: Redirect to garage view
+        window.location.href = "/explore-smart-garage-beta/garageview.html";
+      } else {
+        if (saveData.message && saveData.message.includes("already")) {
+          alert("This car is already in your garage.");
+          window.location.href = "/explore-smart-garage-beta/garageview.html";
+        } else {
+          alert("Failed to save car: " + (saveData.message || "Unknown error"));
+        }
+      }
+    } else {
+      // InfoTarga returned success: false
+      const container = document.querySelector(".garage-container");
+      let msgEl = document.getElementById("errorMsg");
+      if (!msgEl) { 
+        msgEl = document.createElement("p"); 
+        msgEl.id = "errorMsg"; 
+        msgEl.style.color = "#ff6b6b"; 
+        msgEl.style.fontSize = "18px"; 
+        msgEl.style.marginTop = "20px"; 
+        container.appendChild(msgEl); 
+      }
+      msgEl.innerHTML = `Error: ${data.message}. <a href="/explore-smart-garage-beta/manual-upload.html" style="color:#f2c94c; text-decoration:underline;">Enter details manually</a>`;
+    }
+
+  } catch (err) { 
+    console.error("❌ FULL ERROR:", err); 
+    alert("Error: " + err.message); 
+  }
+});
+</script>
+
+<script src="/js/auth.js"></script>
+<script src="/js/translate.js"></script>

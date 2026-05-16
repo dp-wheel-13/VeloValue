@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VeloValue – Car Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    /* ===========================================================
+       ROOT VARIABLES & RESET
+    ============================================================ */
+    :root {
+      --bg: #050505; /* Deeper, richer black */
+      --surface: #111111;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-muted: rgba(255, 255, 255, 0.4);
+      
+      --accent: #1db954;
+      --accent-glow: rgba(29, 185, 84, 0.25);
+      --accent-hover: #1ed760;
+      
+      --radius-xl: 20px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      
+      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
+      --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.6);
+      --shadow-accent: 0 8px 24px var(--accent-glow);
+      
+      --header-height: 70px;
+      --transition-fast: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --transition-smooth: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+      background: var(--bg);
+      color: var(--text-primary);
+      padding-top: var(--header-height);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a { color: var(--text-primary); text-decoration: none; }
+
+    /* ===========================================================
+       PREMIUM HEADER
+    ============================================================ */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-height);
+      padding: 0 2.5rem;
+      background: rgba(5, 5, 5, 0.75);
+      border-bottom: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .header-left, .header-right { 
+      display: flex; 
+      align-items: center; 
+      gap: 1.25rem; 
+    }
+
+    header h1 a {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+    }
+
+    nav.desktop-nav { display: flex; gap: 24px; }
+    nav.desktop-nav a {
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: color var(--transition-fast);
+    }
+    nav.desktop-nav a:hover { color: var(--text-primary); text-decoration: none; }
+
+    .language-select {
+      position: relative;
+    }
+    .language-select select {
+      appearance: none;
+      background: var(--surface);
+      color: var(--text-primary);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 8px 32px 8px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .icon-btn {
+      position: relative;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--glass-border);
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .icon-btn:hover { 
+      border-color: var(--accent); 
+      color: var(--text-primary);
+      background: rgba(255,255,255,0.05);
+    }
+    .icon-btn:active { transform: scale(0.93); }
+
+    .icon-btn svg {
+      width: 18px; height: 18px;
+      stroke: currentColor;
+      fill: transparent;
+      stroke-width: 2;
+    }
+
+    .badge {
+      position: absolute;
+      top: -4px; right: -4px;
+      min-width: 18px; height: 18px;
+      padding: 0 5px;
+      display: none;
+      align-items: center; justify-content: center;
+      background: var(--accent); color: #000;
+      border-radius: 999px;
+      font-size: 10px; font-weight: 800;
+      border: 2px solid var(--bg);
+    }
+
+    #authSection .text-btn {
+      background: var(--text-primary); color: var(--bg);
+      border: none;
+      border-radius: 999px;
+      padding: 8px 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      font-family: inherit;
+    }
+    #authSection .text-btn:hover {
+      background: var(--accent);
+      transform: translateY(-1px);
+    }
+    #authSection .icon-btn { display: none; }
+
+    /* Hamburger */
+    .hamburger {
+      font-size: 0; /* Hide text */
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 40px; height: 40px;
+      position: relative;
+    }
+    .hamburger::before, .hamburger::after, .hamburger span {
+      content: "";
+      position: absolute;
+      left: 50%;
+      width: 20px; height: 2px;
+      background: currentColor;
+      transform: translateX(-50%);
+      transition: all var(--transition-smooth);
+    }
+    .hamburger::before { top: calc(50% - 6px); }
+    .hamburger span { top: 50%; width: 20px; }
+    .hamburger::after { top: calc(50% + 6px); }
+    
+    .hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
+    .hamburger.is-active span { opacity: 0; }
+    .hamburger.is-active::after { top: 50%; transform: translateX(-50%) rotate(-45deg); }
+
+    /* Mobile Menu */
+    .menu-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity var(--transition-smooth);
+      z-index: 900;
+    }
+    .menu-overlay.active { opacity: 1; pointer-events: auto; }
+
+    .menu {
+      position: fixed;
+      top: 0; left: -320px;
+      width: 300px; height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--glass-border);
+      padding: 6rem 2rem 2rem;
+      display: flex; flex-direction: column;
+      gap: 1.5rem;
+      transition: left var(--transition-smooth);
+      z-index: 950;
+    }
+    .menu.active { left: 0; }
+    .menu a {
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      font-weight: 700;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    /* Dropdowns (Wishlist/Compare) */
+    .wishlist { position: relative; }
+    
+    .dropdown {
+      position: absolute; right: 0; top: calc(100% + 12px);
+      width: 340px; max-height: 450px;
+      background: var(--surface);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-deep);
+      display: none;
+      overflow: hidden;
+      z-index: 100;
+    }
+    .wishlist.open .dropdown { display: block; }
+
+    .dropdown-head {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--glass-border);
+      display: flex; justify-content: space-between;
+      align-items: center;
+    }
+    .dropdown-head strong { font-size: 1rem; }
+    .dropdown-head button { 
+      background: none; border: none; color: var(--accent); 
+      cursor: pointer; font-weight: 600; font-family: inherit;
+    }
+
+    .dropdown-list {
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .wish-item {
+      display: grid; grid-template-columns: 48px 1fr auto;
+      gap: 12px; align-items: center;
+      padding: 8px;
+      border-radius: var(--radius-md);
+      transition: background var(--transition-fast);
+    }
+    .wish-item:hover { background: rgba(255,255,255,0.05); }
+    .wish-item img {
+      width: 48px; height: 48px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+    }
+    .wish-title { font-weight: 600; font-size: 0.9rem; }
+    .wish-sub { font-size: 0.8rem; color: var(--text-secondary); }
+    
+    .remove-btn {
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--glass-border);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .remove-btn:hover { border-color: #ff4444; color: #ff4444; }
+
+    /* ===========================================================
+       LAYOUT & GLASS PANELS
+    ============================================================ */
+    .container {
+      width: min(1200px, 94vw);
+      margin: 2rem auto 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      border-radius: var(--radius-xl);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+    }
+    .panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .panel:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-deep);
+    }
+
+    /* ===========================================================
+       LEFT PANEL CONTENT
+    ============================================================ */
+    .left { position: relative; }
+
+    .share-btn {
+      position: absolute;
+      top: 24px; right: 24px;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--glass-border);
+      background: rgba(0,0,0,0.3);
+      color: var(--text-secondary);
+      display: grid; place-items: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      z-index: 10;
+    }
+    .share-btn:hover { border-color: var(--accent); color: var(--text-primary); }
+    .share-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    .car-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .car-logo {
+      width: 80px; height: 80px;
+      border-radius: var(--radius-md);
+      object-fit: contain;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      padding: 12px;
+    }
+
+    .title-stack { display: flex; flex-direction: column; gap: 6px; }
+    .brand { font-size: 1.75rem; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
+    .model { font-size: 1.3rem; font-weight: 600; color: var(--text-secondary); }
+
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid var(--glass-border);
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      width: max-content;
+      color: var(--text-secondary);
+    }
+
+    .hero-wrap {
+      position: relative;
+      width: 100%;
+      margin: 20px auto 0;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: rgba(0,0,0,0.2);
+      aspect-ratio: 16/9;
+    }
+
+    .hero {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform var(--transition-smooth);
+    }
+    .hero-wrap:hover .hero { transform: scale(1.03); }
+
+    /* Heart + Compare over image */
+    .img-heart, .img-compare {
+      position: absolute;
+      width: 40px; height: 40px;
+      border-radius: 999px;
+      display: grid; place-items: center;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      z-index: 5;
+    }
+    .img-heart { bottom: 16px; right: 16px; }
+    .img-compare { bottom: 16px; left: 16px; }
+    .img-heart:hover, .img-compare:hover { 
+      border-color: var(--accent); 
+      transform: scale(1.1);
+    }
+    .img-heart:active, .img-compare:active { transform: scale(0.95); }
+    
+    .img-heart.active svg { fill: #ff4757; stroke: #ff4757; }
+    .img-compare.active svg { stroke: var(--accent); }
+
+    .img-heart svg, .img-compare svg {
+      width: 20px; height: 20px;
+      stroke: currentColor;
+      fill: transparent;
+      stroke-width: 2;
+      transition: all var(--transition-fast);
+    }
+
+    .price-box {
+      margin-top: 20px;
+      background: linear-gradient(135deg, #1db954, #1ed760);
+      color: #000;
+      font-weight: 800;
+      font-size: 1.1rem;
+      border-radius: var(--radius-md);
+      padding: 16px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-accent);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      cursor: default;
+    }
+    .price-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px var(--accent-glow);
+    }
+
+    /* ===========================================================
+       RIGHT PANEL & SPECS
+    ============================================================ */
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .spec-grid .row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--glass-border);
+    }
+    .spec-grid .k { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .spec-grid .v { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+
+    /* Accordion */
+    .accordion {
+      margin-bottom: 12px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+    }
+
+    .acc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      width: 100%;
+      text-align: left;
+      transition: background var(--transition-fast);
+    }
+    .acc-header:hover { background: rgba(255,255,255,0.04); }
+
+    .acc-header .arrow {
+      width: 8px; height: 8px;
+      border-right: 2px solid var(--text-secondary);
+      border-bottom: 2px solid var(--text-secondary);
+      transform: rotate(45deg);
+      transition: transform var(--transition-smooth);
+      margin-left: 16px;
+      flex-shrink: 0;
+    }
+
+    .accordion.open .acc-header .arrow { transform: rotate(-135deg); }
+
+    .acc-content {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 20px;
+      color: var(--text-secondary);
+      transition: max-height 0.5s cubic-bezier(0, 0, 0.2, 1), padding 0.3s ease;
+    }
+    .accordion.open .acc-content {
+      max-height: 500px;
+      padding: 0 20px 20px;
+    }
+
+    /* KV items inside accordion */
+    .kv {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .kv .item {
+      background: var(--surface);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: background var(--transition-fast);
+    }
+    .kv .item:hover { background: #1a1a1a; }
+    .kv .k { font-size: 0.8rem; color: var(--text-muted); }
+    .kv .v { font-weight: 600; color: var(--text-primary); }
+
+    /* ===========================================================
+       TOASTS
+    ============================================================ */
+    .toast-wrap {
+      position: fixed;
+      right: 24px; bottom: 24px;
+      display: grid; gap: 12px;
+      z-index: 2000;
+    }
+    .toast {
+      background: var(--surface);
+      color: var(--text-primary);
+      border: 1px solid var(--accent);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: var(--radius-md);
+      padding: 12px 20px;
+      box-shadow: var(--shadow-accent);
+      transform: translateY(20px);
+      opacity: 0;
+      animation: toast-in 0.3s ease forwards;
+    }
+    @keyframes toast-in { to { transform: translateY(0); opacity: 1; } }
+
+    /* ===========================================================
+       RESPONSIVE
+    ============================================================ */
+    @media(max-width: 1024px) {
+      nav.desktop-nav { display: none; }
+      .hamburger { display: flex; }
+      .container { grid-template-columns: 1fr; padding: 1rem 0 2rem; }
+    }
+
+    @media(max-width: 768px) {
+      :root { --header-height: 60px; }
+      header { padding: 0 1rem; }
+      
+      #authSection .text-btn { display: none; }
+      #authSection .icon-btn { display: inline-flex; }
+
+      .language-select {
+        width: 40px; height: 40px;
+        border-radius: 50%;
+        background: var(--surface);
+        border: 1px solid var(--glass-border);
+        display: flex; align-items: center; justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .language-select::before {
+        content: "🌐";
+        font-size: 1.1rem;
+        position: absolute;
+        pointer-events: none;
+      }
+      .language-select select {
+        opacity: 0;
+        position: absolute;
+        inset: 0;
+        cursor: pointer;
+        font-size: 0;
+      }
+
+      .panel { padding: 20px; }
+      .car-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .brand { font-size: 1.5rem; }
+    }
+
+    @media(max-width: 480px) {
+      .spec-grid { grid-template-columns: 1fr; }
+      .kv { grid-template-columns: 1fr; }
+    }
+
+    /* Reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Unified Header -->
+  <header>
+    <div class="header-left">
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+      </button>
+      <h1><a href="/homepage.html">VeloValue</a></h1>
+    </div>
+    <div class="header-right">
+      <nav class="desktop-nav">
+        <a href="/homepage.html">Home</a>
+        <a href="/explore-smart-garage-beta/smartgarage.html">Smart Garage</a>
+        <a href="/velocharge-beta/velocharge.html">VeloCharge</a>
+        <a href="#about">About</a>
+      </nav>
+
+      <div class="language-select">
+        <select id="languageSelect" aria-label="Select language">
+          <option value="en">🇬🇧 EN</option>
+          <option value="it">🇮🇹 IT</option>
+          <option value="de">🇩🇪 DE</option>
+        </select>
+      </div>
+
+      <div class="wishlist" id="wishlist">
+        <button id="wishlistBtn" class="icon-btn" aria-label="Wishlist" aria-expanded="false" aria-controls="wishlistMenu">
+          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <span class="badge" id="wishlistBadge">0</span>
+        </button>
+        <div id="wishlistMenu" class="dropdown" role="menu">
+          <div class="dropdown-head">
+            <strong>Wishlist</strong>
+            <button id="clearWishlist">Clear all</button>
+          </div>
+          <div id="wishlistItems" class="dropdown-list">
+            <div class="dropdown-empty" style="padding:20px; text-align:center; color:var(--text-muted);">Your wishlist is empty.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wishlist compare" id="compare">
+        <button id="compareBtn" class="icon-btn" aria-label="Compare" aria-expanded="false" aria-controls="compareMenu">
+          <svg viewBox="0 0 24 24"><path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+          <span class="badge" id="compareBadge">0</span>
+        </button>
+        <div id="compareMenu" class="dropdown" role="menu">
+          <div class="dropdown-head">
+            <strong>Compare</strong>
+            <button id="clearCompare">Clear all</button>
+          </div>
+          <div id="compareItems" class="dropdown-list">
+            <div class="dropdown-empty" style="padding:20px; text-align:center; color:var(--text-muted);">Nothing to compare.</div>
+          </div>
+          <div style="padding:12px; border-top:1px solid var(--glass-border); display:flex; justify-content:flex-end;">
+            <button id="viewCompare" style="background:var(--accent); color:#000; border:none; padding:8px 16px; border-radius:999px; font-weight:700; cursor:pointer;">Compare Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="authSection">
+        <button class="text-btn" onclick="window.location.href='login.html'">Login</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <nav class="menu" id="hamburgerMenu" aria-hidden="true">
+    <a href="/homepage.html">Home</a>
+    <a href="/explore-smart-garage-beta/smartgarage.html">Smart Garage</a>
+    <a href="/velocharge-beta/velocharge.html">VeloCharge</a>
+    <a href="#about">About Us</a>
+  </nav>
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <!-- Main Content -->
+  <main class="container">
+    <section class="panel left">
+      <button id="shareBtn" class="share-btn" aria-label="Share">
+        <svg viewBox="0 0 24 24"><path d="M14 5l5 5-5 5M19 10H9a5 5 0 100 10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <div class="car-header">
+        <img class="car-logo" id="carLogo" alt="Brand logo" onerror="this.style.display='none'"/>
+        <div class="title-stack">
+          <div class="brand" id="brand">—</div>
+          <div class="model" id="model">—</div>
+          <div class="pill" id="fuelPill">Fuel: —</div>
+        </div>
+      </div>
+
+      <div class="hero-wrap">
+        <img id="heroImg" class="hero" alt="Car image" src="" />
+        <button id="imgCompare" class="img-compare" aria-label="Add to compare" aria-pressed="false" title="Compare">
+          <svg viewBox="0 0 24 24"><path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+        </button>
+        <button id="imgHeart" class="img-heart" aria-label="Add to wishlist" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </button>
+      </div>
+
+      <div class="price-box" id="priceBadge">Price from: —</div>
+    </section>
+
+    <aside class="panel right">
+      <div class="spec-grid" id="summaryGrid"></div>
+
+      <div class="accordion" id="acc-tech">
+        <button class="acc-header" aria-expanded="false" aria-controls="panel-tech">
+          Technical specifications <span class="arrow"></span>
+        </button>
+        <div id="panel-tech" class="acc-content" hidden></div>
+      </div>
+
+      <div class="accordion" id="acc-perf">
+        <button class="acc-header" aria-expanded="false" aria-controls="panel-perf">
+          Performance & efficiency <span class="arrow"></span>
+        </button>
+        <div id="panel-perf" class="acc-content" hidden></div>
+      </div>
+
+      <div class="accordion" id="acc-dim">
+        <button class="acc-header" aria-expanded="false" aria-controls="panel-dim">
+          Dimensions & capacity <span class="arrow"></span>
+        </button>
+        <div id="panel-dim" class="acc-content" hidden></div>
+      </div>
+
+      <div class="accordion" id="acc-charge">
+        <button class="acc-header" aria-expanded="false" aria-controls="panel-charge">
+          Charging (EV/PHEV) <span class="arrow"></span>
+        </button>
+        <div id="panel-charge" class="acc-content" hidden></div>
+      </div>
+
+      <div class="accordion" id="acc-warranty">
+        <button class="acc-header" aria-expanded="false" aria-controls="panel-warranty">
+          Warranty & safety <span class="arrow"></span>
+        </button>
+        <div id="panel-warranty" class="acc-content" hidden></div>
+      </div>
+    </aside>
+  </main>
+
+  <div id="toastWrap" class="toast-wrap" aria-live="polite"></div>
+
+  <script>
+    // ===========================================================
+    // DATA & STATE
+    // ===========================================================
+    const FALLBACK_CARS = [
+      { id:'lamborghini-revuelto-2024', brand:'Lamborghini', model:'Revuelto', year:2024, body:'Coupé', doors:2, seats:2, fuel:'PHEV', transmission:'Automatic', drivetrain:'AWD', powerKw:747, powerPs:1015, torqueNm:725, zeroTo100KmhS:2.5, topSpeedKmh:350, lengthMm:4947, widthMm:2033, heightMm:1160, wheelbaseMm:2779, bootVolumeSeatsUpL:132, kerbWeightKg:1772, batteryCapacityNetKwh:3.8, chargeAcMaxKw:7, connector:'Type 2', warrantyYears:3, warrantyKm:100000, priceFromEur:500000, image:'https://images.unsplash.com/photo-1606663301623-c7e98de94e02?q=80&w=1400&auto=format&fit=crop', logo:'https://upload.wikimedia.org/wikipedia/commons/0/0c/Lamborghini_Logo.svg' },
+      { id:'tesla-model-3-2024', brand:'Tesla', model:'Model 3', year:2024, body:'Sedan', doors:4, seats:5, fuel:'BEV', transmission:'Single-speed', drivetrain:'RWD', powerKw:208, powerPs:283, torqueNm:340, zeroTo100KmhS:6.1, topSpeedKmh:201, energyConsumptionKwhPer100km:14.5, co2GPerKm:0, lengthMm:4720, widthMm:1849, heightMm:1441, wheelbaseMm:2875, bootVolumeSeatsUpL:594, kerbWeightKg:1760, rangeWltpKm:513, batteryCapacityNetKwh:57, chargeAcMaxKw:11, chargeDcMaxKw:170, chargeDc10To80Min:27, connector:'Type 2 / CCS2', ncapStars:5, ncapYear:2019, warrantyYears:4, warrantyKm:80000, priceFromEur:38990, image:'https://images.unsplash.com/photo-1553440569-bcc63803a83d?q=80&w=1400&auto=format&fit=crop', logo:'https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg' }
+    ];
+    const carsById = new Map(FALLBACK_CARS.map(c => [c.id, c]));
+    const BACKEND = "http://localhost:3000";
+
+    // ===========================================================
+    // HELPERS
+    // ===========================================================
+    const $ = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+    const nd = v => (v === null || v === undefined || v === '') ? '—' : v;
+    const toEUR = n => n == null ? '—' : `€${Number(n).toLocaleString()}`;
+    const kwps = (kw, ps) => (kw || ps) ? `${kw ? kw+' kW' : ''}${kw && ps ? ' / ' : ''}${ps ? ps+' PS' : ''}` : '—';
+    
+    function escapeHtml(s) {
+      if (s == null) return "";
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function showToast(msg) {
+      const wrap = $('#toastWrap');
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.textContent = msg;
+      wrap.appendChild(el);
+      setTimeout(() => {
+        el.style.transition = 'opacity 0.3s, transform 0.3s';
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(10px)';
+      }, 2500);
+      setTimeout(() => wrap.contains(el) && wrap.removeChild(el), 2800);
+    }
+
+    // ===========================================================
+    // HEADER & MENU LOGIC
+    // ===========================================================
+    (function() {
+      const hamburger = $(".hamburger");
+      const menu = $("#hamburgerMenu");
+      const overlay = $("#menuOverlay");
+
+      function toggleMenu(forceClose = false) {
+        const isOpen = menu.classList.contains("active");
+        const shouldOpen = forceClose ? false : !isOpen;
+        
+        menu.classList.toggle("active", shouldOpen);
+        overlay.classList.toggle("active", shouldOpen);
+        hamburger.classList.toggle("is-active", shouldOpen);
+        hamburger.setAttribute("aria-expanded", String(shouldOpen));
+        menu.setAttribute("aria-hidden", String(!shouldOpen));
+      }
+
+      hamburger.addEventListener("click", () => toggleMenu());
+      overlay.addEventListener("click", () => toggleMenu(true));
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 1024 && menu.classList.contains("active")) toggleMenu(true);
+      });
+
+      // Auth UI swap
+      const authSection = $("#authSection");
+      function updateAuthUI() {
+        if (window.innerWidth <= 768) {
+          authSection.innerHTML = `<button class="icon-btn" onclick="location.href='login.html'" aria-label="Login">👤</button>`;
+        } else {
+          authSection.innerHTML = `<button class="text-btn" onclick="location.href='login.html'">Login</button>`;
+        }
+      }
+      updateAuthUI();
+      window.addEventListener("resize", updateAuthUI);
+    })();
+
+    // ===========================================================
+    // WISHLIST & COMPARE LOGIC
+    // ===========================================================
+    const WISHLIST_KEY = 'velovalue_wishlist_v1';
+    const CMP_KEY = 'vv_compare_ids';
+    const META_KEY = 'vv_compare_meta';
+
+    function getSet(key) { try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); } catch { return new Set(); } }
+    function saveSet(key, set) { localStorage.setItem(key, JSON.stringify([...set])); }
+    function getObj(key) { try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; } }
+    function saveObj(key, obj) { localStorage.setItem(key, JSON.stringify(obj)); }
+
+    // Wishlist
+    function updateWishlistBadge() {
+      const n = getSet(WISHLIST_KEY).size;
+      const b = $('#wishlistBadge');
+      b.style.display = n ? 'grid' : 'none';
+      if (n) b.textContent = n;
+    }
+
+    function buildWishlistMenu() {
+      const set = getSet(WISHLIST_KEY);
+      const list = $('#wishlistItems');
+      if (!set.size) {
+        list.innerHTML = '<div class="dropdown-empty" style="padding:20px; text-align:center; color:var(--text-muted);">Your wishlist is empty.</div>';
+        return;
+      }
+      list.innerHTML = [...set].map(id => {
+        const c = carsById.get(id) || {};
+        const title = c.brand ? `${c.brand} ${c.model}` : id;
+        const sub = c.body ? `${c.body} • ${toEUR(c.priceFromEur)}` : '';
+        return `<div class="wish-item" data-id="${escapeHtml(id)}">
+          ${c.image ? `<img src="${escapeHtml(c.image)}" alt="${escapeHtml(title)}">` : '<div style="width:48px;height:48px;background:#1a1a1a;border-radius:8px;"></div>'}
+          <div class="wish-meta"><div class="wish-title">${escapeHtml(title)}</div><div class="wish-sub">${escapeHtml(sub)}</div></div>
+          <button class="remove-btn" data-remove="${escapeHtml(id)}">✕</button>
+        </div>`;
+      }).join('');
+    }
+
+    function setHeartActive(active) {
+      const btn = $('#imgHeart');
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', String(active));
+    }
+
+    function toggleWishlist(id, title = '') {
+      const set = getSet(WISHLIST_KEY);
+      if (set.has(id)) {
+        set.delete(id);
+        showToast(`Removed: ${title || id}`);
+      } else {
+        set.add(id);
+        showToast(`Added: ${title || id}`);
+      }
+      saveSet(WISHLIST_KEY, set);
+      updateWishlistBadge();
+      buildWishlistMenu();
+      setHeartActive(set.has(id));
+    }
+
+    // Compare
+    function updateCompareBadge() {
+      const n = getSet(CMP_KEY).size;
+      const b = $('#compareBadge');
+      b.style.display = n ? 'grid' : 'none';
+      if (n) b.textContent = n;
+    }
+
+    function buildCompareMenu() {
+      const set = getSet(CMP_KEY);
+      const meta = getObj(META_KEY);
+      const list = $('#compareItems');
+      if (!set.size) {
+        list.innerHTML = '<div class="dropdown-empty" style="padding:20px; text-align:center; color:var(--text-muted);">Nothing to compare.</div>';
+        return;
+      }
+      list.innerHTML = [...set].map(id => {
+        const m = meta[id] || {};
+        const name = [m.brand, m.model].filter(Boolean).join(' ') || id;
+        const sub = [m.body, (m.price != null ? '€'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' • ');
+        return `<div class="wish-item" data-id="${escapeHtml(id)}">
+          ${m.img ? `<img src="${escapeHtml(m.img)}" alt="${escapeHtml(name)}">` : '<div style="width:48px;height:48px;background:#1a1a1a;border-radius:8px;"></div>'}
+          <div class="wish-meta"><div class="wish-title">${escapeHtml(name)}</div><div class="wish-sub">${escapeHtml(sub)}</div></div>
+          <button class="remove-btn" data-remove="${escapeHtml(id)}">✕</button>
+        </div>`;
+      }).join('');
+    }
+
+    function setCompareActive(active) {
+      const btn = $('#imgCompare');
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', String(active));
+    }
+
+    function toggleCompare(id, meta) {
+      const set = getSet(CMP_KEY);
+      const m = getObj(META_KEY);
+      if (set.has(id)) {
+        set.delete(id); delete m[id];
+        setCompareActive(false);
+        showToast('Removed from compare');
+      } else {
+        if (set.size >= 4) { showToast('Maximum 4 cars for comparison'); return; }
+        set.add(id); m[id] = meta;
+        setCompareActive(true);
+        showToast('Added to compare');
+      }
+      saveSet(CMP_KEY, set); saveObj(META_KEY, m);
+      updateCompareBadge(); buildCompareMenu();
+    }
+
+    // ===========================================================
+    // DROPDOWN CLOSE LOGIC (Shared)
+    // ===========================================================
+    function setupDropdown(wrapperId, btnId) {
+      const wrap = $(`#${wrapperId}`);
+      const btn = $(`#${btnId}`);
+      if (!wrap || !btn) return;
+
+      btn.addEventListener('click', () => {
+        const open = wrap.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(open));
+      });
+
+      document.addEventListener('click', e => {
+        if (!wrap.contains(e.target)) {
+          wrap.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          wrap.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    // ===========================================================
+    // ACCORDIONS
+    // ===========================================================
+    function toggleAccordion(btn) {
+      const panel = document.getElementById(btn.getAttribute('aria-controls'));
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      panel.hidden = expanded;
+      btn.closest('.accordion').classList.toggle('open', !expanded);
+    }
+
+    // ===========================================================
+    // CAR RENDERING LOGIC (Unifying original code)
+    // ===========================================================
+    async function renderCarSpecs() {
+      let car = null;
+      let idParam = new URLSearchParams(location.search).get('id');
+
+      // 1. Try backend fetch if URL has params (simulating real app flow)
+      const params = new URLSearchParams(window.location.search);
+      const brandParam = params.get("brand");
+      const modelParam = params.get("model");
+      
+      if (brandParam && modelParam) {
+        try {
+          const res = await fetch(`${BACKEND}/api/explore?brand=${encodeURIComponent(brandParam)}&model=${encodeURIComponent(modelParam)}`);
+          if (res.ok) car = await res.json();
+        } catch (err) { console.warn("Backend fetch failed, checking local:", err); }
+      }
+
+      // 2. Try Session Storage
+      if (!car) {
+        try {
+          const raw = sessionStorage.getItem('vv_selected_car');
+          if (raw) {
+            car = JSON.parse(raw);
+            if (!idParam && car.id) idParam = car.id;
+          }
+        } catch (e) {}
+      }
+
+      // 3. Fallback to inline data
+      if (!car) {
+        if (!idParam) idParam = 'lamborghini-revuelto-2024'; // Default fallback
+        car = carsById.get(idParam);
+      }
+
+      // 4. Update URL for sharing if not present
+      if (car && car.id && !params.get('id')) {
+        history.replaceState(null, '', `${location.pathname}?id=${encodeURIComponent(car.id)}`);
+      }
+
+      // 5. Render Failure State
+      if (!car) {
+        document.querySelector('main.container').innerHTML = `
+          <div style="grid-column: 1/-1; text-align:center; padding:4rem 1rem;">
+            <h2 style="margin-bottom:1rem;">Vehicle Not Found</h2>
+            <p style="color:var(--text-secondary);">Please go back to explore and select a car.</p>
+            <a href="/homepage.html" style="display:inline-block; margin-top:2rem; color:var(--accent); font-weight:700;">Back to Explore</a>
+          </div>`;
+        return;
+      }
+
+      // 6. Populate DOM
+      document.title = `VeloValue – ${[car.brand, car.model, car.year].filter(Boolean).join(' ')}`;
+      $('#brand').textContent = car.brand || '—';
+      $('#model').textContent = [car.model, car.year].filter(Boolean).join(' ') || '—';
+      $('#fuelPill').textContent = `Fuel: ${nd(car.fuel)}`;
+      $('#priceBadge').textContent = `Price from: ${toEUR(car.priceFromEur)}`;
+      if (car.logo) $('#carLogo').src = car.logo;
+      if (car.image) $('#heroImg').src = car.image;
+
+      const summary = [
+        ['Body', nd(car.body)], ['Drivetrain', nd(car.drivetrain)],
+        ['Transmission', nd(car.transmission)], ['Power', kwps(car.powerKw, car.powerPs)],
+        ['Torque', car.torqueNm ? `${car.torqueNm} Nm` : '—'], ['0–100 km/h', car.zeroTo100KmhS ? `${car.zeroTo100KmhS} s` : '—'],
+        ['Top speed', car.topSpeedKmh ? `${car.topSpeedKmh} km/h` : '—'], ['Seats / Doors', `${nd(car.seats)} / ${nd(car.doors)}`]
+      ];
+      $('#summaryGrid').innerHTML = summary.map(([k, v]) => `<div class="row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+
+      const buildKvHtml = (data) => data.map(([k, v]) => `<div class="item"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+
+      $('#panel-tech').innerHTML = `<div class="kv">${buildKvHtml([
+        ['Fuel', nd(car.fuel)], ['Transmission', nd(car.transmission)],
+        ['Drivetrain', nd(car.drivetrain)], ['Power', kwps(car.powerKw, car.powerPs)],
+        ['Torque', car.torqueNm ? `${car.torqueNm} Nm` : '—']
+      ])}</div>`;
+
+      $('#panel-perf').innerHTML = `<div class="kv">${buildKvHtml([
+        ['0–100 km/h', car.zeroTo100KmhS ? `${car.zeroTo100KmhS} s` : '—'], ['Top speed', car.topSpeedKmh ? `${car.topSpeedKmh} km/h` : '—'],
+        ['Fuel cons.', car.fuelConsumptionLPer100km ? `${car.fuelConsumptionLPer100km} L/100km` : '—'], ['Energy cons.', car.energyConsumptionKwhPer100km ? `${car.energyConsumptionKwhPer100km} kWh/100km` : '—'],
+        ['CO₂ WLTP', car.co2GPerKm != null ? `${car.co2GPerKm} g/km` : '—'], ['Euro standard', nd(car.euroStandard)]
+      ])}</div>`;
+
+      $('#panel-dim').innerHTML = `<div class="kv">${buildKvHtml([
+        ['Length', car.lengthMm ? `${car.lengthMm} mm` : '—'], ['Width', car.widthMm ? `${car.widthMm} mm` : '—'],
+        ['Height', car.heightMm ? `${car.heightMm} mm` : '—'], ['Wheelbase', car.wheelbaseMm ? `${car.wheelbaseMm} mm` : '—'],
+        ['Boot volume', car.bootVolumeSeatsUpL ? `${car.bootVolumeSeatsUpL} L` : '—'], ['Kerb weight', car.kerbWeightKg ? `${car.kerbWeightKg} kg` : '—']
+      ])}</div>`;
+
+      $('#panel-charge').innerHTML = `<div class="kv">${buildKvHtml([
+        ['WLTP range', car.rangeWltpKm ? `${car.rangeWltpKm} km` : '—'], ['Battery (net)', car.batteryCapacityNetKwh ? `${car.batteryCapacityNetKwh} kWh` : '—'],
+        ['AC max', car.chargeAcMaxKw ? `${car.chargeAcMaxKw} kW` : '—'], ['DC max', car.chargeDcMaxKw ? `${car.chargeDcMaxKw} kW` : '—'],
+        ['DC 10–80%', car.chargeDc10To80Min ? `${car.chargeDc10To80Min} min` : '—'], ['Connector', nd(car.connector)]
+      ])}</div>`;
+
+      $('#panel-warranty').innerHTML = `<div class="kv">${buildKvHtml([
+        ['Warranty', (car.warrantyYears || car.warrantyKm) ? `${nd(car.warrantyYears)} yrs / ${car.warrantyKm ? car.warrantyKm.toLocaleString()+' km' : '—'}` : '—'], 
+        ['Euro NCAP', (car.ncapStars || car.ncapYear) ? `${nd(car.ncapStars)} ★ (${nd(car.ncapYear)})` : '—']
+      ])}</div>`;
+
+      // Open first accordion
+      toggleAccordion($('#acc-tech .acc-header'));
+
+      // 7. Wire Interactive Buttons
+      const currentId = car.id || `${car.brand}-${car.model}`.toLowerCase().replace(/\s+/g, '-');
+      const currentTitle = `${car.brand || ''} ${car.model || ''}`.trim();
+
+      // Wishlist Buttons
+      setHeartActive(getSet(WISHLIST_KEY).has(currentId));
+      $('#imgHeart').addEventListener('click', () => toggleWishlist(currentId, currentTitle));
+
+      // Compare Buttons
+      setCompareActive(getSet(CMP_KEY).has(currentId));
+      $('#imgCompare').addEventListener('click', () => {
+        const meta = { brand: car.brand, model: car.model, body: car.body || '', fuel: car.fuel || '', gear: car.transmission || '', price: car.priceFromEur ?? null, img: car.image || '' };
+        toggleCompare(currentId, meta);
+      });
+
+      // Share Button
+      $('#shareBtn').addEventListener('click', async () => {
+        try {
+          if (navigator.share) {
+            await navigator.share({ title: document.title, url: location.href });
+          } else {
+            await navigator.clipboard.writeText(location.href);
+            showToast('Link copied to clipboard');
+          }
+        } catch {}
+      });
+
+      // 8. Initialize Dropdown UI states
+      updateWishlistBadge();
+      buildWishlistMenu();
+      updateCompareBadge();
+      buildCompareMenu();
+    }
+
+    // ===========================================================
+    // INITIALIZATION
+    // ===========================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      // Wire Accordions
+      $$('.acc-header').forEach(btn => {
+        btn.addEventListener('click', () => toggleAccordion(btn));
+        btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleAccordion(btn); }});
+      });
+
+      // Wire Dropdowns
+      setupDropdown('wishlist', 'wishlistBtn');
+      setupDropdown('compare', 'compareBtn');
+
+      // Wire Wishlist dropdown internal buttons
+      $('#wishlistItems').addEventListener('click', e => {
+        const rmBtn = e.target.closest('[data-remove]');
+        if (rmBtn) {
+          toggleWishlist(rmBtn.getAttribute('data-remove'));
+          return;
+        }
+        const item = e.target.closest('.wish-item');
+        if (item) location.href = `cars.html?id=${encodeURIComponent(item.dataset.id)}`;
+      });
+      $('#clearWishlist').addEventListener('click', () => {
+        localStorage.setItem(WISHLIST_KEY, '[]');
+        updateWishlistBadge(); buildWishlistMenu(); setHeartActive(false); showToast('Wishlist cleared');
+      });
+
+      // Wire Compare dropdown internal buttons
+      $('#compareItems').addEventListener('click', e => {
+        const rmBtn = e.target.closest('[data-remove]');
+        if (rmBtn) {
+          const id = rmBtn.getAttribute('data-remove');
+          const set = getSet(CMP_KEY); const m = getObj(META_KEY);
+          set.delete(id); delete m[id];
+          saveSet(CMP_KEY, set); saveObj(META_KEY, m);
+          updateCompareBadge(); buildCompareMenu();
+          if (typeof currentId !== 'undefined' && id === currentId) setCompareActive(false);
+        }
+      });
+      $('#clearCompare').addEventListener('click', () => {
+        saveSet(CMP_KEY, new Set()); saveObj(META_KEY, {});
+        updateCompareBadge(); buildCompareMenu(); setCompareActive(false);
+        showToast('Compare list cleared');
+      });
+      $('#viewCompare').addEventListener('click', () => {
+        const n = getSet(CMP_KEY).size;
+        if (n < 2) { showToast('Add at least 2 cars to compare'); return; }
+        const url = new URL('compare.html', location.href);
+        url.searchParams.set('ids', [...getSet(CMP_KEY)].join(','));
+        location.href = url.toString();
+      });
+
+      // Load Data
+      renderCarSpecs();
+    });
+  </script>
+  <script src="/js/auth.js"></script>
+  <script src="js/translate.js"></script>
+</body>
+</html>

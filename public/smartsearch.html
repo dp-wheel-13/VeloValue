@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeloValue: Elite Car Recognition</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --success-gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+  --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  --error-gradient: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.15);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    overflow-x: hidden;
+}
+
+#camera-feed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    filter: brightness(0.9) contrast(1.1);
+}
+
+#camera-feed.camera-off { display: none; }
+
+.camera-placeholder {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    z-index: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.camera-placeholder i { font-size: 4rem; color: rgba(255,255,255,0.3); margin-bottom: 1rem; }
+.camera-placeholder p { color: rgba(255,255,255,0.6); text-align: center; padding: 0 2rem; }
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+    background: linear-gradient(to bottom, 
+      rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 20%, 
+      rgba(0,0,0,0) 40%, rgba(0,0,0,0) 60%, 
+      rgba(0,0,0,0.4) 80%, rgba(0,0,0,0.8) 100%);
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+    margin-top: 1.5rem;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.header-card {
+    backdrop-filter: blur(20px);
+    background: var(--glass-bg);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    color: white;
+    text-align: center;
+    max-width: 90%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.brand-logo { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+.brand-logo i { font-size: 2rem; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.brand-logo h1 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; background: linear-gradient(to right, #fff, #cbd5e1); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.api-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.api-status.connected { background: rgba(132, 250, 176, 0.2); color: #84fab0; border: 1px solid rgba(132, 250, 176, 0.3); }
+.api-status.disconnected { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; border: 1px solid rgba(255, 107, 107, 0.3); }
+.api-status.connecting { background: rgba(255, 193, 7, 0.2); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3); }
+
+.footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    pointer-events: auto;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.footer-card {
+    backdrop-filter: blur(20px);
+    background: var(--glass-bg);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 90%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.button-row { display: flex; gap: 1rem; align-items: center; justify-content: center; flex-wrap: wrap; }
+
+.capture-btn {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    min-width: 180px;
+    justify-content: center;
+}
+.capture-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4); }
+.capture-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.flash-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+.flash-btn:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
+.flash-btn.active { background: var(--warning-gradient); border: none; box-shadow: 0 5px 20px rgba(250, 112, 154, 0.4); }
+
+.start-camera-btn {
+    background: var(--success-gradient);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 10px 30px rgba(132, 250, 176, 0.3);
+    animation: pulse 2s infinite;
+}
+.start-camera-btn:hover { transform: translateY(-2px); }
+
+.guide-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 75%;
+    height: 50%;
+    border: 2px dashed rgba(255,255,255,0.3);
+    border-radius: 16px;
+    pointer-events: none;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.result-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 100;
+    display: none;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease-out;
+}
+.result-panel.active { display: block; }
+
+.result-header {
+    background: var(--primary-gradient);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.result-title { color: white; font-size: 1.5rem; font-weight: 700; }
+
+.close-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+.close-btn:hover { background: rgba(255,255,255,0.3); transform: rotate(90deg); }
+
+.result-content { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+
+.car-image {
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin: 0 auto 2rem;
+    display: block;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.car-info {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+.car-title { font-size: 2rem; font-weight: 700; color: white; margin-bottom: 0.5rem; }
+.car-subtitle { color: #cbd5e1; margin-bottom: 1.5rem; }
+
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.info-item { background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+.info-label { color: #94a3b8; font-size: 0.875rem; margin-bottom: 0.25rem; }
+.info-value { color: white; font-size: 1.125rem; font-weight: 600; }
+
+.action-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.action-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+.action-btn:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+.action-btn.primary { background: var(--success-gradient); border: none; }
+
+.saved-cars {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 50;
+}
+.saved-cars:hover { transform: scale(1.05); }
+.saved-count {
+    background: var(--warning-gradient);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+.loading-overlay.active { display: flex; }
+.loading-content { text-align: center; color: white; max-width: 80%; }
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255,255,255,0.2);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+.debug-info {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-align: left;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.error-message {
+    background: rgba(255, 107, 107, 0.15);
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    color: #ff6b6b;
+    display: none;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+.error-message.show { display: flex; }
+.error-message pre { margin: 0; font-size: 0.8rem; white-space: pre-wrap; word-break: break-word; }
+
+.not-car-warning {
+    background: rgba(255, 193, 7, 0.15);
+    border: 1px solid rgba(255, 193, 7, 0.4);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    color: #ffc107;
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+}
+.not-car-warning.show { display: flex; }
+
+.confidence-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+.confidence-badge.high { background: rgba(132, 250, 176, 0.2); color: #84fab0; }
+.confidence-badge.medium { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+.confidence-badge.low { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; }
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+.tips-section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; margin-top: 1rem; }
+.tips-title { color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+.tips-list { color: #cbd5e1; font-size: 0.875rem; line-height: 1.5; text-align: left; list-style: none; padding: 0; margin: 0; }
+.tips-list li { margin-bottom: 0.25rem; padding-left: 1rem; position: relative; }
+.tips-list li:before { content: "•"; position: absolute; left: 0; color: #667eea; }
+
+#capture-canvas, #captured-image { display: none; }
+
+.flash-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 999;
+    transition: opacity 0.1s ease-out;
+}
+.flash-effect.active { opacity: 0.9; }
+
+.mode-toggle {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    transition: all 0.3s ease;
+}
+.mode-toggle:hover { background: rgba(255,255,255,0.15); }
+</style>
+</head>
+<body>
+
+<video id="camera-feed" autoplay playsinline muted></video>
+
+<div id="camera-placeholder" class="camera-placeholder">
+    <i class="fas fa-video-slash"></i>
+    <p>Camera is currently off</p>
+    <p style="font-size: 0.875rem; margin-top: 0.5rem;">Click "Start Camera" below to begin</p>
+</div>
+
+<div id="flash-effect" class="flash-effect"></div>
+
+<div class="overlay">
+  <div class="header">
+    <div class="header-card">
+      <div class="brand-logo">
+        <i class="fas fa-car"></i>
+        <h1>VeloValue</h1>
+      </div>
+      <p class="text-sm text-gray-300">Instant Car Recognition & Valuation</p>
+      
+      <div id="api-status" class="api-status disconnected">
+        <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+        <span>Camera Offline</span>
+      </div>
+      
+      <button id="mode-toggle" class="mode-toggle" title="Switch between Real AI and Demo Mode">
+        <i class="fas fa-brain"></i> Mode: <strong id="current-mode">Gemini AI</strong> (Click to switch)
+      </button>
+      
+      <div class="tips-section">
+        <div class="tips-title"><i class="fas fa-lightbulb"></i> Pro Tips</div>
+        <ul class="tips-list">
+          <li>Capture front or side view for best accuracy</li>
+          <li><strong>Only 4-wheeler cars recognized</strong></li>
+          <li>If API key fails, app auto-switches to Demo</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-overlay" id="guide-overlay">
+    <div><i class="fas fa-camera fa-2x mb-2"></i><div>Position car within frame</div></div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-card">
+      
+      <div id="camera-off-controls" style="display: block;">
+        <button id="start-camera-btn" class="start-camera-btn">
+          <i class="fas fa-power-off"></i> Start Camera
+        </button>
+        <p style="color: rgba(255,255,255,0.5); font-size: 0.75rem; margin-top: 0.75rem;">
+          Camera permission required
+        </p>
+      </div>
+      
+      <div id="camera-on-controls" style="display: none;">
+        <div class="button-row">
+          <button id="flash-btn" class="flash-btn" title="Toggle Flashlight">
+            <i class="fas fa-bolt"></i>
+          </button>
+          <button id="capture-btn" class="capture-btn" disabled>
+            <i class="fas fa-camera"></i> Identify Vehicle
+          </button>
+        </div>
+        <p style="color: rgba(255,255,255,0.5); font-size: 0.75rem; margin-top: 0.75rem;" id="camera-resolution">Loading...</p>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<div id="result-panel" class="result-panel">
+  <div class="result-header">
+    <h2 class="result-title">Vehicle Analysis</h2>
+    <button class="close-btn" id="close-result"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="result-content">
+    
+    <div id="not-car-warning" class="not-car-warning">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>This doesn't appear to be a 4-wheeler car.</span>
+    </div>
+    
+    <div id="error-message" class="error-message">
+      <i class="fas fa-times-circle"></i>
+      <pre id="error-text">Error analyzing image</pre>
+    </div>
+    
+    <img id="result-image" class="car-image" alt="Identified Vehicle">
+    
+    <div class="car-info">
+      <h3 id="car-title" class="car-title">Loading...</h3>
+      <p id="car-subtitle" class="car-subtitle">Analyzing vehicle details...</p>
+      
+      <div class="info-grid">
+        <div class="info-item"><div class="info-label">Make</div><div id="car-make" class="info-value">-</div></div>
+        <div class="info-item"><div class="info-label">Model</div><div id="car-model" class="info-value">-</div></div>
+        <div class="info-item"><div class="info-label">Year</div><div id="car-year" class="info-value">-</div></div>
+        <div class="info-item"><div class="info-label">Body Type</div><div id="car-body" class="info-value">-</div></div>
+        <div class="info-item"><div class="info-label">Estimated Value</div><div id="car-value" class="info-value">-</div></div>
+        <div class="info-item"><div class="info-label">Confidence</div><div id="car-confidence" class="info-value">-</div></div>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="action-btn primary" id="save-car"><i class="fas fa-bookmark"></i> Save to Collection</button>
+        <button class="action-btn" id="share-result"><i class="fas fa-share"></i> Share</button>
+        <button class="action-btn" id="get-details"><i class="fas fa-info-circle"></i> More Details</button>
+        <button class="action-btn" id="compare-cars"><i class="fas fa-balance-scale"></i> Compare</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="loading-overlay" class="loading-overlay">
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <div id="loading-text">Initializing...</div>
+    <div id="debug-log" class="debug-info" style="display:none;"></div>
+  </div>
+</div>
+
+<div class="saved-cars" id="saved-cars-btn">
+  <i class="fas fa-bookmark"></i>
+  <div class="saved-count" id="saved-count">0</div>
+</div>
+
+<canvas id="capture-canvas"></canvas>
+<img id="captured-image" alt="Captured Car Image">
+
+<script>
+// ==========================================
+// CONFIGURATION
+// ==========================================
+const GOOGLE_AI_API_KEY = 'AIzaSyBWN20Kp8Pe5IVkVL8-tGSXf0B0lv_Sxzw';
+
+let analysisMode = 'gemini_ai'; // 'gemini_ai' or 'demo'
+
+// ==========================================
+// DOM ELEMENTS
+// ==========================================
+const videoElement = document.getElementById('camera-feed');
+const canvasElement = document.getElementById('capture-canvas');
+const captureBtn = document.getElementById('capture-btn');
+const resultPanel = document.getElementById('result-panel');
+const resultImage = document.getElementById('result-image');
+const loadingOverlay = document.getElementById('loading-overlay');
+const loadingText = document.getElementById('loading-text');
+const debugLog = document.getElementById('debug-log');
+const apiStatusEl = document.getElementById('api-status');
+const notCarWarning = document.getElementById('not-car-warning');
+const errorMessage = document.getElementById('error-message');
+const errorText = document.getElementById('error-text');
+const startCameraBtn = document.getElementById('start-camera-btn');
+const flashBtn = document.getElementById('flash-btn');
+const cameraOffControls = document.getElementById('camera-off-controls');
+const cameraOnControls = document.getElementById('camera-on-controls');
+const cameraPlaceholder = document.getElementById('camera-placeholder');
+const flashEffect = document.getElementById('flash-effect');
+const resolutionText = document.getElementById('camera-resolution');
+const modeToggle = document.getElementById('mode-toggle');
+const currentModeEl = document.getElementById('current-mode');
+const saveCarBtn = document.getElementById('save-car');
+
+let videoStream = null;
+let savedCars = JSON.parse(localStorage.getItem('savedCars') || '[]');
+let isFlashOn = false;
+let currentTrack = null;
+
+// ==========================================
+// CAR DATABASE (For Valuations)
+// ==========================================
+const carDatabase = {
+  'Toyota Camry': { value: '$26,000-$36,000', body: 'Sedan', details: 'Reliable family sedan' },
+  'Honda Accord': { value: '$27,000-$38,000', body: 'Sedan', details: 'Comfortable mid-size sedan' },
+  'Tesla Model 3': { value: '$40,000-$55,000', body: 'Electric Sedan', details: 'Electric sedan with autopilot' },
+  'BMW 3 Series': { value: '$43,000-$56,000', body: 'Sports Sedan', details: 'Luxury sport sedan' },
+  'Ford F-150': { value: '$35,000-$65,000', body: 'Pickup Truck', details: 'America\'s best-selling pickup' },
+  'Mazda CX-5': { value: '$28,000-$39,000', body: 'Compact SUV', details: 'Stylish compact SUV' },
+  'Jeep Wrangler': { value: '$32,000-$55,000', body: 'SUV', details: 'Iconic off-road SUV' },
+  'Audi A4': { value: '$42,000-$58,000', body: 'Luxury Sedan', details: 'Sophisticated luxury sedan' },
+  'Porsche 911': { value: '$105,000-$200,000', body: 'Sports Car', details: 'Legendary sports car' },
+  'Lexus RX': { value: '$48,000-$65,000', body: 'Luxury SUV', details: 'Reliable luxury SUV' }
+};
+
+function updateSavedCount() { 
+  document.getElementById('saved-count').textContent = savedCars.length; 
+}
+
+// ==========================================
+// DEBUG LOGGING
+// ==========================================
+function addDebugLog(message) {
+  console.log('[DEBUG]', message);
+  debugLog.textContent += message + '\n';
+  debugLog.style.display = 'block';
+  debugLog.scrollTop = debugLog.scrollHeight;
+}
+
+function clearDebugLog() {
+  debugLog.textContent = '';
+  debugLog.style.display = 'none';
+}
+
+// ==========================================
+// MODE TOGGLE
+// ==========================================
+function toggleAnalysisMode() {
+  if (analysisMode === 'gemini_ai') analysisMode = 'demo';
+  else analysisMode = 'gemini_ai';
+
+  if (analysisMode === 'gemini_ai') currentModeEl.textContent = 'Gemini AI';
+  else currentModeEl.textContent = 'Demo Mode';
+  
+  const icon = modeToggle.querySelector('i');
+  icon.className = analysisMode === 'demo' ? 'fas fa-flask' : 'fas fa-brain';
+  console.log(`🔄 Switched to ${analysisMode} mode`);
+}
+
+// ==========================================
+// CAMERA FUNCTIONS
+// ==========================================
+async function startCamera() {
+  updateApiStatus('connecting', 'Connecting...');
+  clearDebugLog();
+  addDebugLog('Requesting camera access...');
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showError('Browser does not support camera access');
+    updateApiStatus('disconnected', 'Not Supported');
+    return false;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ 
+      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, 
+      audio: false 
+    });
+
+    videoStream = stream;
+    currentTrack = stream.getVideoTracks()[0];
+    videoElement.srcObject = stream;
+    await videoElement.play();
+
+    const settings = currentTrack.getSettings();
+    resolutionText.textContent = `Resolution: ${settings.width || 'N/A'}x${settings.height || 'N/A'}`;
+    
+    showCameraOnState();
+    setTimeout(() => { captureBtn.disabled = false; }, 500);
+    
+    addDebugLog(`✅ Camera started: ${settings.width}x${settings.height}`);
+    return true;
+
+  } catch (err) {
+    let msg = 'Camera error: ';
+    if (err.name === 'NotAllowedError') msg += 'Permission denied';
+    else if (err.name === 'NotFoundError') msg += 'No camera found';
+    else if (err.name === 'NotReadableError') msg += 'Camera in use';
+    else msg += err.message;
+    
+    addDebugLog(`❌ ${msg}`);
+    showError(msg);
+    showCameraOffState();
+    return false;
+  }
+}
+
+function stopCamera() {
+  if (videoStream) {
+    videoStream.getTracks().forEach(track => track.stop());
+    videoStream = null;
+    currentTrack = null;
+  }
+  videoElement.srcObject = null;
+  showCameraOffState();
+}
+
+function showCameraOnState() {
+  cameraPlaceholder.style.display = 'none';
+  videoElement.classList.remove('camera-off');
+  cameraOffControls.style.display = 'none';
+  cameraOnControls.style.display = 'block';
+  updateApiStatus('connected', 'Camera Active');
+  isFlashOn = false;
+  flashBtn.classList.remove('active');
+}
+
+function showCameraOffState() {
+  cameraPlaceholder.style.display = 'flex';
+  videoElement.classList.add('camera-off');
+  cameraOffControls.style.display = 'block';
+  cameraOnControls.style.display = 'none';
+  captureBtn.disabled = true;
+  updateApiStatus('disconnected', 'Camera Offline');
+}
+
+function updateApiStatus(status, text) {
+  apiStatusEl.className = `api-status ${status}`;
+  apiStatusEl.innerHTML = `<i class="fas fa-circle" style="font-size: 0.5rem;"></i><span>${text}</span>`;
+}
+
+async function toggleFlash() {
+  if (!currentTrack) { alert('Start camera first'); return; }
+  try {
+    const caps = currentTrack.getCapabilities();
+    if (!caps.torch) { alert('Flashlight not supported on this device'); return; }
+    isFlashOn = !isFlashOn;
+    await currentTrack.applyConstraints({ advanced: [{ torch: isFlashOn }] });
+    flashBtn.classList.toggle('active', isFlashOn);
+  } catch (err) { alert('Could not toggle flashlight'); }
+}
+
+function triggerFlashEffect() {
+  flashEffect.classList.add('active');
+  setTimeout(() => flashEffect.classList.remove('active'), 150);
+}
+
+// ==========================================
+// ANALYSIS FUNCTIONS
+// ==========================================
+
+async function analyzeWithGemini(imageBase64) {
+  addDebugLog('📡 Calling Gemini 1.5 Flash API...');
+  
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}`;
+  
+  const body = {
+    contents: [{
+      parts: [
+        { 
+          text: `Analyze this image. Is it a 4-wheeler passenger car? 
+          If it is NOT a 4-wheeler car (e.g., motorcycle, bicycle, bus, semi-truck, boat, airplane, person, tree, etc), return exactly: {"isCar": false, "detectedAs": "what it actually is", "make": "N/A", "model": "N/A", "year": "N/A", "bodyType": "N/A", "confidence": 0}
+          If it IS a 4-wheeler car, identify it and return a JSON object exactly like this format:
+          {"isCar": true, "make": "Brand Name", "model": "Specific Model Name", "year": "Estimated Year or Unknown", "bodyType": "Sedan/SUV/Coupe/Pickup etc", "confidence": 85}
+          Return ONLY valid JSON. No markdown formatting, no explanation, just the JSON object.` 
+        },
+        { inline_data: { mime_type: 'image/jpeg', data: imageBase64 } }
+      ]
+    }]
+  };
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(`Gemini Error (${response.status}): ${errorData.error?.message || response.statusText}`);
+  }
+
+  const data = await response.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+  
+  addDebugLog(`✅ Success with Gemini!`);
+  return JSON.parse(cleanText);
+}
+
+function analyzeWithDemo() {
+  addDebugLog('🎲 Using DEMO mode (random results)');
+  const demoCars = [
+    { make: 'Toyota', model: 'Camry', year: '2023', bodyType: 'Sedan', isCar: true, confidence: 92 },
+    { make: 'Tesla', model: 'Model 3', year: '2024', bodyType: 'Electric Sedan', isCar: true, confidence: 95 },
+    { make: 'BMW', model: '3 Series', year: '2023', bodyType: 'Sports Sedan', isCar: true, confidence: 88 },
+    { make: 'Ford', model: 'F-150', year: '2022', bodyType: 'Pickup Truck', isCar: true, confidence: 91 },
+    { make: 'Mazda', model: 'CX-5', year: '2024', bodyType: 'Compact SUV', isCar: true, confidence: 89 },
+    { make: 'Porsche', model: '911', year: '2023', bodyType: 'Sports Car', isCar: true, confidence: 97 }
+  ];
+  return demoCars[Math.floor(Math.random() * demoCars.length)];
+}
+
+async function analyzeImage(imageBase64) {
+  if (analysisMode === 'demo') {
+    return analyzeWithDemo();
+  }
+
+  try {
+    const geminiResult = await analyzeWithGemini(imageBase64);
+    if (geminiResult) return geminiResult;
+    throw new Error('Empty Gemini result');
+  } catch (geminiError) {
+    addDebugLog(`❌ Gemini failed: ${geminiError.message}. Auto-switching to Demo Mode for this scan.`);
+    // GRACEFUL FALLBACK: If API fails, just use Demo mode so the app doesn't break
+    return analyzeWithDemo();
+  }
+}
+
+// ==========================================
+// CAPTURE & DISPLAY
+// ==========================================
+async function captureImage() {
+  if (!videoStream) { alert('Please start camera first!'); return; }
+  
+  notCarWarning.classList.remove('show');
+  errorMessage.classList.remove('show');
+  clearDebugLog();
+  triggerFlashEffect();
+
+  const ctx = canvasElement.getContext('2d');
+  canvasElement.width = videoElement.videoWidth;
+  canvasElement.height = videoElement.videoHeight;
+  ctx.drawImage(videoElement, 0, 0);
+
+  const dataUrl = canvasElement.toDataURL('image/jpeg', 0.8);
+  resultImage.src = dataUrl;
+
+  loadingOverlay.classList.add('active');
+  loadingText.textContent = analysisMode === 'demo' ? 'Generating demo results...' : 'Analyzing with AI...';
+  captureBtn.disabled = true;
+
+  saveCarBtn.disabled = false;
+  saveCarBtn.style.opacity = '1';
+  saveCarBtn.innerHTML = '<i class="fas fa-bookmark"></i> Save to Collection';
+  saveCarBtn.style.background = '';
+
+  try {
+    const imageBase64 = dataUrl.split(',')[1];
+    addDebugLog(`📸 Image captured: ${canvasElement.width}x${canvasElement.height}`);
+    
+    const result = await analyzeImage(imageBase64);
+    await new Promise(r => setTimeout(r, 300));
+    
+    if (!result.isCar) {
+      showNotCarWarning(result.detectedAs || 'Object', result.confidence || 0);
+      updatePanelNonCar(result);
+    } else {
+      displayResults(result);
+    }
+    
+  } catch (err) {
+    addDebugLog(`💥 Fatal error: ${err.message}`);
+    showError(err.message);
+    resultPanel.classList.add('active'); 
+  } finally {
+    loadingOverlay.classList.remove('active');
+    captureBtn.disabled = false;
+  }
+}
+
+function showNotCarWarning(detectedAs, conf) {
+  notCarWarning.querySelector('span').textContent = `Detected "${detectedAs}" (${conf}%). Only 4-wheelers analyzed.`;
+  notCarWarning.classList.add('show');
+}
+
+function showError(msg) {
+  errorText.textContent = msg;
+  errorMessage.classList.add('show');
+}
+
+function updatePanelNonCar(r) {
+  document.getElementById('car-title').textContent = 'Not a 4-Wheeler Car';
+  document.getElementById('car-subtitle').textContent = `Detected: ${r.detectedAs || 'Unknown'} (${r.confidence || 0}%)`;
+  document.getElementById('car-make').textContent = '-';
+  document.getElementById('car-model').textContent = '-';
+  document.getElementById('car-year').textContent = '-';
+  document.getElementById('car-body').textContent = r.detectedAs || 'Unknown';
+  document.getElementById('car-value').textContent = 'N/A';
+  document.getElementById('car-confidence').innerHTML = `<span class="confidence-badge low">${r.confidence || 0}%</span>`;
+  saveCarBtn.disabled = true;
+  saveCarBtn.style.opacity = '0.5';
+  resultPanel.classList.add('active');
+}
+
+function displayResults(r) {
+  const key = `${r.make} ${r.model}`;
+  const db = carDatabase[key] || { value: 'Price not available', body: r.bodyType || 'Car', details: `${r.make} ${r.model}` };
+  
+  document.getElementById('car-title').textContent = `${r.year !== 'Unknown' ? r.year : ''} ${r.make} ${r.model}`.trim();
+  document.getElementById('car-subtitle').textContent = db.details;
+  document.getElementById('car-make').textContent = r.make;
+  document.getElementById('car-model').textContent = r.model;
+  document.getElementById('car-year').textContent = r.year;
+  document.getElementById('car-body').textContent = db.body;
+  document.getElementById('car-value').textContent = db.value;
+  
+  const confScore = r.confidence || 0;
+  const badge = confScore >= 85 ? 'high' : confScore >= 70 ? 'medium' : 'low';
+  document.getElementById('car-confidence').innerHTML = `<span class="confidence-badge ${badge}">${confScore}%</span>`;
+  
+  resultPanel.classList.add('active');
+}
+
+// ==========================================
+// UTILITY FUNCTIONS
+// ==========================================
+function saveCar() {
+  const info = {
+    make: document.getElementById('car-make').textContent,
+    model: document.getElementById('car-model').textContent,
+    year: document.getElementById('car-year').textContent,
+    value: document.getElementById('car-value').textContent,
+    image: resultImage.src,
+    savedAt: new Date().toISOString()
+  };
+  if (info.make === '-' || info.make === 'Unknown') { alert('Cannot save non-vehicles'); return; }
+  
+  savedCars.push(info);
+  localStorage.setItem('savedCars', JSON.stringify(savedCars));
+  updateSavedCount();
+  
+  saveCarBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+  saveCarBtn.style.background = 'var(--success-gradient)';
+  setTimeout(() => { 
+    saveCarBtn.innerHTML = '<i class="fas fa-bookmark"></i> Save to Collection'; 
+    saveCarBtn.style.background = ''; 
+  }, 2000);
+}
+
+function shareResult() {
+  const t = document.getElementById('car-title').textContent;
+  const v = document.getElementById('car-value').textContent;
+  const info = `${t} - ${v}`;
+  if (navigator.share) {
+    navigator.share({title:'VeloValue', text:`Check out: ${info}`});
+  } else {
+    navigator.clipboard.writeText(info).then(()=>alert('Copied to clipboard!'));
+  }
+}
+
+function getMoreDetails() { alert('Full details would include specs, reviews, and market data.'); }
+function compareCars() { alert(savedCars.length < 2 ? 'Save 2+ cars first to compare!' : `Compare your ${savedCars.length} saved cars!`); }
+
+function showSavedCars() {
+  if (!savedCars.length) { alert('No saved cars yet!'); return; }
+  alert('Saved Cars:\n\n' + savedCars.map((c,i)=>`${i+1}. ${c.year} ${c.make} ${c.model} - ${c.value}`).join('\n'));
+}
+
+// ==========================================
+// EVENT LISTENERS
+// ==========================================
+startCameraBtn.addEventListener('click', startCamera);
+flashBtn.addEventListener('click', toggleFlash);
+captureBtn.addEventListener('click', captureImage);
+modeToggle.addEventListener('click', toggleAnalysisMode);
+
+document.getElementById('close-result').addEventListener('click', () => {
+  resultPanel.classList.remove('active');
+  notCarWarning.classList.remove('show');
+  errorMessage.classList.remove('show');
+});
+
+saveCarBtn.addEventListener('click', saveCar);
+document.getElementById('share-result').addEventListener('click', shareResult);
+document.getElementById('get-details').addEventListener('click', getMoreDetails);
+document.getElementById('compare-cars').addEventListener('click', compareCars);
+document.getElementById('saved-cars-btn').addEventListener('click', showSavedCars);
+
+window.addEventListener('beforeunload', () => {
+  if (videoStream) videoStream.getTracks().forEach(t => t.stop());
+});
+
+// ==========================================
+// INIT
+// ==========================================
+console.log('%c🚗 VeloValue v12.0 - GRACEFUL FALLBACK', 'font-size: 24px; font-weight: bold; color: #667eea;');
+
+showCameraOffState();
+updateSavedCount();
+</script>
+</body>
+</html>

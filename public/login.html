@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login – VeloValue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+  <!-- Background video -->
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="Multimedia/login video.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Header -->
+  <div class="velovalue-header" onclick="window.location.href='homepage.html'">VeloValue</div>
+
+  <div class="login-container">
+    <form id="loginForm" class="login-form">
+      <h2>Welcome Back</h2>
+
+      <!-- Social login buttons -->
+      <button type="button" class="social-btn" onclick="window.location.href='/auth/google'">
+        Continue with Google
+      </button>
+      <!-- Facebook/Apple login: implement later via Passport strategies -->
+      <button type="button" class="social-btn" onclick="window.location.href='/auth/facebook'">
+        Continue with Facebook
+      </button>
+      <button type="button" class="social-btn" disabled>
+        Continue with Apple (Coming Soon)
+      </button>
+
+      <div class="divider"><span>or</span></div>
+
+      <!-- Email & Password -->
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Your Password" required />
+
+      <button type="submit">Login</button>
+
+      <p class="signup-link">
+        Don't have an account? <a href="/register.html">Sign Up</a>
+      </p>
+
+      <p id="errorMsg" style="color:red;"></p>
+    </form>
+  </div>
+
+  <script>
+const loginForm = document.getElementById('loginForm');
+const errorMsg = document.getElementById('errorMsg');
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  try {
+    const res = await fetch('/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include' // important: store session cookie
+    });
+
+    const data = await res.json();
+
+    if (data.loggedIn) {
+      // Redirect to main app page safely
+      window.location.href = '/garageview.html';
+    } else {
+      errorMsg.textContent = data.error || '❌ Login failed';
+    }
+  } catch (err) {
+    console.error(err);
+    errorMsg.textContent = '❌ Something went wrong. Please try again.';
+  }
+});
+</script>
+
+</body>
+</html>

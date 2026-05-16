@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VeloValue - Garage</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #000;
+  --text: #fff;
+  --accent: #1db954;
+  --gold: #f2c94c;
+  --gold-dim: rgba(242,201,76,0.15);
+  --gold-border: rgba(242,201,76,0.4);
+  --green-bright: #4cf2a0;
+  --glass-bg: rgba(255,255,255,0.03);
+  --glass-border: rgba(255,255,255,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
+html, body { height:100%; background: linear-gradient(135deg, #0a0a0a, #1e1e1e); color:#fff; overflow-x:hidden; }
+
+/* ===== Header ===== */
+header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem 2rem; position: fixed; width: 100%; top: 0;
+  background: rgba(0,0,0,0.6); z-index: 2000; border-bottom: 1px solid #333;
+}
+.header-left { display:flex; align-items:center; gap:15px; }
+.header-right { display:flex; align-items:center; gap:15px; }
+header h1 a { font-size:1.8rem; font-weight:800; color:var(--text); text-decoration:none; }
+nav.desktop-nav { display:flex; gap:20px; }
+nav.desktop-nav a { color:var(--text); font-weight:600; font-size:16px; text-decoration:none; white-space:nowrap; }
+nav.desktop-nav a:hover { text-decoration:underline; }
+.language-select { position:relative; }
+.language-select select {
+  appearance:none; background:#111; color:var(--text); border:1px solid #333;
+  border-radius:6px; padding:6px 30px 6px 10px; font-size:0.9rem; cursor:pointer;
+}
+#authSection .text-btn {
+  display:inline-flex; background:var(--text); color:var(--bg); border:none;
+  border-radius:999px; padding:8px 16px; font-weight:600; cursor:pointer;
+  align-items:center; justify-content:center; transition: transform .15s ease;
+}
+#authSection .text-btn:active { transform:scale(0.96); }
+#authSection .icon-btn { display:none; }
+.hamburger {
+  font-size:1.8rem; background:none; border:none; color:var(--text); cursor:pointer;
+  display:none; align-items:center; justify-content:center; z-index:2200; width:40px; height:40px;
+}
+.menu {
+  position:fixed; top:0; left:-300px; width:300px; height:100vh;
+  background:rgba(17,17,17,0.95); border-right:1px solid rgba(255,255,255,0.12);
+  padding:3rem 2rem; display:flex; flex-direction:column; gap:2rem;
+  transition:left 0.3s ease; z-index:2100; backdrop-filter:blur(10px); border-radius:0 1rem 1rem 0;
+}
+.menu.active { left:0; }
+.menu a { color:var(--text); font-size:1.6rem; font-weight:800; text-decoration:none; }
+.menu-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.5); opacity:0;
+  pointer-events:none; transition:opacity 0.3s ease; z-index:2050;
+}
+.menu-overlay.active { opacity:1; pointer-events:auto; }
+
+@media(max-width:1024px){
+  nav.desktop-nav{display:none;} .hamburger{display:flex;}
+  .hamburger { position:relative; font-size:0; }
+  .hamburger::before, .hamburger::after {
+    content:""; position:absolute; left:50%; width:22px; height:2px;
+    background:currentColor; transform:translateX(-50%);
+    transition:transform .25s ease, top .25s ease;
+  }
+  .hamburger::before { top:calc(50% - 6px); }
+  .hamburger::after  { top:calc(50% + 6px); }
+  .hamburger {
+    background-image:linear-gradient(currentColor,currentColor);
+    background-repeat:no-repeat; background-position:center; background-size:22px 2px;
+  }
+  .hamburger.is-active { background-size:0 0; }
+  .hamburger.is-active::before { top:50%; transform:translateX(-50%) rotate(45deg); }
+  .hamburger.is-active::after  { top:50%; transform:translateX(-50%) rotate(-45deg); }
+}
+@media(max-width:768px){
+  #authSection .text-btn{display:none;}
+  #authSection .icon-btn {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:50%; font-size:1.2rem;
+    background:var(--text); color:var(--bg); border:none; cursor:pointer;
+    transition:transform 0.2s ease;
+  }
+  #authSection .icon-btn:active{transform:scale(0.95);}
+  .language-select {
+    width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .language-select::before{content:"🌐"; font-size:1.2rem; color:#fff; position:absolute;}
+  .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
+}
+
+/* ===== Garage Header ===== */
+.garage-header {
+  display:grid; grid-template-columns:1fr 500px 1fr; gap:20px; align-items:start;
+  padding:clamp(84px,10vh,96px) 40px 60px; width:100%; z-index:2;
+  grid-template-areas:"left center right";
+}
+.garage-left  { grid-area:left;  display:flex; flex-direction:column; gap:12px; align-items:flex-start; }
+.garage-right { grid-area:right; display:flex; flex-direction:column; gap:12px; align-items:flex-end; }
+
+.capsule-search {
+  background:rgba(255,255,255,0.04); color:#fff; font-size:15px; padding:10px 18px;
+  border-radius:50px; border:1px solid rgba(255,255,255,0.06);
+  transition:background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.capsule-search:focus { outline:none; box-shadow:0 0 0 2px rgba(242,201,76,0.3); border-color:rgba(242,201,76,0.6); }
+.add-car-pill {
+  background:rgba(76,242,160,0.08); color:#4cf2a0; font-weight:700; font-size:16px;
+  padding:10px 18px; border-radius:50px; border:1px solid rgba(76,242,160,0.2); cursor:pointer;
+  transition:background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+.add-car-pill:hover { background:rgba(76,242,160,0.18); transform:translateY(-1px); }
+.garage-level-pill {
+  background:var(--gold-dim); color:var(--gold); font-weight:700; padding:10px 20px;
+  border-radius:50px; border:1px solid var(--gold-border);
+  transition:border-color .2s ease;
+}
+.garage-level-pill:hover { border-color:rgba(255,255,255,0.35); }
+.view-toggle select {
+  font-size:16px; padding:8px 12px; border-radius:8px; color:#fff;
+  border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.05);
+  transition:border-color .2s ease;
+}
+.view-toggle select:hover { border-color:rgba(255,255,255,0.35); }
+
+/* ===== Carousel ===== */
+.carousel-wrapper {
+  position:relative; width:100%; max-width:500px; margin:auto; height:560px;
+  perspective:2000px; touch-action:pan-y; grid-area:center;
+}
+.carousel-wrapper.dragging { cursor:grabbing; }
+.carousel-wrapper.dragging .carousel-card.center { transform:translateZ(0) scale(0.985); }
+.carousel-track { position:relative; width:100%; height:100%; }
+
+.carousel-card {
+  position:absolute; width:100%; height:100%;
+  background:rgba(20,20,25,0.55); backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.1); border-radius:20px;
+  padding:18px; display:flex; flex-direction:column; gap:12px;
+  transition:all 0.55s cubic-bezier(0.34,1.2,0.64,1);
+  pointer-events:auto; cursor:pointer; opacity:0;
+}
+.carousel-card.center { transform:translateZ(0) scale(1); opacity:1; z-index:100; }
+.carousel-card.left   { transform:translateX(-45%) translateZ(-80px) scale(0.95); opacity:.7; z-index:99; }
+.carousel-card.right  { transform:translateX(45%) translateZ(-80px) scale(0.95); opacity:.7; z-index:99; }
+.carousel-card.far-left  { transform:translateX(-90%) translateZ(-160px) scale(0.88); opacity:0; pointer-events:none; z-index:98; }
+.carousel-card.far-right { transform:translateX(90%) translateZ(-160px) scale(0.88); opacity:0; pointer-events:none; z-index:98; }
+
+.carousel-btn {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:48px; height:48px; border-radius:50%; font-size:28px; font-weight:800;
+  border:1px solid rgba(255,255,255,0.4);
+  background:linear-gradient(to bottom right,rgba(255,215,0,0.8),rgba(30,30,30,0.8));
+  color:#000; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; backdrop-filter:blur(10px);
+  transition:transform .2s ease, box-shadow .2s ease;
+  z-index:200; user-select:none; -webkit-user-select:none; line-height:1;
+}
+.carousel-btn:hover { transform:translateY(-50%) scale(1.08); box-shadow:0 0 20px rgba(242,201,76,0.25); }
+.carousel-btn:active { transform:translateY(-50%) scale(0.95); }
+.carousel-btn.left  { left:-18px; }
+.carousel-btn.right { right:-18px; }
+
+.carousel-dots {
+  display:flex; gap:8px; justify-content:center; align-items:center;
+  position:absolute; bottom:-36px; left:50%; transform:translateX(-50%); z-index:200;
+}
+.carousel-dot {
+  width:8px; height:8px; border-radius:50%;
+  background:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.45);
+  cursor:pointer; transition:transform .2s ease, background-color .2s ease, border-color .2s ease;
+}
+.carousel-dot:hover { transform:scale(1.2); }
+.carousel-dot.active { background:var(--gold); border-color:rgba(242,201,76,0.8); transform:scale(1.3); }
+
+/* ===== Card Content ===== */
+.car-header { display:flex; align-items:flex-start; gap:20px; margin-bottom:12px; }
+.car-info { display:flex; flex-direction:column; gap:4px; }
+.car-logo { width:100px; height:auto; }
+.car-name { font-size:24px; font-weight:900; color:var(--gold); }
+.car-model { font-size:18px; font-weight:600; color:#ccc; }
+.fuel-pill {
+  display:inline-block; padding:4px 12px; border-radius:20px;
+  background:var(--gold-dim); border:1px solid var(--gold-border);
+  color:var(--gold); font-size:13px; font-weight:600;
+}
+.car-image-box {
+  width:100%; flex:1; min-height:0; border-radius:18px; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,0.02); border:2px solid rgba(255,255,255,0.08);
+}
+.car-image { max-width:100%; max-height:100%; object-fit:contain; }
+
+.italian-plate {
+  position:relative; margin:0 auto; width:360px; height:60px;
+  background:#fff; border-radius:8px; border:1px solid #ccc;
+  font-family:'OCR A Std','Courier New',monospace;
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px; font-weight:900; color:#000; letter-spacing:6px; flex-shrink:0;
+}
+.italian-plate::before {
+  content:'I'; position:absolute; left:0; width:40px; height:100%;
+  background:#003399; color:#fff; display:flex; align-items:center; justify-content:center;
+  border-top-left-radius:8px; border-bottom-left-radius:8px;
+}
+.italian-plate::after {
+  content:'RM'; position:absolute; right:0; width:40px; height:100%;
+  background:#003399; color:#fff; display:flex; align-items:center; justify-content:center;
+  border-top-right-radius:8px; border-bottom-right-radius:8px;
+}
+
+.add-car { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:12px; }
+.add-plus { font-size:64px; font-weight:900; color:var(--gold); line-height:1; transition:transform .25s ease; }
+.carousel-card.center .add-plus:hover { transform:rotate(90deg); }
+.add-text { color:#999; font-weight:600; font-size:16px; }
+
+/* ===== Remove Car Button ===== */
+.remove-car-btn {
+  display: block; margin: 16px auto 0; padding: 10px 24px;
+  background: rgba(255, 80, 80, 0.1); color: #ff5050;
+  border: 1px solid rgba(255, 80, 80, 0.4); border-radius: 8px;
+  font-weight: 700; font-size: 14px; cursor: pointer;
+  transition: background .2s, transform .2s; z-index: 200;
+}
+.remove-car-btn:hover { background: rgba(255, 80, 80, 0.25); transform: translateY(-1px); }
+.remove-car-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+/* ===== Tiles ===== */
+.tiles-view { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; padding:20px; grid-area:center; }
+.tile-card {
+  width:250px; padding:15px; border-radius:20px; backdrop-filter:blur(20px);
+  background:var(--glass-bg); border:1px solid var(--glass-border);
+  cursor:pointer; transition:transform .2s ease, border-color .2s ease;
+}
+.tile-card:hover { transform:translateY(-4px); border-color:rgba(255,255,255,0.18); }
+.tile-card img { width:100%; height:150px; object-fit:contain; border-radius:10px; margin-bottom:10px; }
+.tile-info { display:flex; gap:10px; align-items:flex-start; }
+.tile-info .car-logo { width:50px; height:auto; }
+.tile-info .car-meta { display:flex; flex-direction:column; gap:4px; }
+
+/* ===== List ===== */
+.list-view { display:flex; flex-direction:column; gap:15px; width:80%; margin:0 auto; padding:20px 0; grid-area:center; }
+.list-card {
+  display:flex; align-items:center; gap:20px; padding:15px; border-radius:20px;
+  backdrop-filter:blur(20px); background:var(--glass-bg); border:1px solid var(--glass-border);
+  cursor:pointer; transition:transform .15s ease, border-color .2s ease;
+}
+.list-card:hover { transform:translateX(6px); border-color:rgba(255,255,255,0.18); }
+.list-card .car-logo { width:60px; height:auto; }
+.list-card .car-meta { display:flex; align-items:center; gap:15px; }
+
+/* ===== Status States ===== */
+.status-state { display:flex; flex-direction:column; align-items:center; justify-content:center; height:420px; gap:20px; text-align:center; grid-area:center; }
+.status-icon { font-size:56px; line-height:1; }
+.status-title { font-size:22px; font-weight:800; color:#fff; }
+.status-desc { font-size:15px; color:#888; max-width:320px; line-height:1.5; }
+.status-btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:12px 28px; border-radius:50px; font-weight:700; font-size:16px;
+  cursor:pointer; border:none; transition:transform .2s ease, box-shadow .2s ease;
+}
+.status-btn:hover { transform:translateY(-2px); }
+.status-btn:active { transform:scale(0.97); }
+.status-btn.primary { background:var(--gold); color:#000; box-shadow:0 4px 20px rgba(242,201,76,0.3); }
+.status-btn.primary:hover { box-shadow:0 6px 28px rgba(242,201,76,0.45); }
+.status-btn.green { background:rgba(76,242,160,0.15); color:#4cf2a0; border:1px solid rgba(76,242,160,0.35); }
+.status-btn.green:hover { background:rgba(76,242,160,0.25); }
+
+/* ===== Loading Spinner ===== */
+.loading-state { display:flex; flex-direction:column; align-items:center; justify-content:center; height:420px; gap:16px; grid-area:center; }
+.spinner { width:40px; height:40px; border:3px solid rgba(255,255,255,0.1); border-top-color:var(--gold); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-text { color:#888; font-size:14px; }
+
+/* ===== Responsive ===== */
+@media(max-width:1024px){ .carousel-wrapper{max-width:460px;} }
+@media(max-width:900px){
+  .garage-header{ grid-template-columns:1fr; grid-template-areas:"left" "right" "center"; padding:clamp(84px,10vh,96px) 16px 60px; }
+  .garage-left .capsule-search, .garage-left .add-car-pill { width:100%; display:block; text-align:center; }
+  .garage-right { align-items:stretch; flex-direction:row; width:100%; gap:12px; }
+  .garage-right .garage-level-pill, .garage-right .view-toggle { flex:1; }
+  .garage-right .view-toggle select { width:100%; }
+  .carousel-wrapper { max-width:min(560px,94vw); height:540px; }
+  .carousel-card.left  { transform:translateX(-34%) translateZ(-70px) scale(0.94); opacity:.65; }
+  .carousel-card.right { transform:translateX(34%) translateZ(-70px) scale(0.94); opacity:.65; }
+  .carousel-card.far-left  { transform:translateX(-68%) translateZ(-140px) scale(0.88); opacity:0; }
+  .carousel-card.far-right { transform:translateX(68%) translateZ(-140px) scale(0.88); opacity:0; }
+  .car-image-box { min-height:260px; }
+  .italian-plate { width:90%; font-size:22px; letter-spacing:4px; }
+  .carousel-btn.left { left:2px; } .carousel-btn.right { right:2px; }
+  .carousel-btn { width:40px; height:40px; font-size:22px; }
+  .carousel-dots { bottom:-30px; }
+}
+@media(max-width:700px){
+  .carousel-card.left  { transform:translateX(-28%) translateZ(-60px) scale(0.92); }
+  .carousel-card.right { transform:translateX(28%) translateZ(-60px) scale(0.92); }
+}
+@media(max-width:600px){
+  .garage-header { padding-top:80px; }
+  .carousel-wrapper { height:520px; }
+  .car-image-box { min-height:240px; }
+  .tiles-view { gap:12px; } .tile-card { width:45%; }
+  .list-view { width:95%; }
+  .italian-plate { height:50px; font-size:18px; letter-spacing:3px; }
+  .car-name { font-size:20px; } .car-model { font-size:15px; }
+  .car-header { gap:12px; margin-bottom:8px; } .car-logo { width:70px; }
+  .status-state { height:360px; }
+}
+@media(max-width:400px){
+  .carousel-wrapper { height:500px; }
+  .car-image-box { min-height:220px; }
+  .italian-plate { font-size:16px; letter-spacing:2px; width:95%; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <h1><a href="/homepage.html">VeloValue</a></h1>
+  </div>
+  <div class="header-right">
+    <nav class="desktop-nav">
+      <a href="/homepage.html">HOME</a>
+      <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+      <a href="/explore-smart-garage-beta/smartgarage.html">SMART GARAGE</a>
+      <a href="/velocharge-beta/velocharge.html">VELOCHARGE</a>
+    </nav>
+    <div class="language-select">
+      <select id="languageSelect">
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+    <div id="authSection">
+      <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
+    </div>
+  </div>
+</header>
+
+<nav class="menu" id="hamburgerMenu" aria-hidden="true">
+  <a href="/homepage.html">HOME</a>
+  <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+  <a href="/explore-smart-garage-beta/smartgarage.html">SMART GARAGE</a>
+  <a href="/velocharge-beta/velocharge.html">DISCOVER VELOCHARGE</a>
+  <a href="#careers">WORK WITH US</a>
+  <a href="#about">ABOUT US</a>
+</nav>
+<div class="menu-overlay"></div>
+
+<div class="garage-header">
+  <div class="garage-left">
+    <input type="text" placeholder="Search for your car…" class="capsule-search" id="searchBox"/>
+    <div class="add-car-pill" id="addCarBtn">+ Add a new car</div>
+  </div>
+  <div id="garageDisplay"></div>
+  <div class="garage-right">
+    <div id="garage-level" class="garage-level-pill"></div>
+    <div class="view-toggle">
+      <select id="viewMode">
+        <option value="card">Card View</option>
+        <option value="tiles">Tiles View</option>
+        <option value="list">List View</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== Hamburger Menu ===== */
+const hamburger = document.querySelector(".hamburger");
+const menu = document.getElementById("hamburgerMenu");
+const overlayEl = document.querySelector(".menu-overlay");
+function openMenu() {
+  hamburger.setAttribute("aria-expanded","true");
+  hamburger.classList.add("is-active");
+  menu.classList.add("active");
+  overlayEl.classList.add("active");
+  menu.setAttribute("aria-hidden","false");
+}
+function closeMenu() {
+  hamburger.setAttribute("aria-expanded","false");
+  hamburger.classList.remove("is-active");
+  menu.classList.remove("active");
+  overlayEl.classList.remove("active");
+  menu.setAttribute("aria-hidden","true");
+}
+hamburger.addEventListener("click", () => menu.classList.contains("active") ? closeMenu() : openMenu());
+overlayEl.addEventListener("click", closeMenu);
+window.addEventListener("resize", () => { if (window.innerWidth > 1024 && menu.classList.contains("active")) closeMenu(); });
+
+/* ===== Garage Core ===== */
+const garageDisplay = document.getElementById("garageDisplay");
+const viewModeSelect = document.getElementById("viewMode");
+const garageLevelEl = document.getElementById("garage-level");
+const addCarBtn = document.getElementById("addCarBtn");
+const searchBox = document.getElementById("searchBox");
+
+let cars = [];
+let filteredCars = [];
+let currentIndex = 0;
+let cardElements = [];
+let dotElements = [];
+let isTransitioning = false;
+let touchStartX = 0;
+let touchStartY = 0;
+
+addCarBtn.onclick = () => window.location.href = "garagesearch.html";
+
+function showLoading() {
+  garageDisplay.className = "loading-state";
+  garageDisplay.innerHTML = '<div class="spinner"></div><div class="loading-text">Loading your garage…</div>';
+  garageLevelEl.textContent = "Garage Level - …";
+}
+
+function showLoginRequired() {
+  garageDisplay.className = "status-state";
+  garageDisplay.innerHTML =
+    '<div class="status-icon">🔒</div>' +
+    '<div class="status-title">Login Required</div>' +
+    '<div class="status-desc">You need to be logged in to view your garage.</div>' +
+    '<button class="status-btn primary" id="loginFromGarage">Login</button>';
+  garageLevelEl.textContent = "Garage Level - 0";
+  document.getElementById("loginFromGarage").addEventListener("click", function() {
+    window.location.href = "/login.html";
+  });
+}
+
+function showNoCars() {
+  garageDisplay.className = "status-state";
+  garageDisplay.innerHTML =
+    '<div class="status-icon">🅿️</div>' +
+    '<div class="status-title">Your Garage is Empty</div>' +
+    '<div class="status-desc">You don\'t have any cars yet. Add your first vehicle to get started.</div>' +
+    '<button class="status-btn green" id="addFirstCar">Add Your First Car</button>';
+  garageLevelEl.textContent = "Garage Level - 0";
+  document.getElementById("addFirstCar").addEventListener("click", function() {
+    window.location.href = "/explore-smart-garage-beta/garagesearch.html";
+  });
+}
+
+function showError(errMsg) {
+  garageDisplay.className = "status-state";
+  garageDisplay.innerHTML =
+    '<div class="status-icon">⚠️</div>' +
+    '<div class="status-title">Connection Error</div>' +
+    '<div class="status-desc">Could not load cars: ' + errMsg + '</div>' +
+    '<button class="status-btn primary" onclick="location.reload()">Refresh Page</button>';
+  garageLevelEl.textContent = "Garage Level - Error";
+}
+
+/* =============================================
+   INIT — REAL BACKEND INTEGRATION
+   ============================================= */
+(async function initGarage() {
+  showLoading();
+
+  try {
+    const statusRes = await fetch("/garage-entry", { method: "GET", credentials: "include" });
+    const statusData = await statusRes.json();
+
+    if (statusData.status === "NOT_AUTHENTICATED") { showLoginRequired(); return; }
+    if (statusData.status === "NO_CAR") { showNoCars(); return; }
+
+    const vehRes = await fetch("/api/garage/vehicles", { credentials: "include" });
+    const vehData = await vehRes.json();
+
+    if (vehData.success && vehData.vehicles && vehData.vehicles.length > 0) {
+      
+      // Normalize data (supports both 'brand' and 'make' from database)
+      const vehicles = vehData.vehicles.map(v => ({
+        brand: v.brand || v.make || "Unknown",
+        model: v.model || "Unknown",
+        fuel: v.fuel || null,
+        plate: v.plate || "",
+        img: v.img || null,
+        logo: v.logo || null
+      }));
+
+      cars = [...vehicles, { isAddNew: true }];
+      filteredCars = [...cars];
+      renderView(viewModeSelect.value);
+    } else {
+      showNoCars();
+    }
+
+  } catch (err) {
+    console.error("[Garage] Error:", err);
+    showError(err.message);
+  }
+})();
+
+viewModeSelect.addEventListener("change", () => renderView(viewModeSelect.value));
+
+function renderView(mode) {
+  if (mode === "card")  renderCardSlider();
+  else if (mode === "tiles") renderTiles();
+  else if (mode === "list")  renderList();
+}
+
+searchBox.addEventListener("input", function() {
+  var q = this.value.toLowerCase();
+  filteredCars = cars.filter(function(c) {
+    if (c.isAddNew) return true;
+    return (c.brand && c.brand.toLowerCase().indexOf(q) !== -1) ||
+           (c.model && c.model.toLowerCase().indexOf(q) !== -1) ||
+           (c.plate && c.plate.toLowerCase().indexOf(q) !== -1);
+  });
+  currentIndex = 0;
+  renderView(viewModeSelect.value);
+});
+
+function updateGarageLevel() {
+  var n = filteredCars.filter(function(c) { return !c.isAddNew; }).length;
+  garageLevelEl.textContent = "Garage Level - " + n;
+}
+
+function openDetails(car) {
+  alert("Open details for " + car.brand + " " + car.model + " (" + car.plate + ")");
+}
+
+function renderCarCardHTML(car) {
+  var html = '<div class="car-header">';
+  if (car.logo) html += '<img src="' + car.logo + '" class="car-logo" alt="' + car.brand + '">';
+  html += '<div class="car-info">';
+  html += '<div class="car-name">' + car.brand + '</div>';
+  if (car.model) html += '<div class="car-model">' + car.model + '</div>';
+  if (car.fuel)  html += '<div class="fuel-pill">' + car.fuel + '</div>';
+  html += '</div></div>';
+  html += '<div class="car-image-box">';
+  if (car.img) {
+    html += '<img src="' + car.img + '" class="car-image" alt="' + car.brand + ' ' + car.model + '">';
+  } else {
+    html += '<div style="color:#666;font-size:14px;">No image</div>';
+  }
+  html += '</div>';
+  html += '<div class="italian-plate">' + car.plate + '</div>';
+  return html;
+}
+
+function renderAddCardHTML() {
+  return '<div class="add-car"><div class="add-plus">+</div><div class="add-text">Add new car</div></div>';
+}
+
+function renderCardSlider() {
+  garageDisplay.className = "carousel-wrapper";
+  garageDisplay.innerHTML = "";
+
+  var list = filteredCars;
+  var actual = list.filter(function(c) { return !c.isAddNew; });
+
+  if (actual.length === 0) {
+    garageDisplay.className = "status-state";
+    garageDisplay.innerHTML = '<div class="status-icon">🔍</div><div class="status-title">No cars found</div><div class="status-desc">Try a different search term.</div>';
+    garageLevelEl.textContent = "Garage Level - 0";
+    return;
+  }
+
+  currentIndex = ((currentIndex % list.length) + list.length) % list.length;
+
+  var track = document.createElement("div");
+  track.className = "carousel-track";
+  garageDisplay.appendChild(track);
+
+  cardElements = [];
+  var slotClasses = ["far-left","left","center","right","far-right"];
+  for (var s = 0; s < slotClasses.length; s++) {
+    var div = document.createElement("div");
+    div.className = "carousel-card " + slotClasses[s];
+    track.appendChild(div);
+    cardElements.push(div);
+  }
+
+  var btnLeft = document.createElement("button");
+  btnLeft.className = "carousel-btn left";
+  btnLeft.innerHTML = "‹";
+  btnLeft.setAttribute("aria-label", "Previous car");
+  btnLeft.addEventListener("click", navigatePrev);
+  garageDisplay.appendChild(btnLeft);
+
+  var btnRight = document.createElement("button");
+  btnRight.className = "carousel-btn right";
+  btnRight.innerHTML = "›";
+  btnRight.setAttribute("aria-label", "Next car");
+  btnRight.addEventListener("click", navigateNext);
+  garageDisplay.appendChild(btnRight);
+
+  var dotsWrap = document.createElement("div");
+  dotsWrap.className = "carousel-dots";
+  dotElements = [];
+  for (var d = 0; d < list.length; d++) {
+    (function(index) {
+      var dot = document.createElement("div");
+      dot.className = "carousel-dot";
+      dot.addEventListener("click", function() { goTo(index); });
+      dotsWrap.appendChild(dot);
+      dotElements.push(dot);
+    })(d);
+  }
+  garageDisplay.appendChild(dotsWrap);
+
+  var removeBtn = document.createElement("button");
+  removeBtn.className = "remove-car-btn";
+  removeBtn.textContent = "Remove this car";
+  removeBtn.addEventListener("click", removeCurrentCar);
+  garageDisplay.appendChild(removeBtn);
+
+  populateCards();
+  updateGarageLevel();
+
+  garageDisplay.addEventListener("touchstart", onTouchStart, { passive: true });
+  garageDisplay.addEventListener("touchend",   onTouchEnd,   { passive: true });
+  garageDisplay.addEventListener("mousedown", onMouseDown);
+}
+
+async function removeCurrentCar() {
+  const currentCar = filteredCars[currentIndex];
+  if (!currentCar || currentCar.isAddNew) return;
+
+  const carName = currentCar.brand + " " + currentCar.model;
+  if (!confirm("Are you sure you want to remove " + carName + " (" + currentCar.plate + ") from your garage?")) return;
+
+  try {
+    const res = await fetch("/garage/remove-car", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plate: currentCar.plate })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      cars = cars.filter(c => c.plate !== currentCar.plate);
+      filteredCars = filteredCars.filter(c => c.plate !== currentCar.plate);
+
+      const realCars = cars.filter(c => !c.isAddNew);
+      if (realCars.length === 0) {
+        showNoCars();
+      } else {
+        currentIndex = 0;
+        renderCardSlider();
+      }
+    } else {
+      alert("Failed to remove car: " + (data.message || "Unknown error"));
+    }
+  } catch (err) {
+    alert("Could not connect to server to remove car.");
+  }
+}
+
+function getIndices() {
+  var len = filteredCars.length;
+  return {
+    farLeft: (currentIndex - 2 + len) % len,
+    left:    (currentIndex - 1 + len) % len,
+    center:  currentIndex,
+    right:   (currentIndex + 1) % len,
+    farRight:(currentIndex + 2 + len) % len
+  };
+}
+
+function populateCards() {
+  var list = filteredCars;
+  var idx = getIndices();
+  var keys = ["farLeft","left","center","right","farRight"];
+  var slotClasses = ["far-left","left","center","right","far-right"];
+  var removeBtnEl = garageDisplay.querySelector('.remove-car-btn');
+
+  for (var i = 0; i < keys.length; i++) {
+    var car = list[idx[keys[i]]];
+    var el  = cardElements[i];
+    el.className = "carousel-card " + slotClasses[i];
+
+    if (car.isAddNew) {
+      el.innerHTML = renderAddCardHTML();
+      el.onclick = (slotClasses[i] === "center") ? function() { window.location.href = "garagesearch.html"; } : null;
+    } else {
+      el.innerHTML = renderCarCardHTML(car);
+      el.onclick = (slotClasses[i] === "center") ? (function(c) { return function() { openDetails(c); }; })(car) : null;
+    }
+  }
+
+  if (removeBtnEl) {
+    var centerCar = list[idx.center];
+    removeBtnEl.style.display = (centerCar && centerCar.isAddNew) ? 'none' : 'block';
+  }
+
+  for (var j = 0; j < dotElements.length; j++) {
+    dotElements[j].className = "carousel-dot" + (j === currentIndex ? " active" : "");
+  }
+}
+
+function navigateNext() {
+  if (isTransitioning) return; isTransitioning = true;
+  currentIndex = (currentIndex + 1) % filteredCars.length;
+  populateCards(); setTimeout(function() { isTransitioning = false; }, 450);
+}
+function navigatePrev() {
+  if (isTransitioning) return; isTransitioning = true;
+  currentIndex = (currentIndex - 1 + filteredCars.length) % filteredCars.length;
+  populateCards(); setTimeout(function() { isTransitioning = false; }, 450);
+}
+function goTo(index) {
+  if (isTransitioning || index === currentIndex) return; isTransitioning = true;
+  currentIndex = ((index % filteredCars.length) + filteredCars.length) % filteredCars.length;
+  populateCards(); setTimeout(function() { isTransitioning = false; }, 450);
+}
+
+function onTouchStart(e) { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }
+function onTouchEnd(e) {
+  var dx = touchStartX - e.changedTouches[0].screenX; var dy = touchStartY - e.changedTouches[0].screenY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx > 0 ? navigateNext() : navigatePrev(); }
+}
+
+var mouseIsDown = false, mouseStartX = 0;
+function onMouseDown(e) {
+  if (viewModeSelect.value !== "card") return;
+  mouseIsDown = true; mouseStartX = e.clientX; garageDisplay.classList.add("dragging"); e.preventDefault();
+}
+document.addEventListener("mouseup", function(e) {
+  if (!mouseIsDown) return; mouseIsDown = false; garageDisplay.classList.remove("dragging");
+  var dx = mouseStartX - e.clientX; if (Math.abs(dx) > 50) { dx > 0 ? navigateNext() : navigatePrev(); }
+});
+
+document.addEventListener("keydown", function(e) {
+  if (viewModeSelect.value !== "card") return;
+  if (e.key === "ArrowRight") { e.preventDefault(); navigateNext(); }
+  if (e.key === "ArrowLeft")  { e.preventDefault(); navigatePrev(); }
+});
+
+function renderTiles() {
+  garageDisplay.className = "tiles-view"; garageDisplay.innerHTML = "";
+  filteredCars.forEach(function(car) {
+    var tile = document.createElement("div"); tile.className = "tile-card";
+    if (car.isAddNew) { tile.innerHTML = '<div class="car-name">+ Add new car</div>'; tile.onclick = function() { window.location.href = "garagesearch.html"; }; }
+    else {
+      var imgHtml = car.img ? '<img src="' + car.img + '" alt="' + car.brand + '">' : '<div style="height:150px;background:#222;display:flex;align-items:center;justify-content:center;color:#666;border-radius:10px;margin-bottom:10px;">No image</div>';
+      tile.innerHTML = imgHtml + '<div class="tile-info">' + (car.logo ? '<img src="' + car.logo + '" class="car-logo">' : '') + '<div class="car-meta"><span class="car-name">' + car.brand + '</span>' + (car.model ? '<span class="car-model">' + car.model + '</span>' : '') + (car.fuel ? '<span class="fuel-pill">' + car.fuel + '</span>' : '') + '</div></div>';
+      tile.onclick = function() { openDetails(car); };
+    }
+    garageDisplay.appendChild(tile);
+  });
+  updateGarageLevel();
+}
+
+function renderList() {
+  garageDisplay.className = "list-view"; garageDisplay.innerHTML = "";
+  filteredCars.forEach(function(car) {
+    var item = document.createElement("div"); item.className = "list-card";
+    if (car.isAddNew) { item.innerHTML = '<div class="car-name">+ Add new car</div>'; item.onclick = function() { window.location.href = "garagesearch.html"; }; }
+    else {
+      item.innerHTML = (car.logo ? '<img src="' + car.logo + '" class="car-logo">' : '') + '<div class="car-meta"><span class="car-name">' + car.brand + '</span>' + (car.model ? '<span class="car-model">' + car.model + '</span>' : '') + (car.fuel ? '<span class="fuel-pill">' + car.fuel + '</span>' : '') + '</div>';
+      item.onclick = function() { openDetails(car); };
+    }
+    garageDisplay.appendChild(item);
+  });
+  updateGarageLevel();
+}
+</script>
+
+<script src="/js/auth.js"></script>
+<script src="/js/translate.js"></script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeloValue – Ultra Premium Automotive</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* -------------------- VARIABLES -------------------- */
+:root {
+  --bg-dark: #0a0a0a;
+  --glass-bg: rgba(255,255,255,0.05);
+  --accent-color: #f5d742;
+  --accent-glow: rgba(245,215,66,0.3);
+  --text-light: #f1f1f1;
+  --text-dark: #111;
+  --shadow-glow: 0 0 20px rgba(245,215,66,0.3);
+  --transition: all 0.5s ease;
+  --radius-lg: 20px;
+  --radius-md: 12px;
+}
+
+/* -------------------- BASE STYLES -------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  overflow-x: hidden;
+}
+
+/* -------------------- HERO -------------------- */
+.hero {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: url('https://images.unsplash.com/photo-1606813905173-97c943a2b1c0?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,10,10,0.6) 0%, rgba(10,10,10,0.9) 100%);
+}
+
+.hero-content {
+  position: relative;
+  text-align: center;
+  z-index: 2;
+  animation: fadeIn 1.5s ease forwards;
+}
+
+.hero-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 5vw;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.hero-content p {
+  font-size: 1.5vw;
+  margin-top: 1rem;
+  color: rgba(255,255,255,0.8);
+  text-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* -------------------- GLASS PANELS -------------------- */
+.glass-section {
+  margin: -5rem auto 4rem;
+  max-width: 1200px;
+  backdrop-filter: blur(15px);
+  background: var(--glass-bg);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
+  box-shadow: 0 0 30px rgba(0,0,0,0.7);
+  transition: var(--transition);
+}
+
+.glass-section:hover {
+  box-shadow: 0 0 50px var(--shadow-glow);
+}
+
+.glass-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--accent-color);
+}
+
+.glass-section p {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.6;
+}
+
+/* -------------------- ACCORDION -------------------- */
+.accordion {
+  margin-top: 2rem;
+}
+
+.accordion-item {
+  margin-bottom: 1rem;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(255,255,255,0.02);
+  transition: var(--transition);
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  color: var(--text-light);
+  font-size: 1.1rem;
+  position: relative;
+}
+
+.accordion-header::after {
+  content: '⯈';
+  font-size: 1.2rem;
+  transition: transform 0.5s ease;
+}
+
+.accordion-header.active::after {
+  transform: rotate(90deg);
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 1.5rem;
+  transition: max-height 0.5s ease;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.8);
+}
+
+/* -------------------- CTA BUTTON -------------------- */
+.cta-button {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  background: var(--accent-color);
+  color: var(--text-dark);
+  font-weight: 700;
+  font-size: 1.2rem;
+  border-radius: var(--radius-lg);
+  margin-top: 2rem;
+  text-decoration: none;
+  box-shadow: 0 0 20px var(--shadow-glow);
+  transition: all 0.4s ease;
+}
+
+.cta-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 40px var(--shadow-glow);
+}
+
+/* -------------------- PARALLAX SECTIONS -------------------- */
+.parallax {
+  height: 70vh;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+.parallax::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+}
+
+/* -------------------- ANIMATIONS -------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* -------------------- RESPONSIVE -------------------- */
+@media (max-width: 768px) {
+  .hero-content h1 { font-size: 8vw; }
+  .hero-content p { font-size: 3vw; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>VeloValue</h1>
+    <p>The Pinnacle of Automotive Excellence</p>
+    <a href="#explore" class="cta-button">Explore Now</a>
+  </div>
+</section>
+
+<!-- GLASS PANEL -->
+<section id="explore" class="glass-section">
+  <h2>Luxury Performance Cars</h2>
+  <p>Experience unparalleled design, precision engineering, and breathtaking performance. Every car in our collection is a masterpiece of innovation and elegance.</p>
+
+  <div class="accordion">
+    <div class="accordion-item">
+      <div class="accordion-header">Specifications</div>
+      <div class="accordion-content">
+        <p>Engine: 6.5L V12<br>Top Speed: 350 km/h<br>0-100 km/h: 2.9s<br>Horsepower: 800 HP</p>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header">Interior</div>
+      <div class="accordion-content">
+        <p>Premium leather seats, ambient LED lighting, handcrafted dashboard, carbon fiber finishes.</p>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header">Technology</div>
+      <div class="accordion-content">
+        <p>Advanced driver assistance, digital cockpit, premium sound system, connected car features.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARALLAX SECTION -->
+<section class="parallax" style="background-image: url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1950&q=80');"></section>
+
+<script>
+// ACCORDION FUNCTIONALITY
+const headers = document.querySelectorAll('.accordion-header');
+headers.forEach(header => {
+  header.addEventListener('click', () => {
+    header.classList.toggle('active');
+    const content = header.nextElementSibling;
+    if (header.classList.contains('active')) {
+      content.style.maxHeight = content.scrollHeight + "px";
+    } else {
+      content.style.maxHeight = null;
+    }
+  });
+});
+</script>
+
+</body>
+</html>

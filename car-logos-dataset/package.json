@@ -1,0 +1,41 @@
+{
+  "name": "car-logos-dataset",
+  "version": "2.4.0",
+  "description": "A comprehensive collection of 383 car manufacturer logos with multiple size variations and metadata",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filippofilip95/car-logos-dataset.git"
+  },
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "NODE_OPTIONS=\"--max-old-space-size=4096\" tsx src/index.ts",
+    "prettify": "prettier --write ."
+  },
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "cheerio": "^1.0.0-rc.9",
+    "node-fetch": "^3.1.1",
+    "queue": "^6.0.2",
+    "sharp": "^0.28.2",
+    "slugify": "^1.5.3",
+    "tsx": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.10",
+    "@types/sharp": "^0.28.1",
+    "prettier": "2.3.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "car-logos",
+    "automotive",
+    "images",
+    "dataset",
+    "crawler"
+  ],
+  "author": "filippofilip",
+  "license": "MIT"
+}
