@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeloValue Fleet – Premium Fleet Management</title>
+  <meta name="description" content="Simple fleet management for small businesses. Manage vehicles, documents, and renewals in one place." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --dark: #1a1a1a;
+      --dark-lighter: #252525;
+      --gray: #888888;
+      --gray-light: #a0a0a0;
+      --white: #ffffff;
+      --accent: #d4af37;
+      --accent-dark: #b8941f;
+      --gradient: linear-gradient(135deg, #d4af37 0%, #f4e4bc 100%);
+      --gradient-dark: linear-gradient(135deg, #b8941f 0%, #d4af37 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: var(--black);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.02) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(212, 175, 55, 0.02) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ---------- NAV ---------- */
+    header {
+      padding: 20px 0;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(10, 10, 10, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    header.scrolled {
+      padding: 15px 0;
+      background: rgba(10, 10, 10, 0.95);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: 800;
+      letter-spacing: 2px;
+      font-size: 14px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo i {
+      -webkit-text-fill-color: var(--accent);
+      font-size: 18px;
+    }
+
+    .cta-btn {
+      padding: 12px 28px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 50px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: var(--accent);
+      transform: translate(-50%, -50%);
+      transition: width 0.5s, height 0.5s;
+    }
+
+    .cta-btn:hover {
+      color: var(--black);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    }
+
+    .cta-btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .cta-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      padding: 140px 0 100px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      margin-bottom: 24px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(to right, var(--white) 0%, var(--gray-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero p {
+      color: var(--gray);
+      max-width: 650px;
+      margin: 0 auto 40px;
+      font-size: 20px;
+      line-height: 1.7;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .hero .cta-btn {
+      font-size: 16px;
+      padding: 16px 40px;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    /* ---------- SECTION ---------- */
+    section {
+      padding: 100px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .section-title h2 {
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      margin-bottom: 16px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .section-title p {
+      color: var(--gray);
+      max-width: 650px;
+      margin: auto;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    /* ---------- FEATURES ---------- */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .feature {
+      background: var(--dark);
+      padding: 40px 30px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--gradient);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-5px);
+      border-color: rgba(212, 175, 55, 0.2);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature:hover::before {
+      transform: scaleX(1);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: var(--black);
+    }
+
+    .feature h3 {
+      margin-bottom: 12px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .feature p {
+      color: var(--gray);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ---------- HOW IT WORKS ---------- */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      text-align: center;
+    }
+
+    .step {
+      position: relative;
+      padding: 30px 20px;
+      background: var(--dark);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .step:hover {
+      transform: translateY(-3px);
+      border-color: rgba(212, 175, 55, 0.2);
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: var(--gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .step p {
+      color: var(--gray-light);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ---------- CTA ---------- */
+    .final-cta {
+      text-align: center;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark-lighter) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.1);
+      border-radius: 20px;
+      margin: 0 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .final-cta::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .final-cta .container {
+      position: relative;
+      z-index: 1;
+    }
+
+    .final-cta h2 {
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+
+    .final-cta p {
+      color: var(--gray-light);
+      margin-bottom: 35px;
+      font-size: 18px;
+    }
+
+    .final-cta .cta-btn {
+      background: var(--gradient);
+      color: var(--black);
+      border: none;
+      font-weight: 600;
+      padding: 16px 45px;
+      font-size: 16px;
+    }
+
+    .final-cta .cta-btn:hover {
+      box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+    }
+
+    /* ---------- FOOTER ---------- */
+    footer {
+      padding: 50px 0;
+      text-align: center;
+      color: var(--gray);
+      font-size: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    footer a {
+      color: var(--accent);
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: var(--accent-dark);
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 120px 0 80px;
+      }
+      
+      .features {
+        grid-template-columns: 1fr;
+      }
+      
+      .steps {
+        grid-template-columns: 1fr;
+      }
+      
+      .final-cta {
+        margin: 0 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <header id="header">
+    <div class="container">
+      <nav>
+        <div class="logo">
+          <i class="fas fa-truck-fast"></i>
+          <span>VELOVALUE FLEET</span>
+        </div>
+        <a href="#early-access" class="cta-btn"><span>Early Access</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <h1>Fleet management, redefined.</h1>
+      <p>
+        Elevate your operations with intelligent fleet management. Track vehicles, 
+        documents, and renewals through an elegant dashboard designed for modern businesses.
+      </p>
+      <a href="#early-access" class="cta-btn"><span>Join Early Access</span></a>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section>
+    <div class="container section-title">
+      <h2>The challenge</h2>
+      <p>
+        Small fleet operators waste valuable time managing scattered documents, 
+        tracking renewals manually, and struggling with disconnected systems. 
+        This complexity costs time, money, and peace of mind.
+      </p>
+    </div>
+  </section>
+
+  <!-- SOLUTION -->
+  <section>
+    <div class="container section-title">
+      <h2>Our solution</h2>
+      <p>
+        VeloValue Fleet unifies your entire fleet operation in one sophisticated platform. 
+        Experience the power of seamless management without the complexity.
+      </p>
+    </div>
+
+    <div class="container features">
+      <div class="feature">
+        <div class="feature-icon">
+          <i class="fas fa-warehouse"></i>
+        </div>
+        <h3>Smart Fleet Garage</h3>
+        <p>Intuitive vehicle management with instant recognition using number plates. Complete fleet visibility at your fingertips.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <i class="fas fa-shield-halved"></i>
+        </div>
+        <h3>Compliance Hub</h3>
+        <p>Secure document storage for insurance, PUC, and regulatory compliance. Automated validation and smart categorization.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <i class="fas fa-bell"></i>
+        </div>
+        <h3>Intelligent Alerts</h3>
+        <p>Proactive notifications for renewals, inspections, and deadlines. Never miss a critical date with our smart reminder system.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3>Analytics Dashboard</h3>
+        <p>Real-time insights into fleet performance, costs, and efficiency. Data-driven decisions made simple.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section>
+    <div class="container section-title">
+      <h2>How it works</h2>
+    </div>
+
+    <div class="container steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <p>Create your company profile and customize your dashboard</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <p>Onboard vehicles instantly with smart scanning technology</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <p>Upload documents and let our AI track and manage renewals</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="final-cta" id="early-access">
+    <div class="container">
+      <h2>Exclusive Early Access</h2>
+      <p>
+        Join our select group of pilot users in Italy. 
+        Receive personalized onboarding from our founding team and shape the future of fleet management.
+      </p>
+      <a href="mailto:debanjan.pal@community.unipa.it?subject=Early Access Request - VeloValue Fleet" class="cta-btn"><span>Request Access</span></a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      © 2025 VeloValue. Crafted with precision in Italy. All rights reserved.<br>
+      <a href="mailto:debanjan.pal@community.unipa.it">debanjan.pal@community.unipa.it</a>
+    </div>
+  </footer>
+
+  <script>
+    // Header scroll effect
+    window.addEventListener('scroll', function() {
+      const header = document.getElementById('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Intersection Observer for animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // Observe elements for animation
+    document.querySelectorAll('.feature, .step').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(el);
+    });
+  </script>
+
+</body>
+</html>

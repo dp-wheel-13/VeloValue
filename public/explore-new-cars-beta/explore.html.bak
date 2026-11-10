@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Explore Cars</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .car-card {
+      width: 260px;
+      padding: 12px;
+      margin: 10px;
+      border-radius: 10px;
+      background: #f7f7f7;
+      display: inline-block;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .car-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    #cars-container { margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <h1>Explore Cars</h1>
+
+  <input id="brandInput" placeholder="Brand (e.g. BMW)">
+  <input id="modelInput" placeholder="Model (e.g. X5)">
+  <button onclick="searchCar()">Search</button>
+
+  <div id="cars-container"></div>
+
+<script>
+const BACKEND = "http://localhost:3000";
+
+// ------------------------ LOAD ALL CACHED CARS ON PAGE LOAD ------------------------
+async function loadCachedCars() {
+  try {
+    const res = await fetch(`${BACKEND}/api/cachedCars`);
+    const cars = await res.json();
+    console.log("Cached cars:", cars);
+
+    cars.forEach(addCarCard);
+  } catch (err) {
+    console.error("Failed to load cached cars", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadCachedCars);
+
+// ----------------------------- SEARCH BUTTON HANDLER -----------------------------
+async function searchCar() {
+  const brand = document.getElementById("brandInput").value;
+  const model = document.getElementById("modelInput").value;
+
+  if (!brand || !model) return alert("Enter brand and model!");
+
+  try {
+    const url = `${BACKEND}/api/explore?brand=${brand}&model=${model}`;
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      console.log("Backend error", res.status);
+      return alert("Car not found in backend.");
+    }
+
+    const data = await res.json();
+    console.log("Fetched car:", data);
+
+    addCarCard(data); // add card to UI
+
+  } catch (err) {
+    console.error("Failed to fetch", err);
+    alert("Failed to fetch car from backend.");
+  }
+}
+
+// --------------------------- ADD A CAR CARD TO THE PAGE ---------------------------
+function addCarCard(car) {
+  const container = document.getElementById("cars-container");
+
+  const card = document.createElement("div");
+  card.className = "car-card";
+
+  const img = car.image || "https://via.placeholder.com/300x150?text=No+Image";
+
+  card.innerHTML = `
+    <img src="${img}">
+    <h3>${car.brand} ${car.model}</h3>
+    <p><b>Price:</b> ${car.price || "N/A"}</p>
+    <p><b>Fuel:</b> ${car.fuel || "N/A"}</p>
+    <p><b>Power:</b> ${car.power || "N/A"}</p>
+  `;
+
+  // Click card → open full specs page
+  card.onclick = () => {
+    localStorage.setItem("selectedCar", JSON.stringify(car));
+    window.location.href = "cars.html";
+  };
+
+  container.prepend(card);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1472 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>VeloValue • VeloCharge: Real Stations Near Me</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
+
+    <style>
+      :root { --header-h: 64px; }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { height: 100%; }
+      body {
+        background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
+        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: #fff;
+        padding-top: var(--header-h);
+        font-size: 16px;
+      }
+
+      /* ===== HEADER ===== */
+      header {
+        position: fixed; top: 0; left: 0; width: 100%;
+        padding: 1rem 2rem;
+        background: rgba(0,0,0,0.6);
+        display: flex; justify-content: space-between; align-items: center;
+        z-index: 1000;
+        -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+        border-bottom: 1px solid #333;
+      }
+      .header-left { display: flex; align-items: center; gap: 12px; }
+      .header-right { display: flex; align-items: center; gap: 16px; }
+      header h1 { font-size: 24px; font-weight: 800; margin: 0; }
+      header h1 a { color: white; text-decoration: none; }
+
+      nav.desktop-nav { display: flex; align-items: center; gap: 20px; }
+      nav.desktop-nav a {
+        color: #fff; text-decoration: none; font-size: 16px;
+        font-weight: 600; white-space: nowrap;
+      }
+      nav.desktop-nav a:hover { text-decoration: underline; }
+
+      .language-select { position: relative; }
+      .language-select select {
+        -webkit-appearance: none; -moz-appearance: none; appearance: none;
+        background: #111; color: #fff; border: 1px solid #fff; border-radius: 6px;
+        padding: 4px 8px; font-size: 14px; cursor: pointer;
+      }
+
+      #authSection .text-btn {
+        display: inline-flex; align-items: center; justify-content: center;
+        background: #fff; color: #111;
+        border: 1px solid #333; border-radius: 20px;
+        padding: 6px 12px; font-weight: 600; cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      #authSection .text-btn:hover { background: #444; color: #fff; }
+      #authSection .icon-btn { display: none; }
+
+      .hamburger {
+        font-size: 1.8rem; background: none; border: none; color: #fff;
+        cursor: pointer; display: none; align-items: center;
+        justify-content: center; width: 40px; height: 40px;
+      }
+
+      /* ===== MOBILE DRAWER ===== */
+      .menu {
+        position: fixed; top: 0; left: -300px;
+        width: 300px; height: 100vh;
+        background: rgba(17,17,17,0.95);
+        border-right: 1px solid rgba(255,255,255,0.12);
+        padding: 5.5rem 2rem 2rem;
+        display: flex; flex-direction: column; gap: 2rem;
+        transition: left 0.3s ease; z-index: 2100;
+        -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+        border-radius: 0 1rem 1rem 0;
+      }
+      .menu.active { left: 0; }
+      .menu a { color: #fff; font-size: 1.4rem; font-weight: 800; text-decoration: none; }
+      .menu .menu-close {
+        position: absolute; top: 1rem; right: 1rem;
+        width: 2.25rem; height: 2.25rem;
+        background: none; border: 0; color: #fff; cursor: pointer;
+      }
+      .menu .menu-close::before, .menu .menu-close::after {
+        content: ""; position: absolute; top: 50%; left: 50%;
+        width: 22px; height: 2px; background: currentColor; transform-origin: center;
+      }
+      .menu .menu-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+      .menu .menu-close::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+      .menu-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 2050;
+      }
+      .menu-overlay.active { opacity: 1; pointer-events: auto; }
+
+      @media (max-width: 1024px) {
+        nav.desktop-nav { display: none; }
+        .hamburger { display: flex; position: relative; font-size: 0; }
+        .hamburger::before, .hamburger::after {
+          content: ""; position: absolute; left: 50%;
+          width: 22px; height: 2px; background: currentColor;
+          transform: translateX(-50%);
+          transition: transform .25s ease, top .25s ease;
+        }
+        .hamburger::before { top: calc(50% - 6px); }
+        .hamburger::after  { top: calc(50% + 6px); }
+        .hamburger {
+          background-image: linear-gradient(currentColor, currentColor);
+          background-repeat: no-repeat; background-position: center; background-size: 22px 2px;
+        }
+        .hamburger.is-active { background-size: 0 0; }
+        .hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
+        .hamburger.is-active::after  { top: 50%; transform: translateX(-50%) rotate(-45deg); }
+
+        #authSection .text-btn { display: none; }
+        #authSection .icon-btn {
+          display: inline-flex; align-items: center; justify-content: center;
+          width: 40px; height: 40px; border-radius: 50%;
+          font-size: 1.2rem; background: #fff; color: #000; border: none; cursor: pointer;
+        }
+        .language-select {
+          width: 40px; height: 40px; border-radius: 50%;
+          background: #111; border: 1px solid #fff;
+          display: flex; align-items: center; justify-content: center;
+          position: relative;
+        }
+        .language-select::before { content: "\1F310"; font-size: 1.2rem; color: #fff; position: absolute; }
+        .language-select select { opacity: 0; position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; }
+      }
+
+      /* ===== MAP ===== */
+      #map { position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0; }
+
+      .search-area {
+        position: fixed; top: calc(var(--header-h) + 12px);
+        left: 50%; transform: translateX(-50%);
+        background: #14161c; color: #fff;
+        padding: 8px 16px; border-radius: 6px;
+        box-shadow: 0 10px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.12);
+        font: 14px system-ui; cursor: pointer; display: none; z-index: 900;
+        transition: border-color 0.2s ease;
+      }
+      .search-area:hover { border-color: rgba(242,201,76,.4); }
+
+      .credit {
+        position: fixed; bottom: 8px; left: 8px;
+        background: rgba(255,255,255,.9); padding: 4px 8px;
+        border-radius: 4px; font: 12px system-ui; color: #111; z-index: 900;
+      }
+
+      .station-count {
+        position: fixed; bottom: 8px; right: 8px;
+        background: rgba(20,22,28,0.88); color: #f2c94c;
+        padding: 6px 14px; border-radius: 8px;
+        font: 600 13px system-ui; z-index: 900;
+        border: 1px solid rgba(242,201,76,0.25);
+        -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+      }
+
+      .popup { font: 13px system-ui; color: #111; }
+      .popup .name { font-weight: 600; margin-bottom: 4px; font-size: 14px; }
+
+      /* ===== LOADING / ERROR ===== */
+      .loading-indicator {
+        position: fixed; top: calc(var(--header-h) + 56px);
+        left: 50%; transform: translateX(-50%);
+        background: rgba(20,22,28,0.92); color: #f2c94c;
+        padding: 8px 20px; border-radius: 999px;
+        font: 600 13px/1 system-ui;
+        border: 1px solid rgba(242,201,76,0.3);
+        z-index: 910; display: none;
+        -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+      }
+      .loading-indicator.visible { display: flex; align-items: center; gap: 8px; }
+      .loading-indicator .spinner {
+        width: 14px; height: 14px; border: 2px solid rgba(242,201,76,0.3);
+        border-top-color: #f2c94c; border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      .error-toast {
+        position: fixed; top: calc(var(--header-h) + 56px);
+        left: 50%; transform: translateX(-50%) translateY(-10px);
+        background: rgba(180,40,40,0.92); color: #fff;
+        padding: 10px 20px; border-radius: 10px;
+        font: 600 13px/1.4 system-ui;
+        border: 1px solid rgba(255,100,100,0.3);
+        z-index: 920; opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        max-width: 90vw; text-align: center;
+        -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+      }
+      .error-toast.visible { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+
+      /* ===== LEFT PANEL ===== */
+      .left-panel {
+        position: fixed; top: calc(var(--header-h) + 12px); left: 12px;
+        width: 360px; max-width: calc(100% - 24px); z-index: 950;
+        padding: 18px 18px 20px; border-radius: 24px;
+        border: 1px solid transparent;
+        background:
+          linear-gradient(160deg, rgba(12,14,18,0.55), rgba(12,14,18,0.82)) padding-box,
+          linear-gradient(135deg, rgba(242,201,76,.35), rgba(255,255,255,.06) 35%, rgba(242,201,76,.25)) border-box;
+        box-shadow: 0 26px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+        -webkit-backdrop-filter: blur(10px) saturate(125%);
+        backdrop-filter: blur(10px) saturate(125%);
+      }
+      .left-panel .panel-scroll {
+        max-height: calc(100vh - var(--header-h) - 48px);
+        overflow: auto; padding-right: 4px;
+      }
+      .panel-title {
+        font-size: 24px; font-weight: 900; letter-spacing: 0.2px;
+        color: #f2c94c; margin: 4px 4px 10px;
+        text-shadow: 0 1px 0 rgba(0,0,0,0.6); text-align: left;
+      }
+
+      /* ===== ACCORDIONS ===== */
+      .accordion {
+        margin: 16px 6px; border-radius: 20px; overflow: hidden;
+        border: 1px solid transparent;
+        background:
+          linear-gradient(160deg, rgba(20,22,28,0.85), rgba(14,15,20,0.9)) padding-box,
+          linear-gradient(135deg, rgba(255,255,255,.06), rgba(242,201,76,.15)) border-box;
+        box-shadow: 0 14px 28px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.05);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+      .accordion:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07);
+      }
+      .accordion-header {
+        position: relative; padding: 18px 24px;
+        font-size: 16px; font-weight: 700; color: #f5f5f5;
+        display: flex; justify-content: space-between; align-items: center;
+        cursor: pointer;
+        background:
+          linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,0)),
+          linear-gradient(160deg, rgba(20,22,28,0.85), rgba(14,15,20,0.9));
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+      }
+      .accordion-header:hover {
+        color: #ffffff;
+        background:
+          linear-gradient(to bottom, rgba(242,201,76,.10), rgba(242,201,76,.02)),
+          linear-gradient(160deg, rgba(20,22,28,0.85), rgba(14,15,20,0.9));
+        border-color: rgba(242,201,76,0.22);
+      }
+      .accordion-header::after {
+        content: "\203A"; font-size: 20px; line-height: 1;
+        color: #cfcfd4; opacity: 0.9;
+        transition: transform 0.25s ease, color 0.25s ease;
+      }
+      .accordion.open .accordion-header::after { transform: rotate(90deg); color: #f2c94c; }
+
+      .accordion-content {
+        max-height: 0; overflow: hidden; padding: 0 24px;
+        font-size: 15px; color: #cfcfd4;
+        transition: max-height 0.45s ease, padding 0.3s ease, opacity 0.3s ease;
+        opacity: 0;
+      }
+      .accordion.open .accordion-content {
+        max-height: 1200px; padding: 16px 24px 18px; opacity: 1;
+      }
+
+      /* ===== FILTER WIDGETS ===== */
+      .filter-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 10px 0; }
+      .filter-row label { font-size: 14px; color: #f5f5f5; font-weight: 600; }
+      .pill {
+        display: inline-block; padding: 3px 10px;
+        border: 1px solid rgba(255,255,255,0.12); border-radius: 999px;
+        font-size: 12px; color: #ddd;
+        background: linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      }
+      .list-compact { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+      .list-compact label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #f5f5f5; }
+
+      .btn-reset {
+        margin-top: 10px; width: 100%;
+        background: transparent; color: #f5f5f5;
+        border: 1px solid rgba(255,255,255,0.18); border-radius: 12px;
+        padding: 10px 12px; cursor: pointer;
+        transition: background 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+      }
+      .btn-reset:hover { background: rgba(242,201,76,0.08); border-color: rgba(242,201,76,0.35); }
+      .btn-reset:active { transform: scale(0.995); }
+
+      input[type="checkbox"], input[type="radio"] { accent-color: #f2c94c; }
+
+      input[type="range"] {
+        -webkit-appearance: none; appearance: none;
+        width: 100%; height: 8px; background: transparent; margin-top: 8px;
+      }
+      input[type="range"]::-webkit-slider-runnable-track {
+        height: 8px; border-radius: 999px;
+        background: linear-gradient(90deg, rgba(242,201,76,0.9), rgba(242,201,76,0.25))
+          left/var(--fill,0%) 100% no-repeat, rgba(255,255,255,0.12);
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+        background: #f2c94c; border: 2px solid #000; margin-top: -5px;
+        box-shadow: 0 2px 8px rgba(242,201,76,0.5);
+      }
+      input[type="range"]::-moz-range-track { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.12); }
+      input[type="range"]::-moz-range-progress { height: 8px; border-radius: 999px; background: linear-gradient(90deg, rgba(242,201,76,0.9), rgba(242,201,76,0.25)); }
+      input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #f2c94c; border: 2px solid #000; box-shadow: 0 2px 8px rgba(242,201,76,0.5); }
+
+      .legend-item { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+      .legend-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.9); }
+      .dot-green { background: #2ecc71; }
+      .dot-amber { background: #f39c12; }
+
+      /* ===== SECTION CONTENT STYLES ===== */
+      .section-text { font-size: 14px; line-height: 1.6; color: #bbb; }
+      .section-text strong { color: #f2c94c; font-weight: 700; }
+      .section-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 12px 0; }
+
+      .inline-form { display: flex; flex-direction: column; gap: 10px; }
+      .inline-form input, .inline-form textarea, .inline-form select {
+        background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 10px; padding: 10px 12px; color: #fff;
+        font: 14px system-ui; outline: none;
+        transition: border-color 0.2s ease;
+      }
+      .inline-form input:focus, .inline-form textarea:focus, .inline-form select:focus {
+        border-color: rgba(242,201,76,0.5);
+      }
+      .inline-form textarea { resize: vertical; min-height: 70px; }
+      .inline-form label { font-size: 13px; color: #aaa; font-weight: 600; }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #f2c94c, #e0b030);
+        color: #111; border: none; border-radius: 12px;
+        padding: 10px 16px; font: 700 14px system-ui;
+        cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease;
+      }
+      .btn-primary:hover { box-shadow: 0 4px 16px rgba(242,201,76,0.4); }
+      .btn-primary:active { transform: scale(0.98); }
+
+      .btn-secondary {
+        background: rgba(255,255,255,0.08); color: #f5f5f5;
+        border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
+        padding: 10px 16px; font: 600 14px system-ui;
+        cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease;
+      }
+      .btn-secondary:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); }
+
+      .coming-soon-badge {
+        display: inline-block; padding: 3px 10px; border-radius: 999px;
+        font-size: 11px; font-weight: 700; text-transform: uppercase;
+        background: rgba(242,201,76,0.15); color: #f2c94c;
+        border: 1px solid rgba(242,201,76,0.25);
+      }
+
+      .faq-item { margin: 10px 0; }
+      .faq-q { font-size: 14px; font-weight: 700; color: #f5f5f5; margin-bottom: 4px; }
+      .faq-a { font-size: 13px; color: #999; line-height: 1.5; }
+
+      .store-card {
+        background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px; padding: 14px; margin: 8px 0;
+        transition: border-color 0.2s ease;
+      }
+      .store-card:hover { border-color: rgba(242,201,76,0.3); }
+      .store-card-title { font-size: 14px; font-weight: 700; color: #f5f5f5; }
+      .store-card-desc { font-size: 12px; color: #888; margin-top: 4px; }
+      .store-card-price { font-size: 13px; color: #f2c94c; font-weight: 700; margin-top: 6px; }
+
+      .success-msg {
+        display: none; padding: 10px 14px; border-radius: 10px;
+        background: rgba(46,204,113,0.15); border: 1px solid rgba(46,204,113,0.3);
+        color: #2ecc71; font-size: 13px; font-weight: 600; margin-top: 8px;
+      }
+      .success-msg.visible { display: block; }
+
+      /* ===== BOTTOM SHEET (mobile) ===== */
+      .sheet-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+        opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 940;
+      }
+      .sheet-overlay.active { opacity: 1; pointer-events: auto; }
+      .sheet-handle { display: none; }
+
+      @media (max-width: 900px) {
+        .left-panel {
+          top: auto; bottom: 0; left: 50%; transform: translateX(-50%);
+          width: 100vw; max-width: 100vw;
+          border-radius: 16px 16px 0 0;
+          padding-bottom: max(16px, env(safe-area-inset-bottom));
+        }
+        .panel-title { text-align: center; margin-top: 18px; }
+        .sheet-handle {
+          display: block; position: absolute; top: 8px; left: 50%;
+          transform: translateX(-50%); width: 48px; height: 5px;
+          border-radius: 999px; border: none; background: rgba(255,255,255,.3);
+        }
+        .left-panel.sheet-collapsed .panel-scroll { max-height: clamp(160px, 28vh, 320px); overflow: hidden; }
+        .left-panel.sheet-open { height: calc(100vh - var(--header-h)); max-height: calc(100vh - var(--header-h)); }
+        .left-panel.sheet-open .panel-scroll { max-height: calc(100vh - var(--header-h) - 80px); overflow: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== HEADER ===== -->
+    <header>
+      <div class="header-left">
+        <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+        <h1><a href="/homepage.html">VeloValue</a></h1>
+      </div>
+      <div class="header-right">
+        <nav class="desktop-nav" aria-label="Primary">
+          <a href="/homepage.html" data-i18n="nav_home">HOME</a>
+          <a href="/explore-new-cars-beta/explorenewcars.html" data-i18n="nav_cars">EXPLORE NEW CARS</a>
+          <a href="/explore-smart-garage-beta/smartgarage.html" data-i18n="nav_garage">EXPLORE SMART GARAGE</a>
+          <a href="#about" data-i18n="nav_about">ABOUT US</a>
+        </nav>
+        <div class="language-select">
+          <select id="languageSelect" aria-label="Language">
+            <option value="en">&#127468;&#127463; English</option>
+            <option value="it">&#127470;&#127481; Italiano</option>
+            <option value="de">&#127465;&#127466; Deutsch</option>
+          </select>
+        </div>
+        <div id="authSection">
+          <button class="text-btn" onclick="window.location.href='login.html'" data-i18n="nav_login">Login / Register</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== MOBILE MENU ===== -->
+    <nav class="menu" id="hamburgerMenu" aria-hidden="true">
+      <button class="menu-close" aria-label="Close menu"></button>
+      <a href="/homepage.html" data-i18n="nav_home">HOME</a>
+      <a href="/explore-new-cars-beta/explorenewcars.html" data-i18n="nav_cars">EXPLORE NEW CARS</a>
+      <a href="/explore-smart-garage-beta/smartgarage.html" data-i18n="nav_garage">EXPLORE SMART GARAGE</a>
+      <a href="#about" data-i18n="nav_about">ABOUT US</a>
+    </nav>
+    <div class="menu-overlay"></div>
+
+    <!-- ===== LEFT PANEL / BOTTOM SHEET ===== -->
+    <aside class="left-panel">
+      <button class="sheet-handle" id="sheetHandle" aria-label="Expand filters" aria-expanded="false"></button>
+      <div class="panel-scroll">
+        <h2 class="panel-title" data-i18n="panel_title">Welcome to VeloCharge</h2>
+
+        <!-- FILTERS -->
+        <div class="accordion open" id="filtersAccordion">
+          <div class="accordion-header" data-i18n="acc_filters">Filters</div>
+          <div class="accordion-content">
+            <form id="filtersForm" onsubmit="return false;">
+              <div class="filter-row">
+                <label for="filterOperational" data-i18n="filter_operational">Operational only</label>
+                <input type="checkbox" id="filterOperational" />
+              </div>
+              <div class="filter-row" style="flex-direction: column; align-items: stretch;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <label for="filterMinKw" data-i18n="filter_minkw">Minimum power (kW)</label>
+                  <span class="pill"><span id="minKwValue">0</span> kW</span>
+                </div>
+                <input type="range" id="filterMinKw" min="0" max="350" step="10" value="0">
+              </div>
+              <div style="margin-top: 12px; font-weight:700;" data-i18n="filter_networks">Networks</div>
+              <div id="networksList" class="list-compact" style="margin-top:8px;"></div>
+              <div style="margin-top: 12px; font-weight:700;" data-i18n="filter_connectors">Connector types</div>
+              <div id="connectorsList" class="list-compact" style="margin-top:8px;"></div>
+              <div style="margin-top: 12px; font-weight:700;" data-i18n="filter_cost">Cost</div>
+              <div class="filter-row">
+                <label><input type="radio" name="cost" value="all" checked> <span data-i18n="cost_all">All</span></label>
+                <label><input type="radio" name="cost" value="free"> <span data-i18n="cost_free">Free</span></label>
+                <label><input type="radio" name="cost" value="paid"> <span data-i18n="cost_paid">Paid</span></label>
+              </div>
+              <button type="button" class="btn-reset" id="resetFiltersBtn" data-i18n="filter_reset">Reset filters</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- LEGEND -->
+        <div class="accordion" id="legendAccordion">
+          <div class="accordion-header" data-i18n="acc_legend">Legend</div>
+          <div class="accordion-content">
+            <div class="legend-item"><span class="legend-dot dot-green"></span> <span data-i18n="legend_operational">Operational</span></div>
+            <div class="legend-item"><span class="legend-dot dot-amber"></span> <span data-i18n="legend_unknown">Unknown / Other status</span></div>
+            <div class="legend-item" data-i18n="legend_clusters">Cluster colors scale with density</div>
+          </div>
+        </div>
+
+        <!-- PAY WITH VELOVALUE -->
+        <div class="accordion" id="payAccordion">
+          <div class="accordion-header" data-i18n="acc_pay">Pay with VeloValue</div>
+          <div class="accordion-content">
+            <p class="section-text" data-i18n="pay_desc">Start a charging session directly from VeloValue. No cards, no apps from each network — just tap and charge.</p>
+            <div class="section-divider"></div>
+            <p class="section-text"><strong data-i18n="pay_how">How it works:</strong></p>
+            <p class="section-text" style="margin-top:4px;" data-i18n="pay_steps">1. Tap any station on the map<br>2. Check connector availability<br>3. Hit "Start Charge" and pay via your VeloValue wallet</p>
+            <div class="section-divider"></div>
+            <button class="btn-primary" style="width:100%;" onclick="showError(i18n.t('pay_login_required'))" data-i18n="pay_btn">Connect your wallet</button>
+          </div>
+        </div>
+
+        <!-- ADD STATION -->
+        <div class="accordion" id="addStationAccordion">
+          <div class="accordion-header" data-i18n="acc_add">Add Station</div>
+          <div class="accordion-content">
+            <p class="section-text" data-i18n="add_desc">Know a station that's missing? Submit it and we'll verify it within 48 hours.</p>
+            <div class="section-divider"></div>
+            <div class="inline-form" id="addStationForm">
+              <div>
+                <label data-i18n="add_name_label">Station name</label>
+                <input type="text" id="newStationName" placeholder="e.g. Tesla Supercharger Roma">
+              </div>
+              <div>
+                <label data-i18n="add_address_label">Address</label>
+                <input type="text" id="newStationAddress" placeholder="e.g. Via Appia Nuova 123">
+              </div>
+              <div>
+                <label data-i18n="add_network_label">Network</label>
+                <input type="text" id="newStationNetwork" placeholder="e.g. Enel X, Tesla">
+              </div>
+              <div>
+                <label data-i18n="add_connectors_label">Connector types</label>
+                <input type="text" id="newStationConnectors" placeholder="e.g. CCS, Type 2">
+              </div>
+              <button type="button" class="btn-primary" style="width:100%;" onclick="submitNewStation()" data-i18n="add_btn">Submit station</button>
+              <div class="success-msg" id="addStationSuccess" data-i18n="add_success">Thank you! Your submission is under review.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TRIP PLANNER -->
+        <div class="accordion" id="tripAccordion">
+          <div class="accordion-header" data-i18n="acc_trip">Trip Planner</div>
+          <div class="accordion-content">
+            <p class="section-text" data-i18n="trip_desc">Plan a route with charging stops along the way. Enter your start and destination to see recommended charging points.</p>
+            <div class="section-divider"></div>
+            <div class="inline-form">
+              <div>
+                <label data-i18n="trip_from">From</label>
+                <input type="text" placeholder="Current location" disabled style="opacity:0.5;">
+              </div>
+              <div>
+                <label data-i18n="trip_to">To</label>
+                <input type="text" id="tripDestination" placeholder="e.g. Milan, Florence">
+              </div>
+              <button type="button" class="btn-secondary" style="width:100%;" onclick="showError(i18n.t('trip_coming_soon'))" data-i18n="trip_btn">Plan route</button>
+            </div>
+            <div style="margin-top:12px;"><span class="coming-soon-badge" data-i18n="coming_soon">Coming Soon</span></div>
+          </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="accordion" id="recentAccordion">
+          <div class="accordion-header" data-i18n="acc_recent">Recent Activity</div>
+          <div class="accordion-content">
+            <div id="recentActivityList">
+              <p class="section-text" style="text-align:center; padding: 20px 0; color: #666;" data-i18n="recent_empty">No recent activity yet. Start exploring stations!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="accordion" id="settingsAccordion">
+          <div class="accordion-header" data-i18n="acc_settings">Settings</div>
+          <div class="accordion-content">
+            <div class="filter-row">
+              <label data-i18n="settings_units">Distance units</label>
+              <select id="unitsSelect" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:4px 8px;color:#fff;font-size:13px;cursor:pointer;">
+                <option value="km">km</option>
+                <option value="mi">mi</option>
+              </select>
+            </div>
+            <div class="filter-row">
+              <label data-i18n="settings_style">Map style</label>
+              <select id="mapStyleSelect" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:4px 8px;color:#fff;font-size:13px;cursor:pointer;">
+                <option value="streets">Streets</option>
+                <option value="satellite">Satellite</option>
+                <option value="dark">Dark</option>
+                <option value="navigation">Navigation</option>
+              </select>
+            </div>
+            <div class="filter-row">
+              <label data-i18n="settings_maxresults">Max stations</label>
+              <select id="maxResultsSelect" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:4px 8px;color:#fff;font-size:13px;cursor:pointer;">
+                <option value="100">100</option>
+                <option value="200" selected>200</option>
+                <option value="500">500</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- HELP -->
+        <div class="accordion" id="helpAccordion">
+          <div class="accordion-header" data-i18n="acc_help">Help</div>
+          <div class="accordion-content">
+            <div class="faq-item">
+              <div class="faq-q" data-i18n="help_q1">How do I start charging?</div>
+              <div class="faq-a" data-i18n="help_a1">Tap a station on the map, check availability, and use "Pay with VeloValue" to start a session. You'll need a linked payment method.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q" data-i18n="help_q2">What do the colors mean?</div>
+              <div class="faq-a" data-i18n="help_a2">Green dots = confirmed operational. Amber dots = status unknown or other. Clustered circles show multiple stations grouped together.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q" data-i18n="help_q3">Data is wrong or outdated?</div>
+              <div class="faq-a" data-i18n="help_a3">Use "Submit Feedback" below to report inaccuracies. We sync with OpenChargeMap regularly.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q" data-i18n="help_q4">Why can't I see my location?</div>
+              <div class="faq-a" data-i18n="help_a4">Make sure you've allowed location access in your browser. Check your browser's address bar for a location permission icon.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBMIT FEEDBACK -->
+        <div class="accordion" id="feedbackAccordion">
+          <div class="accordion-header" data-i18n="acc_feedback">Submit Feedback</div>
+          <div class="accordion-content">
+            <div class="inline-form" id="feedbackForm">
+              <div>
+                <label data-i18n="feedback_type">Type</label>
+                <select id="feedbackType">
+                  <option value="bug" data-i18n="feedback_bug">Bug report</option>
+                  <option value="wrong_data" data-i18n="feedback_wrong">Wrong station data</option>
+                  <option value="feature" data-i18n="feedback_feature">Feature request</option>
+                  <option value="other" data-i18n="feedback_other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label data-i18n="feedback_message">Message</label>
+                <textarea id="feedbackMessage" placeholder="Describe the issue or suggestion..."></textarea>
+              </div>
+              <button type="button" class="btn-primary" style="width:100%;" onclick="submitFeedback()" data-i18n="feedback_btn">Send feedback</button>
+              <div class="success-msg" id="feedbackSuccess" data-i18n="feedback_success">Thanks! We'll look into it.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VELOVALUE STORE -->
+        <div class="accordion" id="storeAccordion">
+          <div class="accordion-header" data-i18n="acc_store">VeloValue Store</div>
+          <div class="accordion-content">
+            <div class="store-card">
+              <div class="store-card-title" data-i18n="store_1_title">Charging Bundle — 50 kWh</div>
+              <div class="store-card-desc" data-i18n="store_1_desc">Pre-paid credit for any network station on VeloCharge.</div>
+              <div class="store-card-price" data-i18n="store_1_price">Coming soon</div>
+            </div>
+            <div class="store-card">
+              <div class="store-card-title" data-i18n="store_2_title">Charging Bundle — 200 kWh</div>
+              <div class="store-card-desc" data-i18n="store_2_desc">Best value for frequent drivers. No expiry for 12 months.</div>
+              <div class="store-card-price" data-i18n="store_2_price">Coming soon</div>
+            </div>
+            <div class="store-card">
+              <div class="store-card-title" data-i18n="store_3_title">VeloValue Premium</div>
+              <div class="store-card-desc" data-i18n="store_3_desc">Unlimited map features, priority support, exclusive discounts.</div>
+              <div class="store-card-price" data-i18n="store_3_price">Coming soon</div>
+            </div>
+            <button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="showError(i18n.t('store_login_required'))" data-i18n="store_btn">Browse all products</button>
+          </div>
+        </div>
+
+        <!-- DOWNLOAD THE APP -->
+        <div class="accordion" id="downloadAccordion">
+          <div class="accordion-header" data-i18n="acc_download">Download the App</div>
+          <div class="accordion-content">
+            <p class="section-text" data-i18n="download_desc">Get the full VeloValue experience on your phone. Real-time notifications, offline maps, and wallet management.</p>
+            <div class="section-divider"></div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn-primary" style="flex:1;min-width:120px;" onclick="showError(i18n.t('download_coming_soon'))">
+                &#127822; App Store
+              </button>
+              <button class="btn-secondary" style="flex:1;min-width:120px;color:#fff;" onclick="showError(i18n.t('download_coming_soon'))">
+                &#9654; Google Play
+              </button>
+            </div>
+            <div style="margin-top:12px;"><span class="coming-soon-badge" data-i18n="coming_soon">Coming Soon</span></div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+
+    <!-- ===== MAP + OVERLAYS ===== -->
+    <div id="map"></div>
+    <button id="searchAreaBtn" class="search-area" data-i18n="search_area">Search this area</button>
+    <div class="credit">Data &copy; Open Charge Map</div>
+    <div class="station-count" id="stationCount">0 stations</div>
+
+    <div class="loading-indicator" id="loadingIndicator">
+      <span class="spinner"></span>
+      <span data-i18n="loading">Loading stations&hellip;</span>
+    </div>
+    <div class="error-toast" id="errorToast"></div>
+
+    <!-- Mapbox GL JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+
+    <script>
+    /* ==============================================================
+       I18N — Simple translation system
+       ============================================================== */
+    var i18n = (function() {
+      var strings = {
+        en: {
+          nav_home: 'HOME', nav_cars: 'EXPLORE NEW CARS', nav_garage: 'EXPLORE SMART GARAGE',
+          nav_about: 'ABOUT US', nav_login: 'Login / Register',
+          panel_title: 'Welcome to VeloCharge',
+          acc_filters: 'Filters', acc_legend: 'Legend', acc_pay: 'Pay with VeloValue',
+          acc_add: 'Add Station', acc_trip: 'Trip Planner', acc_recent: 'Recent Activity',
+          acc_settings: 'Settings', acc_help: 'Help', acc_feedback: 'Submit Feedback',
+          acc_store: 'VeloValue Store', acc_download: 'Download the App',
+          filter_operational: 'Operational only', filter_minkw: 'Minimum power (kW)',
+          filter_networks: 'Networks', filter_connectors: 'Connector types',
+          filter_cost: 'Cost', cost_all: 'All', cost_free: 'Free', cost_paid: 'Paid',
+          filter_reset: 'Reset filters',
+          legend_operational: 'Operational', legend_unknown: 'Unknown / Other status',
+          legend_clusters: 'Cluster colors scale with density',
+          pay_desc: 'Start a charging session directly from VeloValue. No cards, no apps from each network \u2014 just tap and charge.',
+          pay_how: 'How it works:', pay_steps: '1. Tap any station on the map<br>2. Check connector availability<br>3. Hit "Start Charge" and pay via your VeloValue wallet',
+          pay_btn: 'Connect your wallet', pay_login_required: 'Coming soon',
+          add_desc: 'Know a station that\'s missing? Submit it and we\'ll verify it within 48 hours.',
+          add_name_label: 'Station name', add_address_label: 'Address',
+          add_network_label: 'Network', add_connectors_label: 'Connector types',
+          add_btn: 'Submit station', add_success: 'Thank you! Your submission is under review.',
+          trip_desc: 'Plan a route with charging stops along the way. Enter your start and destination to see recommended charging points.',
+          trip_from: 'From', trip_to: 'To', trip_btn: 'Plan route', trip_coming_soon: 'Trip Planner is coming soon!',
+          recent_empty: 'No recent activity yet. Start exploring stations!',
+          settings_units: 'Distance units', settings_style: 'Map style', settings_maxresults: 'Max stations',
+          help_q1: 'How do I start charging?', help_a1: 'Tap a station on the map, check availability, and use "Pay with VeloValue" to start a session.',
+          help_q2: 'What do the colors mean?', help_a2: 'Green = confirmed operational. Amber = status unknown. Clusters group multiple stations.',
+          help_q3: 'Data is wrong or outdated?', help_a3: 'Use "Submit Feedback" to report inaccuracies. We sync with OpenChargeMap regularly.',
+          help_q4: 'Why can\'t I see my location?', help_a4: 'Allow location access in your browser. Check the address bar for a permission icon.',
+          feedback_type: 'Type', feedback_bug: 'Bug report', feedback_wrong: 'Wrong station data',
+          feedback_feature: 'Feature request', feedback_other: 'Other',
+          feedback_message: 'Message', feedback_btn: 'Send feedback',
+          feedback_success: 'Thanks! We\'ll look into it.',
+          store_1_title: 'Charging Bundle \u2014 50 kWh', store_1_desc: 'Pre-paid credit for any network station.',
+          store_1_price: '\u20ACComing soon',
+          store_2_title: 'Charging Bundle \u2014 200 kWh', store_2_desc: 'Best value. No expiry for 12 months.',
+          store_2_price: '\u20ACComing soon',
+          store_3_title: 'VeloValue Premium', store_3_desc: 'Unlimited features, priority support, discounts.',
+          store_3_price: '\u20ACComing soon',
+          store_btn: 'Browse all products', store_login_required: 'Coming soon',
+          download_desc: 'Get the full VeloValue experience on your phone. Real-time notifications, offline maps, and wallet.',
+          download_coming_soon: 'App download coming soon!',
+          search_area: 'Search this area', loading: 'Loading stations\u2026',
+          stations_count: '{n} stations',
+          error_no_key: 'OpenChargeMap API key not set. See instructions in the code.',
+          error_fetch: 'Failed to load stations.',
+          coming_soon: 'Coming Soon'
+        },
+        it: {
+          nav_home: 'HOME', nav_cars: 'ESPLORA AUTO NUOVE', nav_garage: 'ESPLORA SMART GARAGE',
+          nav_about: 'CHI SIAMO', nav_login: 'Accedi / Registrati',
+          panel_title: 'Benvenuto su VeloCharge',
+          acc_filters: 'Filtri', acc_legend: 'Legenda', acc_pay: 'Paga con VeloValue',
+          acc_add: 'Aggiungi Stazione', acc_trip: 'Pianifica Viaggio', acc_recent: 'Attivit\u00E0 Recente',
+          acc_settings: 'Impostazioni', acc_help: 'Aiuto', acc_feedback: 'Invia Feedback',
+          acc_store: 'Negozio VeloValue', acc_download: 'Scarica l\'App',
+          filter_operational: 'Solo operative', filter_minkw: 'Potenza minima (kW)',
+          filter_networks: 'Reti', filter_connectors: 'Tipi di connettore',
+          filter_cost: 'Costo', cost_all: 'Tutti', cost_free: 'Gratis', cost_paid: 'A pagamento',
+          filter_reset: 'Resetta filtri',
+          legend_operational: 'Operativa', legend_unknown: 'Stato sconosciuto / altro',
+          legend_clusters: 'I colori dei cluster scalano con la densit\u00E0',
+          pay_desc: 'Avvia una sessione di ricarica direttamente da VeloValue. Nessuna carta, nessuna app separata.',
+          pay_how: 'Come funziona:', pay_steps: '1. Tocca una stazione sulla mappa<br>2. Controlla la disponibilit\u00E0<br>3. Premi "Avvia Ricarica" e paga con il tuo wallet',
+          pay_btn: 'Collega il tuo wallet', pay_login_required: 'Accedi per collegare il tuo wallet.',
+          add_desc: 'Conosci una stazione mancante? Inviacela e la verificheremo entro 48 ore.',
+          add_name_label: 'Nome stazione', add_address_label: 'Indirizzo',
+          add_network_label: 'Rete', add_connectors_label: 'Tipi di connettore',
+          add_btn: 'Invia stazione', add_success: 'Grazie! La tua segnalazione \u00E8 in revisione.',
+          trip_desc: 'Pianifica un percorso con fermate di ricarica. Inserisci partenza e destinazione.',
+          trip_from: 'Da', trip_to: 'A', trip_btn: 'Pianifica percorso', trip_coming_soon: 'Il pianificatore di viaggi arriver\u00E0 presto!',
+          recent_empty: 'Nessuna attivit\u00E0 recente. Esplora le stazioni!',
+          settings_units: 'Unit\u00E0 di distanza', settings_style: 'Stile mappa', settings_maxresults: 'Max stazioni',
+          help_q1: 'Come avvio una ricarica?', help_a1: 'Tocca una stazione, controlla la disponibilit\u00E0 e usa "Paga con VeloValue".',
+          help_q2: 'Cosa significano i colori?', help_a2: 'Verde = operativa confermata. Ambra = stato sconosciuto.',
+          help_q3: 'I dati sono sbagliati?', help_a3: 'Usa "Invia Feedback" per segnalare errori.',
+          help_q4: 'Non vedo la mia posizione?', help_a4: 'Consenti l\'accesso alla posizione nel browser.',
+          feedback_type: 'Tipo', feedback_bug: 'Segnalazione bug', feedback_wrong: 'Dati stazione errati',
+          feedback_feature: 'Richiesta funzione', feedback_other: 'Altro',
+          feedback_message: 'Messaggio', feedback_btn: 'Invia feedback',
+          feedback_success: 'Grazie! Esamineremo la segnalazione.',
+          store_1_title: 'Pacchetto Ricarica \u2014 50 kWh', store_1_desc: 'Credito prepagato per qualsiasi rete.',
+          store_1_price: '\u20AC9,99',
+          store_2_title: 'Pacchetto Ricarica \u2014 200 kWh', store_2_desc: 'Il migliore. Nessuna scadenza per 12 mesi.',
+          store_2_price: '\u20AC34,99',
+          store_3_title: 'VeloValue Premium', store_3_desc: 'Funzioni illimitate, supporto prioritario, sconti.',
+          store_3_price: '\u20AC4,99/mese',
+          store_btn: 'Vedi tutti i prodotti', store_login_required: 'Accedi per accedere al negozio.',
+          download_desc: 'L\'esperienza completa sul tuo telefono. Notifiche, mappe offline, wallet.',
+          download_coming_soon: 'Il download dell\'app arriver\u00E0 presto!',
+          search_area: 'Cerca in questa area', loading: 'Caricamento stazioni\u2026',
+          stations_count: '{n} stazioni',
+          error_no_key: 'Chiave API OpenChargeMap non impostata. Vedi le istruzioni nel codice.',
+          error_fetch: 'Impossibile caricare le stazioni.',
+          coming_soon: 'In arrivo'
+        },
+        de: {
+          nav_home: 'HOME', nav_cars: 'NEUE AUTOS ENTDECKEN', nav_garage: 'SMART GARAGE ENTDECKEN',
+          nav_about: '\u00DCBER UNS', nav_login: 'Anmelden / Registrieren',
+          panel_title: 'Willkommen bei VeloCharge',
+          acc_filters: 'Filter', acc_legend: 'Legende', acc_pay: 'Mit VeloValue bezahlen',
+          acc_add: 'Station hinzuf\u00FCgen', acc_trip: 'Routenplaner', acc_recent: 'Letzte Aktivit\u00E4t',
+          acc_settings: 'Einstellungen', acc_help: 'Hilfe', acc_feedback: 'Feedback senden',
+          acc_store: 'VeloValue Shop', acc_download: 'App herunterladen',
+          filter_operational: 'Nur operative', filter_minkw: 'Mindestleistung (kW)',
+          filter_networks: 'Netzwerke', filter_connectors: 'Steckertypen',
+          filter_cost: 'Kosten', cost_all: 'Alle', cost_free: 'Kostenlos', cost_paid: 'Kostenpflichtig',
+          filter_reset: 'Filter zur\u00FCcksetzen',
+          legend_operational: 'Operativ', legend_unknown: 'Unbekannt / anderer Status',
+          legend_clusters: 'Clusterfarben skalieren mit Dichte',
+          pay_desc: 'Starte eine Ladesession direkt \u00FCber VeloValue. Keine Karten, keine separaten Apps.',
+          pay_how: 'So funktioniert\'s:', pay_steps: '1. Station auf der Karte antippen<br>2. Verf\u00FCgbarkeit pr\u00FCfen<br>3. "Laden starten" und \u00FCber Wallet bezahlen',
+          pay_btn: 'Wallet verbinden', pay_login_required: 'Bitte melde dich an, um dein Wallet zu verbinden.',
+          add_desc: 'Kennst du eine fehlende Station? Melde sie und wir pr\u00FCfen sie innerhalb von 48 Stunden.',
+          add_name_label: 'Stationsname', add_address_label: 'Adresse',
+          add_network_label: 'Netzwerk', add_connectors_label: 'Steckertypen',
+          add_btn: 'Station senden', add_success: 'Danke! Deine Meldung wird gepr\u00FCft.',
+          trip_desc: 'Plane eine Route mit Ladehalten. Gib Start und Ziel ein.',
+          trip_from: 'Von', trip_to: 'Nach', trip_btn: 'Route planen', trip_coming_soon: 'Routenplaner kommt bald!',
+          recent_empty: 'Noch keine Aktivit\u00E4t. Entdecke Stationen!',
+          settings_units: 'Entfernungseinheit', settings_style: 'Kartenstil', settings_maxresults: 'Max Stationen',
+          help_q1: 'Wie starte ich das Laden?', help_a1: 'Tippe auf eine Station, pr\u00FCfe Verf\u00FCgbarkeit und nutze "Mit VeloValue bezahlen".',
+          help_q2: 'Was bedeuten die Farben?', help_a2: 'Gr\u00FCn = operativ best\u00E4tigt. Amber = unbekannter Status.',
+          help_q3: 'Daten sind falsch?', help_a3: 'Nutze "Feedback senden" um Fehler zu melden.',
+          help_q4: 'Position nicht sichtbar?', help_a4: 'Erlaube den Standortzugriff im Browser.',
+          feedback_type: 'Typ', feedback_bug: 'Fehlermeldung', feedback_wrong: 'Falsche Stationsdaten',
+          feedback_feature: 'Feature-Wunsch', feedback_other: 'Sonstiges',
+          feedback_message: 'Nachricht', feedback_btn: 'Feedback senden',
+          feedback_success: 'Danke! Wir pr\u00FCfen das.',
+          store_1_title: 'Ladepaket \u2014 50 kWh', store_1_desc: 'Guthaben f\u00FCr jedes Netzwerk.',
+          store_1_price: '\u20AC9,99',
+          store_2_title: 'Ladepaket \u2014 200 kWh', store_2_desc: 'Bestes Angebot. 12 Monate g\u00FCltig.',
+          store_2_price: '\u20AC34,99',
+          store_3_title: 'VeloValue Premium', store_3_desc: 'Unbegrenzte Features, Priorit\u00E4tssupport, Rabatte.',
+          store_3_price: '\u20AC4,99/Monat',
+          store_btn: 'Alle Produkte ansehen', store_login_required: 'Bitte melde dich an, um den Shop zu nutzen.',
+          download_desc: 'Das volle VeloValue-Erlebnis auf dem Handy. Benachrichtigungen, Offline-Karten, Wallet.',
+          download_coming_soon: 'App-Download kommt bald!',
+          search_area: 'Diesen Bereich durchsuchen', loading: 'Stationen laden\u2026',
+          stations_count: '{n} Stationen',
+          error_no_key: 'OpenChargeMap API-Schl\u00FCssel nicht gesetzt. Siehe Anleitung im Code.',
+          error_fetch: 'Stationen konnten nicht geladen werden.',
+          coming_soon: 'Demn\u00E4chst'
+        }
+      };
+
+      var currentLang = 'en';
+
+      function t(key) {
+        return (strings[currentLang] && strings[currentLang][key]) || strings['en'][key] || key;
+      }
+
+      function apply() {
+        var els = document.querySelectorAll('[data-i18n]');
+        for (var i = 0; i < els.length; i++) {
+          var key = els[i].getAttribute('data-i18n');
+          var val = t(key);
+          if (key === 'loading') val = val.replace('\u2026', '\u2026'); // keep ellipsis
+          els[i].textContent = val;
+        }
+        // Update station count
+        updateStationCountDisplay();
+      }
+
+      function setLang(lang) {
+        if (!strings[lang]) return;
+        currentLang = lang;
+        apply();
+      }
+
+      return { t: t, apply: apply, setLang: setLang };
+    })();
+    </script>
+
+    <script>
+    /* ==============================================================
+       HEADER HEIGHT + HAMBURGER MENU
+       ============================================================== */
+    function setHeaderHeightVar() {
+      var header = document.querySelector('header');
+      var h = header ? header.offsetHeight : 64;
+      document.documentElement.style.setProperty('--header-h', h + 'px');
+    }
+    window.addEventListener('load', setHeaderHeightVar);
+    window.addEventListener('resize', setHeaderHeightVar);
+
+    var hamburger = document.querySelector('.hamburger');
+    var menu = document.getElementById('hamburgerMenu');
+    var menuOverlay = document.querySelector('.menu-overlay');
+    var closeBtn = document.querySelector('.menu-close');
+    var authSection = document.getElementById('authSection');
+
+    function closeMenu() {
+      menu.classList.remove('active');
+      menuOverlay.classList.remove('active');
+      menu.setAttribute('aria-hidden', 'true');
+      hamburger.setAttribute('aria-expanded', 'false');
+      if (window.innerWidth <= 1024) hamburger.classList.remove('is-active');
+    }
+    function toggleMenu() {
+      var expanded = hamburger.getAttribute('aria-expanded') === 'true';
+      hamburger.setAttribute('aria-expanded', String(!expanded));
+      if (window.innerWidth <= 1024) hamburger.classList.toggle('is-active');
+      menu.classList.toggle('active');
+      menuOverlay.classList.toggle('active');
+      menu.setAttribute('aria-hidden', String(!menu.classList.contains('active')));
+    }
+
+    hamburger.addEventListener('click', toggleMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+
+    function updateAuthButton() {
+      if (window.innerWidth <= 768) {
+        authSection.innerHTML = '<button class="icon-btn" onclick="window.location.href=\'login.html\'">&#128100;</button>';
+      } else {
+        authSection.innerHTML = '<button class="text-btn" onclick="window.location.href=\'login.html\'">' + i18n.t('nav_login') + '</button>';
+      }
+    }
+    updateAuthButton();
+
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 1024 && menu.classList.contains('active')) closeMenu();
+      if (window.innerWidth > 1024) hamburger.classList.remove('is-active');
+      setHeaderHeightVar();
+      updateAuthButton();
+      updateSheetMode();
+    });
+    </script>
+
+    <script>
+    /* ==============================================================
+       BOTTOM SHEET (mobile)
+       ============================================================== */
+    var leftPanel = document.querySelector('.left-panel');
+    var sheetHandle = document.getElementById('sheetHandle');
+    var sheetOverlay = document.getElementById('sheetOverlay');
+
+    function openSheet() {
+      leftPanel.classList.add('sheet-open');
+      leftPanel.classList.remove('sheet-collapsed');
+      sheetOverlay.classList.add('active');
+      sheetHandle.setAttribute('aria-expanded', 'true');
+    }
+    function closeSheet() {
+      leftPanel.classList.add('sheet-collapsed');
+      leftPanel.classList.remove('sheet-open');
+      sheetOverlay.classList.remove('active');
+      sheetHandle.setAttribute('aria-expanded', 'false');
+    }
+    function updateSheetMode() {
+      if (window.innerWidth <= 900) {
+        if (!leftPanel.classList.contains('sheet-open')) leftPanel.classList.add('sheet-collapsed');
+      } else {
+        leftPanel.classList.remove('sheet-open', 'sheet-collapsed');
+        sheetOverlay.classList.remove('active');
+        sheetHandle.setAttribute('aria-expanded', 'false');
+      }
+    }
+    updateSheetMode();
+
+    sheetHandle.addEventListener('click', function() {
+      if (leftPanel.classList.contains('sheet-open')) closeSheet(); else openSheet();
+    });
+    sheetOverlay.addEventListener('click', closeSheet);
+    hamburger.addEventListener('click', function() {
+      if (leftPanel.classList.contains('sheet-open')) closeSheet();
+    });
+    </script>
+
+    <script>
+    /* ==============================================================
+       MAP + OCM API + FILTERS + MARKERS
+       ============================================================== */
+
+    // ── CONFIG ──
+    mapboxgl.accessToken = process.env.MAPBOX_SECRET;
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  STEP 1: Get your FREE key at https://openchargemap.org/register ║
+    // ║  STEP 2: Replace the value below with your actual key          ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    var OCM_API_KEY = '0de30aa3-0ceb-46a5-936c-3724b2ca28b7';
+
+    var fallbackCenter = [12.4964, 41.9028]; // Rome
+    var MAP_STYLES = {
+      streets:    'mapbox://styles/mapbox/streets-v12',
+      satellite:  'mapbox://styles/mapbox/satellite-streets-v12',
+      dark:       'mapbox://styles/mapbox/dark-v11',
+      navigation: 'mapbox://styles/mapbox/navigation-day-v1'
+    };
+    var currentMapStyle = 'streets';
+
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: MAP_STYLES[currentMapStyle],
+      center: fallbackCenter,
+      zoom: 12
+    });
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    var geolocate = new mapboxgl.GeolocateControl({
+      positionOptions: { enableHighAccuracy: true, timeout: 10000 },
+      trackUserLocation: true, showAccuracyCircle: false,
+      fitBoundsOptions: { maxZoom: 14 }
+    });
+    map.addControl(geolocate, 'top-right');
+
+    var searchBtn = document.getElementById('searchAreaBtn');
+    var loadingEl = document.getElementById('loadingIndicator');
+    var errorEl = document.getElementById('errorToast');
+    var stationCountEl = document.getElementById('stationCount');
+
+    // ── STATE ──
+    var allStationsGeoJSON = { type: 'FeatureCollection', features: [] };
+    var filteredCount = 0;
+    var filterState = {
+      operationalOnly: false, minKw: 0,
+      networks: new Set(), connectors: new Set(), cost: 'all'
+    };
+    var initialLoadDone = false;
+    var errorTimer = null;
+
+    // ── HELPERS ──
+    function emptyGeoJSON() { return { type: 'FeatureCollection', features: [] }; }
+    function clamp(x, min, max) { return Math.max(min, Math.min(max, x)); }
+    function showLoading() { loadingEl.classList.add('visible'); }
+    function hideLoading() { loadingEl.classList.remove('visible'); }
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add('visible');
+      clearTimeout(errorTimer);
+      errorTimer = setTimeout(function() { errorEl.classList.remove('visible'); }, 5000);
+    }
+    function updateStationCountDisplay() {
+      stationCountEl.textContent = i18n.t('stations_count').replace('{n}', String(filteredCount));
+    }
+    function approxRadiusKm(m) {
+      var b = m.getBounds(), R = 6371;
+      var lat1 = b.getNorth() * Math.PI / 180, lat2 = b.getSouth() * Math.PI / 180;
+      var dLat = lat2 - lat1, dLng = (b.getEast() - b.getWest()) * Math.PI / 180;
+      return 2 * R * Math.asin(Math.sqrt(Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLng/2)**2)) / 2;
+    }
+
+    // ── MAP ON LOAD ──
+    map.on('load', function() {
+      addStationsLayers();
+      initAccordions();
+      initFiltersUI();
+      initSettingsUI();
+      initLanguageUI();
+
+      if (OCM_API_KEY === 'YOUR_OCM_API_KEY_HERE') {
+        showError(i18n.t('error_no_key'));
+        return;
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(pos) {
+            map.jumpTo({ center: [pos.coords.longitude, pos.coords.latitude], zoom: 13 });
+            geolocate.trigger();
+            refreshStations();
+          },
+          function(err) {
+            console.warn('Geolocation error:', err.message);
+            refreshStations();
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+        );
+      } else {
+        refreshStations();
+      }
+    });
+
+    map.on('moveend', function() {
+      if (initialLoadDone) searchBtn.style.display = 'block';
+      initialLoadDone = true;
+    });
+    searchBtn.addEventListener('click', function() {
+      refreshStations();
+      searchBtn.style.display = 'none';
+    });
+
+    // ── MAP LAYERS ──
+      function addStationsLayers() {
+      if (!map.getSource('stations')) {
+        map.addSource('stations', {
+          type: 'geojson', data: emptyGeoJSON(),
+          cluster: true, clusterRadius: 60, clusterMaxZoom: 14
+        });
+      }
+
+      // ── Load your custom icon ──
+      // Change this path to match your actual file, e.g. 'icon/marker.svg', 'icon/pin.png', etc.
+      var ICON_PATH = '/icons/location.png';
+
+      map.loadImage(ICON_PATH, function(error, image) {
+        if (error) {
+          console.error('Failed to load icon:', ICON_PATH, error);
+          // Fallback: use the old circle layers if icon fails to load
+          addFallbackCircleLayers();
+          return;
+        }
+
+        // Add the image to the map so symbol layers can reference it
+        if (!map.hasImage('station-icon')) {
+          map.addImage('station-icon', image);
+        }
+
+        // ── Cluster circle layer (unchanged) ──
+        if (!map.getLayer('clusters')) {
+          map.addLayer({
+            id: 'clusters', type: 'circle', source: 'stations',
+            filter: ['has', 'point_count'],
+            paint: {
+              'circle-color': ['step', ['get', 'point_count'], '#68B5FB', 10, '#3A8EE6', 50, '#1F6FDB', 100, '#1254B3'],
+              'circle-radius': ['step', ['get', 'point_count'], 16, 10, 22, 50, 28, 100, 34]
+            }
+          });
+        }
+        if (!map.getLayer('cluster-count')) {
+          map.addLayer({
+            id: 'cluster-count', type: 'symbol', source: 'stations',
+            filter: ['has', 'point_count'],
+            layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12 },
+            paint: { 'text-color': '#fff' }
+          });
+        }
+
+        // ── Custom icon layer (replaces unclustered-ring + unclustered-dot) ──
+        if (!map.getLayer('unclustered-icon')) {
+          map.addLayer({
+            id: 'unclustered-icon', type: 'symbol', source: 'stations',
+            filter: ['!', ['has', 'point_count']],
+            layout: {
+              'icon-image': 'station-icon',
+              'icon-size': 0.15,          // Adjust scale (0.1 – 1+)
+              'icon-allow-overlap': true,
+              'icon-anchor': 'bottom',
+              'icon-pitch-alignment': 'map'
+            },
+            paint: {
+              'icon-opacity': 0.95
+              
+            }
+          });
+        }
+
+        // ── Interactions ──
+        map.on('click', 'clusters', function(e) {
+          var f = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+          if (!f.length) return;
+          map.getSource('stations').getClusterExpansionZoom(f[0].properties.cluster_id, function(err, z) {
+            if (err) return;
+            map.easeTo({ center: f[0].geometry.coordinates, zoom: z });
+          });
+        });
+        map.on('click', 'unclustered-icon', function(e) {
+          var p = e.features[0].properties;
+          var cl = [];
+          try { cl = JSON.parse(p.connectors || '[]'); } catch(ex) {}
+          var h = '<div class="popup"><div class="name">' + (p.name||'') + '</div>' +
+            '<div>' + (p.network||'\u2014') + ' \u2022 ' + (p.max_power?p.max_power+' kW':'? kW') +
+            ' \u2022 ' + (p.total_connectors||'?') + ' ports</div>' +
+            '<div>' + (p.has_available?'\u2705':'\u26A0\uFE0F') +
+            (p.usage_cost?' \u2022 '+p.usage_cost:'') + '</div>' +
+            (cl.length?'<div style="margin-top:6px;font-size:12px;color:#333">'+cl.join(', ')+'</div>':'') +
+            '</div>';
+          new mapboxgl.Popup({ offset: 12, maxWidth: '280px' }).setLngLat(e.features[0].geometry.coordinates).setHTML(h).addTo(map);
+        });
+
+        ['clusters','unclustered-icon'].forEach(function(id) {
+          map.on('mouseenter', id, function() { map.getCanvas().style.cursor = 'pointer'; });
+          map.on('mouseleave', id, function() { map.getCanvas().style.cursor = ''; });
+        });
+      });
+    }
+
+    // Fallback if icon fails to load — keeps the old green/amber circles
+    function addFallbackCircleLayers() {
+      if (!map.getLayer('clusters')) {
+        map.addLayer({
+          id: 'clusters', type: 'circle', source: 'stations',
+          filter: ['has', 'point_count'],
+          paint: {
+            'circle-color': ['step', ['get', 'point_count'], '#68B5FB', 10, '#3A8EE6', 50, '#1F6FDB', 100, '#1254B3'],
+            'circle-radius': ['step', ['get', 'point_count'], 16, 10, 22, 50, 28, 100, 34]
+          }
+        });
+      }
+      if (!map.getLayer('cluster-count')) {
+        map.addLayer({
+          id: 'cluster-count', type: 'symbol', source: 'stations',
+          filter: ['has', 'point_count'],
+          layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12 },
+          paint: { 'text-color': '#fff' }
+        });
+      }
+      if (!map.getLayer('unclustered-ring')) {
+        map.addLayer({
+          id: 'unclustered-ring', type: 'circle', source: 'stations',
+          filter: ['!', ['has', 'point_count']],
+          paint: { 'circle-radius': 11, 'circle-color': '#ffffff', 'circle-opacity': 0.9, 'circle-pitch-scale': 'map' }
+        });
+      }
+      if (!map.getLayer('unclustered-dot')) {
+        map.addLayer({
+          id: 'unclustered-dot', type: 'circle', source: 'stations',
+          filter: ['!', ['has', 'point_count']],
+          paint: {
+            'circle-radius': 8,
+            'circle-color': ['case', ['get', 'has_available'], '#2ecc71', '#f39c12'],
+            'circle-opacity': 0.95, 'circle-pitch-scale': 'map'
+          }
+        });
+      }
+      map.on('click', 'clusters', function(e) {
+        var f = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+        if (!f.length) return;
+        map.getSource('stations').getClusterExpansionZoom(f[0].properties.cluster_id, function(err, z) {
+          if (err) return;
+          map.easeTo({ center: f[0].geometry.coordinates, zoom: z });
+        });
+      });
+      map.on('click', 'unclustered-dot', function(e) {
+        var p = e.features[0].properties;
+        var cl = [];
+        try { cl = JSON.parse(p.connectors || '[]'); } catch(ex) {}
+        var h = '<div class="popup"><div class="name">' + (p.name||'') + '</div>' +
+          '<div>' + (p.network||'\u2014') + ' \u2022 ' + (p.max_power?p.max_power+' kW':'? kW') +
+          ' \u2022 ' + (p.total_connectors||'?') + ' ports</div>' +
+          '<div>' + (p.has_available?'\u2705':'\u26A0\uFE0F') +
+          (p.usage_cost?' \u2022 '+p.usage_cost:'') + '</div>' +
+          (cl.length?'<div style="margin-top:6px;font-size:12px;color:#333">'+cl.join(', ')+'</div>':'') +
+          '</div>';
+        new mapboxgl.Popup({ offset: 12, maxWidth: '280px' }).setLngLat(e.features[0].geometry.coordinates).setHTML(h).addTo(map);
+      });
+      ['clusters','unclustered-dot','unclustered-ring'].forEach(function(id) {
+        map.on('mouseenter', id, function() { map.getCanvas().style.cursor = 'pointer'; });
+        map.on('mouseleave', id, function() { map.getCanvas().style.cursor = ''; });
+      });
+    }
+
+    // ── FETCH STATIONS ──
+    async function refreshStations() {
+      if (OCM_API_KEY === 'YOUR_OCM_API_KEY_HERE') {
+        showError(i18n.t('error_no_key'));
+        return;
+      }
+      showLoading();
+      var c = map.getCenter(), r = clamp(approxRadiusKm(map), 2, 25);
+      var maxRes = parseInt(document.getElementById('maxResultsSelect').value) || 200;
+      try {
+        var geo = await fetchOCM(c.lng, c.lat, r, maxRes);
+        allStationsGeoJSON = geo;
+        populateDynamicFilterOptions();
+        applyFilters();
+        hideLoading();
+      } catch(err) {
+        hideLoading();
+        console.error('OCM error:', err);
+        showError(i18n.t('error_fetch') + ' ' + (err.message || ''));
+      }
+    }
+
+    async function fetchOCM(lng, lat, dist, max) {
+      var p = new URLSearchParams({
+        output:'json', latitude:String(lat), longitude:String(lng),
+        distance:String(dist), distanceunit:'KM', maxresults:String(max||200),
+        compact:'true', verbose:'false', key: OCM_API_KEY
+      });
+      var res = await fetch('https://api.openchargemap.io/v3/poi/?' + p);
+      if (!res.ok) throw new Error('API ' + res.status);
+      var items = await res.json();
+      if (!Array.isArray(items)) throw new Error('Bad response');
+      return ocmToGeoJSON(items);
+    }
+
+    function ocmToGeoJSON(items) {
+      var feats = [];
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i], ai = it.AddressInfo||{}, ops = it.OperatorInfo||{}, st = it.StatusType||{};
+        var conns = Array.isArray(it.Connections) ? it.Connections : [];
+        var mxP = null, tot = 0, cTitles = [];
+        for (var j = 0; j < conns.length; j++) {
+          if (typeof conns[j].PowerKW === 'number' && (mxP === null || conns[j].PowerKW > mxP)) mxP = conns[j].PowerKW;
+          tot += (conns[j].Quantity || 1);
+          if (conns[j].ConnectionType && conns[j].ConnectionType.Title) cTitles.push(conns[j].ConnectionType.Title);
+        }
+        if (typeof ai.Longitude !== 'number' || typeof ai.Latitude !== 'number') continue;
+        if (!isFinite(ai.Longitude) || !isFinite(ai.Latitude)) continue;
+        feats.push({
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [ai.Longitude, ai.Latitude] },
+          properties: {
+            id: it.ID, name: ai.Title || 'Charging Station',
+            network: ops.Title || null, max_power: mxP,
+            total_connectors: tot || conns.length || null,
+            has_available: st.IsOperational === true || st.ID === 50 || st.ID === 75,
+            usage_cost: it.UsageCost || null,
+            connectors: JSON.stringify(cTitles)
+          }
+        });
+      }
+      return { type: 'FeatureCollection', features: feats };
+    }
+
+    // ── ACCORDIONS ──
+    function initAccordions() {
+      var headers = document.querySelectorAll('.accordion .accordion-header');
+      for (var i = 0; i < headers.length; i++) {
+        (function(h) {
+          h.addEventListener('click', function() { h.parentElement.classList.toggle('open'); });
+        })(headers[i]);
+      }
+    }
+
+    // ── FILTERS UI ──
+    function initFiltersUI() {
+      var minKw = document.getElementById('filterMinKw');
+      var minKwVal = document.getElementById('minKwValue');
+      var op = document.getElementById('filterOperational');
+
+      function paintFill(el) {
+        el.style.setProperty('--fill', (100*(el.value-el.min)/(el.max-el.min))+'%');
+      }
+      paintFill(minKw);
+
+      minKw.addEventListener('input', function() {
+        filterState.minKw = Number(minKw.value);
+        minKwVal.textContent = String(filterState.minKw);
+        paintFill(minKw); applyFilters();
+      });
+      op.addEventListener('change', function() { filterState.operationalOnly = op.checked; applyFilters(); });
+
+      document.getElementById('filtersForm').addEventListener('change', function(e) {
+        if (e.target.name === 'cost') { filterState.cost = e.target.value; applyFilters(); }
+      });
+      document.getElementById('networksList').addEventListener('change', function(e) {
+        if (e.target.type === 'checkbox') {
+          e.target.checked ? filterState.networks.add(e.target.value) : filterState.networks.delete(e.target.value);
+          applyFilters();
+        }
+      });
+      document.getElementById('connectorsList').addEventListener('change', function(e) {
+        if (e.target.type === 'checkbox') {
+          e.target.checked ? filterState.connectors.add(e.target.value) : filterState.connectors.delete(e.target.value);
+          applyFilters();
+        }
+      });
+      document.getElementById('resetFiltersBtn').addEventListener('click', function() {
+        filterState.operationalOnly = false; filterState.minKw = 0;
+        filterState.networks.clear(); filterState.connectors.clear(); filterState.cost = 'all';
+        op.checked = false; minKw.value = 0; minKwVal.textContent = '0'; paintFill(minKw);
+        var cr = document.querySelectorAll('input[name="cost"]');
+        for (var i=0;i<cr.length;i++) cr[i].checked = (cr[i].value==='all');
+        var nc = document.querySelectorAll('#networksList input[type="checkbox"]');
+        for (var i=0;i<nc.length;i++) nc[i].checked = false;
+        var cc = document.querySelectorAll('#connectorsList input[type="checkbox"]');
+        for (var i=0;i<cc.length;i++) cc[i].checked = false;
+        applyFilters();
+      });
+    }
+
+    function populateDynamicFilterOptions() {
+      var nets = new Map(), cons = new Map(), feats = allStationsGeoJSON.features || [];
+      for (var i = 0; i < feats.length; i++) {
+        var p = feats[i].properties || {};
+        if (p.network) nets.set(p.network, (nets.get(p.network)||0)+1);
+        var cl = []; try { cl = JSON.parse(p.connectors||'[]'); } catch(e){}
+        for (var j=0;j<cl.length;j++) cons.set(cl[j], (cons.get(cl[j])||0)+1);
+      }
+      var nL = document.getElementById('networksList'), cL = document.getElementById('connectorsList');
+      nL.innerHTML = ''; cL.innerHTML = '';
+      var tN = Array.from(nets.entries()).sort(function(a,b){return b[1]-a[1]}).slice(0,12);
+      var tC = Array.from(cons.entries()).sort(function(a,b){return b[1]-a[1]}).slice(0,12);
+      for (var i=0;i<tN.length;i++) {
+        var l=tN[i][0], c=tN[i][1], id='net-'+l.replace(/\W+/g,'_');
+        nL.insertAdjacentHTML('beforeend','<label for="'+id+'"><input id="'+id+'" type="checkbox" value="'+l+'" '+(filterState.networks.has(l)?'checked':'')+'>'+l+' <span class="pill">'+c+'</span></label>');
+      }
+      for (var i=0;i<tC.length;i++) {
+        var l=tC[i][0], c=tC[i][1], id='con-'+l.replace(/\W+/g,'_');
+        cL.insertAdjacentHTML('beforeend','<label for="'+id+'"><input id="'+id+'" type="checkbox" value="'+l+'" '+(filterState.connectors.has(l)?'checked':'')+'>'+l+' <span class="pill">'+c+'</span></label>');
+      }
+    }
+
+    function applyFilters() {
+      var src = map.getSource('stations');
+      if (!src) return;
+      var feats = allStationsGeoJSON.features || [];
+      var out = { type: 'FeatureCollection', features: [] };
+      for (var i = 0; i < feats.length; i++) {
+        var p = feats[i].properties || {};
+        var cl = []; try { cl = JSON.parse(p.connectors||'[]'); } catch(e){}
+        if (filterState.operationalOnly && !p.has_available) continue;
+        if (filterState.minKw > 0 && (p.max_power||0) < filterState.minKw) continue;
+        if (filterState.cost === 'free') { if (!/free/i.test(p.usage_cost||'')) continue; }
+        else if (filterState.cost === 'paid') { var cs=p.usage_cost?String(p.usage_cost):''; if (!cs || /free/i.test(cs)) continue; }
+        if (filterState.networks.size > 0) { if (!p.network || !filterState.networks.has(p.network)) continue; }
+        if (filterState.connectors.size > 0) {
+          var hit=false; for (var j=0;j<cl.length;j++) { if (filterState.connectors.has(cl[j])) { hit=true; break; } }
+          if (!hit) continue;
+        }
+        out.features.push(feats[i]);
+      }
+      filteredCount = out.features.length;
+      src.setData(out);
+      updateStationCountDisplay();
+    }
+
+    // ── SETTINGS UI ──
+    function initSettingsUI() {
+      document.getElementById('mapStyleSelect').addEventListener('change', function(e) {
+        var style = MAP_STYLES[e.target.value];
+        if (style) { map.setStyle(style); currentMapStyle = e.target.value; }
+      });
+      document.getElementById('maxResultsSelect').addEventListener('change', function() {
+        // Will apply on next refresh
+      });
+    }
+
+    // ── LANGUAGE UI ──
+    function initLanguageUI() {
+      document.getElementById('languageSelect').addEventListener('change', function(e) {
+        i18n.setLang(e.target.value);
+        updateAuthButton();
+      });
+    }
+
+    // ── FORM SUBMISSIONS (client-side only, show success) ──
+    function submitNewStation() {
+      var name = document.getElementById('newStationName').value.trim();
+      var addr = document.getElementById('newStationAddress').value.trim();
+      if (!name) { showError('Please enter a station name.'); return; }
+      // In production: POST to your backend
+      console.log('New station:', { name: name, address: addr, network: document.getElementById('newStationNetwork').value, connectors: document.getElementById('newStationConnectors').value });
+      document.getElementById('addStationSuccess').classList.add('visible');
+      document.getElementById('newStationName').value = '';
+      document.getElementById('newStationAddress').value = '';
+      document.getElementById('newStationNetwork').value = '';
+      document.getElementById('newStationConnectors').value = '';
+      setTimeout(function() { document.getElementById('addStationSuccess').classList.remove('visible'); }, 4000);
+    }
+
+    function submitFeedback() {
+      var msg = document.getElementById('feedbackMessage').value.trim();
+      if (!msg) { showError('Please enter a message.'); return; }
+      // In production: POST to your backend
+      console.log('Feedback:', { type: document.getElementById('feedbackType').value, message: msg });
+      document.getElementById('feedbackSuccess').classList.add('visible');
+      document.getElementById('feedbackMessage').value = '';
+      setTimeout(function() { document.getElementById('feedbackSuccess').classList.remove('visible'); }, 4000);
+    }
+    </script>
+
+    <!-- Remove this line if /js/auth.js doesn't exist on your server -->
+    <script src="/js/auth.js"></script>
+  </body>
+</html>

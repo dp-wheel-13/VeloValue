@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VeloValue Elite - Enterprise Fleet Management. The pinnacle of fleet optimization technology for discerning businesses.">
+  <title>VeloValue Elite - Premium Fleet Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-black: #0a0a0a;
+      --secondary-black: #1a1a1a;
+      --accent-gold: #d4af37;
+      --accent-silver: #c0c0c0;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--primary-black);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent-gold);
+      border-radius: 4px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--primary-black);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .playfair {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* Custom Cursor */
+    .cursor {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--accent-gold);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      transition: all 0.1s ease;
+      z-index: 9999;
+      mix-blend-mode: difference;
+    }
+
+    .cursor-follower {
+      width: 40px;
+      height: 40px;
+      background: rgba(212, 175, 55, 0.1);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      z-index: 9998;
+    }
+
+    /* Loading Screen */
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--primary-black);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      transition: opacity 1s ease;
+    }
+
+    .loader-content {
+      text-align: center;
+    }
+
+    .loader-logo {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      margin-bottom: 1rem;
+      letter-spacing: 3px;
+    }
+
+    .loader-bar {
+      width: 200px;
+      height: 2px;
+      background: rgba(212, 175, 55, 0.2);
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .loader-progress {
+      height: 100%;
+      background: var(--accent-gold);
+      animation: loading 2s ease-in-out;
+    }
+
+    @keyframes loading {
+      0% { width: 0; }
+      100% { width: 100%; }
+    }
+
+    /* Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1.5rem 5%;
+      background: linear-gradient(to bottom, rgba(10, 10, 10, 0.9), transparent);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    header.scrolled {
+      background: rgba(10, 10, 10, 0.95);
+      padding: 1rem 5%;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      letter-spacing: 2px;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 3rem;
+    }
+
+    .nav-links a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 300;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent-gold);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      background: transparent;
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold);
+      padding: 0.7rem 1.5rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-gold);
+      color: var(--primary-black);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(10, 10, 10, 0.8), rgba(26, 26, 26, 0.8)),
+                  url('https://images.unsplash.com/photo-1554224154-260325c0598e?auto=format&fit=crop&w=2000&q=80') center/cover;
+      filter: grayscale(20%);
+      transform: scale(1.1);
+      animation: heroZoom 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroZoom {
+      0% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 2rem;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 2rem;
+      background: linear-gradient(to right, var(--text-primary), var(--accent-gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      margin-bottom: 3rem;
+      letter-spacing: 1px;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--accent-gold);
+      color: var(--primary-black);
+      padding: 1rem 3rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: left 0.5s ease;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      padding: 1rem 3rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--glass-bg);
+      border-color: var(--accent-gold);
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+      40% { transform: translateX(-50%) translateY(-10px); }
+      60% { transform: translateX(-50%) translateY(-5px); }
+    }
+
+    .scroll-indicator i {
+      font-size: 1.5rem;
+      color: var(--accent-gold);
+    }
+
+    /* Features Section */
+    .features {
+      padding: 8rem 5%;
+      background: var(--secondary-black);
+      position: relative;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .section-subtitle {
+      color: var(--accent-gold);
+      font-size: 0.9rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 900;
+      margin-bottom: 2rem;
+      playfair: true;
+    }
+
+    .section-description {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 3rem;
+      margin-top: 4rem;
+    }
+
+    .feature-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 3rem;
+      border-radius: 10px;
+      transition: all 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent, rgba(212, 175, 55, 0.1));
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--accent-gold);
+      box-shadow: 0 20px 40px rgba(212, 175, 55, 0.1);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--accent-gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    /* Stats Section */
+    .stats {
+      padding: 6rem 5%;
+      background: linear-gradient(135deg, var(--primary-black), var(--secondary-black));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stats::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=2000&q=80') center/cover;
+      opacity: 0.1;
+    }
+
+    .stats-container {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      text-align: center;
+    }
+
+    .stat-item {
+      padding: 2rem;
+    }
+
+    .stat-number {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      margin-bottom: 0.5rem;
+      playfair: true;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Dashboard Section */
+    .dashboard {
+      padding: 8rem 5%;
+      background: var(--primary-black);
+      position: relative;
+    }
+
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .dashboard-content {
+      position: relative;
+    }
+
+    .dashboard-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 900;
+      margin-bottom: 2rem;
+      playfair: true;
+      line-height: 1.2;
+    }
+
+    .dashboard-description {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 3rem;
+      line-height: 1.8;
+    }
+
+    .dashboard-features {
+      list-style: none;
+      margin-bottom: 3rem;
+    }
+
+    .dashboard-features li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    .dashboard-features i {
+      color: var(--accent-gold);
+      margin-right: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .dashboard-image {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(212, 175, 55, 0.2);
+    }
+
+    .dashboard-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .dashboard-image:hover img {
+      transform: scale(1.05);
+    }
+
+    .dashboard-image::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent, rgba(212, 175, 55, 0.2));
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .dashboard-image:hover::before {
+      opacity: 1;
+    }
+
+    /* Testimonials */
+    .testimonials {
+      padding: 8rem 5%;
+      background: var(--secondary-black);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 3rem;
+      margin-top: 4rem;
+    }
+
+    .testimonial-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 3rem;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .testimonial-quote {
+      font-size: 1.3rem;
+      font-style: italic;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+      position: relative;
+    }
+
+    .testimonial-quote::before {
+      content: '"';
+      font-size: 4rem;
+      color: var(--accent-gold);
+      position: absolute;
+      top: -2rem;
+      left: -1rem;
+      opacity: 0.3;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+    }
+
+    .author-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 1rem;
+      border: 2px solid var(--accent-gold);
+    }
+
+    .author-info h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .author-info p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* CTA Section */
+    .cta {
+      padding: 8rem 5%;
+      background: linear-gradient(135deg, var(--primary-black), var(--secondary-black));
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(212, 175, 55, 0.1), transparent);
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .cta-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 900;
+      margin-bottom: 2rem;
+      playfair: true;
+      background: linear-gradient(to right, var(--text-primary), var(--accent-gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .cta-description {
+      font-size: 1.3rem;
+      color: var(--text-secondary);
+      margin-bottom: 3rem;
+    }
+
+    /* Footer */
+    footer {
+      padding: 4rem 5%;
+      background: var(--primary-black);
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-column h3 {
+      color: var(--accent-gold);
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+    }
+
+    .footer-column ul {
+      list-style: none;
+    }
+
+    .footer-column ul li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-column ul li a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-column ul li a:hover {
+      color: var(--accent-gold);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--glass-border);
+      color: var(--text-secondary);
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-links a {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--glass-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      background: var(--accent-gold);
+      color: var(--primary-black);
+      border-color: var(--accent-gold);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero-title {
+        font-size: 3rem;
+      }
+
+      .dashboard-container {
+        grid-template-columns: 1fr;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide-in-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.8s ease;
+    }
+
+    .slide-in-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .slide-in-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.8s ease;
+    }
+
+    .slide-in-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  </style>
+</head>
+<body>
+  <!-- Custom Cursor -->
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+
+  <!-- Loading Screen -->
+  <div class="loader" id="loader">
+    <div class="loader-content">
+      <div class="loader-logo playfair">VELOVALUE</div>
+      <div class="loader-bar">
+        <div class="loader-progress"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <header id="header">
+    <nav>
+      <div class="logo playfair">VELOVALUE</div>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#dashboard">Dashboard</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="nav-cta">Request Demo</button>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content fade-in">
+      <div class="hero-badge">Enterprise Fleet Solution</div>
+      <h1 class="hero-title playfair">Excellence in Fleet Management</h1>
+      <p class="hero-subtitle">Where precision meets performance. Transform your fleet operations with our AI-powered platform designed for the discerning enterprise.</p>
+      <div class="hero-cta">
+        <button class="btn-primary">Schedule Private Demo</button>
+        <button class="btn-secondary">View Case Studies</button>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <i class="fas fa-chevron-down"></i>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="section-header fade-in">
+      <div class="section-subtitle">Capabilities</div>
+      <h2 class="section-title playfair">Unmatched Excellence</h2>
+      <p class="section-description">Experience the pinnacle of fleet management technology with our comprehensive suite of premium features.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">
+          <i class="fas fa-satellite-dish"></i>
+        </div>
+        <h3 class="feature-title">Quantum GPS Tracking</h3>
+        <p class="feature-description">Military-grade precision tracking with real-time analytics and predictive routing algorithms.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3 class="feature-title">Elite Security Suite</h3>
+        <p class="feature-description">Bank-level encryption and biometric authentication for ultimate fleet protection.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">
+          <i class="fas fa-brain"></i>
+        </div>
+        <h3 class="feature-title">AI-Powered Analytics</h3>
+        <p class="feature-description">Machine learning algorithms that predict maintenance needs and optimize fuel efficiency.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">
+          <i class="fas fa-users-cog"></i>
+        </div>
+        <h3 class="feature-title">Executive Driver Management</h3>
+        <p class="feature-description">Comprehensive driver profiling with performance metrics and personalized training programs.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3 class="feature-title">Premium Reporting</h3>
+        <p class="feature-description">Customizable executive dashboards with real-time KPI visualization and forecasting.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">
+          <i class="fas fa-gem"></i>
+        </div>
+        <h3 class="feature-title">White Glove Service</h3>
+        <p class="feature-description">Dedicated account managers and 24/7 concierge support for enterprise clients.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="stats-container">
+      <div class="stat-item fade-in">
+        <div class="stat-number" data-target="50000">0</div>
+        <div class="stat-label">Vehicles Managed</div>
+      </div>
+      <div class="stat-item fade-in">
+        <div class="stat-number" data-target="98">0</div>
+        <div class="stat-label">Client Satisfaction %</div>
+      </div>
+      <div class="stat-item fade-in">
+        <div class="stat-number" data-target="35">0</div>
+        <div class="stat-label">Average Cost Reduction %</div>
+      </div>
+      <div class="stat-item fade-in">
+        <div class="stat-number" data-target="24">0</div>
+        <div class="stat-label">Global Awards</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard Section -->
+  <section class="dashboard" id="dashboard">
+    <div class="dashboard-container">
+      <div class="dashboard-content slide-in-left">
+        <h2 class="dashboard-title playfair">Command Center Excellence</h2>
+        <p class="dashboard-description">Our proprietary dashboard delivers unparalleled visibility and control over your entire fleet ecosystem.</p>
+        <ul class="dashboard-features">
+          <li><i class="fas fa-check-circle"></i> Real-time fleet health monitoring</li>
+          <li><i class="fas fa-check-circle"></i> Predictive maintenance alerts</li>
+          <li><i class="fas fa-check-circle"></i> Advanced route optimization</li>
+          <li><i class="fas fa-check-circle"></i> Custom executive reporting</li>
+          <li><i class="fas fa-check-circle"></i> Seamless ERP integration</li>
+        </ul>
+        <button class="btn-primary">Experience Dashboard</button>
+      </div>
+      <div class="dashboard-image slide-in-right">
+        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1000&q=80" alt="Premium Fleet Dashboard">
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials" id="testimonials">
+    <div class="section-header fade-in">
+      <div class="section-subtitle">Testimonials</div>
+      <h2 class="section-title playfair">Voices of Excellence</h2>
+      <p class="section-description">Hear from industry leaders who have transformed their operations with VeloValue Elite.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade-in">
+        <div class="testimonial-quote">
+          VeloValue Elite has revolutionized our fleet operations. The ROI exceeded our expectations by 300% in the first year alone.
+        </div>
+        <div class="testimonial-author">
+          <img src="https://picsum.photos/seed/person1/60/60.jpg" alt="CEO" class="author-avatar">
+          <div class="author-info">
+            <h4>Alexandra Sterling</h4>
+            <p>CEO, Sterling Global Logistics</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="testimonial-quote">
+          The AI-powered analytics have given us insights we never thought possible. It's not just fleet management; it's business intelligence.
+        </div>
+        <div class="testimonial-author">
+          <img src="https://picsum.photos/seed/person2/60/60.jpg" alt="CFO" class="author-avatar">
+          <div class="author-info">
+            <h4>Marcus Chen</h4>
+            <p>CFO, Apex Transportation</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="testimonial-quote">
+          The white-glove service and attention to detail sets VeloValue apart. They don't just provide software; they deliver solutions.
+        </div>
+        <div class="testimonial-author">
+          <img src="https://picsum.photos/seed/person3/60/60.jpg" alt="Director" class="author-avatar">
+          <div class="author-info">
+            <h4>Isabella Rodriguez</h4>
+            <p>Operations Director, Premier Fleet</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta" id="contact">
+    <div class="cta-content fade-in">
+      <h2 class="cta-title playfair">Elevate Your Fleet Experience</h2>
+      <p class="cta-description">Join the elite circle of enterprises that have chosen excellence. Schedule your private consultation today.</p>
+      <button class="btn-primary">Request Executive Demo</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-column">
+        <h3 class="playfair">VeloValue Elite</h3>
+        <p style="color: var(--text-secondary); margin-top: 1rem;">The pinnacle of fleet management technology for discerning enterprises worldwide.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h3>Solutions</h3>
+        <ul>
+          <li><a href="#">Enterprise Fleet</a></li>
+          <li><a href="#">Logistics Management</a></li>
+          <li><a href="#">Asset Tracking</a></li>
+          <li><a href="#">Compliance Suite</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Leadership</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="#">Case Studies</a></li>
+          <li><a href="#">White Papers</a></li>
+          <li><a href="#">API Documentation</a></li>
+          <li><a href="#">Support Portal</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 VeloValue Elite. All rights reserved. | Privacy Policy | Terms of Service</p>
+    </div>
+  </footer>
+
+  <script>
+    // Loading Screen
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('loader').style.display = 'none';
+        }, 1000);
+      }, 2000);
+    });
+
+    // Custom Cursor
+    const cursor = document.querySelector('.cursor');
+    const cursorFollower = document.querySelector('.cursor-follower');
+
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      
+      setTimeout(() => {
+        cursorFollower.style.left = e.clientX - 10 + 'px';
+        cursorFollower.style.top = e.clientY - 10 + 'px';
+      }, 100);
+    });
+
+    // Header Scroll Effect
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('header');
+      if (window.scrollY > 100) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Scroll Animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Counter Animation
+    const counters = document.querySelectorAll('.stat-number');
+    const speed = 200;
+
+    const countUp = () => {
+      counters.forEach(counter => {
+        const updateCount = () => {
+          const target = +counter.getAttribute('data-target');
+          const count = +counter.innerText;
+          const inc = target / speed;
+
+          if (count < target) {
+            counter.innerText = Math.ceil(count + inc);
+            setTimeout(updateCount, 1);
+          } else {
+            counter.innerText = target;
+          }
+        };
+        updateCount();
+      });
+    };
+
+    // Trigger counter animation when stats section is visible
+    const statsSection = document.querySelector('.stats');
+    const statsObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        countUp();
+        statsObserver.unobserve(statsSection);
+      }
+    }, { threshold: 0.5 });
+
+    statsObserver.observe(statsSection);
+
+    // Smooth Scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Parallax Effect
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const parallax = document.querySelector('.hero-bg');
+      if (parallax) {
+        parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+      }
+    });
+  </script>
+</body>
+</html>

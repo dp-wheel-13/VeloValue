@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VeloValue Hero & Community</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: #000; color: #fff; }
+
+  /* ===== Header ===== */
+  header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 2rem; position: fixed; width: 100%; top: 0;
+    background: rgba(0,0,0,0.6); z-index: 2000; border-bottom: 1px solid #333;
+  }
+  .header-left { display: flex; align-items: center; gap: 15px; }
+  .header-right { display: flex; align-items: center; gap: 15px; }
+  header h1 a { font-size: 1.8rem; font-weight: 800; color: #fff; text-decoration: none; }
+
+  /* Desktop nav */
+  nav.desktop-nav { display: flex; gap: 20px; }
+  nav.desktop-nav a { color: #fff; font-weight: 600; font-size: 16px; text-decoration: none; white-space: nowrap; }
+  nav.desktop-nav a:hover { text-decoration: underline; }
+
+  /* Language select */
+  .language-select { position: relative; }
+  .language-select select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: #111; color: #fff; border: 1px solid #333; border-radius: 6px;
+    padding: 6px 30px 6px 10px; font-size: 0.9rem; cursor: pointer;
+  }
+
+  /* Auth button */
+  #authSection .text-btn {
+    display: inline-flex; background: #fff; color: #000; border: none; border-radius: 999px;
+    padding: 8px 16px; font-weight: 600; cursor: pointer; align-items: center; justify-content: center;
+  }
+  #authSection .icon-btn { display: none; }
+
+  /* Hamburger (desktop hidden) */
+  .hamburger {
+    font-size: 1.8rem; background: none; border: none; color: #fff; cursor: pointer;
+    display: none; align-items: center; justify-content: center; z-index: 2200;
+  }
+
+  /* Mobile menu (drawer) */
+  .menu {
+    position: fixed; top: 0; left: -300px; width: 300px; height: 100vh;
+    background: rgba(17,17,17,0.95); border-right: 1px solid rgba(255,255,255,0.12);
+    padding: 5.5rem 2rem 2rem; display: flex; flex-direction: column; gap: 2rem;
+    transition: left 0.3s ease; z-index: 2100;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 0 1rem 1rem 0;
+  }
+  .menu.active { left: 0; }
+  .menu a { color: #fff; font-size: 1.6rem; font-weight: 800; text-decoration: none; }
+
+  /* In-drawer close X */
+  .menu .menu-close {
+    position: absolute; top: 1rem; right: 1rem; width: 2.25rem; height: 2.25rem;
+    background: none; border: 0; color: #fff; cursor: pointer;
+  }
+  .menu .menu-close::before, .menu .menu-close::after {
+    content: ""; position: absolute; top: 50%; left: 50%; width: 22px; height: 2px; background: currentColor; transform-origin: center;
+  }
+  .menu .menu-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+  .menu .menu-close::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+  /* Overlay */
+  .menu-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 2050;
+  }
+  .menu-overlay.active { opacity: 1; pointer-events: auto; }
+
+  /* Mobile + hamburger morph */
+  @media (max-width: 1024px) {
+    nav.desktop-nav { display: none; }
+    .hamburger { display: flex; width: 40px; height: 40px; }
+    .hamburger { position: relative; font-size: 0; }
+    .hamburger::before, .hamburger::after {
+      content: ""; position: absolute; left: 50%; width: 22px; height: 2px; background: currentColor;
+      transform: translateX(-50%); transition: transform .25s ease, top .25s ease, opacity .2s ease;
+    }
+    .hamburger::before { top: calc(50% - 6px); }
+    .hamburger::after  { top: calc(50% + 6px); }
+    .hamburger { background-image: linear-gradient(currentColor, currentColor); background-repeat: no-repeat; background-position: center; background-size: 22px 2px; }
+    .hamburger.is-active { background-size: 0 0; }
+    .hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
+    .hamburger.is-active::after  { top: 50%; transform: translateX(-50%) rotate(-45deg); }
+  }
+
+  @media (max-width: 768px) {
+    #authSection .text-btn { display: none; }
+    #authSection .icon-btn {
+      display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%;
+      font-size: 1.2rem; background: #fff; color: #000; border: none; cursor: pointer; transition: transform 0.2s ease;
+    }
+    #authSection .icon-btn:active { transform: scale(0.95); }
+
+    .language-select {
+      width: 40px; height: 40px; border-radius: 50%; background: #111; border: 1px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .language-select::before { content:"🌐"; font-size:1.2rem; color:#fff; position:absolute; }
+    .language-select select { opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer; }
+  }
+
+  /* ===== Videos Section ===== */
+  .videos-wrapper { position: relative; }
+  .video-section { width: 100vw; height: 100vh; overflow: hidden; position: relative; }
+  .video-section video { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Sticky CTA */
+  .enter-garage-container {
+    display: flex; justify-content: center; align-items: center;
+    position: sticky; bottom: 80px; width: 100%; z-index: 1001; margin-top: -120px;
+  }
+  .enter-garage-container a {
+    background: #1db954; color: #fff; border: none; padding: 1rem 2.2rem; font-size: 1.2rem; border-radius: 50px;
+    cursor: pointer; font-weight: 700; box-shadow: 0 0 10px rgba(0,0,0,0.6); transition: 0.3s ease; text-decoration: none;
+    display: inline-flex; align-items: center; justify-content: center; position: relative; overflow: visible;
+  }
+  /* White side glow + pulse */
+  .enter-garage-container a::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50px; pointer-events: none;
+    box-shadow: -24px 0 48px rgba(255,255,255,0.35), 24px 0 48px rgba(255,255,255,0.35);
+  }
+  .enter-garage-container a:hover { background: #17a84b; transform: scale(1.05); }
+  .enter-garage-container a:hover::after { animation: sideGlowPulse 1.6s ease-in-out infinite; }
+  @keyframes sideGlowPulse {
+    0%, 100% { box-shadow: -22px 0 44px rgba(255,255,255,0.30), 22px 0 44px rgba(255,255,255,0.30); }
+    50%      { box-shadow: -30px 0 70px rgba(255,255,255,0.6), 30px 0 70px rgba(255,255,255,0.6); }
+  }
+
+  @media (max-width: 600px) {
+    .enter-garage-container { justify-content: center; }
+    .enter-garage-container a { font-size: 1rem; padding: 0.8rem 1.6rem; }
+  }
+
+  /* ===== Join Community ===== */
+  .join-community { padding: 6rem 2rem 4rem; text-align: center; position: relative; min-height: 320px; }
+  .join-community h2 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: #fff; }
+  .social-icons { display: flex; justify-content: center; gap: 24px; margin-bottom: 4rem; flex-wrap: wrap; }
+  .social-icons a.icon { width: 56px; height: 56px; background-color: #222; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.3s ease; }
+  .social-icons a.icon:hover { background-color: #1db954; }
+  .social-icons a.icon img { width: 24px; height: 24px; filter: invert(100%); transition: filter 0.3s ease; }
+  .social-icons a.icon:hover img { filter: invert(0%) sepia(100%) saturate(748%) hue-rotate(8deg) brightness(95%) contrast(92%); }
+
+  .cars { position: absolute; bottom: -170px; left: 50%; transform: translateX(-50%); width: 100%; pointer-events: none; user-select: none; }
+  .cars img { width: 90%; height: auto; object-fit: cover; filter: drop-shadow(0 8px 20px rgba(255,76,0,0.4)); }
+
+  footer { margin-top: 10rem; padding: 3rem 2rem; text-align: center; color: #777; font-size: 0.9rem; border-top: 1px solid #333; }
+
+  /* ===== Smart Garage Interstitial (scoped) ===== */
+  .sg { --sg-bg: #050505; --sg-panel: #0d0d0d; --sg-muted: #9aa0a6; --sg-accent: #d4af37; --sg-card-radius: 18px;
+        background: linear-gradient(180deg, var(--sg-bg) 0%, #070708 60%); position: relative; color: #fff; overflow: visible; }
+  .sg-cursor { display: none !important; } /* cursor disabled */
+
+  .sg-hero { position: relative; min-height: 92vh; display: flex; align-items: center; justify-content: center; padding: 48px 6%; }
+  .sg-hero__video { position: absolute; inset: 0; overflow: hidden; z-index: 1; }
+  .sg-hero__video video { width: 120%; height: 120%; object-fit: cover; transform: translateY(-6%); filter: brightness(0.6) contrast(1.05) saturate(1.02); transition: transform .25s ease; will-change: transform; }
+  .sg-hero__image {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.sg-hero__img {
+  width: 120%;
+  height: 120%;
+  object-fit: cover;
+  transform: translateY(-6%);
+  filter: brightness(0.6) contrast(1.05) saturate(1.02);
+  transition: transform .25s ease;
+  will-change: transform;
+  display: block;
+}
+  .sg-hero__overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(5,5,5,0.12), rgba(0,0,0,0.45) 60%); pointer-events: none; }
+  .sg-hero__content {
+    position: relative; z-index: 3; max-width: 1200px; width: 100%;
+    text-align: center; padding: 80px 24px;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+
+  .sg-eyebrow { color: var(--sg-muted); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-size: 0.78rem; margin-bottom: 12px; }
+  .sg-hero-title { font-size: clamp(2rem, 4.6vw, 3.6rem); line-height: 1.02; margin: 0 0 18px; font-weight: 800; letter-spacing: -0.02em;
+                   background: linear-gradient(90deg, var(--sg-accent) 10%, #fff 70%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .sg-lead { max-width: 900px; margin: 0 auto; color: rgba(255,255,255,0.88); font-size: clamp(1rem, 1.4vw, 1.15rem); line-height: 1.7; }
+
+  .sg-cta-row { margin-top: 28px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .sg-btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)); color: #fff; font-weight: 700; font-size: 0.98rem;
+    cursor: pointer; position: relative; overflow: visible; transition: transform .16s ease, box-shadow .16s ease, background .16s ease; box-shadow: 0 8px 40px rgba(0,0,0,0.6); text-decoration: none;
+  }
+  .sg-btn--primary .sg-glow { position: absolute; inset: 0; border-radius: 999px; pointer-events: none;
+    box-shadow: -22px 0 50px rgba(255,255,255,0.35), 22px 0 50px rgba(255,255,255,0.35), 0 0 0 1px rgba(255,255,255,0.06) inset; }
+  .sg-btn--primary:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 24px 80px rgba(212,175,55,0.08); }
+  .sg-btn--ghost:hover { background: #111; transform: translateY(-2px); }
+  .sg-btn--primary:hover .sg-glow { animation: pulseGlowPrimary 1.6s ease-in-out infinite; }
+  @keyframes pulseGlowPrimary {
+    0%, 100% { box-shadow: -22px 0 50px rgba(255,255,255,0.35), 22px 0 50px rgba(255,255,255,0.35), 0 0 0 1px rgba(255,255,255,0.06) inset; }
+    50%      { box-shadow: -30px 0 80px rgba(255,255,255,0.65), 30px 0 80px rgba(255,255,255,0.65), 0 0 0 1px rgba(255,255,255,0.12) inset; }
+  }
+
+  .sg-info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; width: 100%; max-width: 1200px; margin: 56px auto 0; }
+  .sg-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.03);
+    padding: 26px; border-radius: var(--sg-card-radius); transform: translateY(10px); transition: transform .45s cubic-bezier(.2,.9,.2,1), box-shadow .25s ease, border-color .25s ease;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+  .sg-card:hover { transform: translateY(-10px); border-color: rgba(212,175,55,0.18); box-shadow: 0 18px 60px rgba(2,8,10,0.6); }
+  .sg-card h4 { margin: 0 0 12px; font-size: 1.05rem; color: #fff; font-weight: 700; }
+  .sg-card p { margin: 0; color: var(--sg-muted); line-height: 1.65; font-size: 0.98rem; }
+
+  .sg-content { padding: 80px 6%; display: flex; flex-direction: column; gap: 72px; max-width: 1200px; margin: 0 auto; }
+  .sg-block { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; }
+  .sg-media { border-radius: 16px; overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.6); transform: translateY(12px); transition: transform .6s cubic-bezier(.2,.9,.2,1); }
+  .sg-media video, .sg-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sg-text h3 { margin: 0 0 12px; color: var(--sg-accent); font-size: 1.35rem; font-weight: 800; }
+  .sg-text p { margin: 0; color: var(--sg-muted); line-height: 1.7; }
+
+  .sg-reveal { opacity: 0; transform: translateY(16px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.9,.2,1); }
+  .sg-revealed { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 1000px) {
+    .sg-info { grid-template-columns: 1fr; }
+    .sg-block { grid-template-columns: 1fr; }
+    .sg-hero__content { padding: 48px 18px; }
+  }
+  @media (max-width: 560px) {
+    .sg-hero { padding: 36px 4%; }
+    .sg-hero__content { padding: 28px 12px; }
+    .sg-info { gap: 16px; }
+    .sg-card { padding: 18px; }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .enter-garage-container a:hover::after, .sg-btn--primary:hover .sg-glow { animation: none !important; }
+    .enter-garage-container a, .sg-btn { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <h1><a href="/homepage.html">VeloValue</a></h1>
+  </div>
+
+  <div class="header-right">
+    <nav class="desktop-nav">
+      <a href="/homepage.html">HOME</a>
+      <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+      <a href="/explore-smart-garage-beta/smartgarage.html">SMART GARAGE</a>
+      <a href="/velocharge-beta/velocharge.html">VELOCHARGE</a>
+    </nav>
+    <div class="language-select">
+      <select id="languageSelect">
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+    <div id="authSection">
+      <button class="text-btn" onclick="window.location.href='/login.html'">Login / Register</button>
+    </div>
+  </div>
+</header>
+
+<nav class="menu" id="hamburgerMenu" aria-hidden="true">
+  <button class="menu-close" aria-label="Close menu"></button>
+  <a href="/homepage.html">HOME</a>
+  <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+  <a href="/explore-smart-garage-beta/smartgarage.html">SMART GARAGE</a>
+  <a href="/velocharge-beta/velocharge.html">DISCOVER VELOCHARGE</a>
+  <a href="#careers">WORK WITH US</a>
+  <a href="#about">ABOUT US</a>
+</nav>
+<div class="menu-overlay"></div>
+
+<!-- Videos with centered anchor -->
+<div class="videos-wrapper">
+  <div class="video-section">
+    <video autoplay muted>
+      <source src="/Multimedia/desktop_hero_video_1.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="video-section" id="second-video">
+    <video autoplay muted loop>
+      <source src="/Multimedia/desktop_enter_garage_video2.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="enter-garage-container">
+    <a id="enterGarageLink" href="#">Enter Smart Garage</a>
+  </div>
+</div>
+
+<!-- Smart Garage Interstitial -->
+<section class="sg" id="smart-garage-section">
+  <div class="sg-cursor" id="sgCursor" aria-hidden="true"></div>
+
+  <section class="sg-hero" aria-labelledby="sgHeroTitle">
+    
+    <!-- Hero Image -->
+    <div class="sg-hero__image" id="sgHeroImageWrap" aria-hidden="true">
+      <img 
+        src="/Multimedia/desktop_hero_image3.png" 
+        alt="Smart Garage Hero"
+        class="sg-hero__img"
+      >
+    </div>
+
+    <div class="sg-hero__overlay" aria-hidden="true"></div>
+
+    <div class="sg-hero__content">
+      <div class="sg-eyebrow sg-reveal" data-sg-reveal>Smart Garage</div>
+      <h2 id="sgHeroTitle" class="sg-hero-title sg-reveal" data-sg-reveal>Give your car a premium digital home</h2>
+      <p class="sg-lead sg-reveal" data-sg-reveal>
+        Upload documents once, get timely reminders, and keep your vehicle’s full history at your fingertips.
+      </p>
+
+      <div class="sg-cta-row sg-reveal" data-sg-reveal>
+        <a class="sg-btn sg-btn--primary" id="sgEnterGarageLink" href="#" aria-label="Enter Smart Garage">
+          Enter Smart Garage
+          <span class="sg-glow"></span>
+        </a>
+        <button class="sg-btn sg-btn--ghost" id="sgLearnMore" aria-label="Learn more about Smart Garage">Learn more</button>
+      </div>
+
+      <div class="sg-info sg-reveal" data-sg-reveal>
+        <div class="sg-card">
+          <h4>Why it matters</h4>
+          <p>Never miss renewals or service dates. Keep documents secure and accessible for insurance, resale, or maintenance.</p>
+        </div>
+        <div class="sg-card">
+          <h4>How it works</h4>
+          <p>Add your vehicle by plate, verify ownership, upload documents, and let Smart Garage handle the reminders.</p>
+        </div>
+        <div class="sg-card">
+          <h4>Privacy first</h4>
+          <p>GDPR-aware and encrypted at rest. We store only what you choose — nothing is shared without consent.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-content" aria-labelledby="sgContentHeading">
+    <div class="sg-block sg-reveal" data-sg-reveal>
+      <div class="sg-text">
+        <h3 id="sgContentHeading">All your car details, one click away</h3>
+        <p>Upload insurance, PUC, service receipts and photos. Find everything in a timeline ready for claims, resale or maintenance.</p>
+      </div>
+      <div class="sg-media">
+        <img src="/Multimedia/All_your_car_details_one_click_away.png" alt="All your car details, one click away" />
+      </div>
+    </div>
+
+    <div class="sg-block sg-reveal" data-sg-reveal>
+      <div class="sg-media">
+        <img src="/Multimedia/Your_garage_now_digital.png" alt="Your garage, now digital" />
+      </div>
+      <div class="sg-text">
+        <h3>Your garage, now digital</h3>
+        <p>Access your vehicle's history anywhere, export records for sale, show proof for warranty, or share service receipts with your mechanic.</p>
+      </div>
+    </div>
+
+    <div class="sg-block sg-reveal" data-sg-reveal>
+      <div class="sg-text">
+        <h3>Future-ready intelligence</h3>
+        <p>Not just storage - Smart Garage learns patterns and surfaces reminders, predicted service needs, and suggestions to protect value.</p>
+      </div>
+      <div class="sg-media">
+        <img src="/Multimedia/Future_ready_intelligence.png" alt="Future-ready intelligence" />
+    </div>
+  </section>
+</section>
+<!-- End Smart Garage Interstitial -->
+
+<!-- Community Section -->
+<section id="about" class="join-community">
+  <h2>Join our community</h2>
+  <div class="social-icons">
+    <a href="#" class="icon fb"><img src="/Multimedia/facebook.svg" alt="Facebook" /></a>
+    <a href="#" class="icon x"><img src="/Multimedia/x.svg" alt="X" /></a>
+    <a href="#" class="icon insta"><img src="/Multimedia/instagram.svg" alt="Instagram" /></a>
+    <a href="#" class="icon yt"><img src="/Multimedia/youtube.svg" alt="YouTube" /></a>
+    <a href="#" class="icon linkedin"><img src="/Multimedia/linkedin.svg" alt="LinkedIn" /></a>
+    <a href="#" class="icon tiktok"><img src="/Multimedia/tiktok.svg" alt="TikTok" /></a>
+  </div>
+
+  <div class="cars">
+    <img src="/Multimedia/join-our-community-5-cars.png" alt="Collection of 5 cars" />
+  </div>
+</section>
+
+<footer>
+  &copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.<br>
+  Contact - debanjan.pal@community.unipa.it
+</footer>
+
+<script>
+  // Elements
+  const hamburger = document.querySelector(".hamburger");
+  const menu = document.getElementById("hamburgerMenu");
+  const overlay = document.querySelector(".menu-overlay");
+  const closeBtn = document.querySelector(".menu-close");
+
+  function closeMenu() {
+    menu.classList.remove("active");
+    overlay.classList.remove("active");
+    menu.setAttribute("aria-hidden", "true");
+    hamburger.setAttribute("aria-expanded", "false");
+    if (window.innerWidth <= 1024) hamburger.classList.remove("is-active");
+  }
+
+  // Toggle menu + mobile X morph
+  hamburger.addEventListener("click", () => {
+    const expanded = hamburger.getAttribute("aria-expanded") === "true";
+    hamburger.setAttribute("aria-expanded", !expanded);
+
+    if (window.innerWidth <= 1024) {
+      hamburger.classList.toggle("is-active");
+    }
+
+    menu.classList.toggle("active");
+    overlay.classList.toggle("active");
+    menu.setAttribute("aria-hidden", !menu.classList.contains("active"));
+  });
+
+  overlay.addEventListener("click", closeMenu);
+  if (closeBtn) closeBtn.addEventListener("click", closeMenu);
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 1024 && menu.classList.contains("active")) closeMenu();
+    if (window.innerWidth > 1024) hamburger.classList.remove("is-active");
+  });
+
+  // Auth button toggle
+  const authSection = document.getElementById("authSection");
+  function updateAuthButton() {
+    if(window.innerWidth <= 768) {
+      authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='/login.html'">👤</button>`;
+    } else {
+      authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='/login.html'">Login / Register</button>`;
+    }
+  }
+  updateAuthButton();
+  window.addEventListener("resize", updateAuthButton);
+
+  // Robust sticky-stop at 90% of 2nd video (align CTA bottom to 90% line)
+  (function () {
+    const wrapper = document.querySelector('.videos-wrapper');
+    const buttonContainer = document.querySelector('.enter-garage-container');
+    const secondVideo = document.getElementById('second-video');
+    const BOTTOM_OFFSET = 80;      // matches CSS bottom: 80px
+    const STOP_RATIO = 0.9;        // 90%
+
+    function updateStickyStop() {
+      if (!wrapper || !buttonContainer || !secondVideo) return;
+
+      const wrapperTop = wrapper.getBoundingClientRect().top + window.scrollY;
+      const videoRect = secondVideo.getBoundingClientRect();
+      const videoTop = videoRect.top + window.scrollY;
+      const videoHeight = videoRect.height;
+      const btnH = buttonContainer.offsetHeight || 0;
+
+      const stopY = videoTop + videoHeight * STOP_RATIO;
+      const stickyBottomY = window.scrollY + window.innerHeight - BOTTOM_OFFSET;
+
+      if (stickyBottomY >= stopY) {
+        const topAbs = stopY - wrapperTop - btnH; // align CTA bottom to stop line
+        buttonContainer.style.position = 'absolute';
+        buttonContainer.style.top = `${topAbs}px`;
+        buttonContainer.style.bottom = 'auto';
+        buttonContainer.style.marginTop = '0';
+      } else {
+        buttonContainer.style.position = 'sticky';
+        buttonContainer.style.bottom = `${BOTTOM_OFFSET}px`;
+        buttonContainer.style.top = 'auto';
+        buttonContainer.style.marginTop = '-120px';
+      }
+    }
+
+    updateStickyStop();
+    window.addEventListener('scroll', updateStickyStop, { passive: true });
+    window.addEventListener('resize', updateStickyStop);
+  })();
+
+    // Smart Garage Auth Gate (Page 0)
+  async function handleSmartGarageEntry(e) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+
+    try {
+      // const res = await fetch('/api/garage/status', {
+      const res = await fetch('/garage-entry', {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      const data = await res.json();
+      console.log(data.status);
+      if (data.status === 'NOT_AUTHENTICATED') {
+
+        window.location.href = '/login.html';
+      } 
+      else if (data.status === 'NO_CAR') {
+        window.location.href = '/explore-smart-garage-beta/garagesearch.html';
+      } 
+      else if (data.status === 'HAS_CAR') {
+        window.location.href = '/explore-smart-garage-beta/garageview.html';
+      } 
+      else {
+        // fallback
+        window.location.href = '/login.html';
+        //  window.location.href = '/explore-smart-garage-beta/garagesearch.html';
+      }
+
+    } catch (err) {
+      console.error('Smart Garage entry failed', err);
+      window.location.href = '/login.html';
+      //  window.location.href = '/explore-smart-garage-beta/garagesearch.html';
+    }
+  }
+
+  document
+    .getElementById('enterGarageLink')
+    ?.addEventListener('click', handleSmartGarageEntry);
+
+  document
+    .getElementById('sgEnterGarageLink')
+    ?.addEventListener('click', handleSmartGarageEntry);
+</script>
+
+<!-- Smart Garage Interstitial scripts (scoped) -->
+<script>
+  (function(){
+    const sg = document.getElementById('smart-garage-section');
+    if (!sg) return;
+
+    // Reveal
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if (entry.isIntersecting) {
+          entry.target.classList.add('sg-revealed');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    sg.querySelectorAll('[data-sg-reveal]').forEach(el => io.observe(el));
+
+    // Parallax
+    const wrap = document.getElementById('sgHeroVideoWrap');
+    const vid  = document.getElementById('sgHeroVideo');
+    function parallax(){
+      if (!wrap || !vid) return;
+      const rect = wrap.getBoundingClientRect();
+      const offset = (rect.top - window.innerHeight * 0.1) * -0.04;
+      vid.style.transform = `translateY(${offset}px) scale(1.03)`;
+    }
+    window.addEventListener('scroll', parallax, { passive: true });
+
+    // Learn more
+    const learnBtn = document.getElementById('sgLearnMore');
+    const content = sg.querySelector('.sg-content');
+    if (learnBtn && content) {
+      learnBtn.addEventListener('click', () => content.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    }
+  })();
+</script>
+
+<script src="/js/auth.js"></script>
+<script src="/js/translate.js"></script>
+</body>
+</html>

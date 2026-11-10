@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeloValue - Smart Reminder</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===== Global ===== */
+* { box-sizing: border-box; margin:0; padding:0; }
+html, body { 
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
+}
+body {
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+:root { --header-offset: 0px; }
+body { padding-top: var(--header-offset); }
+
+body::before {
+  content: "";
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, #0a0a0a, #1e1e1e);
+  z-index: -1;
+}
+
+/* ===== Header ===== */
+header, header * { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem 2rem; position: fixed; width: 100%; top: 0; background: rgba(0,0,0,0.6);
+  z-index: 2000; border-bottom: 1px solid #333;
+}
+.header-left { display:flex; align-items:center; gap:15px; }
+.header-right { display:flex; align-items:center; gap:15px; }
+header h1 a { font-size:1.8rem; font-weight:800; color:#fff; text-decoration:none; }
+
+nav.desktop-nav { display:flex; gap:20px; }
+nav.desktop-nav a { color:#fff; font-weight:600; font-size:16px; text-decoration:none; white-space:nowrap; }
+nav.desktop-nav a:hover { text-decoration:underline; }
+
+.language-select { position:relative; }
+.language-select select {
+  appearance:none; background:#111; color:#fff; border:1px solid #333; border-radius:6px;
+  padding:6px 30px 6px 10px; font-size:0.9rem; cursor:pointer;
+}
+
+#authSection .text-btn { display:inline-flex; background:#fff; color:#000; border:none; border-radius:999px; padding:8px 16px; font-weight:600; cursor:pointer; align-items:center; justify-content:center; }
+#authSection .icon-btn { display:none; }
+
+.hamburger {
+  font-size:1.8rem; background:none; border:none; color:#fff; cursor:pointer;
+  display:none; align-items:center; justify-content:center; z-index:2200; width:40px; height:40px;
+}
+
+.menu {
+  position: fixed; top:0; left:-300px; width:300px; height:100vh; background: rgba(17,17,17,0.95);
+  border-right:1px solid rgba(255,255,255,0.12); padding:3rem 2rem; display:flex; flex-direction:column; gap:2rem;
+  transition:left 0.3s ease; z-index:2100; backdrop-filter:blur(10px); border-radius:0 1rem 1rem 0;
+}
+.menu.active { left:0; }
+.menu a { color:#fff; font-size:1.6rem; font-weight:800; text-decoration:none; }
+
+.menu-overlay { position:fixed; inset:0; background: rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:opacity 0.3s ease; z-index:2050; }
+.menu-overlay.active { opacity:1; pointer-events:auto; }
+
+@media(max-width:1024px){
+  nav.desktop-nav{display:none;}
+  .hamburger{display:flex;}
+  .hamburger { position: relative; font-size: 0; }
+  .hamburger::before,
+  .hamburger::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    width: 22px;
+    height: 2px;
+    background: currentColor;
+    transform: translateX(-50%);
+    transition: transform .25s ease, top .25s ease, opacity .2s ease;
+  }
+  .hamburger::before { top: calc(50% - 6px); }
+  .hamburger::after  { top: calc(50% + 6px); }
+  .hamburger {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 22px 2px;
+  }
+  .hamburger.is-active { background-size: 0 0; }
+  .hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
+  .hamburger.is-active::after  { top: 50%; transform: translateX(-50%) rotate(-45deg); }
+}
+
+@media(max-width:768px){
+  #authSection .text-btn{display:none;}
+  #authSection .icon-btn{
+    display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%;
+    font-size:1.2rem; background:#fff; color:#000; border:none; cursor:pointer; transition:transform 0.2s ease;
+  }
+  #authSection .icon-btn:active{transform:scale(0.95);}
+  .language-select{
+    width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff;
+    display:flex; align-items:center; justify-content:center; position: relative;
+  }
+  .language-select::before{content:"🌐"; font-size:1.2rem; color:#fff; position:absolute;}
+  .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
+}
+
+/* ===== Container ===== */
+.container {
+  display: flex; 
+  justify-content: center; 
+  align-items: flex-start; 
+  padding: 110px 20px 50px; 
+  max-width: 1600px; 
+  margin: 0 auto;
+  min-height: calc(100vh - 140px);
+  gap: 30px; 
+  position: relative;
+  z-index: 1;
+}
+.container { padding-top: 0; }
+
+/* ===== Glass Box (Main Panel) ===== */
+.main-panel, .reminders-panel {
+  border-radius: 20px; 
+  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.08); 
+  border: 1px solid rgba(255,255,255,0.15); 
+  padding: 28px 32px; 
+  transition: all 0.4s ease;
+  position: relative;
+  z-index: 10; 
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3); 
+  height: fit-content; 
+}
+.main-panel:hover, .reminders-panel:hover { 
+  transform: translateY(-6px); 
+  box-shadow: 0 25px 70px rgba(0,0,0,0.7); 
+}
+
+.main-panel {
+  width: 650px; 
+  flex-shrink: 0; 
+  position: relative;
+}
+.reminders-panel {
+  width: 650px; 
+  flex-shrink: 0; 
+}
+
+/* ===== Carousel Arrows ===== */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  color: #fff;
+}
+
+.carousel-arrow:hover {
+  background: rgba(255,255,255,0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-arrow.left { left: -20px; }
+.carousel-arrow.right { right: -20px; }
+.carousel-arrow.hidden { opacity: 0; pointer-events: none; }
+
+/* ===== Carousel Container ===== */
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+
+.carousel-card {
+  min-width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+/* ===== Pagination Dots ===== */
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: #f2c94c;
+  transform: scale(1.2);
+}
+
+/* ===== Car Header ===== */
+.car-header { 
+  display: flex; 
+  align-items: center; 
+  gap: 24px; 
+  margin-bottom: 28px; 
+  text-align: left; 
+}
+.car-info { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 4px; 
+  text-align: left; 
+}
+.car-logo { 
+  width: 130px; 
+  height: auto; 
+  flex-shrink: 0; 
+}
+
+.car-name { 
+  font-size: 36px; 
+  font-weight: 900; 
+  color: #f2c94c; 
+  letter-spacing: 1px; 
+  margin: 0; 
+  line-height: 1.2; 
+}
+.car-model { 
+  font-size: 24px; 
+  font-weight: 600; 
+  color: #ccc; 
+  margin: 0; 
+  line-height: 1.2; 
+}
+.fuel-type {
+  font-size: 20px; 
+  font-weight: 700; 
+  display: inline-block; 
+  padding: 4px 12px;
+  border-radius: 16px; 
+  background: rgba(255,255,255,0.08); 
+  border: 1px solid rgba(255,255,255,0.12);
+  margin: 0; 
+  line-height: 1.2; 
+  letter-spacing: 0.5px;
+}
+
+/* ===== Car Details ===== */
+.car-details {
+  text-align: center; 
+}
+.italian-plate {
+  position: relative; 
+  width: 360px; 
+  height: 60px; 
+  background: #fff; 
+  border-radius: 8px; 
+  border: 1px solid #ccc;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-family: 'OCR A Std', monospace;
+  font-weight: 900; 
+  font-size: 28px; 
+  color: #000; 
+  letter-spacing: 6px; 
+  text-transform: uppercase; 
+  text-shadow: 0 1px 0 #aaa;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.2); 
+  margin: 28px auto 0; 
+}
+.italian-plate::before, .italian-plate::after {
+  position: absolute; 
+  top: 0; 
+  width: 40px; 
+  height: 100%; 
+  background: #003399; 
+  color: #fff; 
+  font-weight: 900; 
+  font-size: 18px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+}
+.italian-plate::before { content: 'I'; left: 0; border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+.italian-plate::after { content: 'RM'; right: 0; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+.car-image {
+  width: 550px; 
+  height: 367px; 
+  object-fit: cover; 
+  border-radius: 24px; 
+  margin-bottom: 0; 
+  border: 2px solid rgba(255,255,255,0.08); 
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7); 
+  background: rgba(255,255,255,0.02); 
+  backdrop-filter: blur(16px);
+  display: block; 
+  margin-left: auto; 
+  margin-right: auto; 
+  transition: transform 0.4s, box-shadow 0.4s;
+}
+.car-image:hover { transform: scale(1.03); box-shadow: 0 30px 80px rgba(0,0,0,0.85); }
+
+/* Add New Car Card */
+.add-new-car {
+  display: flex;
+  flex-direction: column,
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 500px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-new-car:hover {
+  transform: scale(1.02);
+}
+
+.add-new-car .icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+  color: rgba(255,255,255,0.6);
+}
+
+.add-new-car .text {
+  font-size: 20px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+}
+
+/* ===== Reminders Section ===== */
+.reminders-header {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #f2c94c;
+}
+
+.reminder-card {
+  background: rgba(0,0,0,0.2);
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.reminder-card:hover {
+  background: rgba(0,0,0,0.3);
+  transform: translateY(-3px);
+}
+
+.doc-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  width: fit-content;
+  margin-top: 6px;
+}
+
+.soon { background: #ffd633; color: #000; }
+.expired { background: #ff4d4d; color: #fff; }
+.active { background: #28a745; color: #fff; }
+
+.expiry {
+  margin-top: 6px;
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+.view-btn {
+  background: #29a3ff;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.view-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
+}
+
+/* Add New Car Message */
+.add-car-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba(255,255,255,0.7);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.add-car-message .highlight {
+  color: #f2c94c;
+  font-weight: 600;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 420px;
+  gap: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: #f2c94c;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  color: #888;
+  font-size: 14px;
+}
+
+/* Error/Empty States */
+.status-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 420px;
+  gap: 20px;
+  text-align: center;
+}
+
+.status-icon {
+  font-size: 56px;
+  line-height: 1;
+}
+
+.status-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.status-desc {
+  font-size: 15px;
+  color: #888;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+.status-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status-btn:hover { transform: translateY(-2px); }
+.status-btn:active { transform: scale(0.97); }
+.status-btn.primary { background: #f2c94c; color: #000; box-shadow: 0 4px 20px rgba(242,201,76,0.3); }
+.status-btn.primary:hover { box-shadow: 0 6px 28px rgba(242,201,76,0.45); }
+.status-btn.green { background: rgba(76,242,160,0.15); color: #4cf2a0; border: 1px solid rgba(76,242,160,0.35); }
+.status-btn.green:hover { background: rgba(76,242,160,0.25); }
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .main-panel, .reminders-panel { width: 550px; }
+  .car-image { width: 450px; height: 300px; }
+}
+
+@media (max-width: 1200px) {
+  .container { flex-direction: column; align-items: center; }
+  .main-panel, .reminders-panel { width: 100%; max-width: 650px; }
+  .car-image { width: 550px; height: 367px; }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 20px; }
+  .car-header { flex-direction: column; gap: 16px; text-align: center; }
+  .car-info { text-align: center; }
+  .italian-plate { width: 280px; height: 50px; font-size: 22px; letter-spacing: 4px; }
+  .italian-plate::before, .italian-plate::after { width: 32px; font-size: 16px; }
+  .car-image { width: 100%; max-width: 400px; height: 267px; }
+  .carousel-arrow { width: 35px; height: 35px; font-size: 16px; }
+  .carousel-arrow.left { left: -15px; }
+  .carousel-arrow.right { right: -15px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="header-left">
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <h1><a href="/homepage.html">VeloValue</a></h1>
+  </div>
+  <div class="header-right">
+    <nav class="desktop-nav">
+      <a href="/homepage.html">HOME</a>
+      <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+      <a href="/explore-smart-garage-beta/smartgarage.html">SMART GARAGE</a>
+      <a href="/velocharge-beta/velocharge.html">VELOCHARGE</a>
+      <a href="/smart-reminder.html">SMART REMINDER</a>
+    </nav>
+    <div class="language-select">
+      <select id="languageSelect">
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+    <div id="authSection">
+      <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<nav class="menu" id="hamburgerMenu" aria-hidden="true">
+  <a href="/homepage.html">HOME</a>
+  <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+  <a href="/explore-smart-garage-beta/smartgarage.html">SMART GARAGE</a>
+  <a href="/velocharge-beta/velocharge.html">DISCOVER VELOCHARGE</a>
+  <a href="/smart-reminder.html">SMART REMINDER</a>
+  <a href="#careers">WORK WITH US</a>
+  <a href="#about">ABOUT US</a>
+</nav>
+<div class="menu-overlay"></div>
+
+<div class="container">
+  <!-- LEFT SIDE - CAR DETAILS CAROUSEL -->
+  <div class="main-panel" id="mainPanel"></div>
+  
+  <!-- RIGHT SIDE - REMINDERS -->
+  <div class="reminders-panel" id="remindersPanel">
+    <h2 class="reminders-header">Reminders</h2>
+    <div id="remindersContent"></div>
+  </div>
+</div>
+
+<script>
+/* =============================================
+   SMART REMINDER - FIXED & WORKING VERSION
+   ============================================= */
+
+let carsData = [];
+let currentIndex = 0;
+
+// =============================================
+// HEADER & MENU
+// =============================================
+const hamburger = document.querySelector(".hamburger");
+const menu = document.getElementById("hamburgerMenu");
+const overlayEl = document.querySelector(".menu-overlay");
+
+function openMenu(){
+  hamburger.setAttribute("aria-expanded","true");
+  hamburger.classList.add("is-active");
+  if (window.innerWidth > 1024) hamburger.textContent = "✕";
+  menu.classList.add("active");
+  overlayEl.classList.add("active");
+  menu.setAttribute("aria-hidden","false");
+}
+function closeMenu(){
+  hamburger.setAttribute("aria-expanded","false");
+  hamburger.classList.remove("is-active");
+  if (window.innerWidth > 1024) hamburger.textContent = "☰";
+  menu.classList.remove("active");
+  overlayEl.classList.remove("active");
+  menu.setAttribute("aria-hidden","true");
+}
+function toggleMenu(){
+  if (menu.classList.contains("active")) closeMenu();
+  else openMenu();
+}
+hamburger.addEventListener("click", toggleMenu);
+overlayEl.addEventListener("click", closeMenu);
+window.addEventListener("resize", () => {
+  if(window.innerWidth > 1024 && menu.classList.contains("active")) closeMenu();
+});
+
+const authSection = document.getElementById("authSection");
+function updateAuthButton() {
+  if(window.innerWidth <= 768) {
+    authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+  } else {
+    authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
+  }
+}
+updateAuthButton();
+window.addEventListener("resize", updateAuthButton);
+
+(function(){
+  var header = document.querySelector('header');
+  function syncHeaderOffset(){
+    if (!header) return;
+    var h = header.offsetHeight;
+    document.documentElement.style.setProperty('--header-offset', h + 'px');
+  }
+  window.addEventListener('load', syncHeaderOffset);
+  window.addEventListener('resize', syncHeaderOffset);
+})();
+
+// =============================================
+// GENERATE SMART REMINDERS
+// =============================================
+function generateSmartReminders(car) {
+  const today = new Date();
+  const regDate = new Date(car.registrationDate || today);
+  const regYear = regDate.getFullYear();
+  const regMonth = regDate.getMonth();
+  const regDay = regDate.getDate();
+  
+  let revisioneYear = regYear + 4;
+  while(revisioneYear <= today.getFullYear()) {
+    revisioneYear += 2;
+  }
+  const revisioneDate = new Date(revisioneYear, regMonth, regDay);
+  
+  let bolloYear = today.getFullYear();
+  let bolloMonth = (regMonth + 1) % 12;
+  if(bolloMonth === 0) bolloMonth = 12;
+  const bolloDate = new Date(bolloYear, bolloMonth, 28);
+  if(bolloDate < today) {
+    bolloDate.setFullYear(bolloYear + 1);
+  }
+  
+  let insuranceYear = today.getFullYear();
+  const insuranceDate = new Date(insuranceYear, regMonth, regDay);
+  if(insuranceDate < today) {
+    insuranceDate.setFullYear(insuranceYear + 1);
+  }
+  
+  function getStatus(date) {
+    const diffTime = date.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if(diffDays < 0) return 'expired';
+    if(diffDays <= 90) return 'soon';
+    return 'active';
+  }
+  
+  function formatDate(date) {
+    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+    return date.toLocaleDateString('en-GB', options);
+  }
+  
+  return [
+    { title: "RCA Auto (Insurance)", status: getStatus(insuranceDate), expiry: formatDate(insuranceDate), type: "insurance" },
+    { title: "Bollo Auto (Road Tax)", status: getStatus(bolloDate), expiry: formatDate(bolloDate), type: "tax" },
+    { title: "Revisione Auto (Vehicle Inspection)", status: getStatus(revisioneDate), expiry: formatDate(revisioneDate), type: "inspection" }
+  ];
+}
+
+// =============================================
+// FETCH DATA FROM BACKEND
+// =============================================
+async function initSmartReminder() {
+  showLoading();
+
+  try {
+    const statusRes = await fetch("/garage-entry", { method: "GET", credentials: "include" });
+    const statusData = await statusRes.json();
+
+    if (statusData.status === "NOT_AUTHENTICATED") {
+      showLoginRequired();
+      return;
+    }
+
+    const vehRes = await fetch("/api/garage/vehicles", { credentials: "include" });
+    const vehData = await vehRes.json();
+
+    if (vehData.success && vehData.vehicles && vehData.vehicles.length > 0) {
+      
+      carsData = vehData.vehicles.map(v => ({
+        brand: v.brand || v.make || "Unknown",
+        model: v.model || "Unknown",
+        fuel: v.fuel || null,
+        plate: v.plate || "",
+        img: v.img || null,
+        logo: v.logo || null,
+        registrationDate: v.registrationDate || null,
+        reminders: generateSmartReminders(v)
+      }));
+
+      renderCarouselUI();
+      
+    } else {
+      showNoCars();
+    }
+
+  } catch (err) {
+    console.error("[Smart Reminder] Error:", err);
+    showError(err.message);
+  }
+}
+
+// =============================================
+// UI RENDERING FUNCTIONS
+// =============================================
+function showLoading() {
+  const mainPanel = document.getElementById('mainPanel');
+  mainPanel.innerHTML = `
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Loading your vehicles…</div>
+    </div>
+  `;
+  document.getElementById('remindersContent').innerHTML = '';
+}
+
+function showLoginRequired() {
+  const mainPanel = document.getElementById('mainPanel');
+  mainPanel.className = "status-state";
+  mainPanel.innerHTML = `
+    <div class="status-icon">🔒</div>
+    <div class="status-title">Login Required</div>
+    <div class="status-desc">Please login to view your Smart Reminders.</div>
+    <button class="status-btn primary" onclick="window.location.href='/login.html'">Login</button>
+  `;
+  document.getElementById('remindersContent').innerHTML = '';
+}
+
+function showNoCars() {
+  const mainPanel = document.getElementById('mainPanel');
+  mainPanel.className = "status-state";
+  mainPanel.innerHTML = `
+    <div class="status-icon">🚗</div>
+    <div class="status-title">No Cars Yet</div>
+    <div class="status-desc">Add vehicles to your Smart Garage to see personalized reminders here.</div>
+    <button class="status-btn green" onclick="window.location.href='/explore-smart-garage-beta/garagesearch.html'">Add Your First Car</button>
+  `;
+  document.getElementById('remindersContent').innerHTML = `
+    <div class="add-car-message">
+      <p>No vehicles found.</p>
+      <p class="highlight">Add a car to get started!</p>
+    </div>
+  `;
+}
+
+function showError(errMsg) {
+  const mainPanel = document.getElementById('mainPanel');
+  mainPanel.className = "status-state";
+  mainPanel.innerHTML = `
+    <div class="status-icon">⚠️</div>
+    <div class="status-title">Connection Error</div>
+    <div class="status-desc">Could not load: ${errMsg}</div>
+    <button class="status-btn primary" onclick="location.reload()">Refresh Page</button>
+  `;
+  document.getElementById('remindersContent').innerHTML = '';
+}
+
+function renderCarouselUI() {
+  const mainPanel = document.getElementById('mainPanel');
+  const totalCards = carsData.length + 1;
+  
+  let html = `
+    <div class="carousel-arrow left hidden" id="leftArrow">‹</div>
+    <div class="carousel-arrow right ${totalCards > 1 ? '' : 'hidden'}" id="rightArrow">›</div>
+    
+    <div class="carousel-container">
+      <div class="carousel-track" id="carouselTrack">
+  `;
+  
+  carsData.forEach((car) => {
+    html += `
+      <div class="carousel-card">
+        <div class="car-header">
+          <img src="${car.logo || 'https://via.placeholder.com/130x60?text=Logo'}" alt="${car.brand}" class="car-logo">
+          <div class="car-info">
+            <div class="car-name">${car.brand}</div>
+            <div class="car-model">${car.model}</div>
+            ${car.fuel ? `<div class="fuel-type">${car.fuel}</div>` : ''}
+          </div>
+        </div>
+        <div class="car-details">
+          <img src="${car.img || 'https://via.placeholder.com/550x367?text=No+Image'}" alt="${car.brand} ${car.model}" class="car-image">
+          <div class="italian-plate">${car.plate}</div>
+        </div>
+      </div>
+    `;
+  });
+  
+  html += `
+        <div class="carousel-card">
+          <div class="add-new-car" id="addNewCar">
+            <div class="icon">+</div>
+            <div class="text">Add a new car to garage</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="carousel-dots" id="carouselDots">
+  `;
+  
+  for(let i = 0; i < totalCards; i++) {
+    html += `<span class="dot${i === 0 ? ' active' : ''}" data-index="${i}"></span>`;
+  }
+  
+  html += `</div>`;
+  
+  mainPanel.innerHTML = html;
+  mainPanel.className = "main-panel";
+  
+  attachEventListeners();
+  
+  if(carsData.length > 0) {
+    updateReminders(carsData[0].reminders);
+  } else {
+    updateRemindersForNewCar();
+  }
+}
+
+function attachEventListeners() {
+  const leftArrow = document.getElementById('leftArrow');
+  const rightArrow = document.getElementById('rightArrow');
+  
+  if(leftArrow) {
+    leftArrow.addEventListener('click', () => {
+      if(currentIndex > 0) {
+        currentIndex--;
+        updateCarouselPosition();
+      }
+    });
+  }
+  
+  if(rightArrow) {
+    rightArrow.addEventListener('click', () => {
+      if(currentIndex < carsData.length) {
+        currentIndex++;
+        updateCarouselPosition();
+      }
+    });
+  }
+  
+  document.querySelectorAll('.dot').forEach(dot => {
+    dot.addEventListener('click', function() {
+      currentIndex = parseInt(this.dataset.index);
+      updateCarouselPosition();
+    });
+  });
+  
+  const addNewCarBtn = document.getElementById('addNewCar');
+  if(addNewCarBtn) {
+    addNewCarBtn.addEventListener('click', () => {
+      window.location.href = '/explore-smart-garage-beta/garagesearch.html';
+    });
+  }
+}
+
+// ✅ FIXED: Added missing closing brace!
+function updateCarouselPosition() {
+  const track = document.getElementById('carouselTrack');
+  const leftArrow = document.getElementById('leftArrow');
+  const rightArrow = document.getElementById('rightArrow');
+  const dots = document.querySelectorAll('.dot');
+  const totalCards = carsData.length + 1;
+  
+  if(!track) return;
+  
+  track.style.transform = `translateX(-${currentIndex * 100}%)`;
+  
+  if(leftArrow) leftArrow.classList.toggle('hidden', currentIndex === 0);
+  if(rightArrow) rightArrow.classList.toggle('hidden', currentIndex === totalCards - 1);
+  
+  dots.forEach((dot, index) => {
+    dot.classList.toggle('active', index === currentIndex);
+  });
+  
+  if(currentIndex < carsData.length) {
+    updateReminders(carsData[currentIndex].reminders);
+  } else {
+    updateRemindersForNewCar();
+  }
+} // ✅ THIS WAS THE MISSING BRACE!
+
+function updateReminders(reminders) {
+  const remindersContent = document.getElementById('remindersContent');
+  if(!remindersContent) return;
+  
+  remindersContent.innerHTML = reminders.map(reminder => `
+    <div class="reminder-card">
+      <div>
+        <div class="doc-title">${reminder.title}</div>
+        <div class="status ${reminder.status}">${getStatusText(reminder.status)}</div>
+        <div class="expiry">Expiry: ${reminder.expiry}</div>
+      </div>
+      <button class="view-btn" onclick="handleViewReminder('${reminder.title}', '${reminder.type}')">View</button>
+    </div>
+  `).join('');
+}
+
+function updateRemindersForNewCar() {
+  const remindersContent = document.getElementById('remindersContent');
+  if(!remindersContent) return;
+  
+  remindersContent.innerHTML = `
+    <div class="add-car-message">
+      <p>Add a new car to garage to view</p>
+      <p class="highlight">RCA Auto (Insurance) / Bollo Auto (Road Tax) / Revisione Auto (Vehicle Inspection)</p>
+      <p>details</p>
+    </div>
+  `;
+}
+
+function getStatusText(status) {
+  const statusMap = {
+    'active': 'Active',
+    'expired': 'Expired',
+    'soon': 'Expires Soon'
+  };
+  return statusMap[status] || status;
+}
+
+function handleViewReminder(title, type) {
+  console.log(`Viewing details for: ${title}`);
+  alert(`${title}\n\nHere you can:\n• View full details\n• Make payments\n• Download documents\n• Schedule appointments`);
+}
+
+// =============================================
+// INITIALIZATION
+// =============================================
+document.addEventListener('DOMContentLoaded', function() {
+  initSmartReminder();
+});
+</script>
+
+<script src="/js/auth.js"></script>
+<script src="js/translate.js"></script>
+</body>
+</html>

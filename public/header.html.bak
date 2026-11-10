@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeloValue Header</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #000;
+  --text: #fff;
+  --accent: #1db954;
+}
+
+/* Reset & base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Header Styles */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 2000;
+  border-bottom: 1px solid #333;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+header h1 a {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* Desktop nav */
+nav.desktop-nav {
+  display: flex;
+  gap: 20px;
+}
+nav.desktop-nav a {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+nav.desktop-nav a:hover {
+  text-decoration: underline;
+}
+
+/* Language select */
+.language-select {
+  position: relative;
+}
+.language-select select {
+  appearance: none;
+  background: #111;
+  color: var(--text);
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 6px 30px 6px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Auth button */
+#authSection .text-btn {
+  display: inline-flex;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+#authSection .icon-btn {
+  display: none;
+}
+
+/* Hamburger */
+.hamburger {
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2200;
+}
+
+/* Mobile menu */
+.menu {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 300px;
+  height: 100vh;
+  background: rgba(17,17,17,0.95);
+  border-right: 1px solid rgba(255,255,255,0.12);
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  transition: left 0.3s ease;
+  z-index: 2100;
+  backdrop-filter: blur(10px);
+  border-radius: 0 1rem 1rem 0;
+}
+.menu.active { left: 0; }
+.menu a {
+  color: var(--text);
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+/* Menu overlay */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 2050;
+}
+.menu-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Responsive header */
+@media (max-width: 1024px) {
+  nav.desktop-nav { display: none; }
+  .hamburger { display: flex; width: 40px; height: 40px; }
+}
+
+@media (max-width: 768px) {
+  #authSection .text-btn { display: none; }
+  #authSection .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  #authSection .icon-btn:active { transform: scale(0.95); }
+
+  /* Circular language icon */
+  .language-select {
+    width: 40px; height: 40px; border-radius: 50%; background: #111; border: 1px solid #fff; display: flex; align-items: center; justify-content: center;
+  }
+  .language-select::before { content:"🌐"; font-size:1.2rem; color:#fff; position:absolute; }
+  .language-select select { opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <h1><a href="/homepage.html">VeloValue</a></h1>
+  </div>
+
+  <div class="header-right">
+    <nav class="desktop-nav">
+      <a href="/homepage.html">HOME</a>
+      <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+      <a href="/explore-smart-garage-beta/smartgarage.html">SMART GARAGE</a>
+      <a href="/velocharge-beta/velocharge.html">VELOCHARGE</a>
+    </nav>
+    <div class="language-select">
+      <select id="languageSelect">
+        <option value="en">🇬🇧 English</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+    <div id="authSection">
+      <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
+    </div>
+  </div>
+</header>
+
+<nav class="menu" id="hamburgerMenu" aria-hidden="true">
+  <a href="/homepage.html">HOME</a>
+  <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+  <a href="/explore-smart-garage-beta/smartgarage.html">SMART GARAGE</a>
+  <a href="/velocharge-beta/velocharge.html">DISCOVER VELOCHARGE</a>
+  <a href="#careers">WORK WITH US</a>
+  <a href="#about">ABOUT US</a>
+</nav>
+<div class="menu-overlay"></div>
+
+<script>
+// Hamburger toggle
+const hamburger = document.querySelector(".hamburger");
+const menu = document.getElementById("hamburgerMenu");
+const overlay = document.querySelector(".menu-overlay");
+
+hamburger.addEventListener("click", () => {
+  const expanded = hamburger.getAttribute("aria-expanded") === "true";
+  hamburger.setAttribute("aria-expanded", !expanded);
+  menu.classList.toggle("active");
+  overlay.classList.toggle("active");
+  menu.setAttribute("aria-hidden", !menu.classList.contains("active"));
+});
+
+overlay.addEventListener("click", () => { hamburger.click(); });
+window.addEventListener("resize", () => { 
+  if(window.innerWidth > 1024 && menu.classList.contains("active")) hamburger.click(); 
+});
+
+// Auth button toggle
+const authSection = document.getElementById("authSection");
+function updateAuthButton() {
+  if(window.innerWidth <= 768) {
+    authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+  } else {
+    authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
+  }
+}
+updateAuthButton();
+window.addEventListener("resize", updateAuthButton);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Cars API</title>
+</head>
+<body>
+<h1>Cars from Apiverve API</h1>
+<div id="cars"></div>
+
+<script>
+fetch('/cars')
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById('cars');
+    if (!data || !data.length) {
+      container.innerHTML = "<p>No cars found.</p>";
+      return;
+    }
+    data.forEach(car => {
+      const div = document.createElement('div');
+      div.innerHTML = `<strong>${car.make} ${car.model}</strong> - ${car.price || 'N/A'} €`;
+      container.appendChild(div);
+    });
+  })
+  .catch(err => {
+    document.getElementById('cars').innerHTML = "<p style='color:red'>Error loading cars</p>";
+    console.error(err);
+  });
+</script>
+</body>
+</html>
