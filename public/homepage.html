@@ -78,12 +78,12 @@
   <section id="about" class="join-community">
     <h2>JOIN OUR COMMUNITY</h2>
     <div class="social-icons">
-      <a href="#" aria-label="Facebook" class="icon fb"><img src="Multimedia/facebook.svg" alt="Facebook" /></a>
-      <a href="#" aria-label="X (Twitter)" class="icon x"><img src="Multimedia/x.svg" alt="X" /></a>
-      <a href="#" aria-label="Instagram" class="icon insta"><img src="Multimedia/instagram.svg" alt="Instagram" /></a>
-      <a href="#" aria-label="YouTube" class="icon yt"><img src="Multimedia/youtube.svg" alt="YouTube" /></a>
-      <a href="#" aria-label="LinkedIn" class="icon linkedin"><img src="Multimedia/linkedin.svg" alt="LinkedIn" /></a>
-      <a href="#" aria-label="TikTok" class="icon tiktok"><img src="Multimedia/tiktok.svg" alt="TikTok" /></a>
+      <a href="#" data-social="facebook" aria-label="Facebook" class="icon fb"><img src="Multimedia/facebook.svg" alt="Facebook" /></a>
+      <a href="#" data-social="x" aria-label="X (Twitter)" class="icon x"><img src="Multimedia/x.svg" alt="X" /></a>
+      <a href="#" data-social="instagram" aria-label="Instagram" class="icon insta"><img src="Multimedia/instagram.svg" alt="Instagram" /></a>
+      <a href="#" data-social="youtube" aria-label="YouTube" class="icon yt"><img src="Multimedia/youtube.svg" alt="YouTube" /></a>
+      <a href="#" data-social="linkedin" aria-label="LinkedIn" class="icon linkedin"><img src="Multimedia/linkedin.svg" alt="LinkedIn" /></a>
+      <a href="#" data-social="tiktok" aria-label="TikTok" class="icon tiktok"><img src="Multimedia/tiktok.svg" alt="TikTok" /></a>
     </div>
 
     <div class="cars">
@@ -268,6 +268,38 @@
   }
   </script>
 
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const socials = window.VeloValueSiteInfo?.socials || {};
+
+    document.querySelectorAll(".social-icons a[data-social]").forEach(link => {
+        const platform = link.dataset.social;
+        const url = socials[platform];
+
+        if (url && url.trim() !== "") {
+            link.href = url;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+        } else {
+            link.href = "#";
+            link.classList.add("coming-soon");
+
+            link.addEventListener("click", function (event) {
+                event.preventDefault();
+
+                link.classList.add("show-message");
+
+                setTimeout(() => {
+                    link.classList.remove("show-message");
+                }, 2000);
+            });
+        }
+    });
+});
+</script>
+
+  <script src="/config/site-info.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/translate.js"></script>
 
