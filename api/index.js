@@ -183,13 +183,110 @@ app.post("/logout", (req, res) => {
   });
 });
 
-// ------------------- CHARGING STATIONS -------------------
-const stations = [
-  { id: 1, name: "Station A", lat: 37.7749, lng: -122.4194 },
-  { id: 2, name: "Station B", lat: 37.7849, lng: -122.4094 },
-  { id: 3, name: "Station C", lat: 37.7949, lng: -122.4294 }
-];
-app.get("/api/stations", (req, res) => res.json(stations));
+// ------------------- VELOCHARGE: PUBLIC CONFIG -------------------
+app.get("/api/config", (req, res) => {
+  const mapboxToken = process.env.MAPBOX_PUBLIC_TOKEN?.trim();
+
+  if (!mapboxToken) {
+    return res.status(500).json({
+      error: "Mapbox public token is not configured."
+    });
+  }
+
+  res.set("Cache-Control", "no-store");
+  return res.json({ mapboxToken });
+});
+
+app.get("/api/config.js", (req, res) => {
+  const mapboxToken = process.env.MAPBOX_PUBLIC_TOKEN?.trim();
+
+  if (!mapboxToken) {
+    return res.status(500).send(
+      "console.error('Mapbox public token is not configured.');"
+    );
+  }
+
+  res.set("Content-Type", "application/javascript; charset=utf-8");
+  res.set("Cache-Control", "no-store");
+
+  return res.send(
+    `window.VELOCHARGE_CONFIG = ${JSON.stringify({
+      mapboxToken
+    })};`
+  );
+});
+
+// ------------------- VELOCHARGE: CHARGING STATIONS -------------------
+app.get("/api/charging-stations", async (req, res) => {
+  try {
+    const apiKey = process.env.OCM_API_KEY?.trim();
+
+    if (!apiKey) {
+      return res.status(500).json({
+        error: "Open Charge Map API key is not configured."
+      });
+    }
+
+    const latitude = Number(req.query.latitude);
+    const longitude = Number(req.query.longitude);
+    const distance = Number(req.query.distance ?? 10);
+    const maxResults = Number(req.query.maxresults ?? 200);
+
+    if (
+      !Number.isFinite(latitude) ||
+      latitude < -90 ||
+      latitude > 90 ||
+      !Number.isFinite(longitude) ||
+      longitude < -180 ||
+      longitude > 180 ||
+      !Number.isFinite(distance) ||
+      distance < 1 ||
+      distance > 25 ||
+      !Number.isInteger(maxResults) ||
+      maxResults < 1 ||
+      maxResults > 500
+    ) {
+      return res.status(400).json({
+        error: "Invalid location or station search parameters."
+      });
+    }
+
+    const response = await axios.get(
+      "https://api.openchargemap.io/v3/poi/",
+      {
+        params: {
+          output: "json",
+          latitude,
+          longitude,
+          distance,
+          distanceunit: "KM",
+          maxresults: maxResults,
+          compact: "true",
+          verbose: "false",
+          key: apiKey
+        },
+        timeout: 15000
+      }
+    );
+
+    if (!Array.isArray(response.data)) {
+      throw new Error("Invalid response from Open Charge Map.");
+    }
+
+    return res.json(response.data);
+
+  } catch (err) {
+    console.error("VeloCharge upstream error:", {
+  status: err.response?.status,
+  data: err.response?.data,
+  message: err.message
+});
+
+    return res.status(502).json({
+      error: "Unable to retrieve charging stations."
+    });
+  }
+});
 
 // ------------------- STATIC ROUTES -------------------
 app.get("/", (req, res) =>

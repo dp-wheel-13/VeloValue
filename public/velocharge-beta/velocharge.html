@@ -980,44 +980,50 @@
       if (leftPanel.classList.contains('sheet-open')) closeSheet();
     });
     </script>
-
+    <script src="/api/config.js"></script>
     <script>
     /* ==============================================================
        MAP + OCM API + FILTERS + MARKERS
        ============================================================== */
 
     // ── CONFIG ──
-    mapboxgl.accessToken = process.env.MAPBOX_SECRET;
+if (!window.VELOCHARGE_CONFIG?.mapboxToken) {
+  throw new Error('Mapbox public token is not configured.');
+}
 
-    // ╔══════════════════════════════════════════════════════════════╗
-    // ║  STEP 1: Get your FREE key at https://openchargemap.org/register ║
-    // ║  STEP 2: Replace the value below with your actual key          ║
-    // ╚══════════════════════════════════════════════════════════════╝
-    var OCM_API_KEY = '0de30aa3-0ceb-46a5-936c-3724b2ca28b7';
+mapboxgl.accessToken = window.VELOCHARGE_CONFIG.mapboxToken;
 
-    var fallbackCenter = [12.4964, 41.9028]; // Rome
-    var MAP_STYLES = {
-      streets:    'mapbox://styles/mapbox/streets-v12',
-      satellite:  'mapbox://styles/mapbox/satellite-streets-v12',
-      dark:       'mapbox://styles/mapbox/dark-v11',
-      navigation: 'mapbox://styles/mapbox/navigation-day-v1'
-    };
-    var currentMapStyle = 'streets';
+var fallbackCenter = [12.4964, 41.9028]; // Rome
 
-    var map = new mapboxgl.Map({
-      container: 'map',
-      style: MAP_STYLES[currentMapStyle],
-      center: fallbackCenter,
-      zoom: 12
-    });
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+var MAP_STYLES = {
+  streets: 'mapbox://styles/mapbox/streets-v12',
+  satellite: 'mapbox://styles/mapbox/satellite-streets-v12',
+  dark: 'mapbox://styles/mapbox/dark-v11',
+  navigation: 'mapbox://styles/mapbox/navigation-day-v1'
+};
 
-    var geolocate = new mapboxgl.GeolocateControl({
-      positionOptions: { enableHighAccuracy: true, timeout: 10000 },
-      trackUserLocation: true, showAccuracyCircle: false,
-      fitBoundsOptions: { maxZoom: 14 }
-    });
-    map.addControl(geolocate, 'top-right');
+var currentMapStyle = 'streets';
+
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: MAP_STYLES[currentMapStyle],
+  center: fallbackCenter,
+  zoom: 12
+});
+
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+var geolocate = new mapboxgl.GeolocateControl({
+  positionOptions: {
+    enableHighAccuracy: true,
+    timeout: 10000
+  },
+  trackUserLocation: true,
+  showAccuracyCircle: false,
+  fitBoundsOptions: { maxZoom: 14 }
+});
+
+map.addControl(geolocate, 'top-right');
 
     var searchBtn = document.getElementById('searchAreaBtn');
     var loadingEl = document.getElementById('loadingIndicator');
@@ -1062,11 +1068,6 @@
       initFiltersUI();
       initSettingsUI();
       initLanguageUI();
-
-      if (OCM_API_KEY === 'YOUR_OCM_API_KEY_HERE') {
-        showError(i18n.t('error_no_key'));
-        return;
-      }
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -1257,10 +1258,6 @@
 
     // ── FETCH STATIONS ──
     async function refreshStations() {
-      if (OCM_API_KEY === 'YOUR_OCM_API_KEY_HERE') {
-        showError(i18n.t('error_no_key'));
-        return;
-      }
       showLoading();
       var c = map.getCenter(), r = clamp(approxRadiusKm(map), 2, 25);
       var maxRes = parseInt(document.getElementById('maxResultsSelect').value) || 200;
@@ -1277,18 +1274,31 @@
       }
     }
 
-    async function fetchOCM(lng, lat, dist, max) {
-      var p = new URLSearchParams({
-        output:'json', latitude:String(lat), longitude:String(lng),
-        distance:String(dist), distanceunit:'KM', maxresults:String(max||200),
-        compact:'true', verbose:'false', key: OCM_API_KEY
-      });
-      var res = await fetch('https://api.openchargemap.io/v3/poi/?' + p);
-      if (!res.ok) throw new Error('API ' + res.status);
-      var items = await res.json();
-      if (!Array.isArray(items)) throw new Error('Bad response');
-      return ocmToGeoJSON(items);
-    }
+async function fetchOCM(lng, lat, dist, max) {
+  var p = new URLSearchParams({
+    latitude: String(lat),
+    longitude: String(lng),
+    distance: String(dist),
+    maxresults: String(max || 200)
+  });
+
+  var res = await fetch('/api/charging-stations?' + p.toString(), {
+    method: 'GET',
+    credentials: 'same-origin'
+  });
+
+  if (!res.ok) {
+    throw new Error('API ' + res.status);
+  }
+
+  var items = await res.json();
+
+  if (!Array.isArray(items)) {
+    throw new Error('Bad response');
+  }
+
+  return ocmToGeoJSON(items);
+}
 
     function ocmToGeoJSON(items) {
       var feats = [];
