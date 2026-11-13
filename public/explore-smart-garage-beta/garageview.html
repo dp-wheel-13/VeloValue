@@ -320,6 +320,96 @@ nav.desktop-nav a:hover { text-decoration:underline; }
   .car-image-box { min-height:220px; }
   .italian-plate { font-size:16px; letter-spacing:2px; width:95%; }
 }
+
+/* ===== Vehicle Details Popup ===== */
+.car-details-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.car-details-panel {
+  position: relative;
+  width: 100%;
+  max-width: 650px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 30px;
+  border-radius: 20px;
+  background: #151515;
+  border: 1px solid rgba(242,201,76,0.3);
+}
+
+.car-details-panel h2 {
+  color: var(--gold);
+  font-size: 25px;
+  margin-bottom: 22px;
+  padding-right: 35px;
+}
+
+.car-details-panel h3 {
+  color: var(--gold);
+  font-size: 16px;
+  margin: 25px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.car-details-close {
+  position: absolute;
+  top: 15px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.car-details-image {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  margin-bottom: 20px;
+  border-radius: 12px;
+}
+
+.car-details-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 13px;
+}
+
+.car-details-row span {
+  color: #999;
+}
+
+.car-details-row strong {
+  color: #fff;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+@media(max-width:600px) {
+  .car-details-panel {
+    padding: 22px 16px;
+  }
+
+  .car-details-row {
+    font-size: 12px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -480,13 +570,36 @@ function showError(errMsg) {
       
       // Normalize data (supports both 'brand' and 'make' from database)
       const vehicles = vehData.vehicles.map(v => ({
-        brand: v.brand || v.make || "Unknown",
-        model: v.model || "Unknown",
-        fuel: v.fuel || null,
-        plate: v.plate || "",
-        img: v.img || null,
-        logo: v.logo || null
-      }));
+  // Basic vehicle information
+  brand: v.brand || v.make || "Unknown",
+  model: v.model || "Unknown",
+  year: v.year || null,
+  fuel: v.fuel || null,
+  plate: v.plate || "",
+
+  // Vehicle images
+  img: v.img || null,
+  logo: v.logo || null,
+
+  // Vehicle identification
+  vin: v.vin || null,
+
+  // Technical specifications
+  engine: v.engine || null,
+  transmission: v.transmission || null,
+  power: v.power || null,
+  bodyType: v.bodyType || null,
+
+  // Registration and compliance
+  registrationPlace: v.registrationPlace || null,
+  euroClass: v.euroClass || null,
+  insuranceStatus: v.insuranceStatus || null,
+  inspectionStatus: v.inspectionStatus || null,
+  inspectionDueDate: v.inspectionDueDate || null,
+  theftReported: typeof v.theftReported === "boolean"
+    ? v.theftReported
+    : null
+}));
 
       cars = [...vehicles, { isAddNew: true }];
       filteredCars = [...cars];
@@ -527,7 +640,107 @@ function updateGarageLevel() {
 }
 
 function openDetails(car) {
-  alert("Open details for " + car.brand + " " + car.model + " (" + car.plate + ")");
+  // Remove an existing popup, if present
+  const existingModal = document.getElementById("carDetailsModal");
+  if (existingModal) existingModal.remove();
+
+  const modal = document.createElement("div");
+  modal.id = "carDetailsModal";
+  modal.className = "car-details-overlay";
+
+  const panel = document.createElement("div");
+  panel.className = "car-details-panel";
+
+  const title = document.createElement("h2");
+  title.textContent = `${car.brand} ${car.model}`;
+  panel.appendChild(title);
+
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "car-details-close";
+  closeBtn.textContent = "×";
+  closeBtn.setAttribute("aria-label", "Close vehicle details");
+  closeBtn.onclick = () => modal.remove();
+  panel.appendChild(closeBtn);
+
+  if (car.img) {
+    const image = document.createElement("img");
+    image.src = car.img;
+    image.alt = `${car.brand} ${car.model}`;
+    image.className = "car-details-image";
+    panel.appendChild(image);
+  }
+
+  const sections = [
+    {
+      heading: "Vehicle Information",
+      fields: [
+        ["Registration Plate", car.plate],
+        ["Manufacturer", car.brand],
+        ["Model", car.model],
+        ["Year", car.year],
+        ["Fuel Type", car.fuel],
+        ["VIN", car.vin]
+      ]
+    },
+    {
+      heading: "Technical Specifications",
+      fields: [
+        ["Engine", car.engine],
+        ["Transmission", car.transmission],
+        ["Power", car.power],
+        ["Body Type", car.bodyType]
+      ]
+    },
+    {
+      heading: "Registration & Compliance",
+      fields: [
+        ["Registration Location", car.registrationPlace],
+        ["Euro Emission Class", car.euroClass],
+        ["Insurance Status", car.insuranceStatus],
+        ["Inspection Status", car.inspectionStatus],
+        ["Next Inspection Due", car.inspectionDueDate],
+        ["Theft Reported", car.theftReported === null
+          ? null
+          : car.theftReported ? "Yes" : "No"]
+      ]
+    }
+  ];
+
+  sections.forEach(section => {
+    const heading = document.createElement("h3");
+    heading.textContent = section.heading;
+    panel.appendChild(heading);
+
+    section.fields.forEach(([label, value]) => {
+      if (value === null || value === undefined || value === "") return;
+
+      const row = document.createElement("div");
+      row.className = "car-details-row";
+
+      const labelEl = document.createElement("span");
+      labelEl.textContent = label;
+
+      const valueEl = document.createElement("strong");
+      valueEl.textContent = String(value);
+
+      row.append(labelEl, valueEl);
+      panel.appendChild(row);
+    });
+  });
+
+  modal.appendChild(panel);
+  document.body.appendChild(modal);
+
+  modal.addEventListener("click", event => {
+    if (event.target === modal) modal.remove();
+  });
+
+  document.addEventListener("keydown", function closeOnEscape(event) {
+    if (event.key === "Escape") {
+      modal.remove();
+      document.removeEventListener("keydown", closeOnEscape);
+    }
+  });
 }
 
 function renderCarCardHTML(car) {
@@ -626,35 +839,57 @@ function renderCardSlider() {
 
 async function removeCurrentCar() {
   const currentCar = filteredCars[currentIndex];
+
   if (!currentCar || currentCar.isAddNew) return;
 
   const carName = currentCar.brand + " " + currentCar.model;
-  if (!confirm("Are you sure you want to remove " + carName + " (" + currentCar.plate + ") from your garage?")) return;
+
+  if (!confirm(
+    "Are you sure you want to remove " +
+    carName + " (" + currentCar.plate + ") from your garage?"
+  )) return;
 
   try {
     const res = await fetch("/garage/remove-car", {
       method: "POST",
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plate: currentCar.plate })
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        plate: currentCar.plate
+      })
     });
+
     const data = await res.json();
 
-    if (data.success) {
-      cars = cars.filter(c => c.plate !== currentCar.plate);
-      filteredCars = filteredCars.filter(c => c.plate !== currentCar.plate);
-
-      const realCars = cars.filter(c => !c.isAddNew);
-      if (realCars.length === 0) {
-        showNoCars();
-      } else {
-        currentIndex = 0;
-        renderCardSlider();
-      }
-    } else {
+    if (!res.ok || !data.success) {
       alert("Failed to remove car: " + (data.message || "Unknown error"));
+      return;
     }
+
+    // Remove only the selected vehicle from the frontend arrays.
+    cars = cars.filter(c =>
+      c.isAddNew || c.plate !== currentCar.plate
+    );
+
+    filteredCars = filteredCars.filter(c =>
+      c.isAddNew || c.plate !== currentCar.plate
+    );
+
+    currentIndex = 0;
+
+    const remainingCars = filteredCars.filter(c => !c.isAddNew);
+
+    if (remainingCars.length === 0) {
+      showNoCars();
+    } else {
+      // Preserve the currently selected view.
+      renderView(viewModeSelect.value);
+    }
+
   } catch (err) {
+    console.error("[Garage] Remove error:", err);
     alert("Could not connect to server to remove car.");
   }
 }

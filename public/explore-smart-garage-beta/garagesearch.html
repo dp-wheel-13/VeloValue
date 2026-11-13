@@ -274,73 +274,177 @@
 const proceedBtn = document.getElementById("proceedBtn");
 const plateInput = document.getElementById("numberPlateInput");
 
+function firstAvailable(...values) {
+  return values.find(value =>
+    value !== undefined &&
+    value !== null &&
+    String(value).trim() !== ""
+  ) ?? null;
+}
+
+function formatEuroClass(value) {
+  if (value === undefined || value === null || String(value).trim() === "") {
+    return null;
+  }
+
+  const text = String(value).trim();
+  return /^\d+$/.test(text) ? `Euro ${text}` : text;
+}
+
 proceedBtn.addEventListener("click", async () => {
-  const plate = plateInput.value.trim().toUpperCase();
-  if (!plate) { alert("Please enter your number plate."); return; }
+  const plate = plateInput.value.trim().replace(/[\s-]/g, "").toUpperCase();
+
+  if (!plate) {
+    alert("Please enter your number plate.");
+    return;
+  }
+
+  const originalButtonText = proceedBtn.textContent;
+  proceedBtn.disabled = true;
+  proceedBtn.textContent = "Searching...";
 
   try {
-    // 1. Fetch from InfoTarga API
-    const res = await axios.get(`/api/lookup/${encodeURIComponent(plate)}`);
+    // 1. Fetch vehicle information from the VeloValue InfoTarga route.
+    const res = await axios.get(`/api/lookup/${encodeURIComponent(plate)}`, {
+      withCredentials: true
+    });
+
     const data = res.data;
-    
-    console.log("✅ InfoTarga API Response:", data);
+    console.log("InfoTarga API Response:", data);
 
-    if (data.success) {
-      
-      // 2. Extract details directly from the nested "info" object
-      const brand = (data.info && data.info.brand) ? data.info.brand : "Unknown";
-      const model = (data.info && data.info.model) ? data.info.model : "Unknown";
-      const fuel = (data.info && data.info.engine) ? data.info.engine.fuel : null;
-
-      console.log("🔄 Parsed Data to send:", { plate, brand, model, fuel });
-
-      // 3. Save car to backend database
-      const saveRes = await fetch("/garage/search", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          plate: plate,
-          brand: brand,
-          model: model,
-          fuel: fuel,
-          img: null,   // API doesn't provide this
-          logo: null   // API doesn't provide this
-        })
-      });
-
-      const saveData = await saveRes.json();
-      console.log("✅ Backend Save Response:", saveData);
-
-      if (saveData.success) {
-        // SUCCESS: Redirect to garage view
-        window.location.href = "/explore-smart-garage-beta/garageview.html";
-      } else {
-        if (saveData.message && saveData.message.includes("already")) {
-          alert("This car is already in your garage.");
-          window.location.href = "/explore-smart-garage-beta/garageview.html";
-        } else {
-          alert("Failed to save car: " + (saveData.message || "Unknown error"));
-        }
-      }
-    } else {
-      // InfoTarga returned success: false
+    if (!data || data.success !== true) {
       const container = document.querySelector(".garage-container");
       let msgEl = document.getElementById("errorMsg");
-      if (!msgEl) { 
-        msgEl = document.createElement("p"); 
-        msgEl.id = "errorMsg"; 
-        msgEl.style.color = "#ff6b6b"; 
-        msgEl.style.fontSize = "18px"; 
-        msgEl.style.marginTop = "20px"; 
-        container.appendChild(msgEl); 
+
+      if (!msgEl) {
+        msgEl = document.createElement("p");
+        msgEl.id = "errorMsg";
+        msgEl.style.color = "#ff6b6b";
+        msgEl.style.fontSize = "18px";
+        msgEl.style.marginTop = "20px";
+        container.appendChild(msgEl);
       }
-      msgEl.innerHTML = `Error: ${data.message}. <a href="/explore-smart-garage-beta/manual-upload.html" style="color:#f2c94c; text-decoration:underline;">Enter details manually</a>`;
+
+      msgEl.textContent = `Error: ${data?.message || "Vehicle lookup failed."} `;
+      const manualLink = document.createElement("a");
+      manualLink.href = "/explore-smart-garage-beta/manual-upload.html";
+      manualLink.textContent = "Enter details manually";
+      manualLink.style.color = "#f2c94c";
+      manualLink.style.textDecoration = "underline";
+      msgEl.appendChild(manualLink);
+      return;
     }
 
-  } catch (err) { 
-    console.error("❌ FULL ERROR:", err); 
-    alert("Error: " + err.message); 
+    // 2. Support both the current test response and the previously supplied
+    // production response. The test response uses flat fields under info;
+    // the production response uses vehicle / registration / emissions objects.
+    const info = data.info || data;
+    const vehicle = info.vehicle || {};
+    const registration = info.registration || {};
+    const engine = info.engine || vehicle.engine || {};
+    const emissions = info.emissions || {};
+    const productionEuroClass = emissions.euroClass || {};
+    const insurance = info.insurance || {};
+    const inspection = info.inspection || {};
+    const theft = info.theft || {};
+
+    const brand = firstAvailable(info.brand, vehicle.brand) || "Unknown";
+    const model = firstAvailable(info.model, vehicle.model) || "Unknown";
+    const fuel = firstAvailable(engine.fuel);
+    const vin = firstAvailable(info.vin, vehicle.vin, vehicle.wine);
+
+    const registrationPlace = firstAvailable(
+      info.registrationPlace,
+      registration.place
+    );
+
+    const euroClass = formatEuroClass(firstAvailable(
+      emissions.class,
+      productionEuroClass.class,
+      productionEuroClass.name,
+      productionEuroClass.value,
+      productionEuroClass.internship
+    ));
+
+    let insuranceStatus = firstAvailable(
+      info.insuranceStatus,
+      insurance.status
+    );
+
+    if (!insuranceStatus && typeof data.insuranceCompliant === "boolean") {
+      insuranceStatus = data.insuranceCompliant
+        ? "Compliant"
+        : "Not compliant";
+    }
+
+    let inspectionStatus = firstAvailable(
+      info.inspectionStatus,
+      inspection.status
+    );
+
+    if (!inspectionStatus && typeof inspection.compliant === "boolean") {
+      inspectionStatus = inspection.compliant
+        ? "Compliant"
+        : "Not compliant";
+    }
+
+    const inspectionDueDate = firstAvailable(
+      info.inspectionDueDate,
+      inspection.nextDueDate
+    );
+
+    const theftReported = firstAvailable(
+      theft.report,
+      info.theftReported
+    );
+
+    const vehicleData = {
+      plate,
+      brand,
+      model,
+      fuel,
+      vin,
+      registrationPlace,
+      euroClass,
+      insuranceStatus,
+      inspectionStatus,
+      inspectionDueDate,
+      theftReported,
+      img: null,
+      logo: null
+    };
+
+    console.log("Parsed vehicle data to save:", vehicleData);
+
+    // 3. Save the vehicle once. The backend remains responsible for
+    // rejecting a registration plate that is already in this user's garage.
+    const saveRes = await fetch("/garage/search", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(vehicleData)
+    });
+
+    const saveData = await saveRes.json();
+    console.log("Backend Save Response:", saveData);
+
+    if (saveData.success) {
+      if (saveData.alreadyExists) {
+        alert("This car is already in your garage.");
+      }
+
+      window.location.href = "/explore-smart-garage-beta/garageview.html";
+      return;
+    }
+
+    alert("Failed to save car: " + (saveData.message || "Unknown error"));
+
+  } catch (err) {
+    console.error("FULL ERROR:", err);
+    alert("Error: " + (err.response?.data?.message || err.message));
+  } finally {
+    proceedBtn.disabled = false;
+    proceedBtn.textContent = originalButtonText;
   }
 });
 </script>
