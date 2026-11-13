@@ -41,6 +41,8 @@ const infotargaRoutes = require("../routes/infotarga"); // InfoTarga routes
 const authSocialRoutes = require("../routes/authSocial");
 const app = express();
 
+app.set("trust proxy", 1);
+
 // ------------------- MIDDLEWARE -------------------
 app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: false }));
 app.use(express.json());
