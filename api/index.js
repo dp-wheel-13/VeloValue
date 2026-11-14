@@ -41,6 +41,86 @@ const infotargaRoutes = require("../routes/infotarga"); // InfoTarga routes
 const authSocialRoutes = require("../routes/authSocial");
 const app = express();
 
+
+// ------------------- SHARED MONGODB CONNECTION -------------------
+let mongoConnectPromise = null;
+let sessionStorePromise = null;
+let sessionStore = null;
+let sessionMiddleware = null;
+
+// Reset the session middleware when Mongoose disconnects.
+// Do not close the client: it is shared with Mongoose.
+mongoose.connection.on("disconnected", () => {
+  console.error("[MongoDB] Connection disconnected. Resetting session middleware.");
+  mongoConnectPromise = null;
+  sessionStore = null;
+  sessionMiddleware = null;
+  sessionStorePromise = null;
+});
+
+async function initializeMongo() {
+  // Connect Mongoose, retrying on a subsequent request if connection fails.
+  if (mongoose.connection.readyState !== 1) {
+    if (!mongoConnectPromise) {
+      mongoConnectPromise = mongoose
+        .connect(MONGO_URI, {
+          serverSelectionTimeoutMS: 7000
+        })
+        .then(() => {
+          console.log("[MongoDB] Connected:", mongoose.connection.name);
+        })
+        .catch((err) => {
+          mongoConnectPromise = null;
+          throw err;
+        });
+    }
+
+    await mongoConnectPromise;
+  }
+
+
+// Create the session store only once, even if requests arrive concurrently.
+if (!sessionMiddleware) {
+  if (!sessionStorePromise) {
+    sessionStorePromise = (async () => {
+      const store = MongoStore.create({
+        client: mongoose.connection.getClient(),
+        dbName: mongoose.connection.name,
+        collectionName: "sessions",
+        ttl: 14 * 24 * 60 * 60
+      });
+
+      await store.collectionP;
+
+      const middleware = session({
+        secret: SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        store,
+        cookie: {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: IS_PRODUCTION,
+          maxAge: 14 * 24 * 60 * 60 * 1000
+        }
+      });
+
+      sessionStore = store;
+      sessionMiddleware = middleware;
+
+      console.log("[MongoDB] Shared session store ready");
+    })().catch((err) => {
+      sessionStorePromise = null;
+      sessionStore = null;
+      sessionMiddleware = null;
+      throw err;
+    });
+  }
+
+  await sessionStorePromise;
+}
+}
+
 app.set("trust proxy", 1);
 
 // ------------------- MIDDLEWARE -------------------
@@ -51,27 +131,40 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files from public folder
 app.use(express.static(path.join(__dirname, "../public")));
 
-// Persistent MongoDB sessions
-app.use(
-  session({
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MONGO_URI
-      ? MongoStore.create({
-          mongoUrl: MONGO_URI,
-          collectionName: "sessions",
-          ttl: 14 * 24 * 60 * 60
-        })
-      : undefined,
-    cookie: {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: IS_PRODUCTION,
-      maxAge: 14 * 24 * 60 * 60 * 1000
+ // Persistent MongoDB sessions — initialized through shared connection
+app.use(async (req, res, next) => {
+  try {
+    await initializeMongo();
+
+    return sessionMiddleware(req, res, (err) => {
+  if (err) {
+    console.error("[MongoDB] Session middleware failed:", {
+      name: err.name,
+      message: err.message
+    });
+
+    if (res.headersSent) {
+      return next(err);
     }
-  })
-);
+
+    return res.status(503).json({
+      error: "Session service temporarily unavailable. Please try again."
+    });
+  }
+
+  return next();
+});
+  } catch (err) {
+    console.error("[MongoDB] Session initialization failed:", {
+      name: err.name,
+      message: err.message
+    });
+
+    return res.status(503).json({
+      error: "Database temporarily unavailable. Please try again."
+    });
+  }
+});
 
 // Passport authentication
 app.use(passport.initialize());
@@ -87,16 +180,6 @@ app.use("/api", exploreRoutes);
 
 // Google and Facebook authentication
 app.use("/", authSocialRoutes);
-
-// ------------------- MONGO CONNECTION -------------------
-
-mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log("MongoDB connected:", mongoose.connection.name))
-  .catch((err) => {
-    console.error("MongoDB connection error:", err.message);
-    process.exit(1);
-  });
 
 // ------------------- MODELS -------------------
 // Translation cache model (used in your existing translation route)
