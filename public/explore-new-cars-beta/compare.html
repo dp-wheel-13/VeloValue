@@ -551,29 +551,64 @@
       return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">×</button></span>`;
     }
 
-    function colHTML(meta, id){
-      const name = `${meta.brand||''} ${meta.model||''}`.trim() || id;
-      const sub = [meta.body, meta.fuel].filter(Boolean).join(' • ');
-      const t = meta.gear ? (meta.gear === 'Auto' ? 'Automatic' : meta.gear) : '—';
-      return `
-        <div class="col" data-id="${id}">
-          <div class="head">
-            ${meta.img ? `<img class="img" src="${meta.img}" alt="${name}">` : `<div class="img" style="display:grid;place-items:center;opacity:.6">No image</div>`}
-            <div class="name">${name}</div>
-            <div class="sub">${sub || '&nbsp;'}</div>
-            <div class="actions">
-              <a class="btn" href="cars.html?id=${encodeURIComponent(id)}">View</a>
-              <button class="btn" data-remove="${id}">Remove</button>
-            </div>
-          </div>
-          <div class="row"><span class="k">Price</span><span class="v">${formatEUR(meta.price)}</span></div>
-          <div class="row"><span class="k">Body</span><span class="v">${meta.body || '—'}</span></div>
-          <div class="row"><span class="k">Fuel</span><span class="v">${meta.fuel || '—'}</span></div>
-          <div class="row"><span class="k">Transmission</span><span class="v">${t}</span></div>
-          <div class="row"><span class="k">Rating</span><span class="v">${meta.rating ?? '—'}</span></div>
-        </div>`;
+    function escapeHTML(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[char]);
     }
 
+    function colHTML(meta, id){
+      const safe = value => escapeHTML(value == null || value === '' ? '—' : value);
+      const name = `${meta.brand||''} ${meta.model||''}`.trim() || id;
+      const title = meta.variantName ? `${name} — ${meta.variantName}` : name;
+      const sub = [meta.body, meta.fuel].filter(Boolean).join(' • ');
+      const t = meta.gear ? (meta.gear === 'Auto' ? 'Automatic' : meta.gear) : '—';
+      const power = meta.powerHp != null
+        ? `${meta.powerHp} HP${meta.powerKw != null ? ` / ${meta.powerKw} kW` : ''}`
+        : '—';
+      const acceleration = meta.zeroTo100 != null ? `${meta.zeroTo100} s` : '—';
+      const topSpeed = meta.topSpeed != null ? `${meta.topSpeed} km/h` : '—';
+      const consumption = meta.fuelConsumption != null ? `${meta.fuelConsumption} L/100 km` : '—';
+      const viewUrl = meta.generationId
+        ? `cars.html?code=${encodeURIComponent(meta.generationId)}&variant=${encodeURIComponent(meta.variantIndex ?? "")}`
+        : `cars.html?id=${encodeURIComponent(id)}`;
+      const row = (label, value) =>
+        `<div class="row"><span class="k">${escapeHTML(label)}</span><span class="v">${safe(value)}</span></div>`;
+
+      return `
+        <div class="col" data-id="${escapeHTML(id)}">
+          <div class="head">
+            ${meta.img ? `<img class="img" src="${escapeHTML(meta.img)}" alt="${escapeHTML(title)}">` : `<div class="img" style="display:grid;place-items:center;opacity:.6">No image</div>`}
+            <div class="name">${escapeHTML(title)}</div>
+            <div class="sub">${escapeHTML(sub || '—')}</div>
+            <div class="actions">
+              <a class="btn" href="${viewUrl}">View</a>
+              <button class="btn" data-remove="${escapeHTML(id)}">Remove</button>
+            </div>
+          </div>
+          ${row('Variant', meta.variantName)}
+          ${row('Price', meta.price == null ? '—' : formatEUR(meta.price))}
+          ${row('Body', meta.body)}
+          ${row('Fuel', meta.fuel)}
+          ${row('Power', power)}
+          ${row('Torque', meta.torqueNm != null ? `${meta.torqueNm} Nm` : '—')}
+          ${row('Transmission', t)}
+          ${row('Drivetrain', meta.drivetrain)}
+          ${row('0–100 km/h', acceleration)}
+          ${row('Top speed', topSpeed)}
+          ${row('Fuel consumption', consumption)}
+          ${row('Length', meta.lengthMm != null ? `${meta.lengthMm} mm` : '—')}
+          ${row('Width', meta.widthMm != null ? `${meta.widthMm} mm` : '—')}
+          ${row('Height', meta.heightMm != null ? `${meta.heightMm} mm` : '—')}
+          ${row('Wheelbase', meta.wheelbaseMm != null ? `${meta.wheelbaseMm} mm` : '—')}
+          ${row('Kerb weight', meta.kerbWeightKg != null ? `${meta.kerbWeightKg} kg` : '—')}
+          ${row('Rating', meta.rating)}
+        </div>`;
+    }
     function render(){
       const ids = loadIds();
       const meta = loadMeta();

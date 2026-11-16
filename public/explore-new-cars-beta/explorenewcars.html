@@ -59,10 +59,10 @@
     .hero::before{ content:""; position:absolute; inset:0; background:radial-gradient(1200px 300px at 50% 0%, rgba(255,255,255,.06), transparent 60%); z-index:0; pointer-events:none; }
     .hero video{ position:absolute; top:50%; left:50%; min-width:100%; min-height:100%; width:auto; height:auto; z-index:-1; transform:translate(-50%,-50%); object-fit:cover; filter:brightness(.6); }
     .search-wrap{ width:min(1100px,92vw); background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:10px; backdrop-filter:blur(6px); box-shadow:0 14px 40px rgba(0,0,0,.5); display:flex; align-items:center; gap:10px; position:relative; z-index:1; }
-    .search-wrap select{ appearance:none; background:#111; color:#fff; border:1px solid #333; border-radius:20px; padding:8px 30px 8px 12px; font-size:0.9rem; cursor:pointer; flex:1; min-width:0; }
+    .search-wrap select, .search-wrap input{ appearance:none; background:#111; color:#fff; border:1px solid #333; border-radius:20px; padding:8px 30px 8px 12px; font-size:0.9rem; cursor:pointer; flex:1; min-width:0; }
     .search-btn{ background:var(--accent); border:0; color:var(--bg); font-weight:800; padding:12px 18px; border-radius:999px; cursor:pointer; transition:filter .2s, transform .05s; white-space:nowrap; }
     .search-btn:hover{ filter:brightness(1.05); } .search-btn:active{ transform:translateY(1px); }
-    @media (max-width:600px){ .search-wrap{ border-radius:16px; padding:8px 10px; } .search-btn{ padding:10px 14px; font-weight:700; } .search-wrap select{ font-size:0.8rem; padding:6px 24px 6px 8px; } }
+    @media (max-width:600px){ .search-wrap{ border-radius:16px; padding:8px 10px; } .search-btn{ padding:10px 14px; font-weight:700; } .search-wrap select, .search-wrap input{ font-size:0.8rem; padding:6px 24px 6px 8px; } }
 
     .section{ width:min(1200px,94vw); margin:0 auto; padding:26px 0; } .section h2{ font-size:22px; margin:0 0 14px; letter-spacing:.2px; }
     .marquee{ position:relative; overflow:hidden; border-radius:var(--radius-xl); background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); padding:14px; box-shadow:var(--shadow-1); }
@@ -164,9 +164,9 @@
       .hamburger.is-active { background-size:0 0; } .hamburger.is-active::before { top:50%; transform:translateX(-50%) rotate(45deg); } .hamburger.is-active::after { top:50%; transform:translateX(-50%) rotate(-45deg); }
     }
     @media(max-width:768px){
-      #authSection .text-btn{display:none;} #authSection .icon-btn{ display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; font-size:1.2rem; background:#fff; color:#000; border:none; cursor:pointer; }
+      #authSection .text-btn{display:none;} #authSection .icon-btn{display:inline-flex; align-items:center; justify-content:center; width:auto; height:auto; padding:8px 16px; border-radius:999px; font-size:0.9rem; font-weight:600; background:#fff; color:#000; border:none; cursor:pointer;}
       .language-select{ width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff; display:flex; align-items:center; justify-content:center; position:relative; }
-      .language-select::before{content:"🌐"; font-size:1.2rem; color:#fff; position:absolute;} .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
+      .language-select::before{content:"ðŸŒ"; font-size:1.2rem; color:#fff; position:absolute;} .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
       header { padding:0.5rem 0.8rem !important; height:60px; gap:10px; }
       .header-left, .header-right { gap:10px !important; }
       .hamburger { width:30px !important; height:30px !important; } .hamburger::before, .hamburger::after { width:16px !important; } .hamburger { background-size:16px 2px !important; }
@@ -195,7 +195,7 @@
         <a href="#about">ABOUT US</a>
       </nav>
       <div class="language-select">
-        <select id="languageSelect"><option value="en">🇬🇧 English</option><option value="it">🇮🇹 Italiano</option><option value="de">🇩🇪 Deutsch</option></select>
+        <select id="languageSelect"><option value="en">ðŸ‡¬ðŸ‡§ English</option><option value="it">ðŸ‡®ðŸ‡¹ Italiano</option><option value="de">ðŸ‡©ðŸ‡ª Deutsch</option></select>
       </div>
       <div class="wishlist" id="wishlist">
         <button id="wishlistBtn" class="icon-btn" aria-label="Wishlist" aria-expanded="false" aria-controls="wishlistMenu">
@@ -230,8 +230,8 @@
   <section class="hero" id="home">
     <video autoplay muted loop playsinline><source src="/Multimedia/videoplayback.mp4" type="video/mp4"></video>
     <div class="search-wrap">
-      <select id="brand_name_dropdwn" aria-label="Select Brand"><option value="">Loading Brands...</option></select>
-      <select id="model_name_dropdwn" aria-label="Select Model"><option value="">Select Brand First</option></select>
+      <input id="brand_name_dropdwn" type="text" placeholder="Search brand (e.g. BMW)" aria-label="Search Brand" autocomplete="off" list="brandSuggestions"><datalist id="brandSuggestions"></datalist>
+      <input id="model_name_dropdwn" type="text" placeholder="Search model (e.g. 3 Series)" aria-label="Search Model" autocomplete="off" list="modelSuggestions"><datalist id="modelSuggestions"></datalist>
       <button class="search-btn" id="searchBtn">Search</button>
     </div>
   </section>
@@ -292,7 +292,7 @@
       function closeMenu(){ hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); }
       hamburger.addEventListener("click", ()=>{ menu.classList.contains("active") ? closeMenu() : openMenu(); });
       overlay.addEventListener("click", closeMenu); window.addEventListener("resize", ()=>{ if(window.innerWidth > 1024 && menu.classList.contains("active")) closeMenu(); });
-      const authSection = document.getElementById("authSection"); function updateAuthButton(){ if(window.innerWidth <= 768){ authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`; } else { authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`; } }
+      const authSection = document.getElementById("authSection"); function updateAuthButton(){ if(window.innerWidth <= 768){ authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">Login</button>`; } else { authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`; } }
       updateAuthButton(); window.addEventListener("resize", updateAuthButton); function syncHeaderOffset(){ const header = document.querySelector('header'); if(!header) return; document.documentElement.style.setProperty('--header-offset', header.offsetHeight + 'px'); }
       window.addEventListener('load', syncHeaderOffset); window.addEventListener('resize', syncHeaderOffset);
     })();
@@ -301,6 +301,7 @@
   <script>
     const $ = (s, r=document) => r.querySelector(s);
     const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+    const API_BASE_URL = location.port === '5501' ? 'http://localhost:3000' : '';
     const toEUR = n => `€${Number(n).toLocaleString()}`;
     
     // Helper to convert FERRARI -> Ferrari for Wikipedia compatibility
@@ -309,7 +310,7 @@
       return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     }
 
-    function carId(c){ return `${c.brand}-${c.model}`.toLowerCase().replace(/\s+/g,'-'); }
+    function carId(c){ return c.code ? `cv-${String(c.code).trim().toLowerCase()}` : `${c.brand}-${c.model}`.toLowerCase().replace(/\s+/g,'-'); }
     const carsById = new Map();
     window.cars = []; 
     function showToast(msg){ const wrap = $('#toastWrap'); const el = document.createElement('div'); el.className='toast'; el.textContent=msg; wrap.appendChild(el); setTimeout(()=>{ el.style.transition='opacity .2s, transform .2s'; el.style.opacity='0'; el.style.transform='translateY(8px)'; }, 1600); setTimeout(()=> wrap.contains(el) && wrap.removeChild(el), 1850); }
@@ -326,7 +327,7 @@
     function buildCompareUrl(){ const ids = [...loadCompare()]; const url = new URL('compare.html', location.href); if(ids.length) url.searchParams.set('ids', ids.join(',')); return url.toString(); }
 
     /* Auth */
-    window.__vvUserKey = 'guest'; fetch('/api/user-status', { method:'POST', credentials:'include' }).then(r=>r.json()).then(d=>{ if(d.loggedIn && d.user) window.__vvUserKey = d.user.id || 'guest'; }).catch(()=>{});
+    window.__vvUserKey = 'guest'; fetch('/api/user-status', { method:'GET', credentials:'include' }).then(r=>r.json()).then(d=>{ if(d.loggedIn && d.user) window.__vvUserKey = d.user.id || 'guest'; }).catch(()=>{});
     function isLoggedIn(){ return window.__vvUserKey && window.__vvUserKey !== 'guest'; }
     function requireLogin(action){ if(!isLoggedIn()){ showToast(`Please Login/Register to ${action}`); return false; } return true; }
 
@@ -336,18 +337,31 @@
     (function wireCompareDropdown(){ const wrap = document.getElementById('compare'); const btn = document.getElementById('compareBtn'); const menu = document.getElementById('compareMenu'); if(!wrap||!btn||!menu) return; btn.addEventListener('click', ()=>{ const open = wrap.classList.toggle('open'); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }); document.addEventListener('click', e=>{ if(!wrap.contains(e.target)){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); } }); document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); } }); document.getElementById('compareItems').addEventListener('click', e=>{ const rm = e.target.closest('[data-remove]'); if(!rm) return; removeFromCompare(rm.getAttribute('data-remove')); updateCompareBadge(); buildCompareMenu(); syncCompareButtons(); }); document.getElementById('clearCompare').addEventListener('click', ()=>{ saveCompare(new Set()); saveMeta({}); updateCompareBadge(); buildCompareMenu(); syncCompareButtons(); }); document.getElementById('viewCompare').addEventListener('click', ()=>{ if(loadCompare().size < 2){ showToast('Add at least 2 cars to compare'); return; } location.href = buildCompareUrl(); }); })();
 
     const WIRE_KEY = 'vv_selected_car'; const DETAILS_PATH = 'cars.html';
-    function openCarById(id){ const car = carsById.get(id); if(!car) return; const normalized = { id, brand:car.brand, model:car.model, year:car.year??null, fuel:car.fuel??null, body:car.body??null, transmission:car.transmission??(car.gear==='Auto'?'Automatic':car.gear==='Manual'?'Manual':car.gear??null), priceFromEur:car.price??null, image:car.img??car.image??'', logo:car.logo??'' }; sessionStorage.setItem(WIRE_KEY, JSON.stringify(normalized)); location.href = `${DETAILS_PATH}?id=${encodeURIComponent(id)}`; }
+    function openCarById(id){ const car = carsById.get(id); if(!car) return; if(car.code){ location.href = `${DETAILS_PATH}?code=${encodeURIComponent(car.code)}`; return; } const normalized = { id, brand:car.brand, model:car.model, year:car.year??null, fuel:car.fuel??null, body:car.body??null, transmission:car.transmission??(car.gear==='Auto'?'Automatic':car.gear==='Manual'?'Manual':car.gear??null), priceFromEur:car.price??null, image:car.img??car.image??'', logo:car.logo??'' }; sessionStorage.setItem(WIRE_KEY, JSON.stringify(normalized)); location.href = `${DETAILS_PATH}?id=${encodeURIComponent(id)}`; }
 
     const WISHLIST_KEY = 'velovalue_wishlist_v1';
     const wishlist = new Set((()=>{ try{ return JSON.parse(localStorage.getItem(WISHLIST_KEY)||'[]'); }catch{ return []; } })());
     function saveWishlist(){ localStorage.setItem(WISHLIST_KEY, JSON.stringify([...wishlist])); }
     function updateWishlistBadge(){ const b=$('#wishlistBadge'); const n=wishlist.size; b.style.display=n?'grid':'none'; if(n) b.textContent=n; }
-    function buildWishlistMenu(){ const list = $('#wishlistItems'); if(!wishlist.size){ list.innerHTML='<div class="dropdown-empty" style="padding:20px;text-align:center;opacity:.75;">Your wishlist is empty.</div>'; return; } list.innerHTML = [...wishlist].map(id=>{ const c=carsById.get(id); if(!c) return ''; return `<div class="wish-item" data-id="${id}"><img src="${c.img}" alt="${c.brand} ${c.model}"><div class="wish-meta"><div class="wish-title">${c.brand} ${c.model}</div><div class="wish-sub">${c.body} • ${toEUR(c.price)}</div></div><button class="remove-btn" data-remove="${id}">Remove</button></div>`; }).join(''); }
+    function buildWishlistMenu(){
+      const list = $('#wishlistItems');
+      if(!wishlist.size){
+        list.innerHTML = '<div class="dropdown-empty" style="padding:20px;text-align:center;opacity:.75;">Your wishlist is empty.</div>';
+        return;
+      }
+      list.innerHTML = [...wishlist].map(id=>{
+        const c = carsById.get(id);
+        if(!c) return '';
+        const priceText = c.price == null || !Number.isFinite(Number(c.price)) ? 'Price unavailable' : toEUR(c.price);
+        const details = [c.generation || c.body, priceText].filter(Boolean).join(' • ');
+        return `<div class="wish-item" data-id="${id}"><img src="${c.img || ''}" alt="${c.brand} ${c.model}"><div class="wish-meta"><div class="wish-title">${c.brand} ${c.model}</div><div class="wish-sub">${details}</div></div><button class="remove-btn" data-remove="${id}">Remove</button></div>`;
+      }).join('');
+    }
     function syncHeartButtons(){ $$('.heart-btn').forEach(btn=>{ const id=btn.dataset.id, active=wishlist.has(id); btn.classList.toggle('active', active); btn.setAttribute('aria-pressed', active?'true':'false'); btn.setAttribute('aria-label', active?'Remove from wishlist':'Add to wishlist'); }); }
     function toggleWishlist(id){ if(!requireLogin('wishlist your favourite car')) return; const c = carsById.get(id); if(!c) return; const was = wishlist.has(id); if(was){ wishlist.delete(id); showToast(`Removed: ${c.brand} ${c.model}`); } else { wishlist.add(id); showToast(`Added: ${c.brand} ${c.model}`); } saveWishlist(); updateWishlistBadge(); buildWishlistMenu(); syncHeartButtons(); const btn = document.querySelector(`.heart-btn[data-id="${id}"]`); if(btn){ btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); } }
 
     function syncCompareButtons(){ const set = loadCompare(); document.querySelectorAll('.compare-btn').forEach(btn=>{ const id = btn.getAttribute('data-compare'); const active = set.has(id); btn.classList.toggle('active', active); btn.setAttribute('aria-pressed', active?'true':'false'); btn.setAttribute('aria-label', active?'Remove from compare':'Add to compare'); }); updateCompareBar(); updateCompareBadge(); buildCompareMenu(); }
-    function updateCompareBar(){ const bar = document.getElementById('compareBar'); const chips = document.getElementById('compareChips'); const ids = [...loadCompare()]; const meta = loadMeta(); chips.innerHTML = ids.map(id=>{ const m = meta[id]; const name = m ? `${m.brand} ${m.model}`.trim() : id; return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">×</button></span>`; }).join(''); bar.classList.toggle('show', ids.length >= 2); }
+    function updateCompareBar(){ const bar = document.getElementById('compareBar'); const chips = document.getElementById('compareChips'); const ids = [...loadCompare()]; const meta = loadMeta(); chips.innerHTML = ids.map(id=>{ const m = meta[id]; const name = m ? `${m.brand} ${m.model}`.trim() : id; return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">Remove</button></span>`; }).join(''); bar.classList.toggle('show', ids.length >= 2); }
     function heartButtonHTML(id){ return `<button class="heart-btn" data-id="${id}" aria-label="Add to wishlist" aria-pressed="false" title="Wishlist"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>`; }
     function extractCardMetadata(card){ const name = card?.querySelector('.name')?.textContent || ''; const parts = name.split(' '); const priceText = card?.querySelector('.muted')?.textContent || ''; return { brand: parts[0]||'', model: parts.slice(1).join(' ')||'', price: (()=>{ const m=priceText.match(/€([\d.,]+)/); return m ? Number(m[1].replace(/[.,](?=\d{3})/g,'').replace(',','.')) : null; })(), img: card?.querySelector('img.thumb')?.getAttribute('src')||'', body: priceText.split('•')[0]?.trim()||'', fuel:'', gear:'' }; }
 
@@ -356,66 +370,35 @@
     /* ───────────────────────────────────────
        OPEN-VEHICLE-DB INTEGRATION
     ─────────────────────────────────────── */
-    const VEHICLE_DB_URL = "https://raw.githubusercontent.com/plowman/open-vehicle-db/master/data/makes_and_models.json"; 
-    let vehicleDatabase = []; 
+    function populateSearchSuggestions() {
+      const brands = [...new Set(
+        window.cars.map(car => String(car.brand || '').trim()).filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b));
 
-    async function loadMakes() {
-      try {
-        els.brandDropdown.innerHTML = '<option value="">Loading Brands...</option>';
-        const res = await fetch(VEHICLE_DB_URL);
-        if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
-        const data = await res.json();
-        
-        vehicleDatabase = Array.isArray(data) ? data : (data.makes || data.data || []);
-        els.brandDropdown.innerHTML = '<option value="">All Brands</option>';
-        const brands = [];
-        
-        vehicleDatabase.forEach(make => {
-          const makeName = make.make_name || make.name || make.Make;
-          if (makeName) brands.push(makeName);
-        });
+      const models = [...new Set(
+        window.cars.map(car => String(car.model || '').trim()).filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b));
 
-        const uniqueBrands = [...new Set(brands)].sort();
-        uniqueBrands.forEach(make => { const opt = document.createElement('option'); opt.value = make; opt.textContent = make; els.brandDropdown.appendChild(opt); });
-        initBrandTiles(uniqueBrands);
-      } catch (err) {
-        console.error("Error loading makes:", err);
-        els.brandDropdown.innerHTML = '<option value="">Error loading brands</option>';
-      }
+      const brandList = document.getElementById('brandSuggestions');
+      const modelList = document.getElementById('modelSuggestions');
+
+      brandList.innerHTML = '';
+      modelList.innerHTML = '';
+
+      brands.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        brandList.appendChild(option);
+      });
+
+      models.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        modelList.appendChild(option);
+      });
+
+      initBrandTiles(brands);
     }
-
-    function loadModels(makeName) {
-      els.modelDropdown.innerHTML = '<option value="">Loading models...</option>';
-      if (!makeName) { els.modelDropdown.innerHTML = '<option value="">All Models</option>'; return; }
-      
-      const selectedMake = vehicleDatabase.find(m => (m.make_name || m.name) === makeName);
-      els.modelDropdown.innerHTML = '<option value="">All Models</option>';
-      
-      if (selectedMake && selectedMake.models) {
-        let modelsArray = Object.values(selectedMake.models);
-
-        if (modelsArray.length > 0) {
-          modelsArray.sort((a, b) => {
-            const nameA = (a.model_name || a.name || '').toLowerCase();
-            const nameB = (b.model_name || b.name || '').toLowerCase();
-            return nameA.localeCompare(nameB);
-          }).forEach(model => {
-            const modelName = model.model_name || model.name || 'Unknown';
-            const opt = document.createElement('option');
-            opt.value = modelName;
-            opt.textContent = modelName;
-            els.modelDropdown.appendChild(opt);
-          });
-        } else {
-          els.modelDropdown.innerHTML = '<option value="">No models found</option>';
-        }
-      } else {
-        els.modelDropdown.innerHTML = '<option value="">No models found</option>';
-      }
-    }
-
-    els.brandDropdown.addEventListener('change', (e) => { loadModels(e.target.value); applyFiltersNow(false); });
-
     function initBrandTiles(brands) {
       els.brandGrid.innerHTML = ''; 
       brands.forEach(name => {
@@ -467,13 +450,13 @@
       if(selected.maxPrice<200000) chips.push({group:'price', value:String(selected.maxPrice), label:`≤ ${toEUR(selected.maxPrice)}`});
       selected.brands.forEach(v=>chips.push({group:'brands', value:v, label:`Brand: ${v}`}));
       selected.body.forEach(v=>chips.push({group:'body', value:v, label:v}));
-      els.activeFilters.innerHTML = chips.map(c=>`<span class="af-chip" data-group="${c.group}" data-value="${c.value}">${c.label} <button class="x" aria-label="Remove ${c.label}">×</button></span>`).join('');
+      els.activeFilters.innerHTML = chips.map(c=>`<span class="af-chip" data-group="${c.group}" data-value="${c.value}">${c.label} <button class="x" aria-label="Remove ${c.label}">Remove</button></span>`).join('');
     }
 
     els.activeFilters.addEventListener('click', e=>{
       const x=e.target.closest('.x'); if(!x) return;
       const chip=x.closest('.af-chip'); const group=chip.dataset.group, value=chip.dataset.value;
-      if(group==='searchBrand'){ els.brandDropdown.value=''; loadModels(''); }
+      if(group==='searchBrand'){ els.brandDropdown.value=''; }
       else if(group==='searchModel'){ els.modelDropdown.value=''; }
       else if(group==='price'){ selected.maxPrice=200000; els.priceRange.value='200000'; els.priceOut.textContent='≤ €200,000'; }
       else if(group==='brands'){ selected.brands.delete(value); const tile=brandTileMap.get(value); if(tile) tile.classList.remove('active'); }
@@ -485,7 +468,7 @@
       selected.brands.clear(); brandTileMap.forEach(t=>t.classList.remove('active'));
       selected.body.clear(); chipMap.body.forEach(el=>el.classList.remove('active'));
       selected.maxPrice=200000; els.priceRange.value='200000'; els.priceOut.textContent='≤ €200,000';
-      els.brandDropdown.value=''; els.modelDropdown.value=''; loadModels('');
+      els.brandDropdown.value=''; els.modelDropdown.value='';
       applyFiltersNow();
     });
 
@@ -495,48 +478,173 @@
     });
 
     function renderCards(list){
-      if(!list.length){ els.grid.innerHTML = `<div style="padding:30px;text-align:center;opacity:.75">No cars match your filters.</div>`; els.resultCount.textContent='0 results'; return; }
-      els.grid.innerHTML = list.map(c=>{ const id=carId(c); return `<article class="car-card" data-id="${id}" role="link" tabindex="0" aria-label="${c.brand} ${c.model}">${heartButtonHTML(id)} ${compareButtonHTML(id)}<img class="thumb" loading="lazy" src="${c.img || 'https://via.placeholder.com/400x250?text=No+Image'}" alt="${c.brand} ${c.model}"><div class="meta"><div><div class="name">${c.brand} ${c.model}</div><div class="muted" style="font-size:12px">${c.body} • ${toEUR(c.price)}</div></div></div></article>`; }).join('');
-      els.resultCount.textContent = `${list.length} result${list.length!==1?'s':''}`; syncHeartButtons(); syncCompareButtons();
+      if(!list.length){
+        els.grid.innerHTML = `<div style="padding:30px;text-align:center;opacity:.75">No cars match your filters.</div>`;
+        els.resultCount.textContent='0 results';
+        return;
+      }
+      els.grid.innerHTML = list.map(c=>{
+        const id=carId(c);
+        const priceText = c.price == null || !Number.isFinite(Number(c.price)) ? 'Price unavailable' : toEUR(c.price);
+        return `<article class="car-card" data-id="${escapeHtml(id)}" role="link" tabindex="0" aria-label="${escapeHtml(c.brand)} ${escapeHtml(c.model)}">${heartButtonHTML(id)} ${compareButtonHTML(id)}<img class="thumb" loading="lazy" src="${escapeHtml(c.img || 'https://via.placeholder.com/400x250?text=No+Image')}" alt="${escapeHtml(c.brand)} ${escapeHtml(c.model)}"><div class="meta"><div><div class="name">${escapeHtml(c.brand)} ${escapeHtml(c.model)}</div><div class="muted" style="font-size:12px">${escapeHtml(c.body || '')} • ${escapeHtml(priceText)}</div></div></div></article>`;
+      }).join('');
+      els.resultCount.textContent = `${list.length} result${list.length!==1?'s':''}`;
+      syncHeartButtons(); syncCompareButtons();
     }
 
     function applyFiltersNow(scroll=false){
-      const searchBrand = els.brandDropdown.value.trim(); const searchModel = els.modelDropdown.value.trim();
-      let list = window.cars.filter(c=> c.price <= selected.maxPrice);
-      // Case-insensitive filtering so "FERRARI" matches "Ferrari" from Wiki
+      const searchBrand = els.brandDropdown.value.trim();
+      const searchModel = els.modelDropdown.value.trim();
+      let list = window.cars.filter(c => c.price == null || !Number.isFinite(Number(c.price)) || Number(c.price) <= selected.maxPrice);
       if(selected.brands.size) list = list.filter(c=> selected.brands.has(c.brand.toUpperCase()));
-      if(selected.body.size)   list = list.filter(c=> selected.body.has(c.body));
+      if(selected.body.size) list = list.filter(c=> selected.body.has(c.body));
       if(searchBrand) list = list.filter(c=> c.brand.toUpperCase() === searchBrand.toUpperCase());
-      if(searchModel) list = list.filter(c=> c.model.toLowerCase() === searchModel.toLowerCase());
-      switch(els.sortSel.value){ case 'price_asc': list.sort((a,b)=>a.price-b.price); break; case 'price_desc': list.sort((a,b)=>b.price-a.price); break; default: list.sort((a,b)=> a.brand.localeCompare(b.brand)); break; }
-      updateActiveFiltersUI(searchBrand, searchModel); renderCards(list);
+      if(searchModel) {
+        const normalizeModel = value => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const wantedModel = normalizeModel(searchModel);
+        list = list.filter(c => {
+          const candidates = [c.model, c.generation, c.name].map(normalizeModel).filter(Boolean);
+          return candidates.some(value => value === wantedModel || value.includes(wantedModel) || wantedModel.includes(value));
+        });
+      }
+      switch(els.sortSel.value){
+        case 'price_asc':
+          list.sort((a,b)=> a.price == null ? (b.price == null ? 0 : 1) : b.price == null ? -1 : Number(a.price)-Number(b.price));
+          break;
+        case 'price_desc':
+          list.sort((a,b)=> a.price == null ? (b.price == null ? 0 : 1) : b.price == null ? -1 : Number(b.price)-Number(a.price));
+          break;
+        default:
+          list.sort((a,b)=> a.brand.localeCompare(b.brand));
+          break;
+      }
+      updateActiveFiltersUI(searchBrand, searchModel);
+      renderCards(list);
       if(scroll) document.getElementById('resultsGrid').scrollIntoView({behavior:'smooth', block:'start'});
     }
-
-    /* Unified Search: Wikipedia Fetch */
+    /* Unified Search: CarVariables generation search */
     els.searchBtn.addEventListener('click', async ()=>{
-      applyFiltersNow(true);
-      
-      // Convert DB names (FERRARI) to Title Case (Ferrari) for Wikipedia API compatibility
-      const rawBrand = els.brandDropdown.value.trim(); 
+      const rawBrand = els.brandDropdown.value.trim();
       const rawModel = els.modelDropdown.value.trim();
       const brand = toTitleCase(rawBrand);
       const model = toTitleCase(rawModel);
 
-      if(brand){
-        try {
-          const res = await fetch(`http://localhost:3000/api/explore?brand=${encodeURIComponent(brand)}&model=${encodeURIComponent(model)}`);
-          if(!res.ok) throw new Error(`Status ${res.status}`);
-          const car = await res.json();
-          if(car && car.brand) addCarCard(car);
-        } catch(err){ console.warn('Wikipedia fetch failed:', err); }
+      if(!brand){
+        applyFiltersNow(true);
+        showToast('Select a car brand first');
+        return;
       }
-    });
-    els.applyBtn.addEventListener('click', ()=> applyFiltersNow(true));
+
+      const query = [brand, model].filter(Boolean).join(' ');
+      const resultsGrid = document.getElementById('resultsGrid');
+
+      try {
+        showToast('Searching car generations...');
+
+        const res = await fetch(`${API_BASE_URL}/api/explore/search?q=${encodeURIComponent(query)}&page=1&per=50`);
+        if(!res.ok) throw new Error(`Status ${res.status}`);
+
+        const payload = await res.json();
+        const results = payload?.data?.results;
+
+        if(!payload?.success || !Array.isArray(results)){
+          throw new Error('Unexpected CarVariables response format');
+        }
+
+        const normalizedResults = results.map(raw => {
+          const variantList = Array.isArray(raw.variants) ? raw.variants : [];
+          const transmissions = [...new Set(variantList.map(v => v.transmission).filter(Boolean))];
+
+          return {
+            ...raw,
+            source: 'carvariables',
+            code: raw.code,
+            brand: raw.make?.name || raw.brand || brand,
+            model: raw.model || raw.name || model,
+            generation: raw.generation || raw.name || '',
+            year_start: raw.year_start ?? null,
+            year_end: raw.year_end ?? null,
+            body: raw.body?.label || raw.body?.style || raw.body?.type || '',
+            image: raw.image_url || '',
+            img: raw.image_url || '',
+            price: null,
+            fuels: raw.fuels || [],
+            drives: raw.drives || [],
+            variants: variantList,
+            variant_count: raw.variant_count ?? variantList.length,
+            power_hp: raw.power_hp ?? null,
+            torque_nm: raw.torque_nm ?? null,
+            transmission: transmissions.join(', ') || null
+          };
+        });
+
+        if(!normalizedResults.length){
+          showToast('No generations found for this search');
+          return;
+        }
+
+        // Replace previous CarVariables results while retaining legacy cached cars.
+        const previousSearchIds = new Set(
+          window.cars
+            .filter(car => car.source === 'carvariables')
+            .map(car => carId(car))
+        );
+        window.cars = window.cars.filter(car => car.source !== 'carvariables');
+        document.querySelectorAll('#resultsGrid .car-card').forEach(card => {
+          if (previousSearchIds.has(card.dataset.id)) card.remove();
+        });
+
+        normalizedResults.forEach(addCarCard);
+        applyFiltersNow(true);
+        showToast(`${normalizedResults.length} generations found`);
+      } catch(err) {
+        console.error('CarVariables search failed:', err);
+        showToast('Car search failed. Please try again.');
+      }
+    });    els.applyBtn.addEventListener('click', ()=> applyFiltersNow(true));
     els.sortSel.addEventListener('change', ()=> applyFiltersNow(false));
 
     function onHeartClick(e){ const btn = e.target.closest('.heart-btn'); if(!btn) return; e.preventDefault(); e.stopPropagation(); toggleWishlist(btn.dataset.id); }
-    function onCompareClick(e){ if(!requireLogin('compare cars')) return; const btn = e.target.closest('.compare-btn'); if(!btn) return; e.preventDefault(); e.stopPropagation(); const id = btn.getAttribute('data-compare'); const card = btn.closest('.car-card'); const meta = loadMeta(); meta[id] = meta[id] || extractCardMetadata(card); if(loadCompare().has(id)) removeFromCompare(id); else addToCompare(id, meta[id]); syncCompareButtons(); }
+    function onCompareClick(e){
+      if(!requireLogin('compare cars')) return;
+      const btn = e.target.closest('.compare-btn');
+      if(!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      const id = btn.getAttribute('data-compare');
+      const card = btn.closest('.car-card');
+      const car = carsById.get(id);
+      const meta = loadMeta();
+
+      if(car){
+        meta[id] = {
+          brand: car.brand || '',
+          model: car.model || '',
+          generation: car.generation || '',
+          generationId: car.code || null,
+          year_start: car.year_start ?? null,
+          year_end: car.year_end ?? null,
+          price: car.price ?? null,
+          img: car.img || '',
+          body: car.body || '',
+          fuel: Array.isArray(car.fuels) ? car.fuels.join(', ') : (car.fuel || ''),
+          gear: car.transmission || '',
+          fuels: car.fuels || [],
+          drives: car.drives || [],
+          variants: car.variants || [],
+          power_hp: car.power_hp ?? null,
+          torque_nm: car.torque_nm ?? null
+        };
+      } else {
+        meta[id] = meta[id] || extractCardMetadata(card);
+      }
+
+      saveMeta(meta);
+      if(loadCompare().has(id)) removeFromCompare(id);
+      else addToCompare(id, meta[id]);
+      syncCompareButtons();
+    }
     function onCardActivate(e, root){ if(e.target.closest('.heart-btn') || e.target.closest('.compare-btn')) return; const card = e.target.closest('.car-card'); if(!card || !root.contains(card)) return; openCarById(card.dataset.id); }
     els.grid.addEventListener('click', e=>{ onHeartClick(e); onCompareClick(e); onCardActivate(e, els.grid); });
     els.track.addEventListener('click', e=>{ onHeartClick(e); onCompareClick(e); onCardActivate(e, els.track); });
@@ -554,28 +662,75 @@
 
     function escapeHtml(s){ if(!s) return ""; return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
     function addCarCard(car){
-      const container = document.getElementById("resultsGrid"); if(!container) return;
-      const brand = car.brand || car.make || "Unknown"; const model = car.model || ""; const body = car.body || "";
-      const img = car.image || car.img || ""; const priceNum = Number(car.price ?? car.priceFromEur); const priceText = isNaN(priceNum) ? "N/A" : `€${priceNum.toLocaleString()}`;
-      const id = carId({ brand, model });
+      const container = document.getElementById("resultsGrid");
+      if(!container) return;
+
+      const brand = car.brand || car.make?.name || car.make || "Unknown";
+      const model = car.model || car.name || "";
+      const generation = car.generation || "";
+      const body = typeof car.body === "object" ? (car.body.label || car.body.style || car.body.type || "") : (car.body || "");
+      const img = car.image || car.img || car.image_url || "";
+      const rawPrice = car.price ?? car.priceFromEur;
+      const parsedPrice = rawPrice == null || rawPrice === "" ? null : Number(rawPrice);
+      const priceNum = parsedPrice !== null && Number.isFinite(parsedPrice) ? parsedPrice : null;
+      const priceText = priceNum === null ? "Price unavailable" : `\u20AC${priceNum.toLocaleString()}`;
+      const id = carId({ brand, model, code: car.code });
+
       if(container.querySelector(`.car-card[data-id="${id}"]`)) return;
-      carsById.set(id, { brand, model, body, price: isNaN(priceNum)?0:priceNum, img });
-      if (!window.cars.some(c => carId(c) === id)) window.cars.push({ brand, model, body, price: isNaN(priceNum)?0:priceNum, img });
-      const card = document.createElement('article'); card.className='car-card'; card.dataset.id=id; card.tabIndex=0; card.setAttribute('role','link'); card.setAttribute('aria-label',`${brand} ${model}`)
-      card.innerHTML = `${heartButtonHTML(id)} ${compareButtonHTML(id)} <img class="thumb" src="${escapeHtml(img)}" alt="${escapeHtml(brand)} ${escapeHtml(model)}"><div class="meta"><div><div class="name">${escapeHtml(brand)} ${escapeHtml(model)}</div><div class="muted" style="font-size:12px">${escapeHtml(body)} • ${escapeHtml(priceText)}</div></div></div>`;
+
+      const storedCar = {
+        ...car,
+        id,
+        code: car.code || null,
+        brand,
+        model,
+        generation,
+        year_start: car.year_start ?? null,
+        year_end: car.year_end ?? null,
+        body,
+        price: priceNum,
+        img,
+        fuels: car.fuels || [],
+        drives: car.drives || [],
+        variants: car.variants || [],
+        variant_count: car.variant_count ?? 0,
+        power_hp: car.power_hp ?? null,
+        torque_nm: car.torque_nm ?? null,
+        transmission: car.transmission || null
+      };
+
+      carsById.set(id, storedCar);
+      if (!window.cars.some(c => carId(c) === id)) window.cars.push(storedCar);
+
+      const card = document.createElement('article');
+      card.className = 'car-card';
+      card.dataset.id = id;
+      card.tabIndex = 0;
+      card.setAttribute('role', 'link');
+      card.setAttribute('aria-label', `${brand} ${model}`);
+
+      const detailText = [generation, body, priceText].filter(Boolean).join(' \u2022 ');
+
+      card.innerHTML = `${heartButtonHTML(id)} ${compareButtonHTML(id)} <img class="thumb" src="${escapeHtml(img)}" alt="${escapeHtml(brand)} ${escapeHtml(model)}"><div class="meta"><div><div class="name">${escapeHtml(brand)} ${escapeHtml(model)}</div><div class="muted" style="font-size:12px">${escapeHtml(detailText)}</div></div></div>`;
+
       container.prepend(card);
-      const countEl = document.getElementById("resultCount"); if(countEl) countEl.textContent = `${container.querySelectorAll('.car-card').length} results`;
-      syncHeartButtons(); syncCompareButtons();
+
+      const countEl = document.getElementById("resultCount");
+      if(countEl) countEl.textContent = `${container.querySelectorAll('.car-card').length} results`;
+
+      syncHeartButtons();
+      syncCompareButtons();
     }
 
-    async function loadCachedCars(){ try { const res = await fetch("http://localhost:3000/api/cachedCars"); if(!res.ok) throw new Error(`Status ${res.status}`); const list = await res.json(); if(Array.isArray(list)) list.forEach(addCarCard); } catch(err){ console.warn("Cached cars unavailable:", err); } }
+    async function loadCachedCars(){ try { const res = await fetch("/api/cachedCars"); if(!res.ok) throw new Error(`Status ${res.status}`); const list = await res.json(); if(Array.isArray(list)) list.forEach(addCarCard); } catch(err){ console.warn("Cached cars unavailable:", err); } }
 
     async function initApp() {
       window.cars = [];
       updateWishlistBadge(); buildWishlistMenu(); syncHeartButtons(); syncCompareButtons(); updateCompareBadge(); buildCompareMenu();
       initFilterChips();
-      await loadMakes(); 
-      await loadCachedCars(); 
+
+      await loadCachedCars();
+      populateSearchSuggestions();
       buildPopularSlider();
       applyFiltersNow(false);
     }
@@ -583,7 +738,7 @@
     initApp();
   </script>
 
-  <script src="/services/WikiCarService.js"></script>x
+
   <script src="/js/auth.js"></script>
   <script src="/js/translate.js"></script>
 </body>

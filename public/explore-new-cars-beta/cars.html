@@ -18,20 +18,20 @@
       --text-primary: #ffffff;
       --text-secondary: rgba(255, 255, 255, 0.7);
       --text-muted: rgba(255, 255, 255, 0.4);
-      
+
       --accent: #1db954;
       --accent-glow: rgba(29, 185, 84, 0.25);
       --accent-hover: #1ed760;
-      
+
       --radius-xl: 20px;
       --radius-lg: 16px;
       --radius-md: 12px;
       --radius-sm: 8px;
-      
+
       --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
       --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.6);
       --shadow-accent: 0 8px 24px var(--accent-glow);
-      
+
       --header-height: 70px;
       --transition-fast: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
       --transition-smooth: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -71,10 +71,10 @@
       z-index: 1000;
     }
 
-    .header-left, .header-right { 
-      display: flex; 
-      align-items: center; 
-      gap: 1.25rem; 
+    .header-left, .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
     }
 
     header h1 a {
@@ -121,8 +121,8 @@
       cursor: pointer;
       transition: all var(--transition-fast);
     }
-    .icon-btn:hover { 
-      border-color: var(--accent); 
+    .icon-btn:hover {
+      border-color: var(--accent);
       color: var(--text-primary);
       background: rgba(255,255,255,0.05);
     }
@@ -190,7 +190,7 @@
     .hamburger::before { top: calc(50% - 6px); }
     .hamburger span { top: 50%; width: 20px; }
     .hamburger::after { top: calc(50% + 6px); }
-    
+
     .hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
     .hamburger.is-active span { opacity: 0; }
     .hamburger.is-active::after { top: 50%; transform: translateX(-50%) rotate(-45deg); }
@@ -229,7 +229,7 @@
 
     /* Dropdowns (Wishlist/Compare) */
     .wishlist { position: relative; }
-    
+
     .dropdown {
       position: absolute; right: 0; top: calc(100% + 12px);
       width: 340px; max-height: 450px;
@@ -250,8 +250,8 @@
       align-items: center;
     }
     .dropdown-head strong { font-size: 1rem; }
-    .dropdown-head button { 
-      background: none; border: none; color: var(--accent); 
+    .dropdown-head button {
+      background: none; border: none; color: var(--accent);
       cursor: pointer; font-weight: 600; font-family: inherit;
     }
 
@@ -278,7 +278,7 @@
     }
     .wish-title { font-weight: 600; font-size: 0.9rem; }
     .wish-sub { font-size: 0.8rem; color: var(--text-secondary); }
-    
+
     .remove-btn {
       background: transparent; color: var(--text-muted);
       border: 1px solid var(--glass-border);
@@ -377,6 +377,41 @@
       color: var(--text-secondary);
     }
 
+    .variant-selector {
+      margin: 0 0 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .variant-selector:not([hidden]) {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .variant-selector label {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .variant-selector select {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      color: var(--text-primary);
+      font: inherit;
+    }
+
+    .variant-selector select:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
     .hero-wrap {
       position: relative;
       width: 100%;
@@ -411,12 +446,12 @@
     }
     .img-heart { bottom: 16px; right: 16px; }
     .img-compare { bottom: 16px; left: 16px; }
-    .img-heart:hover, .img-compare:hover { 
-      border-color: var(--accent); 
+    .img-heart:hover, .img-compare:hover {
+      border-color: var(--accent);
       transform: scale(1.1);
     }
     .img-heart:active, .img-compare:active { transform: scale(0.95); }
-    
+
     .img-heart.active svg { fill: #ff4757; stroke: #ff4757; }
     .img-compare.active svg { stroke: var(--accent); }
 
@@ -574,7 +609,7 @@
     @media(max-width: 768px) {
       :root { --header-height: 60px; }
       header { padding: 0 1rem; }
-      
+
       #authSection .text-btn { display: none; }
       #authSection .icon-btn { display: inline-flex; }
 
@@ -588,7 +623,7 @@
         overflow: hidden;
       }
       .language-select::before {
-        content: "🌐";
+        content: "ðŸŒ";
         font-size: 1.1rem;
         position: absolute;
         pointer-events: none;
@@ -642,9 +677,9 @@
 
       <div class="language-select">
         <select id="languageSelect" aria-label="Select language">
-          <option value="en">🇬🇧 EN</option>
-          <option value="it">🇮🇹 IT</option>
-          <option value="de">🇩🇪 DE</option>
+          <option value="en">ðŸ‡¬ðŸ‡§ EN</option>
+          <option value="it">ðŸ‡®ðŸ‡¹ IT</option>
+          <option value="de">ðŸ‡©ðŸ‡ª DE</option>
         </select>
       </div>
 
@@ -714,6 +749,12 @@
         </div>
       </div>
 
+      <div class="variant-selector" id="variantSelector" hidden>
+        <label for="variantSelect">Engine / Version</label>
+        <select id="variantSelect" disabled>
+          <option value="">Select a version</option>
+        </select>
+      </div>
       <div class="hero-wrap">
         <img id="heroImg" class="hero" alt="Car image" src="" />
         <button id="imgCompare" class="img-compare" aria-label="Add to compare" aria-pressed="false" title="Compare">
@@ -778,7 +819,7 @@
       { id:'tesla-model-3-2024', brand:'Tesla', model:'Model 3', year:2024, body:'Sedan', doors:4, seats:5, fuel:'BEV', transmission:'Single-speed', drivetrain:'RWD', powerKw:208, powerPs:283, torqueNm:340, zeroTo100KmhS:6.1, topSpeedKmh:201, energyConsumptionKwhPer100km:14.5, co2GPerKm:0, lengthMm:4720, widthMm:1849, heightMm:1441, wheelbaseMm:2875, bootVolumeSeatsUpL:594, kerbWeightKg:1760, rangeWltpKm:513, batteryCapacityNetKwh:57, chargeAcMaxKw:11, chargeDcMaxKw:170, chargeDc10To80Min:27, connector:'Type 2 / CCS2', ncapStars:5, ncapYear:2019, warrantyYears:4, warrantyKm:80000, priceFromEur:38990, image:'https://images.unsplash.com/photo-1553440569-bcc63803a83d?q=80&w=1400&auto=format&fit=crop', logo:'https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg' }
     ];
     const carsById = new Map(FALLBACK_CARS.map(c => [c.id, c]));
-    const BACKEND = "http://localhost:3000";
+    const BACKEND = "";
 
     // ===========================================================
     // HELPERS
@@ -788,7 +829,7 @@
     const nd = v => (v === null || v === undefined || v === '') ? '—' : v;
     const toEUR = n => n == null ? '—' : `€${Number(n).toLocaleString()}`;
     const kwps = (kw, ps) => (kw || ps) ? `${kw ? kw+' kW' : ''}${kw && ps ? ' / ' : ''}${ps ? ps+' PS' : ''}` : '—';
-    
+
     function escapeHtml(s) {
       if (s == null) return "";
       return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -819,7 +860,7 @@
       function toggleMenu(forceClose = false) {
         const isOpen = menu.classList.contains("active");
         const shouldOpen = forceClose ? false : !isOpen;
-        
+
         menu.classList.toggle("active", shouldOpen);
         overlay.classList.toggle("active", shouldOpen);
         hamburger.classList.toggle("is-active", shouldOpen);
@@ -837,7 +878,7 @@
       const authSection = $("#authSection");
       function updateAuthUI() {
         if (window.innerWidth <= 768) {
-          authSection.innerHTML = `<button class="icon-btn" onclick="location.href='login.html'" aria-label="Login">👤</button>`;
+          authSection.innerHTML = `<button class="icon-btn" onclick="location.href='login.html'" aria-label="Login">ðŸ‘¤</button>`;
         } else {
           authSection.innerHTML = `<button class="text-btn" onclick="location.href='login.html'">Login</button>`;
         }
@@ -852,6 +893,7 @@
     const WISHLIST_KEY = 'velovalue_wishlist_v1';
     const CMP_KEY = 'vv_compare_ids';
     const META_KEY = 'vv_compare_meta';
+    const GEN_META_KEY = 'vv_generation_meta_v1';
 
     function getSet(key) { try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); } catch { return new Set(); } }
     function saveSet(key, set) { localStorage.setItem(key, JSON.stringify([...set])); }
@@ -875,11 +917,12 @@
       }
       list.innerHTML = [...set].map(id => {
         const c = carsById.get(id) || {};
-        const title = c.brand ? `${c.brand} ${c.model}` : id;
-        const sub = c.body ? `${c.body} • ${toEUR(c.priceFromEur)}` : '';
+        const generationMeta = getObj(GEN_META_KEY)[id] || {};
+        const title = c.brand ? `${c.brand} ${c.model}` : (generationMeta.title || id);
+        const sub = c.body ? `${c.body} · ${toEUR(c.priceFromEur)}` : (generationMeta.subtitle || '');
+        const image = c.image || generationMeta.image || '';
         return `<div class="wish-item" data-id="${escapeHtml(id)}">
-          ${c.image ? `<img src="${escapeHtml(c.image)}" alt="${escapeHtml(title)}">` : '<div style="width:48px;height:48px;background:#1a1a1a;border-radius:8px;"></div>'}
-          <div class="wish-meta"><div class="wish-title">${escapeHtml(title)}</div><div class="wish-sub">${escapeHtml(sub)}</div></div>
+          ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}">` : '<div style="width:48px;height:48px;background:#1a1a1a;border-radius:8px;"></div>'}          <div class="wish-meta"><div class="wish-title">${escapeHtml(title)}</div><div class="wish-sub">${escapeHtml(sub)}</div></div>
           <button class="remove-btn" data-remove="${escapeHtml(id)}">✕</button>
         </div>`;
       }).join('');
@@ -891,21 +934,26 @@
       btn.setAttribute('aria-pressed', String(active));
     }
 
-    function toggleWishlist(id, title = '') {
+    function toggleWishlist(id, title = '', generationMeta = null) {
       const set = getSet(WISHLIST_KEY);
+      const generationMetadata = getObj(GEN_META_KEY);
+
       if (set.has(id)) {
         set.delete(id);
+        delete generationMetadata[id];
         showToast(`Removed: ${title || id}`);
       } else {
         set.add(id);
+        if (generationMeta) generationMetadata[id] = generationMeta;
         showToast(`Added: ${title || id}`);
       }
+
       saveSet(WISHLIST_KEY, set);
+      saveObj(GEN_META_KEY, generationMetadata);
       updateWishlistBadge();
       buildWishlistMenu();
       setHeartActive(set.has(id));
     }
-
     // Compare
     function updateCompareBadge() {
       const n = getSet(CMP_KEY).size;
@@ -924,7 +972,7 @@
       }
       list.innerHTML = [...set].map(id => {
         const m = meta[id] || {};
-        const name = [m.brand, m.model].filter(Boolean).join(' ') || id;
+        const name = [m.brand, m.model, m.variantName].filter(Boolean).join(' ') || id;
         const sub = [m.body, (m.price != null ? '€'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' • ');
         return `<div class="wish-item" data-id="${escapeHtml(id)}">
           ${m.img ? `<img src="${escapeHtml(m.img)}" alt="${escapeHtml(name)}">` : '<div style="width:48px;height:48px;background:#1a1a1a;border-radius:8px;"></div>'}
@@ -999,15 +1047,273 @@
     // ===========================================================
     // CAR RENDERING LOGIC (Unifying original code)
     // ===========================================================
+    async function renderCarVariablesGeneration(code) {
+      const main = document.querySelector('main.container');
+      const selectorWrap = $('#variantSelector');
+      const selector = $('#variantSelect');
+      let generation;
+
+      try {
+        const response = await fetch(`/api/explore/generation/${encodeURIComponent(code)}`);
+        const result = await response.json();
+
+        if (!response.ok || !result.success || !result.data) {
+          throw new Error('Generation not found');
+        }
+
+        generation = result.data;
+      } catch (error) {
+        console.error('CarVariables generation load failed:', error);
+        main.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:4rem 1rem;">
+            <h2 style="margin-bottom:1rem;">Vehicle Data Unavailable</h2>
+            <p style="color:var(--text-secondary);">We could not load this vehicle generation. Please return to Explore and try again.</p>
+            <a href="/homepage.html" style="display:inline-block;margin-top:2rem;color:var(--accent);font-weight:700;">Back to Explore</a>
+          </div>`;
+        return;
+      }
+
+      const makeName = generation.make?.name || generation.make || '—';
+      const modelName = generation.model || generation.name || '—';
+      const generationName = generation.generation || generation.name || modelName;
+      const yearStart = generation.year_start;
+      const yearEnd = generation.year_end;
+      const yearLabel = yearStart
+        ? `${yearStart}${yearEnd && yearEnd !== yearStart ? `–${yearEnd}` : ''}`
+        : '';
+      const bodyName = generation.body?.label || generation.body || '—';
+      const imageUrl = generation.image_url || '';
+
+      document.title = `VeloValue – ${makeName} ${modelName} ${yearLabel}`.trim();
+      $('#brand').textContent = makeName;
+      $('#model').textContent = `${modelName}${yearLabel ? ` · ${yearLabel}` : ''}`;
+      $('#fuelPill').textContent = 'Fuel: Select a version';
+      $('#priceBadge').hidden = true;
+
+      if (imageUrl) {
+        $('#heroImg').src = imageUrl;
+        $('#heroImg').alt = `${makeName} ${modelName}`;
+      }
+
+      selectorWrap.hidden = false;
+      selector.disabled = !Array.isArray(generation.variants) || generation.variants.length === 0;
+      selector.replaceChildren(new Option('Select a version', ''));
+
+      const variants = Array.isArray(generation.variants) ? generation.variants : [];
+
+      variants.forEach((variant, index) => {
+        const option = new Option(
+          variant.name || `Version ${index + 1}`,
+          String(index)
+        );
+        selector.add(option);
+      });
+
+      const display = value => escapeHtml(String(value ?? '—'));
+      const buildRows = rows => rows.map(([key, value]) =>
+        `<div class="item"><span class="k">${display(key)}</span><span class="v">${display(value)}</span></div>`
+      ).join('');
+
+      let selectedVariant = null;
+
+      function renderVariant(variant) {
+        selectedVariant = variant;
+
+        const hp = variant?.power_hp;
+        const powerPs = hp != null ? Math.round(Number(hp)) : null;
+        const powerKw = hp != null ? Math.round(Number(hp) * 0.7355) : null;
+        const fuel = variant ? (variant.fuel_type || variant.fuel || '—') : '—';
+
+        const car = {
+          body: bodyName,
+          drivetrain: variant?.drivetrain,
+          transmission: variant?.transmission,
+          powerKw,
+          powerPs,
+          torqueNm: variant?.torque_nm,
+          zeroTo100KmhS: variant?.zero_to_100_s,
+          topSpeedKmh: variant?.top_speed_kmh,
+          fuel,
+          fuelConsumptionLPer100km: variant?.fuel_economy_combined_l100,
+          lengthMm: variant?.length_mm,
+          widthMm: variant?.width_mm,
+          heightMm: variant?.height_mm,
+          wheelbaseMm: variant?.wheelbase_mm,
+          kerbWeightKg: variant?.curb_weight_kg
+        };
+
+        $('#fuelPill').textContent = `Fuel: ${fuel}`;
+
+        const summary = [
+          ['Body', car.body],
+          ['Drivetrain', car.drivetrain],
+          ['Transmission', car.transmission],
+          ['Power', kwps(car.powerKw, car.powerPs)],
+          ['Torque', car.torqueNm != null ? `${car.torqueNm} Nm` : '—'],
+          ['0–100 km/h', car.zeroTo100KmhS != null ? `${car.zeroTo100KmhS} s` : '—'],
+          ['Top speed', car.topSpeedKmh != null ? `${car.topSpeedKmh} km/h` : '—'],
+          ['Seats / Doors', '—']
+        ];
+
+        $('#summaryGrid').innerHTML = summary.map(([key, value]) =>
+          `<div class="row"><span class="k">${display(key)}</span><span class="v">${display(value)}</span></div>`
+        ).join('');
+
+        $('#panel-tech').innerHTML = `<div class="kv">${buildRows([
+          ['Fuel', car.fuel],
+          ['Transmission', car.transmission],
+          ['Drivetrain', car.drivetrain],
+          ['Power', kwps(car.powerKw, car.powerPs)],
+          ['Torque', car.torqueNm != null ? `${car.torqueNm} Nm` : '—']
+        ])}</div>`;
+
+        $('#panel-perf').innerHTML = `<div class="kv">${buildRows([
+          ['0–100 km/h', car.zeroTo100KmhS != null ? `${car.zeroTo100KmhS} s` : '—'],
+          ['Top speed', car.topSpeedKmh != null ? `${car.topSpeedKmh} km/h` : '—'],
+          ['Fuel cons.', car.fuelConsumptionLPer100km != null ? `${car.fuelConsumptionLPer100km} L/100km` : '—'],
+          ['Energy cons.', '—'],
+          ['CO₂ WLTP', '—'],
+          ['Euro standard', '—']
+        ])}</div>`;
+
+        $('#panel-dim').innerHTML = `<div class="kv">${buildRows([
+          ['Length', car.lengthMm != null ? `${car.lengthMm} mm` : '—'],
+          ['Width', car.widthMm != null ? `${car.widthMm} mm` : '—'],
+          ['Height', car.heightMm != null ? `${car.heightMm} mm` : '—'],
+          ['Wheelbase', car.wheelbaseMm != null ? `${car.wheelbaseMm} mm` : '—'],
+          ['Boot volume', '—'],
+          ['Kerb weight', car.kerbWeightKg != null ? `${car.kerbWeightKg} kg` : '—']
+        ])}</div>`;
+
+        $('#panel-charge').innerHTML = `<div class="kv">${buildRows([
+          ['WLTP range', '—'],
+          ['Battery (net)', '—'],
+          ['AC max', '—'],
+          ['DC max', '—'],
+          ['DC 10–80%', '—'],
+          ['Connector', '—']
+        ])}</div>`;
+
+        $('#panel-warranty').innerHTML = `<div class="kv">${buildRows([
+          ['Warranty', '—'],
+          ['Euro NCAP', '—']
+        ])}</div>`;
+      }
+
+      // Restore a previously selected variant when opened from Compare.
+      const requestedVariant = new URLSearchParams(window.location.search).get('variant');
+      const variantIndex = requestedVariant !== null && /^\d+$/.test(requestedVariant)
+        ? Number(requestedVariant)
+        : -1;
+
+      if (variantIndex >= 0 && variantIndex < variants.length) {
+        selector.value = String(variantIndex);
+        renderVariant(variants[variantIndex]);
+      } else {
+        renderVariant(null);
+      }
+
+      selector.addEventListener('change', () => {
+        const index = selector.value;
+        renderVariant(index === '' ? null : variants[Number(index)] || null);
+      });
+
+      // Wishlist uses the generation code as its stable identifier.
+      const currentId = generation.code || code;
+      const currentTitle = `${makeName} ${modelName}`.trim();
+      const generationMeta = {
+        title: currentTitle,
+        subtitle: `${bodyName}${yearLabel ? ` · ${yearLabel}` : ''}`,
+        image: imageUrl
+      };
+
+      setHeartActive(getSet(WISHLIST_KEY).has(currentId));
+      $('#imgHeart').addEventListener('click', () => {
+        toggleWishlist(currentId, currentTitle, generationMeta);
+      });
+
+      // Compare uses a unique ID for each selected generation variant.
+      const getVariantCompareId = () => {
+        return selector.value === '' ? null : `${currentId}::variant-${selector.value}`;
+      };
+
+      const updateVariantCompareButton = () => {
+        const compareId = getVariantCompareId();
+        $('#imgCompare').dataset.compareId = compareId || '';
+        setCompareActive(!!compareId && getSet(CMP_KEY).has(compareId));
+      };
+
+      updateVariantCompareButton();
+      selector.addEventListener('change', updateVariantCompareButton);
+
+      $('#imgCompare').addEventListener('click', () => {
+        if (!selectedVariant || selector.value === '') {
+          showToast('Please select a version first');
+          return;
+        }
+
+        const compareId = getVariantCompareId();
+        const hp = selectedVariant.power_hp;
+        const meta = {
+          generationId: currentId,
+          variantIndex: Number(selector.value),
+          brand: makeName,
+          model: modelName,
+          body: bodyName,
+          variantName: selectedVariant.name || `Version ${Number(selector.value) + 1}`,
+          fuel: selectedVariant.fuel_type || selectedVariant.fuel || '',
+          gear: selectedVariant.transmission || '',
+          drivetrain: selectedVariant.drivetrain || '',
+          powerHp: hp != null ? Number(hp) : null,
+          powerKw: hp != null ? Math.round(Number(hp) * 0.7355) : null,
+          torqueNm: selectedVariant.torque_nm ?? null,
+          zeroTo100: selectedVariant.zero_to_100_s ?? null,
+          topSpeed: selectedVariant.top_speed_kmh ?? null,
+          fuelConsumption: selectedVariant.fuel_economy_combined_l100 ?? null,
+          lengthMm: selectedVariant.length_mm ?? null,
+          widthMm: selectedVariant.width_mm ?? null,
+          heightMm: selectedVariant.height_mm ?? null,
+          wheelbaseMm: selectedVariant.wheelbase_mm ?? null,
+          kerbWeightKg: selectedVariant.curb_weight_kg ?? null,
+          price: null,
+          img: imageUrl
+        };
+
+        toggleCompare(compareId, meta);
+        updateVariantCompareButton();
+      });
+
+      $('#shareBtn').addEventListener('click', async () => {
+        try {
+          if (navigator.share) {
+            await navigator.share({ title: document.title, url: location.href });
+          } else {
+            await navigator.clipboard.writeText(location.href);
+            showToast('Link copied to clipboard');
+          }
+        } catch {}
+      });
+
+      updateWishlistBadge();
+      buildWishlistMenu();
+      updateCompareBadge();
+      buildCompareMenu();
+    }
     async function renderCarSpecs() {
       let car = null;
       let idParam = new URLSearchParams(location.search).get('id');
 
       // 1. Try backend fetch if URL has params (simulating real app flow)
       const params = new URLSearchParams(window.location.search);
+      const codeParam = params.get('code');
+
+      if (codeParam) {
+        await renderCarVariablesGeneration(codeParam);
+        return;
+      }
       const brandParam = params.get("brand");
       const modelParam = params.get("model");
-      
+
       if (brandParam && modelParam) {
         try {
           const res = await fetch(`${BACKEND}/api/explore?brand=${encodeURIComponent(brandParam)}&model=${encodeURIComponent(modelParam)}`);
@@ -1092,7 +1398,7 @@
       ])}</div>`;
 
       $('#panel-warranty').innerHTML = `<div class="kv">${buildKvHtml([
-        ['Warranty', (car.warrantyYears || car.warrantyKm) ? `${nd(car.warrantyYears)} yrs / ${car.warrantyKm ? car.warrantyKm.toLocaleString()+' km' : '—'}` : '—'], 
+        ['Warranty', (car.warrantyYears || car.warrantyKm) ? `${nd(car.warrantyYears)} yrs / ${car.warrantyKm ? car.warrantyKm.toLocaleString()+' km' : '—'}` : '—'],
         ['Euro NCAP', (car.ncapStars || car.ncapYear) ? `${nd(car.ncapStars)} ★ (${nd(car.ncapYear)})` : '—']
       ])}</div>`;
 
@@ -1155,10 +1461,16 @@
           return;
         }
         const item = e.target.closest('.wish-item');
-        if (item) location.href = `cars.html?id=${encodeURIComponent(item.dataset.id)}`;
+        if (item) {
+          const savedId = item.dataset.id;
+          const generationMeta = getObj(GEN_META_KEY)[savedId];
+          const parameter = generationMeta ? 'code' : 'id';
+          location.href = `cars.html?${parameter}=${encodeURIComponent(savedId)}`;
+        }
       });
       $('#clearWishlist').addEventListener('click', () => {
         localStorage.setItem(WISHLIST_KEY, '[]');
+        saveObj(GEN_META_KEY, {});
         updateWishlistBadge(); buildWishlistMenu(); setHeartActive(false); showToast('Wishlist cleared');
       });
 
@@ -1171,7 +1483,7 @@
           set.delete(id); delete m[id];
           saveSet(CMP_KEY, set); saveObj(META_KEY, m);
           updateCompareBadge(); buildCompareMenu();
-          if (typeof currentId !== 'undefined' && id === currentId) setCompareActive(false);
+          if (document.querySelector("#imgCompare").dataset.compareId === id) setCompareActive(false);
         }
       });
       $('#clearCompare').addEventListener('click', () => {
