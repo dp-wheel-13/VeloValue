@@ -1,36 +1,22 @@
-/* ===========================================================
-   VeloValue – Optimized Global Translator
-   -----------------------------------------------------------
-   ✅ Deduplicates repeated text
-   ✅ Skips icons, emojis, and UI symbols
-   ✅ Caches translations for session
-   ✅ Persists language in localStorage
-   ✅ Works on page load and dynamic updates
-   =========================================================== */
-
+﻿/* VeloValue Global Translator */
 const translationCache = {};
+const originalTextNodes = new WeakMap();
 
-// Utility: check if a string is "translatable"
 function isTranslatable(text) {
-  if (!text || text.trim() === "") return false;
-  // skip symbols/icons/emojis
-  const nonTranslatable = /^[\s\p{So}\p{Sk}]+$/u;
-  return !nonTranslatable.test(text);
+  return !!text && text.trim() !== "" &&
+    !/^[\s\p{So}\p{Sk}]+$/u.test(text);
 }
 
-// Extract text nodes from an element
 function getTextNodes(el) {
-  const nodes = [];
-  el.childNodes.forEach(node => {
-    if (node.nodeType === Node.TEXT_NODE && isTranslatable(node.textContent)) {
-      nodes.push(node);
-    }
-  });
-  return nodes;
+  return [...el.childNodes].filter(node =>
+    node.nodeType === Node.TEXT_NODE &&
+    isTranslatable(node.textContent)
+  );
 }
 
-// Translate all page text
 async function translatePage(targetLang) {
+  const lang = String(targetLang || "en").toLowerCase();
+
   const elements = document.querySelectorAll(
     "h1, h2, h3, p, button, a, span, label, div"
   );
@@ -39,18 +25,35 @@ async function translatePage(targetLang) {
   const textsToTranslate = [];
 
   elements.forEach(el => {
-    if (el.dataset.noTranslate !== undefined) return;
+    if (
+      el.closest(".language-select") ||
+      el.dataset.noTranslate !== undefined
+    ) return;
 
-    const nodes = getTextNodes(el);
-    nodes.forEach(node => {
-      const original = node.dataset.originalText || node.textContent.trim();
-      node.dataset.originalText = original;
-      if (!translationCache[original + targetLang] && !textsToTranslate.includes(original)) {
+    getTextNodes(el).forEach(node => {
+      if (!originalTextNodes.has(node)) {
+        originalTextNodes.set(node, node.textContent.trim());
+      }
+
+      const original = originalTextNodes.get(node);
+      textNodes.push({ node, original });
+
+      if (
+        lang !== "en" &&
+        !translationCache[lang + "|" + original] &&
+        !textsToTranslate.includes(original)
+      ) {
         textsToTranslate.push(original);
       }
-      textNodes.push(node);
     });
   });
+
+  if (lang === "en") {
+    textNodes.forEach(({ node, original }) => {
+      node.textContent = original;
+    });
+    return;
+  }
 
   if (textsToTranslate.length === 0) return;
 
@@ -58,43 +61,58 @@ async function translatePage(targetLang) {
     const res = await fetch("/api/translate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ texts: textsToTranslate, targetLang })
+      body: JSON.stringify({
+        texts: textsToTranslate,
+        targetLang: lang
+      })
     });
+
+    if (!res.ok) {
+      throw new Error("Translation API returned HTTP " + res.status);
+    }
 
     const data = await res.json();
-    const translations = data.translations || {};
 
-    // Cache translations
-    Object.entries(translations).forEach(([orig, tr]) => {
-      translationCache[orig + targetLang] = tr;
+    if (!data.translations || Object.keys(data.translations).length === 0) {
+      throw new Error("The translation service returned no translations.");
+    }
+
+    Object.entries(data.translations).forEach(([original, translated]) => {
+      translationCache[lang + "|" + original] = translated;
     });
 
-    // Apply translations
-    textNodes.forEach(node => {
-      const original = node.dataset.originalText;
-      if (translationCache[original + targetLang]) {
-        node.textContent = translationCache[original + targetLang];
-      }
+    textNodes.forEach(({ node, original }) => {
+      const translated = translationCache[lang + "|" + original];
+      if (translated) node.textContent = translated;
     });
 
   } catch (err) {
-    console.error("Translation error:", err);
+    console.error("VeloValue translation failed:", err);
+    alert("Translation failed. Please try again later.");
   }
 }
 
-// Set language (called from menu)
 function setLanguage(lang) {
-  localStorage.setItem("language", lang);
-  translatePage(lang);
+  const selectedLang = String(lang || "en").toLowerCase();
+  localStorage.setItem("language", selectedLang);
+  document.documentElement.lang = selectedLang;
+  return translatePage(selectedLang);
 }
 
-// Auto-load saved language
 document.addEventListener("DOMContentLoaded", () => {
-  const savedLang = localStorage.getItem("language");
-  if (savedLang && savedLang !== "EN") {
-    translatePage(savedLang);
+  const selector = document.getElementById("languageSelect");
+
+  if (selector) {
+    const savedLang = (localStorage.getItem("language") || "en").toLowerCase();
+    selector.value = savedLang;
+
+    selector.addEventListener("change", event => {
+      setLanguage(event.target.value);
+    });
   }
+
+  const savedLang = (localStorage.getItem("language") || "en").toLowerCase();
+  if (savedLang !== "en") translatePage(savedLang);
 });
 
-// Expose globally for menu buttons
 window.setLanguage = setLanguage;

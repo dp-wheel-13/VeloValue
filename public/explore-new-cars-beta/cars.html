@@ -676,11 +676,7 @@
       </nav>
 
       <div class="language-select">
-        <select id="languageSelect" aria-label="Select language">
-          <option value="en">ðŸ‡¬ðŸ‡§ EN</option>
-          <option value="it">ðŸ‡®ðŸ‡¹ IT</option>
-          <option value="de">ðŸ‡©ðŸ‡ª DE</option>
-        </select>
+        System.Text.RegularExpressions.MatchEvaluator
       </div>
 
       <div class="wishlist" id="wishlist">
@@ -820,6 +816,25 @@
     ];
     const carsById = new Map(FALLBACK_CARS.map(c => [c.id, c]));
     const BACKEND = "";
+    function setCarVariablesBrandLogo(brand) {
+      const logoEl = $('#carLogo');
+      if (!logoEl) return;
+
+      const slug = String(brand || '').toLowerCase().trim()
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+      logoEl.alt = `${brand || 'Brand'} logo`;
+      logoEl.onerror = () => { logoEl.style.display = 'none'; };
+
+      if (!slug) {
+        logoEl.removeAttribute('src');
+        logoEl.style.display = 'none';
+        return;
+      }
+
+      logoEl.style.display = '';
+      logoEl.src = `https://carvariables.com/assets/brand-logos/${slug}-logo.svg`;
+    }
 
     // ===========================================================
     // HELPERS
@@ -1086,6 +1101,7 @@
 
       document.title = `VeloValue – ${makeName} ${modelName} ${yearLabel}`.trim();
       $('#brand').textContent = makeName;
+      setCarVariablesBrandLogo(makeName);
       $('#model').textContent = `${modelName}${yearLabel ? ` · ${yearLabel}` : ''}`;
       $('#fuelPill').textContent = 'Fuel: Select a version';
       $('#priceBadge').hidden = true;
@@ -1360,7 +1376,7 @@
       $('#model').textContent = [car.model, car.year].filter(Boolean).join(' ') || '—';
       $('#fuelPill').textContent = `Fuel: ${nd(car.fuel)}`;
       $('#priceBadge').textContent = `Price from: ${toEUR(car.priceFromEur)}`;
-      if (car.logo) $('#carLogo').src = car.logo;
+      setCarVariablesBrandLogo(car.brand);
       if (car.image) $('#heroImg').src = car.image;
 
       const summary = [

@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VeloValue – Compare Cars</title>
+  <title>VeloValue â€“ Compare Cars</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
 <style>
   :root { --bg:#000; --text:#fff; --accent:#1db954; --radius-xl:18px; --radius-lg:14px; --radius-md:10px; --shadow-1:0 8px 24px rgba(0,0,0,.45); --shadow-2:0 18px 50px rgba(0,0,0,.55); --header-offset:0px; }
@@ -24,7 +24,7 @@
   .btn.primary:hover{ filter:brightness(1.05); }
 
   /* Compare grid */
-  .panel{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-xl); box-shadow:var(--shadow-1); }
+  .panel{ background:#101820; border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-xl); box-shadow:var(--shadow-1); }
   .table{ overflow:auto; }
   .grid{ display:grid; grid-auto-flow:column; grid-auto-columns:minmax(240px,1fr); gap:1px; }
   .col{ background:rgba(255,255,255,.02); border-right:1px solid rgba(255,255,255,.08); min-width:240px; }
@@ -50,7 +50,7 @@
   @keyframes toast-in{ to{ transform:translateY(0); opacity:1; } }
 </style>
 
-<!-- ✅ FULL VERSION A — FINAL RESPONSIVE HEADER -->
+<!-- âœ… FULL VERSION A â€” FINAL RESPONSIVE HEADER -->
 <style>
   header, header * {
     font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -154,7 +154,7 @@
     top:calc(100% + 10px);
     width:320px;
     max-height:420px;
-    background:rgba(255,255,255,.03);
+    background:#101820;
     border:1px solid rgba(255,255,255,.12);
     border-radius:14px;
     box-shadow:var(--shadow-2);
@@ -299,7 +299,7 @@
       position: relative;
     }
     .language-select::before{
-      content:"🌐";
+      content:"ðŸŒ";
       font-size:1.2rem;
       color:#fff;
       position:absolute;
@@ -313,7 +313,7 @@
     }
   }
 
-  /* ✅ FINAL MOBILE SHRINK FIX */
+  /* âœ… FINAL MOBILE SHRINK FIX */
   @media (max-width: 768px) {
     header {
       padding: 0.5rem 0.8rem !important;
@@ -379,7 +379,7 @@
     }
   }
 
-  /* ✅ TAB-VIEW GRID OVERRIDE */
+  /* âœ… TAB-VIEW GRID OVERRIDE */
   @media (max-width: 700px) {
     .grid {
       grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -400,7 +400,7 @@
   <!-- Unified Header -->
   <header>
     <div class="header-left">
-      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
       <h1><a href="/homepage.html">VeloValue</a></h1>
     </div>
     <div class="header-right">
@@ -412,11 +412,7 @@
       </nav>
 
       <div class="language-select">
-        <select id="languageSelect">
-          <option value="en">🇬🇧 English</option>
-          <option value="it">🇮🇹 Italiano</option>
-          <option value="de">🇩🇪 Deutsch</option>
-        </select>
+        System.Text.RegularExpressions.MatchEvaluator
       </div>
 
       <!-- Wishlist dropdown (header) -->
@@ -437,30 +433,7 @@
           </div>
         </div>
       </div>
-
-      <!-- Compare dropdown (header) -->
-      <div class="wishlist compare" id="compare">
-        <button id="compareBtn" class="icon-btn" aria-label="Compare" aria-expanded="false" aria-controls="compareMenu" title="Compare">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 17h6M3 7h10M3 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/>
-          </svg>
-          <span class="badge" id="compareBadge">0</span>
-        </button>
-        <div id="compareMenu" class="dropdown" role="menu" aria-label="Compare">
-          <div class="dropdown-head">
-            <strong>Compare</strong>
-            <button id="clearCompare" class="text-btn">Clear all</button>
-          </div>
-          <div id="compareItems" class="dropdown-list">
-            <div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Nothing to compare.</div>
-          </div>
-          <div style="padding:10px; border-top:1px solid rgba(255,255,255,.1); display:flex; justify-content:flex-end;">
-            <button id="viewCompare" class="text-btn">View compare</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="authSection">
+<div id="authSection">
         <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
       </div>
     </div>
@@ -480,7 +453,7 @@
     <div class="title-row">
       <div>
         <div class="title">Compare Cars</div>
-        <div class="muted" id="countLine">Loading…</div>
+        <div class="muted" id="countLine">Loadingâ€¦</div>
       </div>
       <div style="display:flex; gap:8px;">
         <button class="btn" id="backBtn">Back to Explore</button>
@@ -532,7 +505,7 @@
     }
     function saveMeta(meta){ localStorage.setItem(META_KEY, JSON.stringify(meta)); }
 
-    function formatEUR(n){ return n==null ? '—' : '€'+Number(n).toLocaleString(); }
+    function formatEUR(n){ return n==null ? 'â€”' : 'â‚¬'+Number(n).toLocaleString(); }
 
     function removeId(id){
       const ids = loadIds().filter(x => x !== id);
@@ -548,7 +521,7 @@
 
     function chipHTML(id, meta){
       const name = meta?.brand ? `${meta.brand} ${meta.model||''}`.trim() : id;
-      return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">×</button></span>`;
+      return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">Ã—</button></span>`;
     }
 
     function escapeHTML(value) {
@@ -562,17 +535,17 @@
     }
 
     function colHTML(meta, id){
-      const safe = value => escapeHTML(value == null || value === '' ? '—' : value);
+      const safe = value => escapeHTML(value == null || value === '' ? 'â€”' : value);
       const name = `${meta.brand||''} ${meta.model||''}`.trim() || id;
-      const title = meta.variantName ? `${name} — ${meta.variantName}` : name;
-      const sub = [meta.body, meta.fuel].filter(Boolean).join(' • ');
-      const t = meta.gear ? (meta.gear === 'Auto' ? 'Automatic' : meta.gear) : '—';
+      const title = meta.variantName ? `${name} â€” ${meta.variantName}` : name;
+      const sub = [meta.body, meta.fuel].filter(Boolean).join(' â€¢ ');
+      const t = meta.gear ? (meta.gear === 'Auto' ? 'Automatic' : meta.gear) : 'â€”';
       const power = meta.powerHp != null
         ? `${meta.powerHp} HP${meta.powerKw != null ? ` / ${meta.powerKw} kW` : ''}`
-        : '—';
-      const acceleration = meta.zeroTo100 != null ? `${meta.zeroTo100} s` : '—';
-      const topSpeed = meta.topSpeed != null ? `${meta.topSpeed} km/h` : '—';
-      const consumption = meta.fuelConsumption != null ? `${meta.fuelConsumption} L/100 km` : '—';
+        : 'â€”';
+      const acceleration = meta.zeroTo100 != null ? `${meta.zeroTo100} s` : 'â€”';
+      const topSpeed = meta.topSpeed != null ? `${meta.topSpeed} km/h` : 'â€”';
+      const consumption = meta.fuelConsumption != null ? `${meta.fuelConsumption} L/100 km` : 'â€”';
       const viewUrl = meta.generationId
         ? `cars.html?code=${encodeURIComponent(meta.generationId)}&variant=${encodeURIComponent(meta.variantIndex ?? "")}`
         : `cars.html?id=${encodeURIComponent(id)}`;
@@ -584,28 +557,28 @@
           <div class="head">
             ${meta.img ? `<img class="img" src="${escapeHTML(meta.img)}" alt="${escapeHTML(title)}">` : `<div class="img" style="display:grid;place-items:center;opacity:.6">No image</div>`}
             <div class="name">${escapeHTML(title)}</div>
-            <div class="sub">${escapeHTML(sub || '—')}</div>
+            <div class="sub">${escapeHTML(sub || 'â€”')}</div>
             <div class="actions">
               <a class="btn" href="${viewUrl}">View</a>
               <button class="btn" data-remove="${escapeHTML(id)}">Remove</button>
             </div>
           </div>
           ${row('Variant', meta.variantName)}
-          ${row('Price', meta.price == null ? '—' : formatEUR(meta.price))}
+          ${row('Price', meta.price == null ? 'â€”' : formatEUR(meta.price))}
           ${row('Body', meta.body)}
           ${row('Fuel', meta.fuel)}
           ${row('Power', power)}
-          ${row('Torque', meta.torqueNm != null ? `${meta.torqueNm} Nm` : '—')}
+          ${row('Torque', meta.torqueNm != null ? `${meta.torqueNm} Nm` : 'â€”')}
           ${row('Transmission', t)}
           ${row('Drivetrain', meta.drivetrain)}
-          ${row('0–100 km/h', acceleration)}
+          ${row('0â€“100 km/h', acceleration)}
           ${row('Top speed', topSpeed)}
           ${row('Fuel consumption', consumption)}
-          ${row('Length', meta.lengthMm != null ? `${meta.lengthMm} mm` : '—')}
-          ${row('Width', meta.widthMm != null ? `${meta.widthMm} mm` : '—')}
-          ${row('Height', meta.heightMm != null ? `${meta.heightMm} mm` : '—')}
-          ${row('Wheelbase', meta.wheelbaseMm != null ? `${meta.wheelbaseMm} mm` : '—')}
-          ${row('Kerb weight', meta.kerbWeightKg != null ? `${meta.kerbWeightKg} kg` : '—')}
+          ${row('Length', meta.lengthMm != null ? `${meta.lengthMm} mm` : 'â€”')}
+          ${row('Width', meta.widthMm != null ? `${meta.widthMm} mm` : 'â€”')}
+          ${row('Height', meta.heightMm != null ? `${meta.heightMm} mm` : 'â€”')}
+          ${row('Wheelbase', meta.wheelbaseMm != null ? `${meta.wheelbaseMm} mm` : 'â€”')}
+          ${row('Kerb weight', meta.kerbWeightKg != null ? `${meta.kerbWeightKg} kg` : 'â€”')}
           ${row('Rating', meta.rating)}
         </div>`;
     }
@@ -662,8 +635,8 @@
       const menu = $("#hamburgerMenu");
       const overlay = document.querySelector(".menu-overlay");
 
-      function openMenu(){ hamburger.setAttribute("aria-expanded","true"); hamburger.classList.add("is-active"); if (window.innerWidth>1024) hamburger.textContent="✕"; menu.classList.add("active"); overlay.classList.add("active"); menu.setAttribute("aria-hidden","false"); }
-      function closeMenu(){ hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); if (window.innerWidth>1024) hamburger.textContent="☰"; menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); }
+      function openMenu(){ hamburger.setAttribute("aria-expanded","true"); hamburger.classList.add("is-active"); if (window.innerWidth>1024) hamburger.textContent="âœ•"; menu.classList.add("active"); overlay.classList.add("active"); menu.setAttribute("aria-hidden","false"); }
+      function closeMenu(){ hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); if (window.innerWidth>1024) hamburger.textContent="â˜°"; menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); }
       function toggleMenu(){ menu.classList.contains("active") ? closeMenu() : openMenu(); }
       if (hamburger){ hamburger.addEventListener("click", toggleMenu); }
       if (overlay){ overlay.addEventListener("click", closeMenu); }
@@ -674,7 +647,7 @@
       function updateAuthButton(){
         if(!authSection) return;
         if(window.innerWidth <= 768){
-          authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+          authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">ðŸ‘¤</button>`;
         } else {
           authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
         }
@@ -695,78 +668,213 @@
       // Header dropdowns (Wishlist)
       (function(){
         const wrap = document.getElementById('wishlist');
-        const btn  = document.getElementById('wishlistBtn');
-        if (!wrap || !btn) return;
-        btn.addEventListener('click', ()=>{
-          const open = wrap.classList.toggle('open');
-          btn.setAttribute('aria-expanded', open?'true':'false');
-        });
-        document.addEventListener('click', (e)=>{
-          if (!wrap.contains(e.target)) { wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
-        });
-        document.addEventListener('keydown', (e)=>{ if (e.key==='Escape'){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); } });
-      })();
+        const btn = document.getElementById('wishlistBtn');
+        const badge = document.getElementById('wishlistBadge');
+        const items = document.getElementById('wishlistItems');
+        const clearBtn = document.getElementById('clearWishlist');
 
-      // Header dropdowns (Compare)
-      (function(){
-        const wrap = document.getElementById('compare');
-        const btn  = document.getElementById('compareBtn');
-        const items = document.getElementById('compareItems');
-        const clearBtn = document.getElementById('clearCompare');
-        const viewBtn = document.getElementById('viewCompare');
-        if (!wrap || !btn) return;
+        if (!wrap || !btn || !badge || !items) return;
+
+        let wishlistCars = [];
+        let wishlistReady = false;
+        let wishlistBusy = false;
+
+        function renderWishlist(){
+          badge.textContent = wishlistCars.length;
+          badge.style.display = wishlistCars.length ? 'grid' : 'none';
+          items.replaceChildren();
+
+          if (!wishlistCars.length) {
+            const empty = document.createElement('div');
+            empty.className = 'dropdown-empty';
+            empty.style.cssText = 'padding:20px;text-align:center;opacity:.75;';
+            empty.textContent = 'Your wishlist is empty.';
+            items.appendChild(empty);
+            return;
+          }
+
+          wishlistCars.forEach(car => {
+            const row = document.createElement('div');
+            row.className = 'wish-item';
+            row.dataset.id = car.carId;
+
+            if (car.img) {
+              const img = document.createElement('img');
+              img.src = car.img;
+              img.alt = [car.brand, car.model].filter(Boolean).join(' ');
+              row.appendChild(img);
+            }
+
+            const info = document.createElement('div');
+            info.className = 'wish-meta';
+
+            const name = document.createElement('div');
+            name.className = 'wish-title';
+            name.textContent = [car.brand, car.model].filter(Boolean).join(' ') || 'Saved car';
+
+            const details = document.createElement('div');
+            details.className = 'wish-sub';
+            const price = Number(car.price);
+            const priceText = car.price != null && car.price !== '' && Number.isFinite(price)
+              ? new Intl.NumberFormat('it-IT', {
+                  style: 'currency',
+                  currency: 'EUR',
+                  maximumFractionDigits: 0
+                }).format(price)
+              : 'Price unavailable';
+
+            details.textContent = [car.generation || car.body, priceText]
+              .filter(Boolean)
+              .join(' • ');
+
+            info.appendChild(name);
+            info.appendChild(details);
+            row.appendChild(info);
+
+            const remove = document.createElement('button');
+            remove.className = 'remove-btn';
+            remove.type = 'button';
+            remove.dataset.remove = car.carId;
+            remove.textContent = 'Remove';
+            remove.setAttribute('aria-label', 'Remove ' + name.textContent + ' from wishlist');
+            row.appendChild(remove);
+
+            items.appendChild(row);
+          });
+        }
+
+        async function loadWishlist(){
+          try {
+            const authResponse = await fetch('/api/user-status', {
+              method: 'GET',
+              credentials: 'include'
+            });
+
+            if (!authResponse.ok) {
+              throw new Error('Could not verify login status');
+            }
+
+            const auth = await authResponse.json();
+
+            if (!auth.loggedIn) {
+              wishlistCars = [];
+              wishlistReady = true;
+              renderWishlist();
+              return;
+            }
+
+            const response = await fetch('/api/wishlist', {
+              method: 'GET',
+              credentials: 'include'
+            });
+
+            const data = await response.json();
+
+            if (response.status === 401) {
+              wishlistCars = [];
+              wishlistReady = true;
+              renderWishlist();
+              return;
+            }
+
+            if (!response.ok || !data.success) {
+              throw new Error(data.message || 'Could not load Wishlist');
+            }
+
+            wishlistCars = Array.isArray(data.cars) ? data.cars : [];
+            wishlistReady = true;
+            renderWishlist();
+          } catch (error) {
+            console.error('Compare page Wishlist load failed:', error);
+          }
+        }
+
+        async function removeWishlistCar(id){
+          if (wishlistBusy || !id) return;
+          wishlistBusy = true;
+
+          try {
+            const response = await fetch('/api/wishlist/' + encodeURIComponent(id), {
+              method: 'DELETE',
+              credentials: 'include'
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+              throw new Error(data.message || 'Could not remove car');
+            }
+
+            wishlistCars = Array.isArray(data.cars) ? data.cars : [];
+            renderWishlist();
+          } catch (error) {
+            console.error('Compare page Wishlist removal failed:', error);
+          } finally {
+            wishlistBusy = false;
+          }
+        }
+
+        async function clearWishlist(){
+          if (wishlistBusy || !wishlistCars.length) return;
+          wishlistBusy = true;
+
+          try {
+            const response = await fetch('/api/wishlist', {
+              method: 'DELETE',
+              credentials: 'include'
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+              throw new Error(data.message || 'Could not clear Wishlist');
+            }
+
+            wishlistCars = Array.isArray(data.cars) ? data.cars : [];
+            renderWishlist();
+          } catch (error) {
+            console.error('Compare page Wishlist clear failed:', error);
+          } finally {
+            wishlistBusy = false;
+          }
+        }
+
         btn.addEventListener('click', ()=>{
           const open = wrap.classList.toggle('open');
           btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          if (open && !wishlistReady) loadWishlist();
         });
+
+        items.addEventListener('click', (e)=>{
+          const removeBtn = e.target.closest('[data-remove]');
+          if (removeBtn) removeWishlistCar(removeBtn.dataset.remove);
+        });
+
+        if (clearBtn) {
+          clearBtn.addEventListener('click', clearWishlist);
+        }
+
         document.addEventListener('click', (e)=>{
-          if (!wrap.contains(e.target)) { wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+          if (!wrap.contains(e.target)) {
+            wrap.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+          }
         });
+
         document.addEventListener('keydown', (e)=>{
-          if (e.key === 'Escape') { wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+          if (e.key === 'Escape') {
+            wrap.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+          }
         });
-        if (items){
-          items.addEventListener('click', (e)=>{
-            const rm = e.target.closest('[data-remove]'); if(!rm) return;
-            const id = rm.getAttribute('data-remove');
-            // remove id from compare
-            try {
-              const set = new Set(JSON.parse(localStorage.getItem('vv_compare_ids')||'[]'));
-              set.delete(id);
-              localStorage.setItem('vv_compare_ids', JSON.stringify([...set]));
-            } catch {}
-            // Rebuild simple list (no page refresh)
-            const ids = JSON.parse(localStorage.getItem('vv_compare_ids')||'[]');
-            if (!ids.length) items.innerHTML = `<div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Nothing to compare.</div>`;
-            else {
-              // soft rebuild (optional)
-              location.reload(); // simplest to reflect everywhere
-            }
-          });
-        }
-        if (clearBtn) clearBtn.addEventListener('click', ()=>{
-          localStorage.setItem('vv_compare_ids', '[]');
-          localStorage.setItem('vv_compare_meta', '{}');
-          if (items) items.innerHTML = `<div class="dropdown-empty" style="padding:20px; text-align:center; opacity:.75;">Nothing to compare.</div>`;
-        });
-        if (viewBtn){
-          viewBtn.addEventListener('click', ()=>{
-            try{
-              const ids = JSON.parse(localStorage.getItem('vv_compare_ids')||'[]');
-              if (!ids || ids.length < 2){ alert('Add minimum of 2 cars to compare'); return; }
-            }catch{}
-            // Already on compare.html; ensure the URL has ids
-            const ids = JSON.parse(localStorage.getItem('vv_compare_ids')||'[]');
-            const url = new URL('compare.html', location.href);
-            if (ids && ids.length) url.searchParams.set('ids', ids.join(','));
-            location.href = url.toString();
-          });
-        }
+
+        loadWishlist();
       })();
-    })();
+})();
   </script>
 
   <script src="/js/auth.js"></script>
   <script src="js/translate.js"></script>
 </body>
 </html>
+

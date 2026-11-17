@@ -36,6 +36,7 @@ if (!SESSION_SECRET) {
 // Import your models and routes
 const User = require("../models/User");
 const garageRoutes = require("../routes/garageRoutes");
+const wishlistRoutes = require("../routes/wishlistRoutes");
 const exploreRoutes = require("../routes/exploreRoutes");
 const infotargaRoutes = require("../routes/infotarga"); // InfoTarga routes
 const authSocialRoutes = require("../routes/authSocial");
@@ -130,6 +131,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from public folder
 app.use(express.static(path.join(__dirname, "../public")));
+// Serve local vehicle manufacturer logos
+app.use("/assets/car-logos/custom", express.static(path.join(__dirname, "../car-logos-dataset/local-logos")));
+app.use("/assets/car-logos", express.static(path.join(__dirname, "../car-logos-dataset/logos/optimized")));
 
  // Persistent MongoDB sessions — initialized through shared connection
 app.use(async (req, res, next) => {
@@ -176,6 +180,7 @@ app.use("/api", infotargaRoutes);
 
 // Your existing garage routes
 app.use("/", garageRoutes);
+app.use("/", wishlistRoutes);
 app.use("/api", exploreRoutes);
 
 // Google and Facebook authentication
@@ -210,14 +215,18 @@ app.post("/api/translate", async (req, res) => {
         continue;
       }
 
-      const deeplRes = await axios.post(
+            const deeplRes = await axios.post(
         "https://api-free.deepl.com/v2/translate",
         new URLSearchParams({
-          auth_key: process.env.DEEPL_API_KEY,
           text,
           target_lang: targetLang.toUpperCase()
         }),
-        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": `DeepL-Auth-Key ${process.env.DEEPL_API_KEY}`
+          }
+        }
       );
 
       const translatedText = deeplRes.data.translations[0].text;

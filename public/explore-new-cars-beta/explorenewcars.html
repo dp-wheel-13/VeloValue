@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VeloValue – Explore Cars</title>
+  <title>VeloValue Ã¢â‚¬â€œ Explore Cars</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
     :root { --bg:#000; --text:#fff; --accent:#1db954; --radius-xl:18px; --radius-lg:14px; --radius-md:10px; --shadow-1:0 8px 24px rgba(0,0,0,.45); --shadow-2:0 18px 50px rgba(0,0,0,.55); --header-offset:0px; }
@@ -27,7 +27,7 @@
     .icon-btn:hover{ border-color:var(--accent); } .icon-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     .icon-btn svg{ width:18px; height:18px; stroke:currentColor; fill:transparent; stroke-width:1.8; }
     .icon-btn .badge{ position:absolute; top:-6px; right:-6px; min-width:18px; height:18px; padding:0 5px; display:none; align-items:center; justify-content:center; background:var(--accent); color:var(--bg); border-radius:999px; font-size:11px; font-weight:800; }
-    .wishlist .dropdown{ position:absolute; right:0; top:calc(100% + 10px); width:320px; max-height:420px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:14px; box-shadow:var(--shadow-2); display:none; overflow:hidden; }
+    .wishlist .dropdown{ position:absolute; right:0; top:calc(100% + 10px); width:320px; max-height:420px; background:#101820; border:1px solid rgba(255,255,255,.12); border-radius:14px; box-shadow:var(--shadow-2); display:none; overflow:hidden; }
     .wishlist.open .dropdown{ display:block; }
     .dropdown-head{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.1); }
     .dropdown-head strong{ font-size:14px; }
@@ -65,14 +65,14 @@
     @media (max-width:600px){ .search-wrap{ border-radius:16px; padding:8px 10px; } .search-btn{ padding:10px 14px; font-weight:700; } .search-wrap select, .search-wrap input{ font-size:0.8rem; padding:6px 24px 6px 8px; } }
 
     .section{ width:min(1200px,94vw); margin:0 auto; padding:26px 0; } .section h2{ font-size:22px; margin:0 0 14px; letter-spacing:.2px; }
-    .marquee{ position:relative; overflow:hidden; border-radius:var(--radius-xl); background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); padding:14px; box-shadow:var(--shadow-1); }
+    .marquee{ position:relative; overflow:hidden; border-radius:var(--radius-xl); background:#101820; border:1px solid rgba(255,255,255,.12); padding:14px; box-shadow:var(--shadow-1); }
     .marquee .track{ display:flex; gap:14px; align-items:stretch; width:max-content; animation:scroll-left 28s linear infinite; }
     .marquee:hover .track{ animation-play-state:paused; }
     @keyframes scroll-left{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
     @media (prefers-reduced-motion:reduce){ .marquee .track{ animation:none; } }
     .marquee .car-card{ min-width:260px; max-width:260px; margin-inline:0; }
 
-    .car-card{ position:relative; min-width:260px; max-width:260px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:transform .25s, box-shadow .25s; box-shadow:0 8px 20px rgba(0,0,0,.35); margin-inline:auto; }
+    .car-card{ position:relative; min-width:260px; max-width:260px; background:#101820; border:1px solid rgba(255,255,255,.12); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:transform .25s, box-shadow .25s; box-shadow:0 8px 20px rgba(0,0,0,.35); margin-inline:auto; }
     .car-card:hover{ transform:translateY(-4px); box-shadow:0 16px 36px rgba(0,0,0,.55); }
     .car-card .thumb{ aspect-ratio:16/10; width:100%; object-fit:cover; background:#111; }
     .car-card .meta{ padding:12px 12px 14px; display:flex; justify-content:space-between; align-items:center; }
@@ -87,13 +87,13 @@
 
     .filters-wrap{ display:grid; grid-template-columns:260px 1fr 280px; gap:16px; }
     @media (max-width:1060px){ .filters-wrap{ grid-template-columns:1fr; } }
-    .panel{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-xl); box-shadow:var(--shadow-1); }
+    .panel{ background:#101820; border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-xl); box-shadow:var(--shadow-1); }
     .left-filters{ padding:16px; position:sticky; top:calc(var(--header-offset, 72px) + 6px); height:max-content; }
     .left-filters h3{ margin:4px 0 12px; font-size:18px; }
     .f-group{ margin:14px 0; }
     .f-label{ display:block; font-size:12px; letter-spacing:.2px; color:var(--text); opacity:.7; margin-bottom:8px; text-transform:uppercase; }
     .filters-toggle{ display:inline-flex; align-items:center; gap:8px; margin-bottom:10px; background:#111; color:#fff; border:1px solid #333; border-radius:6px; padding:6px 10px; font-size:0.9rem; cursor:pointer; }
-    .filters-toggle:after{ content:"▾"; opacity:.8; }
+    .filters-toggle:after{ content:"Ã¢â€“Â¾"; opacity:.8; }
     .left-filters.collapsed #filtersContent{ display:none; }
     .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
     .chip{ padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.2); cursor:pointer; font-weight:600; color:var(--text); background:transparent; transition:border-color .15s, color .15s, background .15s; }
@@ -121,7 +121,7 @@
 
     .brand-panel{ padding:14px; } .brand-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
     .brand-tile{ background:transparent; border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:12px; display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer; transition:transform .2s, border-color .2s, box-shadow .2s, color .2s; }
-    .brand-tile .brand-logo{ font-size:22px; font-weight:700; opacity:.7; } .brand-tile .brand-name{ font-size:14px; font-weight:600; text-align:center; }
+    .brand-tile .brand-logo{ width:100%; height:54px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; opacity:.85; } .brand-tile .brand-logo img{ max-width:100%; max-height:54px; object-fit:contain; } .brand-tile .brand-name{ font-size:14px; font-weight:600; text-align:center; }
     .brand-tile:hover{ transform:translateY(-2px); border-color:rgba(255,255,255,.25); }
     .brand-tile.active{ border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset; color:var(--accent); }
     .brand-tile:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
@@ -134,7 +134,13 @@
     @keyframes toast-in{ to{ transform:translateY(0); opacity:1; } }
     @media (prefers-reduced-motion:reduce){ .toast{ animation:none; opacity:1; transform:none; } }
     .sr-only{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
-  </style>
+  
+    .pagination{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:18px 6px 8px}
+    .pagination[hidden]{display:none}
+    .pagination button{background:#111;color:#fff;border:1px solid #444;border-radius:8px;padding:9px 16px;cursor:pointer}
+    .pagination button:disabled{opacity:.4;cursor:not-allowed}
+    .pagination span{font-size:13px;opacity:.85}
+</style>
 
   <style>
     header, header * { font-family:'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
@@ -166,14 +172,14 @@
     @media(max-width:768px){
       #authSection .text-btn{display:none;} #authSection .icon-btn{display:inline-flex; align-items:center; justify-content:center; width:auto; height:auto; padding:8px 16px; border-radius:999px; font-size:0.9rem; font-weight:600; background:#fff; color:#000; border:none; cursor:pointer;}
       .language-select{ width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff; display:flex; align-items:center; justify-content:center; position:relative; }
-      .language-select::before{content:"ðŸŒ"; font-size:1.2rem; color:#fff; position:absolute;} .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
+      .language-select::before{content:"";}
       header { padding:0.5rem 0.8rem !important; height:60px; gap:10px; }
       .header-left, .header-right { gap:10px !important; }
       .hamburger { width:30px !important; height:30px !important; } .hamburger::before, .hamburger::after { width:16px !important; } .hamburger { background-size:16px 2px !important; }
       header h1 a { font-size:1.3rem !important; }
       #authSection .icon-btn { width:30px !important; height:30px !important; font-size:1rem !important; }
       .language-select { width:30px !important; height:30px !important; }
-      .language-select::before { font-size:1rem !important; }
+      .language-select::before{content:"";}
       .wishlist .icon-btn { width:30px !important; height:30px !important; } .wishlist .icon-btn svg { width:14px !important; height:14px !important; }
       .wishlist .badge { top:-4px !important; right:-4px !important; min-width:14px !important; height:14px !important; font-size:9px !important; }
       .header-right { overflow:visible; flex-shrink:1; }
@@ -184,7 +190,7 @@
 
   <header>
     <div class="header-left">
-      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">Ã¢ËœÂ°</button>
       <h1><a href="/homepage.html">VeloValue</a></h1>
     </div>
     <div class="header-right">
@@ -195,7 +201,7 @@
         <a href="#about">ABOUT US</a>
       </nav>
       <div class="language-select">
-        <select id="languageSelect"><option value="en">ðŸ‡¬ðŸ‡§ English</option><option value="it">ðŸ‡®ðŸ‡¹ Italiano</option><option value="de">ðŸ‡©ðŸ‡ª Deutsch</option></select>
+        <select id="languageSelect"><option value="en">EN â€” English</option><option value="it">IT â€” Italiano</option><option value="de">DE â€” Deutsch</option></select>
       </div>
       <div class="wishlist" id="wishlist">
         <button id="wishlistBtn" class="icon-btn" aria-label="Wishlist" aria-expanded="false" aria-controls="wishlistMenu">
@@ -248,7 +254,7 @@
         <button id="filtersToggle" class="filters-toggle" aria-expanded="true" type="button">Filter By</button>
         <div id="filtersContent">
           <div class="f-group"><span class="f-label">Body Style</span><div class="chip-row" id="bodyChips"></div></div>
-          <div class="f-group"><span class="f-label">Price (EUR)</span><div class="range"><input type="range" id="priceRange" min="10000" max="200000" value="200000" step="1000"/><span id="priceOut" class="muted">≤ €200,000</span></div></div>
+          <div class="f-group"><span class="f-label">Price (EUR)</span><div class="range"><input type="range" id="priceRange" min="10000" max="200000" value="200000" step="1000"/><span id="priceOut" class="muted">Ã¢â€°Â¤ Ã¢â€šÂ¬200,000</span></div></div>
           <button class="apply-btn" id="applyFilters">Done</button>
         </div>
       </aside>
@@ -259,14 +265,19 @@
             <label class="sr-only" for="sortSel">Sort</label>
             <select id="sortSel" aria-label="Sort">
               <option value="relevance">Sort: Relevance</option>
-              <option value="price_asc">Price: Low → High</option>
-              <option value="price_desc">Price: High → Low</option>
+              <option value="price_asc">Price: Low Ã¢â€ â€™ High</option>
+              <option value="price_desc">Price: High Ã¢â€ â€™ Low</option>
             </select>
             <button id="clearFiltersBtn" class="clear-filters" title="Clear all filters">Clear filters</button>
           </div>
         </div>
         <div id="activeFilters" class="active-filters"></div>
         <div class="grid" id="resultsGrid"></div>
+        <nav class="pagination" id="cataloguePagination" aria-label="Car catalogue pages" hidden>
+          <button type="button" id="cataloguePrev" disabled>Previous</button>
+          <span id="cataloguePageInfo" aria-live="polite">Page 1 of 1</span>
+          <button type="button" id="catalogueNext" disabled>Next</button>
+        </nav>
       </main>
       <aside class="panel brand-panel">
         <h3 style="margin:4px 0 10px">Brands</h3>
@@ -302,7 +313,7 @@
     const $ = (s, r=document) => r.querySelector(s);
     const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
     const API_BASE_URL = location.port === '5501' ? 'http://localhost:3000' : '';
-    const toEUR = n => `€${Number(n).toLocaleString()}`;
+    const toEUR = n => `Ã¢â€šÂ¬${Number(n).toLocaleString()}`;
     
     // Helper to convert FERRARI -> Ferrari for Wikipedia compatibility
     function toTitleCase(str) {
@@ -311,6 +322,35 @@
     }
 
     function carId(c){ return c.code ? `cv-${String(c.code).trim().toLowerCase()}` : `${c.brand}-${c.model}`.toLowerCase().replace(/\s+/g,'-'); }
+    function normalizeCarVariablesResults(results, fallbackBrand = '', fallbackModel = '') {
+      return results.map(raw => {
+        const variantList = Array.isArray(raw.variants) ? raw.variants : [];
+        const transmissions = [...new Set(variantList.map(v => v.transmission).filter(Boolean))];
+
+        return {
+          ...raw,
+          source: 'carvariables',
+          code: raw.code,
+          brand: raw.make?.name || raw.brand || fallbackBrand,
+          model: raw.model || raw.name || fallbackModel,
+          generation: raw.generation || raw.name || '',
+          year_start: raw.year_start ?? null,
+          year_end: raw.year_end ?? null,
+          body: raw.body?.label || raw.body?.style || raw.body?.type || '',
+          image: raw.image_url || '',
+          img: raw.image_url || '',
+          price: null,
+          fuels: raw.fuels || [],
+          drives: raw.drives || [],
+          variants: variantList,
+          variant_count: raw.variant_count ?? variantList.length,
+          power_hp: raw.power_hp ?? null,
+          torque_nm: raw.torque_nm ?? null,
+          transmission: transmissions.join(', ') || null
+        };
+      });
+    }
+
     const carsById = new Map();
     window.cars = []; 
     function showToast(msg){ const wrap = $('#toastWrap'); const el = document.createElement('div'); el.className='toast'; el.textContent=msg; wrap.appendChild(el); setTimeout(()=>{ el.style.transition='opacity .2s, transform .2s'; el.style.opacity='0'; el.style.transform='translateY(8px)'; }, 1600); setTimeout(()=> wrap.contains(el) && wrap.removeChild(el), 1850); }
@@ -333,43 +373,279 @@
 
     /* UI Helpers */
     function updateCompareBadge(){ const n = loadCompare().size; const b = document.getElementById('compareBadge'); if(!b) return; b.style.display = n > 0 ? 'grid' : 'none'; if(n) b.textContent = n; }
-    function buildCompareMenu(){ const listEl = document.getElementById('compareItems'); if(!listEl) return; const ids = [...loadCompare()]; const meta = loadMeta(); if(!ids.length){ listEl.innerHTML = `<div class="dropdown-empty" style="padding:20px;text-align:center;opacity:.75;">Nothing to compare.</div>`; return; } listEl.innerHTML = ids.map(id=>{ const m = meta[id]||{}; const name = [m.brand, m.model].filter(Boolean).join(' ') || id; const sub = [m.body, (m.price!=null ? '€'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' • '); const img = m.img || ''; return `<div class="wish-item" data-id="${id}">${img ? `<img src="${img}" alt="${name}">` : `<div style="width:44px;height:44px;border-radius:8px;background:#111;display:grid;place-items:center;opacity:.6">—</div>`}<div class="wish-meta"><div class="wish-title">${name}</div><div class="wish-sub">${sub||''}</div></div><button class="remove-btn" data-remove="${id}">Remove</button></div>`; }).join(''); }
+    function buildCompareMenu(){ const listEl = document.getElementById('compareItems'); if(!listEl) return; const ids = [...loadCompare()]; const meta = loadMeta(); if(!ids.length){ listEl.innerHTML = `<div class="dropdown-empty" style="padding:20px;text-align:center;opacity:.75;">Nothing to compare.</div>`; return; } listEl.innerHTML = ids.map(id=>{ const m = meta[id]||{}; const name = [m.brand, m.model].filter(Boolean).join(' ') || id; const sub = [m.body, (m.price!=null ? 'Ã¢â€šÂ¬'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' Ã¢â‚¬Â¢ '); const img = m.img || ''; return `<div class="wish-item" data-id="${id}">${img ? `<img src="${img}" alt="${name}">` : `<div style="width:44px;height:44px;border-radius:8px;background:#111;display:grid;place-items:center;opacity:.6">Ã¢â‚¬â€</div>`}<div class="wish-meta"><div class="wish-title">${name}</div><div class="wish-sub">${sub||''}</div></div><button class="remove-btn" data-remove="${id}">Remove</button></div>`; }).join(''); }
     (function wireCompareDropdown(){ const wrap = document.getElementById('compare'); const btn = document.getElementById('compareBtn'); const menu = document.getElementById('compareMenu'); if(!wrap||!btn||!menu) return; btn.addEventListener('click', ()=>{ const open = wrap.classList.toggle('open'); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }); document.addEventListener('click', e=>{ if(!wrap.contains(e.target)){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); } }); document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); } }); document.getElementById('compareItems').addEventListener('click', e=>{ const rm = e.target.closest('[data-remove]'); if(!rm) return; removeFromCompare(rm.getAttribute('data-remove')); updateCompareBadge(); buildCompareMenu(); syncCompareButtons(); }); document.getElementById('clearCompare').addEventListener('click', ()=>{ saveCompare(new Set()); saveMeta({}); updateCompareBadge(); buildCompareMenu(); syncCompareButtons(); }); document.getElementById('viewCompare').addEventListener('click', ()=>{ if(loadCompare().size < 2){ showToast('Add at least 2 cars to compare'); return; } location.href = buildCompareUrl(); }); })();
 
     const WIRE_KEY = 'vv_selected_car'; const DETAILS_PATH = 'cars.html';
     function openCarById(id){ const car = carsById.get(id); if(!car) return; if(car.code){ location.href = `${DETAILS_PATH}?code=${encodeURIComponent(car.code)}`; return; } const normalized = { id, brand:car.brand, model:car.model, year:car.year??null, fuel:car.fuel??null, body:car.body??null, transmission:car.transmission??(car.gear==='Auto'?'Automatic':car.gear==='Manual'?'Manual':car.gear??null), priceFromEur:car.price??null, image:car.img??car.image??'', logo:car.logo??'' }; sessionStorage.setItem(WIRE_KEY, JSON.stringify(normalized)); location.href = `${DETAILS_PATH}?id=${encodeURIComponent(id)}`; }
 
-    const WISHLIST_KEY = 'velovalue_wishlist_v1';
-    const wishlist = new Set((()=>{ try{ return JSON.parse(localStorage.getItem(WISHLIST_KEY)||'[]'); }catch{ return []; } })());
-    function saveWishlist(){ localStorage.setItem(WISHLIST_KEY, JSON.stringify([...wishlist])); }
-    function updateWishlistBadge(){ const b=$('#wishlistBadge'); const n=wishlist.size; b.style.display=n?'grid':'none'; if(n) b.textContent=n; }
-    function buildWishlistMenu(){
-      const list = $('#wishlistItems');
-      if(!wishlist.size){
-        list.innerHTML = '<div class="dropdown-empty" style="padding:20px;text-align:center;opacity:.75;">Your wishlist is empty.</div>';
-        return;
-      }
-      list.innerHTML = [...wishlist].map(id=>{
-        const c = carsById.get(id);
-        if(!c) return '';
-        const priceText = c.price == null || !Number.isFinite(Number(c.price)) ? 'Price unavailable' : toEUR(c.price);
-        const details = [c.generation || c.body, priceText].filter(Boolean).join(' • ');
-        return `<div class="wish-item" data-id="${id}"><img src="${c.img || ''}" alt="${c.brand} ${c.model}"><div class="wish-meta"><div class="wish-title">${c.brand} ${c.model}</div><div class="wish-sub">${details}</div></div><button class="remove-btn" data-remove="${id}">Remove</button></div>`;
-      }).join('');
-    }
-    function syncHeartButtons(){ $$('.heart-btn').forEach(btn=>{ const id=btn.dataset.id, active=wishlist.has(id); btn.classList.toggle('active', active); btn.setAttribute('aria-pressed', active?'true':'false'); btn.setAttribute('aria-label', active?'Remove from wishlist':'Add to wishlist'); }); }
-    function toggleWishlist(id){ if(!requireLogin('wishlist your favourite car')) return; const c = carsById.get(id); if(!c) return; const was = wishlist.has(id); if(was){ wishlist.delete(id); showToast(`Removed: ${c.brand} ${c.model}`); } else { wishlist.add(id); showToast(`Added: ${c.brand} ${c.model}`); } saveWishlist(); updateWishlistBadge(); buildWishlistMenu(); syncHeartButtons(); const btn = document.querySelector(`.heart-btn[data-id="${id}"]`); if(btn){ btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); } }
+    const wishlist = new Set();
+const wishlistCars = new Map();
+const wishlistPending = new Set();
+let wishlistReady = false;
 
+const wishlistAuthReady = fetch('/api/user-status', {
+  method: 'GET',
+  credentials: 'include'
+})
+.then(response => {
+  if (!response.ok) throw new Error(`Authentication status: ${response.status}`);
+  return response.json();
+})
+.then(data => {
+  window.__vvUserKey = data.loggedIn && data.user ? (data.user.id || 'guest') : 'guest';
+  return data;
+})
+.catch(error => {
+  window.__vvUserKey = 'guest';
+  console.error('Wishlist authentication check failed:', error);
+  return null;
+});
+
+function normalizeWishlistCar(car) {
+  return {
+    id: car.carId,
+    carId: car.carId,
+    code: car.code || null,
+    brand: car.brand || '',
+    model: car.model || '',
+    generation: car.generation || '',
+    body: car.body || '',
+    price: car.price ?? null,
+    img: car.img || '',
+    fuels: Array.isArray(car.fuels) ? car.fuels : [],
+    transmission: car.transmission || '',
+    year_start: car.year_start ?? null,
+    year_end: car.year_end ?? null
+  };
+}
+
+function applyWishlistCars(cars) {
+  wishlist.clear();
+  wishlistCars.clear();
+
+  (Array.isArray(cars) ? cars : []).forEach(car => {
+    if (!car || !car.carId) return;
+
+    const normalized = normalizeWishlistCar(car);
+    wishlist.add(normalized.id);
+    wishlistCars.set(normalized.id, normalized);
+
+    if (!carsById.has(normalized.id)) {
+      carsById.set(normalized.id, normalized);
+    }
+  });
+
+  updateWishlistBadge();
+  buildWishlistMenu();
+  syncHeartButtons();
+}
+
+async function loadWishlistFromApi() {
+  await wishlistAuthReady;
+
+  if (!isLoggedIn()) {
+    applyWishlistCars([]);
+    wishlistReady = true;
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/wishlist', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (response.status === 401) {
+      window.__vvUserKey = 'guest';
+      applyWishlistCars([]);
+      wishlistReady = true;
+      return;
+    }
+
+    const data = await response.json();
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || `Wishlist request failed: ${response.status}`);
+    }
+
+    applyWishlistCars(data.cars);
+    wishlistReady = true;
+  } catch (error) {
+    console.error('Could not load account Wishlist:', error);
+    showToast('Could not load your Wishlist. Please refresh.');
+  }
+}
+
+function updateWishlistBadge() {
+  const badge = $('#wishlistBadge');
+  if (!badge) return;
+
+  const count = wishlist.size;
+  badge.style.display = count ? 'grid' : 'none';
+  if (count) badge.textContent = count;
+}
+
+function buildWishlistMenu() {
+  const list = $('#wishlistItems');
+  if (!list) return;
+
+  if (!wishlist.size) {
+    list.innerHTML = '<div class="dropdown-empty" style="padding:20px;text-align:center;opacity:.75;">Your wishlist is empty.</div>';
+    return;
+  }
+
+  list.innerHTML = [...wishlist].map(id => {
+    const car = wishlistCars.get(id) || carsById.get(id);
+    if (!car) return '';
+
+    const priceText = car.price == null || !Number.isFinite(Number(car.price))
+      ? 'Price unavailable'
+      : toEUR(car.price);
+
+    const details = [car.generation || car.body, priceText]
+      .filter(Boolean)
+      .join(' • ');
+
+    const name = `${car.brand || ''} ${car.model || ''}`.trim();
+
+    return `<div class="wish-item" data-id="${escapeHtml(id)}"><img src="${escapeHtml(car.img || '')}" alt="${escapeHtml(name)}"><div class="wish-meta"><div class="wish-title">${escapeHtml(name)}</div><div class="wish-sub">${escapeHtml(details)}</div></div><button class="remove-btn" data-remove="${escapeHtml(id)}">Remove</button></div>`;
+  }).join('');
+}
+
+function syncHeartButtons() {
+  $$('.heart-btn').forEach(button => {
+    const id = button.dataset.id;
+    const active = wishlist.has(id);
+
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    button.setAttribute('aria-label', active ? 'Remove from wishlist' : 'Add to wishlist');
+  });
+}
+
+async function toggleWishlist(id) {
+  await wishlistAuthReady;
+
+  if (!requireLogin('wishlist your favourite car')) return;
+
+  if (!wishlistReady) {
+    await loadWishlistFromApi();
+    if (!wishlistReady) {
+      showToast('Your Wishlist is not ready. Please try again.');
+      return;
+    }
+  }
+
+  if (wishlistPending.has(id)) return;
+
+  const car = carsById.get(id) || wishlistCars.get(id);
+  if (!car) return;
+
+  wishlistPending.add(id);
+
+  try {
+    const wasSaved = wishlist.has(id);
+    const response = await fetch(
+      wasSaved ? `/api/wishlist/${encodeURIComponent(id)}` : '/api/wishlist',
+      {
+        method: wasSaved ? 'DELETE' : 'POST',
+        credentials: 'include',
+        headers: wasSaved ? {} : { 'Content-Type': 'application/json' },
+        body: wasSaved ? undefined : JSON.stringify({
+          carId: id,
+          code: car.code || '',
+          brand: car.brand || '',
+          model: car.model || '',
+          generation: car.generation || '',
+          body: car.body || '',
+          price: car.price ?? null,
+          img: car.img || car.image || '',
+          fuels: Array.isArray(car.fuels) ? car.fuels : [],
+          transmission: car.transmission || '',
+          year_start: car.year_start ?? null,
+          year_end: car.year_end ?? null
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status === 401) {
+      window.__vvUserKey = 'guest';
+      applyWishlistCars([]);
+      wishlistReady = true;
+      showToast('Your session has expired. Please log in again.');
+      return;
+    }
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || `Wishlist update failed: ${response.status}`);
+    }
+
+    applyWishlistCars(data.cars);
+    showToast(`${wasSaved ? 'Removed:' : 'Added:'} ${car.brand} ${car.model}`);
+
+    const button = document.querySelector(`.heart-btn[data-id="${id}"]`);
+    if (button) {
+      button.classList.remove('pop');
+      void button.offsetWidth;
+      button.classList.add('pop');
+    }
+  } catch (error) {
+    console.error('Wishlist update failed:', error);
+    showToast('Could not update your Wishlist. Please try again.');
+  } finally {
+    wishlistPending.delete(id);
+  }
+}
+
+async function clearWishlistFromApi() {
+  await wishlistAuthReady;
+
+  if (!requireLogin('clear your Wishlist')) return;
+  if (!wishlistReady) {
+    await loadWishlistFromApi();
+    if (!wishlistReady) return;
+  }
+  if (!wishlist.size) return;
+
+  try {
+    const response = await fetch('/api/wishlist', {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (response.status === 401) {
+      window.__vvUserKey = 'guest';
+      applyWishlistCars([]);
+      wishlistReady = true;
+      showToast('Your session has expired. Please log in again.');
+      return;
+    }
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || `Wishlist clear failed: ${response.status}`);
+    }
+
+    applyWishlistCars(data.cars);
+    showToast('Wishlist cleared');
+  } catch (error) {
+    console.error('Wishlist clear failed:', error);
+    showToast('Could not clear your Wishlist. Please try again.');
+  }
+}
     function syncCompareButtons(){ const set = loadCompare(); document.querySelectorAll('.compare-btn').forEach(btn=>{ const id = btn.getAttribute('data-compare'); const active = set.has(id); btn.classList.toggle('active', active); btn.setAttribute('aria-pressed', active?'true':'false'); btn.setAttribute('aria-label', active?'Remove from compare':'Add to compare'); }); updateCompareBar(); updateCompareBadge(); buildCompareMenu(); }
     function updateCompareBar(){ const bar = document.getElementById('compareBar'); const chips = document.getElementById('compareChips'); const ids = [...loadCompare()]; const meta = loadMeta(); chips.innerHTML = ids.map(id=>{ const m = meta[id]; const name = m ? `${m.brand} ${m.model}`.trim() : id; return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">Remove</button></span>`; }).join(''); bar.classList.toggle('show', ids.length >= 2); }
     function heartButtonHTML(id){ return `<button class="heart-btn" data-id="${id}" aria-label="Add to wishlist" aria-pressed="false" title="Wishlist"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>`; }
-    function extractCardMetadata(card){ const name = card?.querySelector('.name')?.textContent || ''; const parts = name.split(' '); const priceText = card?.querySelector('.muted')?.textContent || ''; return { brand: parts[0]||'', model: parts.slice(1).join(' ')||'', price: (()=>{ const m=priceText.match(/€([\d.,]+)/); return m ? Number(m[1].replace(/[.,](?=\d{3})/g,'').replace(',','.')) : null; })(), img: card?.querySelector('img.thumb')?.getAttribute('src')||'', body: priceText.split('•')[0]?.trim()||'', fuel:'', gear:'' }; }
+    function extractCardMetadata(card){ const name = card?.querySelector('.name')?.textContent || ''; const parts = name.split(' '); const priceText = card?.querySelector('.muted')?.textContent || ''; return { brand: parts[0]||'', model: parts.slice(1).join(' ')||'', price: (()=>{ const m=priceText.match(/Ã¢â€šÂ¬([\d.,]+)/); return m ? Number(m[1].replace(/[.,](?=\d{3})/g,'').replace(',','.')) : null; })(), img: card?.querySelector('img.thumb')?.getAttribute('src')||'', body: priceText.split('Ã¢â‚¬Â¢')[0]?.trim()||'', fuel:'', gear:'' }; }
 
     const els = { track: $('#popularTrack'), bodyChips: $('#bodyChips'), priceRange: $('#priceRange'), priceOut: $('#priceOut'), brandGrid: $('#brandGrid'), alphaRow: $('#alphaRow'), grid: $('#resultsGrid'), resultCount: $('#resultCount'), sortSel: $('#sortSel'), brandDropdown: $('#brand_name_dropdwn'), modelDropdown: $('#model_name_dropdwn'), applyBtn: $('#applyFilters'), searchBtn: $('#searchBtn'), activeFilters: $('#activeFilters'), clearFiltersBtn: $('#clearFiltersBtn'), wishlistItems: $('#wishlistItems'), clearWishlist: $('#clearWishlist') };
 
-    /* ───────────────────────────────────────
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
        OPEN-VEHICLE-DB INTEGRATION
-    ─────────────────────────────────────── */
+    Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     function populateSearchSuggestions() {
       const brands = [...new Set(
         window.cars.map(car => String(car.brand || '').trim()).filter(Boolean)
@@ -403,10 +679,19 @@
       els.brandGrid.innerHTML = ''; 
       brands.forEach(name => {
         const tile = document.createElement('div'); tile.className = 'brand-tile'; tile.tabIndex = 0;
-        const logo = document.createElement('div'); logo.className = 'brand-logo'; logo.textContent = name.split(' ').map(s => s[0]).join('').slice(0, 3).toUpperCase();
+        const logo = document.createElement('div'); logo.className = 'brand-logo';
+        const initials = document.createElement('span');
+        initials.textContent = name.split(/[\s-]+/).map(s => s[0]).join('').slice(0, 3).toUpperCase();
+        const slug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const logoImg = document.createElement('img');
+        logoImg.src = `https://carvariables.com/assets/brand-logos/${slug}-logo.svg`;
+        logoImg.alt = `${name} logo`;
+        logoImg.loading = 'lazy';
+        logoImg.onerror = () => { logo.replaceChildren(initials); };
+        logo.appendChild(logoImg);
         const label = document.createElement('div'); label.className = 'brand-name'; label.textContent = name;
         tile.append(logo, label);
-        const toggle = () => { const active = tile.classList.toggle('active'); if (active) selected.brands.add(name); else selected.brands.delete(name); applyFiltersNow(false); };
+        const toggle = () => { const active = tile.classList.contains('active'); brandTileMap.forEach(item=>item.classList.remove('active')); selected.brands.clear(); if(!active){ tile.classList.add('active'); selected.brands.add(name); } };
         tile.addEventListener('click', toggle); tile.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
         brandTileMap.set(name, tile); els.brandGrid.appendChild(tile);
       });
@@ -415,7 +700,7 @@
 
     function buildPopularSlider(){
       const popularCars = window.cars.slice(0, 15); 
-      const slideHTML = c => { const id=carId(c); return `<article class="car-card" data-id="${id}" role="link" tabindex="0" aria-label="${c.brand} ${c.model}">${heartButtonHTML(id)} ${compareButtonHTML(id)}<img class="thumb" src="${c.img || 'https://via.placeholder.com/400x250?text=No+Image'}" alt="${c.brand} ${c.model}"><div class="meta"><div><div class="name">${c.brand} ${c.model}</div><div class="muted" style="font-size:12px">${c.body} • ${toEUR(c.price)}</div></div></div></article>`; };
+      const slideHTML = c => { const id=carId(c); return `<article class="car-card" data-id="${id}" role="link" tabindex="0" aria-label="${c.brand} ${c.model}">${heartButtonHTML(id)} ${compareButtonHTML(id)}<img class="thumb" src="${c.img || 'https://via.placeholder.com/400x250?text=No+Image'}" alt="${c.brand} ${c.model}"><div class="meta"><div><div class="name">${c.brand} ${c.model}</div><div class="muted" style="font-size:12px">${c.body} Ã¢â‚¬Â¢ ${toEUR(c.price)}</div></div></div></article>`; };
       els.track.innerHTML = popularCars.map(slideHTML).join('') + popularCars.map(slideHTML).join('');
     }
 
@@ -425,7 +710,7 @@
 
     function initFilterChips(){
       const bodies = ["Sedan", "SUV", "Coupe", "Hatchback", "Convertible", "Wagon", "Minivan", "Truck"]; 
-      function chip(label, group){ const el=document.createElement('button'); el.className='chip'; el.textContent=label; el.dataset.group=group; el.dataset.value=label; el.addEventListener('click',()=>{ el.classList.toggle('active'); const set=selected[group]; if(el.classList.contains('active')) set.add(label); else set.delete(label); }); chipMap[group].set(label, el); return el; }
+      function chip(label, group){ const el=document.createElement('button'); el.className='chip'; el.textContent=label; el.dataset.group=group; el.dataset.value=label; el.addEventListener('click',()=>{ const wasActive=el.classList.contains('active'); chipMap[group].forEach(item=>item.classList.remove('active')); selected[group].clear(); if(!wasActive){ el.classList.add('active'); selected[group].add(label); } }); chipMap[group].set(label, el); return el; }
       bodies.forEach(b=>els.bodyChips.appendChild(chip(b,'body')));
     }
 
@@ -441,13 +726,13 @@
       });
     }
 
-    els.priceRange.addEventListener('input', e=>{ selected.maxPrice=Number(e.target.value); els.priceOut.textContent=`≤ ${toEUR(selected.maxPrice)}`; });
+    els.priceRange.addEventListener('input', e=>{ selected.maxPrice=Number(e.target.value); els.priceOut.textContent=`Ã¢â€°Â¤ ${toEUR(selected.maxPrice)}`; });
 
     function updateActiveFiltersUI(searchBrand, searchModel){
       const chips=[];
       if(searchBrand) chips.push({group:'searchBrand', value:searchBrand, label:`Brand: ${searchBrand}`});
       if(searchModel) chips.push({group:'searchModel', value:searchModel, label:`Model: ${searchModel}`});
-      if(selected.maxPrice<200000) chips.push({group:'price', value:String(selected.maxPrice), label:`≤ ${toEUR(selected.maxPrice)}`});
+      if(selected.maxPrice<200000) chips.push({group:'price', value:String(selected.maxPrice), label:`Ã¢â€°Â¤ ${toEUR(selected.maxPrice)}`});
       selected.brands.forEach(v=>chips.push({group:'brands', value:v, label:`Brand: ${v}`}));
       selected.body.forEach(v=>chips.push({group:'body', value:v, label:v}));
       els.activeFilters.innerHTML = chips.map(c=>`<span class="af-chip" data-group="${c.group}" data-value="${c.value}">${c.label} <button class="x" aria-label="Remove ${c.label}">Remove</button></span>`).join('');
@@ -458,7 +743,7 @@
       const chip=x.closest('.af-chip'); const group=chip.dataset.group, value=chip.dataset.value;
       if(group==='searchBrand'){ els.brandDropdown.value=''; }
       else if(group==='searchModel'){ els.modelDropdown.value=''; }
-      else if(group==='price'){ selected.maxPrice=200000; els.priceRange.value='200000'; els.priceOut.textContent='≤ €200,000'; }
+      else if(group==='price'){ selected.maxPrice=200000; els.priceRange.value='200000'; els.priceOut.textContent='Ã¢â€°Â¤ Ã¢â€šÂ¬200,000'; }
       else if(group==='brands'){ selected.brands.delete(value); const tile=brandTileMap.get(value); if(tile) tile.classList.remove('active'); }
       else { selected[group].delete(value); const el=chipMap[group].get(value); if(el) el.classList.remove('active'); }
       applyFiltersNow();
@@ -467,9 +752,9 @@
     els.clearFiltersBtn.addEventListener('click', ()=>{
       selected.brands.clear(); brandTileMap.forEach(t=>t.classList.remove('active'));
       selected.body.clear(); chipMap.body.forEach(el=>el.classList.remove('active'));
-      selected.maxPrice=200000; els.priceRange.value='200000'; els.priceOut.textContent='≤ €200,000';
+      selected.maxPrice=200000; els.priceRange.value='200000'; els.priceOut.textContent='? ?200,000';
       els.brandDropdown.value=''; els.modelDropdown.value='';
-      applyFiltersNow();
+      loadCataloguePage(1);
     });
 
     document.getElementById('filtersToggle').addEventListener('click', ()=>{
@@ -486,7 +771,7 @@
       els.grid.innerHTML = list.map(c=>{
         const id=carId(c);
         const priceText = c.price == null || !Number.isFinite(Number(c.price)) ? 'Price unavailable' : toEUR(c.price);
-        return `<article class="car-card" data-id="${escapeHtml(id)}" role="link" tabindex="0" aria-label="${escapeHtml(c.brand)} ${escapeHtml(c.model)}">${heartButtonHTML(id)} ${compareButtonHTML(id)}<img class="thumb" loading="lazy" src="${escapeHtml(c.img || 'https://via.placeholder.com/400x250?text=No+Image')}" alt="${escapeHtml(c.brand)} ${escapeHtml(c.model)}"><div class="meta"><div><div class="name">${escapeHtml(c.brand)} ${escapeHtml(c.model)}</div><div class="muted" style="font-size:12px">${escapeHtml(c.body || '')} • ${escapeHtml(priceText)}</div></div></div></article>`;
+        return `<article class="car-card" data-id="${escapeHtml(id)}" role="link" tabindex="0" aria-label="${escapeHtml(c.brand)} ${escapeHtml(c.model)}">${heartButtonHTML(id)} ${compareButtonHTML(id)}<img class="thumb" loading="lazy" src="${escapeHtml(c.img || 'https://via.placeholder.com/400x250?text=No+Image')}" alt="${escapeHtml(c.brand)} ${escapeHtml(c.model)}"><div class="meta"><div><div class="name">${escapeHtml(c.brand)} ${escapeHtml(c.model)}</div><div class="muted" style="font-size:12px">${escapeHtml(c.body || '')} Ã¢â‚¬Â¢ ${escapeHtml(priceText)}</div></div></div></article>`;
       }).join('');
       els.resultCount.textContent = `${list.length} result${list.length!==1?'s':''}`;
       syncHeartButtons(); syncCompareButtons();
@@ -496,13 +781,16 @@
       const searchBrand = els.brandDropdown.value.trim();
       const searchModel = els.modelDropdown.value.trim();
       let list = window.cars.filter(c => c.price == null || !Number.isFinite(Number(c.price)) || Number(c.price) <= selected.maxPrice);
-      if(selected.brands.size) list = list.filter(c=> selected.brands.has(c.brand.toUpperCase()));
-      if(selected.body.size) list = list.filter(c=> selected.body.has(c.body));
-      if(searchBrand) list = list.filter(c=> c.brand.toUpperCase() === searchBrand.toUpperCase());
+      const serverFilteredCatalogue = window.explorePagination?.mode === 'catalogue';
+      const needsLocalFilter = c => !serverFilteredCatalogue || c.source !== 'carvariables';
+      if(selected.brands.size) list = list.filter(c => !needsLocalFilter(c) || [...selected.brands].some(b => b.toUpperCase() === String(c.brand || '').toUpperCase()));
+      if(selected.body.size) list = list.filter(c => !needsLocalFilter(c) || [...selected.body].some(b => b.toLowerCase() === String(c.body || '').toLowerCase()));
+      if(searchBrand) list = list.filter(c => !needsLocalFilter(c) || String(c.brand || '').toUpperCase() === searchBrand.toUpperCase());
       if(searchModel) {
         const normalizeModel = value => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
         const wantedModel = normalizeModel(searchModel);
         list = list.filter(c => {
+          if (!needsLocalFilter(c)) return true;
           const candidates = [c.model, c.generation, c.name].map(normalizeModel).filter(Boolean);
           return candidates.some(value => value === wantedModel || value.includes(wantedModel) || wantedModel.includes(value));
         });
@@ -515,7 +803,7 @@
           list.sort((a,b)=> a.price == null ? (b.price == null ? 0 : 1) : b.price == null ? -1 : Number(b.price)-Number(a.price));
           break;
         default:
-          list.sort((a,b)=> a.brand.localeCompare(b.brand));
+          // Preserve CarVariables provider order.
           break;
       }
       updateActiveFiltersUI(searchBrand, searchModel);
@@ -551,32 +839,7 @@
           throw new Error('Unexpected CarVariables response format');
         }
 
-        const normalizedResults = results.map(raw => {
-          const variantList = Array.isArray(raw.variants) ? raw.variants : [];
-          const transmissions = [...new Set(variantList.map(v => v.transmission).filter(Boolean))];
-
-          return {
-            ...raw,
-            source: 'carvariables',
-            code: raw.code,
-            brand: raw.make?.name || raw.brand || brand,
-            model: raw.model || raw.name || model,
-            generation: raw.generation || raw.name || '',
-            year_start: raw.year_start ?? null,
-            year_end: raw.year_end ?? null,
-            body: raw.body?.label || raw.body?.style || raw.body?.type || '',
-            image: raw.image_url || '',
-            img: raw.image_url || '',
-            price: null,
-            fuels: raw.fuels || [],
-            drives: raw.drives || [],
-            variants: variantList,
-            variant_count: raw.variant_count ?? variantList.length,
-            power_hp: raw.power_hp ?? null,
-            torque_nm: raw.torque_nm ?? null,
-            transmission: transmissions.join(', ') || null
-          };
-        });
+        const normalizedResults = normalizeCarVariablesResults(results, brand, model);
 
         if(!normalizedResults.length){
           showToast('No generations found for this search');
@@ -594,6 +857,11 @@
           if (previousSearchIds.has(card.dataset.id)) card.remove();
         });
 
+        if (window.explorePagination) {
+          window.explorePagination.mode = 'search';
+          updateCataloguePagination();
+        }
+
         normalizedResults.forEach(addCarCard);
         applyFiltersNow(true);
         showToast(`${normalizedResults.length} generations found`);
@@ -601,7 +869,7 @@
         console.error('CarVariables search failed:', err);
         showToast('Car search failed. Please try again.');
       }
-    });    els.applyBtn.addEventListener('click', ()=> applyFiltersNow(true));
+    });    els.applyBtn.addEventListener('click', ()=> loadCataloguePage(1));
     els.sortSel.addEventListener('change', ()=> applyFiltersNow(false));
 
     function onHeartClick(e){ const btn = e.target.closest('.heart-btn'); if(!btn) return; e.preventDefault(); e.stopPropagation(); toggleWishlist(btn.dataset.id); }
@@ -658,7 +926,7 @@
     document.addEventListener('click', e=>{ if(!$('#wishlist').contains(e.target)){ $('#wishlist').classList.remove('open'); $('#wishlistBtn').setAttribute('aria-expanded','false'); } });
     document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ $('#wishlist').classList.remove('open'); $('#wishlistBtn').setAttribute('aria-expanded','false'); } });
     els.wishlistItems.addEventListener('click', e=>{ const removeBtn=e.target.closest('[data-remove]'); if(removeBtn){ toggleWishlist(removeBtn.getAttribute('data-remove')); return; } const item = e.target.closest('.wish-item'); if(item) openCarById(item.getAttribute('data-id')); });
-    els.clearWishlist.addEventListener('click', ()=>{ wishlist.clear(); saveWishlist(); updateWishlistBadge(); buildWishlistMenu(); syncHeartButtons(); showToast('Wishlist cleared'); });
+    els.clearWishlist.addEventListener('click', clearWishlistFromApi);
 
     function escapeHtml(s){ if(!s) return ""; return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
     function addCarCard(car){
@@ -724,17 +992,114 @@
 
     async function loadCachedCars(){ try { const res = await fetch("/api/cachedCars"); if(!res.ok) throw new Error(`Status ${res.status}`); const list = await res.json(); if(Array.isArray(list)) list.forEach(addCarCard); } catch(err){ console.warn("Cached cars unavailable:", err); } }
 
+    function updateCataloguePagination() {
+      const nav = document.getElementById('cataloguePagination');
+      const info = document.getElementById('cataloguePageInfo');
+      const prev = document.getElementById('cataloguePrev');
+      const next = document.getElementById('catalogueNext');
+      const state = window.explorePagination;
+      if (!nav) return;
+
+      const catalogueMode = state && state.mode !== 'search';
+      nav.hidden = !catalogueMode;
+      if (!catalogueMode) return;
+
+      const page = Number(state.page) || 1;
+      const pages = Number(state.pages) || 1;
+      const total = Number(state.total) || 0;
+      if (info) info.textContent = `Page ${page} of ${pages} ? ${total.toLocaleString()} cars`;
+      if (prev) prev.disabled = page <= 1;
+      if (next) next.disabled = page >= pages;
+    }
+
+    async function loadCataloguePage(page = 1) {
+      const prev = document.getElementById('cataloguePrev');
+      const next = document.getElementById('catalogueNext');
+
+      try {
+        if (prev) prev.disabled = true;
+        if (next) next.disabled = true;
+        showToast('Loading car catalogue...');
+
+        const params = new URLSearchParams({ page: String(page), per: '24' });
+        const selectedBrand = [...selected.brands][0] || els.brandDropdown.value.trim();
+        const selectedModel = els.modelDropdown.value.trim();
+        const bodyMap = {
+          Sedan: 'sedan', SUV: 'suv', Coupe: 'coupe',
+          Hatchback: 'hatchback', Convertible: 'convertible',
+          Wagon: 'wagon', Minivan: 'mpv', Truck: 'pickup'
+        };
+
+        if (selectedBrand) params.set('make', selectedBrand);
+        if (selectedModel) params.set('modelFamily', selectedModel);
+        if (selected.body.size) {
+          const apiBody = bodyMap[[...selected.body][0]];
+          if (apiBody) params.set('body', apiBody);
+        }
+
+        const res = await fetch(`${API_BASE_URL}/api/explore/cars?${params.toString()}`);
+        if (!res.ok) throw new Error(`Status ${res.status}`);
+
+        const payload = await res.json();
+        const results = payload?.data?.results;
+        if (!payload?.success || !Array.isArray(results)) {
+          throw new Error('Unexpected CarVariables catalogue response');
+        }
+
+        const normalized = normalizeCarVariablesResults(results);
+        const legacyCars = window.cars.filter(car => car.source !== 'carvariables');
+
+        window.cars = legacyCars;
+        document.getElementById('resultsGrid').innerHTML = '';
+        normalized.forEach(addCarCard);
+        // addCarCard already populated window.cars.
+
+        window.explorePagination = {
+          page: payload.data.page || page,
+          per: payload.data.per || 24,
+          total: payload.data.total || normalized.length,
+          pages: payload.data.pages || 1,
+          filters: {},
+          mode: 'catalogue'
+        };
+
+        applyFiltersNow(false);
+        updateCataloguePagination();
+        console.info('CarVariables catalogue loaded:', window.explorePagination);
+      } catch (err) {
+        console.error('CarVariables catalogue loading failed:', err);
+        showToast('Could not load the car catalogue. Please try again.');
+        updateCataloguePagination();
+      }
+    }
+
+    document.getElementById('cataloguePrev').addEventListener('click', () => {
+      const page = Number(window.explorePagination?.page) || 1;
+      if (page > 1) loadCataloguePage(page - 1);
+    });
+
+    document.getElementById('catalogueNext').addEventListener('click', () => {
+      const state = window.explorePagination;
+      const page = Number(state?.page) || 1;
+      const pages = Number(state?.pages) || 1;
+      if (page < pages) loadCataloguePage(page + 1);
+    });
+
+    async function loadInitialCatalogue() {
+      await loadCataloguePage(1);
+    }
+
     async function initApp() {
       window.cars = [];
+      await loadWishlistFromApi();
       updateWishlistBadge(); buildWishlistMenu(); syncHeartButtons(); syncCompareButtons(); updateCompareBadge(); buildCompareMenu();
       initFilterChips();
 
-      await loadCachedCars();
+      await loadInitialCatalogue();
       populateSearchSuggestions();
       buildPopularSlider();
       applyFiltersNow(false);
     }
-
     initApp();
   </script>
 
@@ -743,3 +1108,7 @@
   <script src="/js/translate.js"></script>
 </body>
 </html>
+
+
+
+
