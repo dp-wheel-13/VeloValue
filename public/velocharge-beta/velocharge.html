@@ -1189,7 +1189,8 @@ map.addControl(geolocate, 'top-right');
             '<div>' + escapePopupHTML(p.network || '\u2014') + ' \u2022 ' + (p.max_power ? escapePopupHTML(p.max_power) + ' kW' : '? kW') +
             ' \u2022 ' + escapePopupHTML(p.total_connectors || '?') + ' ports</div>' +
             '<div>' + (p.has_available?'\u2705':'\u26A0\uFE0F') +
-            (p.usage_cost ? ' \u2022 ' + escapePopupHTML(p.usage_cost) : '') + '</div>' +
+            (p.usage_cost ? ' \u2022 ' + escapePopupHTML(p.usage_cost) : '') + '</div>' +
+            '<a href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(e.features[0].geometry.coordinates[1] + ',' + e.features[0].geometry.coordinates[0]) + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:8px;color:#1db954;font-weight:600;text-decoration:none">&#128205; Get Directions</a>' +
             (cl.length?'<div style="margin-top:6px;font-size:12px;color:#333">'+cl.map(escapePopupHTML).join(', ')+'</div>':'') +
             '</div>';
           new mapboxgl.Popup({ offset: 12, maxWidth: '280px' }).setLngLat(e.features[0].geometry.coordinates).setHTML(h).addTo(map);
@@ -1256,7 +1257,8 @@ map.addControl(geolocate, 'top-right');
           '<div>' + escapePopupHTML(p.network || '\u2014') + ' \u2022 ' + (p.max_power ? escapePopupHTML(p.max_power) + ' kW' : '? kW') +
           ' \u2022 ' + escapePopupHTML(p.total_connectors || '?') + ' ports</div>' +
           '<div>' + (p.has_available?'\u2705':'\u26A0\uFE0F') +
-          (p.usage_cost ? ' \u2022 ' + escapePopupHTML(p.usage_cost) : '') + '</div>' +
+          (p.usage_cost ? ' \u2022 ' + escapePopupHTML(p.usage_cost) : '') + '</div>' +
+          '<a href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(e.features[0].geometry.coordinates[1] + ',' + e.features[0].geometry.coordinates[0]) + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:8px;color:#1db954;font-weight:600;text-decoration:none">&#128205; Get Directions</a>' +
           (cl.length?'<div style="margin-top:6px;font-size:12px;color:#333">'+cl.map(escapePopupHTML).join(', ')+'</div>':'') +
           '</div>';
         new mapboxgl.Popup({ offset: 12, maxWidth: '280px' }).setLngLat(e.features[0].geometry.coordinates).setHTML(h).addTo(map);
@@ -1270,7 +1272,7 @@ map.addControl(geolocate, 'top-right');
     // â”€â”€ FETCH STATIONS â”€â”€
     async function refreshStations() {
       showLoading();
-      var c = map.getCenter(), r = clamp(approxRadiusKm(map), 2, 25);
+      var c = map.getCenter(), r = 25;
       var maxRes = parseInt(document.getElementById('maxResultsSelect').value) || 200;
       try {
         var geo = await fetchOCM(c.lng, c.lat, r, maxRes);
