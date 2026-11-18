@@ -247,6 +247,28 @@ nav.desktop-nav a:hover { text-decoration:underline; }
 .tile-info .car-logo { width:50px; height:auto; }
 .tile-info .car-meta { display:flex; flex-direction:column; gap:4px; }
 
+.tile-remove-btn {
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  width:100%; margin-top:14px; padding:9px;
+  background:rgba(255,80,80,0.08); color:#ff6666;
+  border:1px solid rgba(255,80,80,0.3); border-radius:8px;
+  font-size:13px; font-weight:700; cursor:pointer;
+}
+.tile-remove-btn:hover, .list-remove-btn:hover {
+  background:rgba(255,80,80,0.2); color:#ff5050;
+}
+.list-remove-btn {
+  margin-left:auto; flex-shrink:0; width:38px; height:38px;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(255,80,80,0.08); color:#ff6666;
+  border:1px solid rgba(255,80,80,0.3); border-radius:8px;
+  cursor:pointer; font-size:19px;
+}
+.tile-remove-btn svg, .list-remove-btn svg {
+  width:17px; height:17px; fill:none; stroke:currentColor;
+  stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+}
+
 /* ===== List ===== */
 .list-view { display:flex; flex-direction:column; gap:15px; width:80%; margin:0 auto; padding:20px 0; grid-area:center; }
 .list-card {
@@ -837,8 +859,8 @@ function renderCardSlider() {
   garageDisplay.addEventListener("mousedown", onMouseDown);
 }
 
-async function removeCurrentCar() {
-  const currentCar = filteredCars[currentIndex];
+async function removeCurrentCar(carToRemove) {
+  const currentCar = carToRemove || filteredCars[currentIndex];
 
   if (!currentCar || currentCar.isAddNew) return;
 
@@ -978,11 +1000,24 @@ function renderTiles() {
   garageDisplay.className = "tiles-view"; garageDisplay.innerHTML = "";
   filteredCars.forEach(function(car) {
     var tile = document.createElement("div"); tile.className = "tile-card";
-    if (car.isAddNew) { tile.innerHTML = '<div class="car-name">+ Add new car</div>'; tile.onclick = function() { window.location.href = "garagesearch.html"; }; }
-    else {
+    if (car.isAddNew) {
+      tile.innerHTML = '<div class="car-name">+ Add new car</div>';
+      tile.onclick = function() { window.location.href = "garagesearch.html"; };
+    } else {
       var imgHtml = car.img ? '<img src="' + car.img + '" alt="' + car.brand + '">' : '<div style="height:150px;background:#222;display:flex;align-items:center;justify-content:center;color:#666;border-radius:10px;margin-bottom:10px;">No image</div>';
       tile.innerHTML = imgHtml + '<div class="tile-info">' + (car.logo ? '<img src="' + car.logo + '" class="car-logo">' : '') + '<div class="car-meta"><span class="car-name">' + car.brand + '</span>' + (car.model ? '<span class="car-model">' + car.model + '</span>' : '') + (car.fuel ? '<span class="fuel-pill">' + car.fuel + '</span>' : '') + '</div></div>';
       tile.onclick = function() { openDetails(car); };
+
+      var removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "tile-remove-btn";
+      removeBtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v7m6-7v7"/></svg><span>Remove this car</span>';
+      removeBtn.setAttribute("aria-label", "Remove " + car.brand + " " + car.model);
+      removeBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        removeCurrentCar(car);
+      });
+      tile.appendChild(removeBtn);
     }
     garageDisplay.appendChild(tile);
   });
@@ -993,10 +1028,23 @@ function renderList() {
   garageDisplay.className = "list-view"; garageDisplay.innerHTML = "";
   filteredCars.forEach(function(car) {
     var item = document.createElement("div"); item.className = "list-card";
-    if (car.isAddNew) { item.innerHTML = '<div class="car-name">+ Add new car</div>'; item.onclick = function() { window.location.href = "garagesearch.html"; }; }
-    else {
+    if (car.isAddNew) {
+      item.innerHTML = '<div class="car-name">+ Add new car</div>';
+      item.onclick = function() { window.location.href = "garagesearch.html"; };
+    } else {
       item.innerHTML = (car.logo ? '<img src="' + car.logo + '" class="car-logo">' : '') + '<div class="car-meta"><span class="car-name">' + car.brand + '</span>' + (car.model ? '<span class="car-model">' + car.model + '</span>' : '') + (car.fuel ? '<span class="fuel-pill">' + car.fuel + '</span>' : '') + '</div>';
       item.onclick = function() { openDetails(car); };
+
+      var removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "list-remove-btn";
+      removeBtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v7m6-7v7"/></svg>';
+      removeBtn.setAttribute("aria-label", "Remove " + car.brand + " " + car.model);
+      removeBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        removeCurrentCar(car);
+      });
+      item.appendChild(removeBtn);
     }
     garageDisplay.appendChild(item);
   });
