@@ -1,314 +1,1356 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VeloValue – Profile </title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <meta name="theme-color" content="#050706"/>
+  <title>VeloValue – Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
   <style>
-    :root { --bg:#000; --text:#fff; --accent:#1db954; --radius-xl:18px; --shadow-1:0 8px 24px rgba(0,0,0,.45); --shadow-2:0 18px 50px rgba(0,0,0,.55); }
-    *{ box-sizing:border-box; margin:0; padding:0; }
-    html,body{ height:100%; }
-    body{ font-family:Inter,system-ui,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.35; }
-
-    /* Header */
-    header{ position:sticky; top:0; width:100%; z-index:1000; background:var(--bg); border-bottom:1px solid rgba(255,255,255,.1); }
-    .nav{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px; }
-    .nav a{ color:var(--text); text-decoration:none; font-weight:600; }
-    .nav a:hover{ text-decoration:underline; }
-
-    /* Layout */
-    .container{ width:min(1100px,94vw); margin:0 auto; padding:24px 0 40px; display:grid; grid-template-columns: 320px 1fr; gap:18px; }
-    @media (max-width: 900px){ .container{ grid-template-columns: 1fr; } }
-
-    .panel{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-xl); box-shadow:var(--shadow-1); }
-    .panel h2{ font-size:16px; font-weight:800; margin:0 0 10px; }
-    .panel .sub{ opacity:.75; font-size:13px; margin-bottom:10px; }
-
-    .side{ padding:14px; }
-    .main{ padding:14px; display:grid; gap:12px; }
-
-    .group{ padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:12px; display:grid; gap:10px; background:rgba(255,255,255,.02); }
-    .row{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
-    @media (max-width: 600px){ .row{ grid-template-columns: 1fr; } }
-
-    label{ font-size:12px; opacity:.8; display:block; margin-bottom:4px; }
-    input, select{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:#101010; color:#fff; outline:none; }
-    input::placeholder{ color:#aaa; }
-
-    .btn{ padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:transparent; color:#fff; cursor:pointer; font-weight:800; }
-    .btn:hover{ border-color:var(--accent); color:var(--accent); }
-    .btn.primary{ background:var(--accent); color:var(--bg); border-color:#178b42; }
-    .btn.primary:hover{ filter:brightness(1.05); }
-    .btn.danger{ border-color:rgba(255,255,255,.18); color:#ff6b6b; }
-    .muted{ opacity:.75; }
-
-    /* Avatar */
-    .avatar-wrap{ display:flex; align-items:center; gap:14px; }
-    .avatar{
-      width:72px; height:72px; border-radius:50%;
-      border:1px solid rgba(255,255,255,.2);
-      background:#111; color:#fff; display:grid; place-items:center;
-      font-weight:900; font-size:22px; overflow:hidden;
+    :root {
+      --bg:#000;
+      --surface:rgba(18,23,20,.78);
+      --surface-strong:rgba(22,29,25,.94);
+      --text:#f4f7f4;
+      --muted:#9aa69e;
+      --accent:#1db954;
+      --accent-soft:rgba(29,185,84,.13);
+      --line:rgba(255,255,255,.09);
+      --radius:22px;
+      --shadow:0 22px 70px rgba(0,0,0,.38);
     }
-    .avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
 
-    /* Toast */
-    .toast-wrap{ position:fixed; right:16px; bottom:16px; display:grid; gap:10px; z-index:2000; }
-    .toast{ background:var(--accent); color:var(--bg); border-radius:12px; padding:10px 12px; box-shadow:var(--shadow-2); transform:translateY(10px); opacity:0; animation:toast-in .2s ease forwards; font-weight:800; }
-    @keyframes toast-in{ to{ transform:translateY(0); opacity:1; } }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      min-height:100%;
+      font-family:Inter,system-ui,Arial,sans-serif;
+      color:var(--text);
+      line-height:1.5;
+      background:
+        radial-gradient(ellipse at 78% 8%,rgba(29,185,84,.13),transparent 32%),
+        radial-gradient(ellipse at 8% 42%,rgba(38,91,62,.13),transparent 35%),
+        linear-gradient(145deg,#050706 0%,#090d0a 48%,#050706 100%);
+      overflow-x:hidden;
+    }
+
+    body:before {
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.12;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+      z-index:-1;
+    }
+
+    /* Existing header preserved */
+    header {
+      position:sticky;
+      top:0;
+      width:100%;
+      z-index:1000;
+      background:var(--bg);
+      border-bottom:1px solid rgba(255,255,255,.1);
+    }
+
+    .nav {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:14px 24px;
+    }
+
+    .nav a {
+      color:var(--text);
+      text-decoration:none;
+      font-weight:600;
+    }
+
+    .nav a:hover { text-decoration:underline; }
+
+    .page {
+      width:min(1240px,94vw);
+      margin:0 auto;
+      padding:42px 0 72px;
+    }
+
+    .eyebrow {
+      display:flex;
+      align-items:center;
+      gap:9px;
+      color:#9fbaa8;
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+    }
+
+    .eyebrow:before {
+      content:"";
+      width:22px;
+      height:1px;
+      background:var(--accent);
+    }
+
+    .page-heading {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:24px;
+      margin-bottom:26px;
+    }
+
+    h1 {
+      font-size:clamp(30px,4vw,46px);
+      line-height:1.08;
+      letter-spacing:-.055em;
+      margin-top:12px;
+      font-weight:700;
+    }
+
+    .intro {
+      max-width:480px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+      margin-top:12px;
+    }
+
+    .secure-note {
+      display:flex;
+      align-items:center;
+      gap:9px;
+      color:#b8c8bd;
+      font-size:12px;
+      padding:11px 14px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(255,255,255,.035);
+      white-space:nowrap;
+    }
+
+    .secure-note span {
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 14px rgba(29,185,84,.8);
+    }
+
+    .hero {
+      position:relative;
+      isolation:isolate;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      align-items:center;
+      gap:22px;
+      padding:26px 30px;
+      margin-bottom:22px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:26px;
+      background:linear-gradient(115deg,rgba(29,185,84,.13),rgba(255,255,255,.045) 42%,rgba(255,255,255,.025));
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(22px);
+      -webkit-backdrop-filter:blur(22px);
+    }
+
+    .hero:after {
+      content:"";
+      position:absolute;
+      width:300px;
+      height:300px;
+      right:12%;
+      top:-220px;
+      border-radius:50%;
+      background:rgba(29,185,84,.18);
+      filter:blur(55px);
+      z-index:-1;
+    }
+
+    .hero-avatar,.avatar {
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      border-radius:50%;
+      background:linear-gradient(145deg,#1b3c28,#0d1711);
+      border:1px solid rgba(114,229,151,.4);
+      color:#eaffef;
+      font-weight:800;
+    }
+
+    .hero-avatar {
+      width:78px;
+      height:78px;
+      font-size:25px;
+      box-shadow:0 0 0 8px rgba(29,185,84,.07),0 0 35px rgba(29,185,84,.12);
+    }
+
+    .hero-avatar img,.avatar img {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .hero-copy .kicker {
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#9bb4a2;
+      font-weight:700;
+    }
+
+    .hero-copy h2 {
+      font-size:21px;
+      letter-spacing:-.03em;
+      margin:4px 0;
+    }
+
+    .hero-copy p {
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .hero-status {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 13px;
+      border:1px solid rgba(29,185,84,.25);
+      border-radius:12px;
+      background:rgba(29,185,84,.08);
+      font-size:12px;
+      color:#c8f4d5;
+    }
+
+    .hero-status:before {
+      content:"";
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 12px var(--accent);
+    }
+
+    .settings-layout {
+      display:grid;
+      grid-template-columns:245px minmax(0,1fr);
+      gap:22px;
+      align-items:start;
+    }
+
+    .glass {
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:var(--surface);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+    }
+
+    .side {
+      padding:18px;
+      position:sticky;
+      top:90px;
+    }
+
+    .side-title {
+      font-size:11px;
+      color:#829188;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-weight:800;
+      margin:4px 10px 13px;
+    }
+
+    .side-link {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 11px;
+      margin:3px 0;
+      border-radius:12px;
+      text-decoration:none;
+      color:#b8c2bb;
+      font-size:13px;
+      font-weight:600;
+      transition:background .2s,color .2s;
+    }
+
+    .side-link .nav-icon {
+      width:27px;
+      height:27px;
+      display:grid;
+      place-items:center;
+      border:1px solid var(--line);
+      border-radius:9px;
+      color:#a9b9ae;
+      font-size:13px;
+    }
+
+    .side-link:hover,.side-link.active {
+      background:var(--accent-soft);
+      color:#e8fff0;
+    }
+
+    .side-link.active .nav-icon {
+      border-color:rgba(29,185,84,.35);
+      color:var(--accent);
+    }
+
+    .side-divider {
+      height:1px;
+      background:var(--line);
+      margin:14px 4px;
+    }
+
+    .side-profile {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 5px 2px;
+    }
+
+    .avatar {
+      width:38px;
+      height:38px;
+      font-size:13px;
+      flex:0 0 auto;
+    }
+
+    .side-profile strong {
+      display:block;
+      font-size:12px;
+      max-width:145px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .side-profile small {
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      margin-top:2px;
+    }
+
+    .content {
+      display:grid;
+      gap:18px;
+      min-width:0;
+    }
+
+    .section {
+      padding:25px 27px;
+      scroll-margin-top:100px;
+    }
+
+    .section-head {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      padding-bottom:19px;
+      margin-bottom:20px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .section-head h2 {
+      font-size:17px;
+      letter-spacing:-.025em;
+      font-weight:700;
+    }
+
+    .section-head p {
+      font-size:12px;
+      color:var(--muted);
+      margin-top:5px;
+      line-height:1.6;
+    }
+
+    .section-symbol {
+      width:38px;
+      height:38px;
+      display:grid;
+      place-items:center;
+      border-radius:12px;
+      color:#aaf0bf;
+      background:var(--accent-soft);
+      border:1px solid rgba(29,185,84,.2);
+      flex:0 0 auto;
+      font-size:16px;
+    }
+
+    .fields {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:18px;
+    }
+
+    .field { min-width:0; }
+
+    label {
+      display:block;
+      color:#c3cdc6;
+      font-size:12px;
+      font-weight:600;
+      margin:0 0 8px;
+    }
+
+    input,select {
+      width:100%;
+      min-height:47px;
+      padding:12px 14px;
+      border-radius:11px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(4,8,5,.72);
+      color:var(--text);
+      font:500 13px Inter,system-ui,sans-serif;
+      outline:none;
+      transition:border-color .2s,box-shadow .2s;
+    }
+
+    input::placeholder { color:#657168; }
+
+    input:focus,select:focus {
+      border-color:rgba(29,185,84,.75);
+      box-shadow:0 0 0 3px rgba(29,185,84,.1);
+    }
+
+    input:disabled,select:disabled {
+      opacity:.5;
+      cursor:not-allowed;
+    }
+
+    input[type="file"] {
+      padding:8px;
+      font-size:11px;
+    }
+
+    input[type="file"]::file-selector-button {
+      border:0;
+      border-radius:7px;
+      padding:7px 10px;
+      margin-right:10px;
+      background:#1b2a20;
+      color:#d8f7e1;
+      font:600 11px Inter;
+      cursor:pointer;
+    }
+
+    .field-hint {
+      font-size:11px;
+      color:#78867c;
+      margin-top:7px;
+      line-height:1.5;
+    }
+
+    .section-actions {
+      display:flex;
+      align-items:center;
+      gap:13px;
+      margin-top:21px;
+      flex-wrap:wrap;
+    }
+
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:42px;
+      padding:10px 16px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.035);
+      color:#f2f6f3;
+      cursor:pointer;
+      font:700 12px Inter;
+      transition:transform .2s,border-color .2s,background .2s;
+    }
+
+    .btn:hover {
+      border-color:rgba(29,185,84,.65);
+      transform:translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity:.55;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    /* Existing header button styling preserved */
+    #authSection .btn {
+      min-height:0;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.2);
+      background:transparent;
+      color:#fff;
+      cursor:pointer;
+      font-weight:800;
+      transform:none;
+    }
+
+    #authSection .btn:hover {
+      border-color:var(--accent);
+      color:var(--accent);
+      background:transparent;
+      transform:none;
+    }
+
+    .btn.primary {
+      background:var(--accent);
+      border-color:var(--accent);
+      color:#061009;
+    }
+
+    .btn.primary:hover { background:#35d36c; }
+
+    .btn.danger {
+      color:#ff9b9b;
+      border-color:rgba(255,110,110,.2);
+    }
+
+    .btn.danger:hover {
+      border-color:rgba(255,110,110,.65);
+      background:rgba(255,80,80,.07);
+    }
+
+    .status {
+      font-size:12px;
+      color:#8de5a8;
+    }
+
+    .avatar-editor {
+      display:flex;
+      align-items:center;
+      gap:18px;
+    }
+
+    .avatar-editor .avatar {
+      width:76px;
+      height:76px;
+      font-size:22px;
+    }
+
+    .avatar-controls {
+      display:grid;
+      gap:9px;
+      min-width:0;
+    }
+
+    .security-note {
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding:13px 14px;
+      margin-top:17px;
+      border-radius:12px;
+      background:rgba(255,255,255,.035);
+      border:1px solid var(--line);
+      color:#9ca99f;
+      font-size:11px;
+      line-height:1.6;
+    }
+
+    .security-note strong { color:#dbe6de; }
+
+    .toast-wrap {
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      display:grid;
+      gap:10px;
+      z-index:2000;
+    }
+
+    .toast {
+      background:#c9f7d5;
+      color:#07120a;
+      border:1px solid rgba(29,185,84,.4);
+      border-radius:12px;
+      padding:12px 16px;
+      box-shadow:0 16px 45px rgba(0,0,0,.4);
+      font-size:12px;
+      font-weight:800;
+      animation:toast-in .2s ease both;
+    }
+
+    @keyframes toast-in {
+      from { transform:translateY(8px); opacity:0; }
+      to { transform:translateY(0); opacity:1; }
+    }
+
+    @media(max-width:900px) {
+      .page { padding-top:32px; }
+      .settings-layout { grid-template-columns:1fr; }
+      .side { position:static; padding:13px; }
+      .side-title { margin:2px 7px 9px; }
+
+      .side-links {
+        display:grid;
+        grid-template-columns:repeat(4,minmax(0,1fr));
+        gap:5px;
+      }
+
+      .side-link {
+        justify-content:center;
+        flex-direction:column;
+        gap:6px;
+        text-align:center;
+        padding:10px 5px;
+        font-size:11px;
+      }
+
+      .side-divider,.side-profile { display:none; }
+    }
+
+    @media(max-width:620px) {
+      .page {
+        width:min(100% - 28px,560px);
+        padding:27px 0 48px;
+      }
+
+      .page-heading {
+        display:block;
+        margin-bottom:20px;
+      }
+
+      h1 { font-size:34px; }
+      .intro { font-size:13px; }
+
+      .secure-note {
+        display:inline-flex;
+        margin-top:16px;
+      }
+
+      .hero {
+        grid-template-columns:auto 1fr;
+        gap:15px;
+        padding:19px;
+        border-radius:20px;
+        margin-bottom:15px;
+      }
+
+      .hero-avatar {
+        width:62px;
+        height:62px;
+        font-size:20px;
+      }
+
+      .hero-copy h2 { font-size:17px; }
+      .hero-copy p { font-size:11px; }
+
+      .hero-status {
+        grid-column:1/-1;
+        justify-content:center;
+        padding:9px;
+      }
+
+      .settings-layout { gap:14px; }
+      .side { border-radius:17px; }
+
+      .side-links {
+        grid-template-columns:repeat(4,minmax(0,1fr));
+      }
+
+      .side-link { font-size:10px; }
+
+      .side-link .nav-icon {
+        width:25px;
+        height:25px;
+      }
+
+      .section {
+        padding:19px 16px;
+        border-radius:18px;
+      }
+
+      .section-head {
+        margin-bottom:17px;
+        padding-bottom:15px;
+      }
+
+      .section-head h2 { font-size:16px; }
+      .section-head p { font-size:11px; }
+
+      .fields {
+        grid-template-columns:1fr;
+        gap:15px;
+      }
+
+      .avatar-editor {
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .section-actions { align-items:stretch; }
+
+      .section-actions .btn { width:100%; }
+
+      .status { width:100%; }
+
+      .toast-wrap {
+        left:14px;
+        right:14px;
+        bottom:14px;
+      }
+
+      .toast { text-align:center; }
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      *,*:before,*:after {
+        scroll-behavior:auto!important;
+        animation-duration:.01ms!important;
+        transition-duration:.01ms!important;
+      }
+    }
   </style>
 </head>
+
 <body>
 
 <header>
   <div class="nav">
     <a href="homepage.html"><strong>VeloValue</strong></a>
+
     <nav style="display:flex;gap:16px;align-items:center">
       <a href="homepage.html">HOME</a>
       <a href="/explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
       <a href="garageview.html">SMART GARAGE</a>
-      <div id="authSection"><button class="btn">Login / Register</button></div>
+      <div id="authSection">
+        <button class="btn">Login / Register</button>
+      </div>
     </nav>
   </div>
 </header>
 
-<main class="container">
-  <!-- Sidebar -->
-  <aside class="panel side">
-    <h2>Settings</h2>
-    <div class="sub">Manage your profile and preferences.</div>
-    <div class="group">
-      <div class="avatar-wrap">
-        <div class="avatar" id="avatarPreview" aria-label="Profile avatar">U</div>
-        <div style="display:grid; gap:6px;">
-          <label for="avatarInput">Profile picture</label>
-          <input id="avatarInput" type="file" accept="image/*"/>
-          <button class="btn danger" id="removeAvatarBtn">Remove picture</button>
-        </div>
-      </div>
-      <div class="muted" style="font-size:12px">For beta, your picture is stored only in this browser.</div>
-    </div>
-  </aside>
+<main class="page">
 
-  <!-- Main content -->
-  <section class="panel main">
-    <!-- Profile info -->
-    <div class="group">
-      <h2>Edit Personal Information</h2>
-      <div class="row">
-        <div>
-          <label for="userName">Username</label>
-          <input id="displayName" type="text" placeholder="Search Available Username"/>
-        </div>
-        <div>
-          <label for="email">Email</label>
-          <input id="email" type="email" placeholder="you@example.com"/>
-        </div>
-        <div>
-          <label for="sex">Sex</label>
-          <select id="sex">
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="others">Others</option>
-            <option value="prefernottosay">Prefer not to say</option>
-            <option value="pokemon">Pokemon</option>
-            <option value="transformers">Transformers</option>
-            <option value="anime">Anime</option>
-            <option value="cartoon">Cartoon</option>
-            <option value="avengers">Avengers</option>
-            <option value="jet">Fighter Jet</option>
-            <option value="helicopter">Fighter Helicopter</option>
-          </select>
-        </div>
-        <div>
-          <label for="dateofbirth">Date of birth</label>
-          <input id="dateofbirth" type="date" />
-        </div>
-      </div>
-      <div style="display:flex; gap:8px;">
-        <button class="btn primary" id="saveProfileBtn">Save profile</button>
-        <span class="muted" id="profileStatus"></span>
-      </div>
+  <div class="page-heading">
+    <div>
+      <div class="eyebrow">Your account</div>
+      <h1>Settings<span style="color:var(--accent)">.</span></h1>
+      <p class="intro">
+        Manage your personal details, tailor your VeloValue experience
+        and keep your account preferences up to date.
+      </p>
     </div>
 
-    <!-- Password (beta-safe) -->
-    <div class="group">
-      <h2>Password</h2>
-      <div class="row">
-        <div>
-          <label for="currentPwd">Current password</label>
-          <input id="currentPwd" type="password" placeholder="••••••••"/>
-        </div>
-        <div>
-          <label for="newPwd">New password</label>
-          <input id="newPwd" type="password" placeholder="New password"/>
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label for="confirmPwd">Confirm new password</label>
-          <input id="confirmPwd" type="password" placeholder="Confirm new password"/>
-        </div>
-        <div></div>
-      </div>
-      <button class="btn" id="changePwdBtn">Change password</button>
-      <div class="muted" style="font-size:12px">For security, password changes will be enabled when the backend is ready.</div>
+    <div class="secure-note">
+      <span></span>
+      Your preferences, your control
+    </div>
+  </div>
+
+  <section class="hero" aria-label="Profile overview">
+    <div class="hero-avatar" id="heroAvatar" aria-label="Profile avatar">U</div>
+
+    <div class="hero-copy">
+      <div class="kicker">Personal profile</div>
+      <h2 id="heroName">Welcome to VeloValue</h2>
+      <p id="heroEmail">Your mobility experience starts here.</p>
     </div>
 
-    <!-- Preferences -->
-    <div class="group">
-      <h2>Preferences</h2>
-      <div class="row">
-        <div>
-          <label for="country">Country or Region</label>
-          <select id="country">
-            <option value="it">Italia</option>
-          </select>
-        </div>
-        <div>
-          <label for="language">Language</label>
-          <select id="language">
-            <option value="en">English</option>
-            <option value="it">Italiano</option>
-            <option value="de">Deutsch</option>
-          </select>
-        </div>
-        <div>
-          <label for="notifications">Email notifications</label>
-          <select id="notifications">
-            <option value="on">On</option>
-            <option value="off">Off</option>
-          </select>
-        </div>
-        <div>
-          <label for="currency">Currency</label>
-          <select id="currency">
-            <option value="EUR">EUR (€)</option>
-            <option value="USD">USD ($)</option>
-            <option value="GBP">INR (₹)</option>
-          </select>
-        </div>
-      </div>
-        <div></div>
-      </div>
-      <div style="display:flex; gap:8px;">
-        <button class="btn primary" id="savePrefsBtn">Save preferences</button>
-        <span class="muted" id="prefsStatus"></span>
-      </div>
-    </div>
+    <div class="hero-status">Profile settings</div>
   </section>
+
+  <div class="settings-layout">
+
+    <aside class="glass side">
+      <div class="side-title">Settings menu</div>
+
+      <nav class="side-links" aria-label="Settings sections">
+        <a class="side-link active" href="#personal">
+          <span class="nav-icon">◉</span>
+          <span>Personal info</span>
+        </a>
+
+        <a class="side-link" href="#preferences">
+          <span class="nav-icon">⌘</span>
+          <span>Preferences</span>
+        </a>
+
+        <a class="side-link" href="#security">
+          <span class="nav-icon">◇</span>
+          <span>Security</span>
+        </a>
+
+        <a class="side-link" href="#picture">
+          <span class="nav-icon">▧</span>
+          <span>Picture</span>
+        </a>
+      </nav>
+
+      <div class="side-divider"></div>
+
+      <div class="side-profile">
+        <div class="avatar" id="sideAvatar">U</div>
+        <div>
+          <strong id="sideName">VeloValue member</strong>
+          <small>Account profile</small>
+        </div>
+      </div>
+    </aside>
+
+    <div class="content">
+
+      <!-- PERSONAL INFORMATION -->
+      <section class="glass section" id="personal">
+        <div class="section-head">
+          <div>
+            <h2>Personal information</h2>
+            <p>Keep your profile details accurate and up to date.</p>
+          </div>
+          <div class="section-symbol">◉</div>
+        </div>
+
+        <div class="fields">
+          <div class="field">
+            <label for="displayName">Username</label>
+            <input id="displayName" type="text"
+              placeholder="Enter your username"
+              autocomplete="nickname"/>
+          </div>
+
+          <div class="field">
+            <label for="email">Email address</label>
+            <input id="email" type="email"
+              placeholder="you@example.com"
+              autocomplete="email"/>
+          </div>
+
+          <div class="field">
+            <label for="sex">Gender</label>
+            <select id="sex">
+              <option value="">Select an option</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="others">Other</option>
+              <option value="prefernottosay">Prefer not to say</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="dateofbirth">Date of birth</label>
+            <input id="dateofbirth" type="date" autocomplete="bday"/>
+          </div>
+        </div>
+
+        <div class="section-actions">
+          <button class="btn primary" id="saveProfileBtn">Save changes</button>
+          <span class="status" id="profileStatus" aria-live="polite"></span>
+        </div>
+      </section>
+
+      <!-- PREFERENCES -->
+      <section class="glass section" id="preferences">
+        <div class="section-head">
+          <div>
+            <h2>Experience preferences</h2>
+            <p>Set the region, language and display currency for your experience.</p>
+          </div>
+          <div class="section-symbol">⌘</div>
+        </div>
+
+        <div class="fields">
+          <div class="field">
+            <label for="country">Country or region</label>
+            <select id="country">
+              <option value="it">Italy</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="language">Language</label>
+            <select id="language">
+              <option value="en">English</option>
+              <option value="it">Italiano</option>
+              <option value="de">Deutsch</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="currency">Currency</label>
+            <select id="currency">
+              <option value="EUR">EUR (€)</option>
+              <option value="USD">USD ($)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="INR">INR (₹)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="notifications">Email notifications</label>
+            <select id="notifications">
+              <option value="on">On</option>
+              <option value="off">Off</option>
+            </select>
+            <div class="field-hint">
+              Choose whether you want to receive product and account updates by email.
+            </div>
+          </div>
+        </div>
+
+        <div class="section-actions">
+          <button class="btn primary" id="savePrefsBtn">Save preferences</button>
+          <span class="status" id="prefsStatus" aria-live="polite"></span>
+        </div>
+      </section>
+
+      <!-- SECURITY -->
+      <section class="glass section" id="security">
+        <div class="section-head">
+          <div>
+            <h2>Password &amp; security</h2>
+            <p>Manage your account password securely.</p>
+          </div>
+          <div class="section-symbol">◇</div>
+        </div>
+
+        <div class="fields">
+          <div class="field">
+            <label for="currentPwd">Current password</label>
+            <input id="currentPwd" type="password"
+              placeholder="Enter current password"
+              autocomplete="current-password"/>
+          </div>
+
+          <div class="field">
+            <label for="newPwd">New password</label>
+            <input id="newPwd" type="password"
+              placeholder="New password"
+              autocomplete="new-password"/>
+          </div>
+
+          <div class="field">
+            <label for="confirmPwd">Confirm new password</label>
+            <input id="confirmPwd" type="password"
+              placeholder="Confirm new password"
+              autocomplete="new-password"/>
+          </div>
+        </div>
+
+        <div class="section-actions">
+          <button class="btn" id="changePwdBtn" type="button">
+            Change password
+          </button>
+        </div>
+
+        <div class="security-note">
+          <span>ⓘ</span>
+          <div>
+            <strong>Password protection.</strong><br/>
+            Your current password is verified before a password change.
+            New passwords are securely hashed before being stored.
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE PICTURE -->
+      <section class="glass section" id="picture">
+        <div class="section-head">
+          <div>
+            <h2>Profile picture</h2>
+            <p>Personalise your account with a profile image.</p>
+          </div>
+          <div class="section-symbol">▧</div>
+        </div>
+
+        <div class="avatar-editor">
+          <div class="avatar" id="avatarPreview" aria-label="Profile avatar">U</div>
+
+          <div class="avatar-controls">
+            <label for="avatarInput">Upload a picture</label>
+
+            <input id="avatarInput" type="file"
+              accept="image/png,image/jpeg,image/webp"/>
+
+            <div class="field-hint">
+              JPG, PNG or WebP. Maximum file size: 2 MB.
+              Your profile picture is saved to your VeloValue account.
+            </div>
+
+            <div>
+              <button class="btn danger" id="removeAvatarBtn" type="button">
+                Remove picture
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
 </main>
 
-<div id="toastWrap" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+<div id="toastWrap" class="toast-wrap"
+  aria-live="polite" aria-atomic="true"></div>
 
 <script>
-  // Local storage keys (beta storage)
-  const PROFILE_KEY = 'vv_user_profile_override_v1';
-  const PREFS_KEY   = 'vv_user_prefs_v1';
+  const $ = (s, r = document) => r.querySelector(s);
 
-  const $ = (s, r=document) => r.querySelector(s);
-  const toast = (msg) => {
-    const w = $('#toastWrap'); const el = document.createElement('div');
-    el.className='toast'; el.textContent = msg; w.appendChild(el);
-    setTimeout(()=>{ el.style.transition='opacity .2s, transform .2s'; el.style.opacity='0'; el.style.transform='translateY(8px)'; },1200);
-    setTimeout(()=> w.contains(el) && w.removeChild(el),1500);
+  let currentProfile = {
+    name: '',
+    email: '',
+    sex: '',
+    dateofbirth: '',
+    avatar: null
   };
 
-  function loadJSON(key, fallback=null){
-    try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback; }
-    catch { return fallback; }
-  }
-  function saveJSON(key, value){
-    localStorage.setItem(key, JSON.stringify(value));
+  // ---------------- TOAST NOTIFICATIONS ----------------
+
+  function toast(message) {
+    const wrap = $('#toastWrap');
+    const item = document.createElement('div');
+
+    item.className = 'toast';
+    item.textContent = message;
+
+    wrap.appendChild(item);
+
+    setTimeout(() => {
+      item.style.transition = 'opacity .2s,transform .2s';
+      item.style.opacity = '0';
+      item.style.transform = 'translateY(8px)';
+    }, 1700);
+
+    setTimeout(() => item.remove(), 2000);
   }
 
-  // Avatar helpers
-  function initials(name=''){
-    return name.trim().split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase() || 'U';
+  // ---------------- PROFILE DISPLAY ----------------
+
+  function initials(name = '') {
+    return name.trim()
+      .split(/\s+/)
+      .map(part => part[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase() || 'U';
   }
-  function renderAvatar(name, dataUrl){
-    const el = $('#avatarPreview');
+
+  function setAvatar(element, name, dataUrl) {
+    if (!element) return;
+
+    element.replaceChildren();
+
     if (dataUrl) {
-      el.innerHTML = `<img alt="Avatar">`;
-      el.querySelector('img').src = dataUrl;
+      const img = document.createElement('img');
+      img.alt = 'Profile picture';
+      img.src = dataUrl;
+      element.appendChild(img);
     } else {
-      el.textContent = initials(name);
+      element.textContent = initials(name);
     }
   }
 
-  // Init
-  (function init(){
-    const profile = loadJSON(PROFILE_KEY, { name:'', email:'', avatar:null });
-    const prefs   = loadJSON(PREFS_KEY, { language:'en', currency:'EUR', notifications:'on' });
+  function renderProfile(profile) {
+    const name = profile.name || 'Welcome to VeloValue';
 
-    $('#displayName').value = profile.name || '';
-    $('#email').value = profile.email || '';
-    $('#language').value = prefs.language || 'en';
-    $('#currency').value = prefs.currency || 'EUR';
-    $('#notifications').value = prefs.notifications || 'on';
+    $('#heroName').textContent = name;
 
-    renderAvatar(profile.name, profile.avatar || null);
-  })();
+    $('#heroEmail').textContent =
+      profile.email || 'Your mobility experience starts here.';
 
-  // Avatar upload/remove
-  $('#avatarInput').addEventListener('change', (e)=>{
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) { alert('Please select an image.'); return; }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const profile = loadJSON(PROFILE_KEY, { name:'', email:'', avatar:null });
-      profile.avatar = reader.result; // data URL
-      saveJSON(PROFILE_KEY, profile);
-      renderAvatar(profile.name, profile.avatar);
-      toast('Profile picture updated');
+    $('#sideName').textContent =
+      profile.name || 'VeloValue member';
+
+    [
+      $('#heroAvatar'),
+      $('#sideAvatar'),
+      $('#avatarPreview')
+    ].forEach(el => {
+      setAvatar(el, profile.name || '', profile.avatar || null);
+    });
+  }
+
+  // ---------------- API REQUEST HELPER ----------------
+
+  async function apiRequest(url, method = 'GET', data = null) {
+    const options = {
+      method,
+      credentials: 'same-origin',
+      headers: {}
     };
+
+    if (data !== null) {
+      options.headers['Content-Type'] = 'application/json';
+      options.body = JSON.stringify(data);
+    }
+
+    const response = await fetch(url, options);
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || 'Something went wrong.');
+    }
+
+    return result;
+  }
+
+  // ---------------- LOAD SETTINGS ----------------
+
+  async function initSettings() {
+    try {
+      const result = await apiRequest('/api/settings');
+
+      const profile = result.settings.profile;
+      const prefs = result.settings.preferences;
+
+      currentProfile = { ...profile };
+
+      $('#displayName').value = profile.name || '';
+      $('#email').value = profile.email || '';
+      $('#sex').value = profile.sex || '';
+      $('#dateofbirth').value = profile.dateofbirth || '';
+
+      $('#country').value = prefs.country || 'it';
+      $('#language').value = prefs.language || 'en';
+      $('#currency').value = prefs.currency || 'EUR';
+      $('#notifications').value = prefs.notifications || 'on';
+
+      renderProfile(currentProfile);
+
+    } catch (error) {
+      console.error('[Settings] Loading error:', error);
+      toast(error.message || 'Unable to load account settings.');
+    }
+  }
+
+  initSettings();
+
+  // ---------------- SAVE PROFILE ----------------
+
+  $('#saveProfileBtn').addEventListener('click', async () => {
+    const button = $('#saveProfileBtn');
+    button.disabled = true;
+
+    try {
+      const profile = {
+        name: $('#displayName').value.trim(),
+        email: $('#email').value.trim(),
+        sex: $('#sex').value,
+        dateofbirth: $('#dateofbirth').value
+      };
+
+      await apiRequest('/api/settings/profile', 'PUT', profile);
+
+      currentProfile = {
+        ...currentProfile,
+        ...profile
+      };
+
+      renderProfile(currentProfile);
+
+      $('#profileStatus').textContent = 'Saved';
+      toast('Profile saved successfully.');
+
+      setTimeout(() => {
+        $('#profileStatus').textContent = '';
+      }, 1600);
+
+    } catch (error) {
+      console.error('[Settings] Profile save error:', error);
+      toast(error.message || 'Could not save your profile.');
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  // ---------------- SAVE PREFERENCES ----------------
+
+  $('#savePrefsBtn').addEventListener('click', async () => {
+    const button = $('#savePrefsBtn');
+    button.disabled = true;
+
+    try {
+      const preferences = {
+        country: $('#country').value,
+        language: $('#language').value,
+        currency: $('#currency').value,
+        notifications: $('#notifications').value
+      };
+
+      await apiRequest(
+        '/api/settings/preferences',
+        'PUT',
+        preferences
+      );
+
+      $('#prefsStatus').textContent = 'Saved';
+      toast('Preferences saved successfully.');
+
+      setTimeout(() => {
+        $('#prefsStatus').textContent = '';
+      }, 1600);
+
+    } catch (error) {
+      console.error('[Settings] Preferences save error:', error);
+      toast(error.message || 'Could not save preferences.');
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  // ---------------- PROFILE PICTURE UPLOAD ----------------
+
+  $('#avatarInput').addEventListener('change', event => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      toast('Please select a JPG, PNG or WebP image.');
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast('Please choose an image smaller than 2 MB.');
+      event.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = async () => {
+      const button = $('#avatarInput');
+      button.disabled = true;
+
+      try {
+        await apiRequest('/api/settings/avatar', 'PUT', {
+          avatar: reader.result
+        });
+
+        currentProfile.avatar = reader.result;
+        renderProfile(currentProfile);
+
+        toast('Profile picture updated successfully.');
+
+      } catch (error) {
+        console.error('[Settings] Avatar upload error:', error);
+        toast(error.message || 'Could not upload your picture.');
+        event.target.value = '';
+
+      } finally {
+        button.disabled = false;
+      }
+    };
+
+    reader.onerror = () => {
+      toast('The image could not be read. Please try again.');
+      event.target.value = '';
+    };
+
     reader.readAsDataURL(file);
   });
 
-  $('#removeAvatarBtn').addEventListener('click', ()=>{
-    const profile = loadJSON(PROFILE_KEY, { name:'', email:'', avatar:null });
-    profile.avatar = null;
-    saveJSON(PROFILE_KEY, profile);
-    renderAvatar(profile.name, null);
-    toast('Profile picture removed');
+  // ---------------- REMOVE PROFILE PICTURE ----------------
+
+  $('#removeAvatarBtn').addEventListener('click', async () => {
+    const button = $('#removeAvatarBtn');
+    button.disabled = true;
+
+    try {
+      await apiRequest('/api/settings/avatar', 'PUT', {
+        avatar: null
+      });
+
+      currentProfile.avatar = null;
+      renderProfile(currentProfile);
+
+      $('#avatarInput').value = '';
+
+      toast('Profile picture removed.');
+
+    } catch (error) {
+      console.error('[Settings] Avatar removal error:', error);
+      toast(error.message || 'Could not remove your picture.');
+    } finally {
+      button.disabled = false;
+    }
   });
 
-  // Save profile
-  $('#saveProfileBtn').addEventListener('click', ()=>{
-    const name = $('#displayName').value.trim();
-    const email = $('#email').value.trim();
-    const profile = loadJSON(PROFILE_KEY, { name:'', email:'', avatar:null });
-    profile.name = name;
-    profile.email = email;
-    saveJSON(PROFILE_KEY, profile);
-    renderAvatar(profile.name, profile.avatar || null);
-    $('#profileStatus').textContent = 'Saved';
-    toast('Profile saved');
-    setTimeout(()=> $('#profileStatus').textContent = '', 1200);
+  // ---------------- CHANGE PASSWORD ----------------
+
+  $('#changePwdBtn').addEventListener('click', async () => {
+    const button = $('#changePwdBtn');
+
+    const currentPassword = $('#currentPwd').value;
+    const newPassword = $('#newPwd').value;
+    const confirmPassword = $('#confirmPwd').value;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast('Please complete all password fields.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast('The new passwords do not match.');
+      return;
+    }
+
+    if (newPassword.length < 8 || newPassword.length > 128) {
+      toast('Your new password must contain 8–128 characters.');
+      return;
+    }
+
+    button.disabled = true;
+
+    try {
+      await apiRequest('/api/settings/password', 'PUT', {
+        currentPassword,
+        newPassword
+      });
+
+      $('#currentPwd').value = '';
+      $('#newPwd').value = '';
+      $('#confirmPwd').value = '';
+
+      toast('Password changed successfully.');
+
+    } catch (error) {
+      console.error('[Settings] Password change error:', error);
+      toast(error.message || 'Could not change your password.');
+    } finally {
+      button.disabled = false;
+    }
   });
 
-  // Change password (beta)
-  $('#changePwdBtn').addEventListener('click', ()=>{
-    alert('For security, password change will be enabled when the backend is ready.');
+  // ---------------- SECTION NAVIGATION ----------------
+
+  const sectionLinks = [...document.querySelectorAll('.side-link')];
+
+  const sectionObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        sectionLinks.forEach(link => {
+          link.classList.toggle(
+            'active',
+            link.getAttribute('href') === '#' + entry.target.id
+          );
+        });
+      }
+    });
+  }, {
+    rootMargin: '-20% 0px -65% 0px'
   });
 
-  // Save preferences
-  $('#savePrefsBtn').addEventListener('click', ()=>{
-    const prefs = {
-      language: $('#language').value,
-      currency: $('#currency').value,
-      notifications: $('#notifications').value
-    };
-    saveJSON(PREFS_KEY, prefs);
-    $('#prefsStatus').textContent = 'Saved';
-    toast('Preferences saved');
-    setTimeout(()=> $('#prefsStatus').textContent = '', 1200);
+  document.querySelectorAll('.content > section').forEach(section => {
+    sectionObserver.observe(section);
   });
 </script>
 
 <script src="/js/auth.js"></script>
+
 </body>
 </html>

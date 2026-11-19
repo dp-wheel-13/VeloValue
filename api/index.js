@@ -126,7 +126,7 @@ app.set("trust proxy", 1);
 
 // ------------------- MIDDLEWARE -------------------
 app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: false }));
-app.use(express.json());
+app.use(express.json({ limit: "4mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from public folder
@@ -490,6 +490,263 @@ app.get("/api/user", (req, res) => {
     res.json({ loggedIn: false, user: null });
   }
 });
+
+// ------------------- ACCOUNT SETTINGS API -------------------
+
+async function requireSettingsAuth(req, res, next) {
+  try {
+    if (!req.session || !req.session.user || !req.session.user.id) {
+  return res.status(401).json({
+    success: false,
+    message: "Please log in to manage your settings."
+  });
+}
+
+const user = await User.findById(req.session.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Account not found."
+      });
+    }
+
+    req.settingsUser = user;
+    next();
+  } catch (error) {
+    console.error("[Settings] Authentication error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Could not verify your account."
+    });
+  }
+}
+
+// Load settings from MongoDB
+app.get("/api/settings", requireSettingsAuth, (req, res) => {
+  const user = req.settingsUser;
+
+  res.json({
+    success: true,
+    settings: {
+      profile: {
+        name: user.name || "",
+        email: user.email || "",
+        sex: user.sex || "",
+        dateofbirth: user.dateofbirth || "",
+        avatar: user.avatar || null
+      },
+      preferences: {
+        country: user.country || "it",
+        language: user.language || "en",
+        currency: user.currency || "EUR",
+        notifications: user.notifications || "on"
+      }
+    }
+  });
+});
+
+// Update personal information
+app.put("/api/settings/profile", requireSettingsAuth, async (req, res) => {
+  try {
+    const { name, email, sex, dateofbirth } = req.body;
+
+    const cleanName = typeof name === "string" ? name.trim() : "";
+    const cleanEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+
+    if (!cleanName || cleanName.length > 80) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a name between 1 and 80 characters."
+      });
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid email address."
+      });
+    }
+
+    const existingUser = await User.findOne({
+      email: cleanEmail,
+      _id: { $ne: req.settingsUser._id }
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "This email address is already registered."
+      });
+    }
+
+    req.settingsUser.name = cleanName;
+    req.settingsUser.email = cleanEmail;
+    req.settingsUser.sex = typeof sex === "string" ? sex : "";
+    req.settingsUser.dateofbirth =
+      typeof dateofbirth === "string" ? dateofbirth : "";
+
+    await req.settingsUser.save();
+
+    req.session.user = {
+      ...req.session.user,
+      id: req.settingsUser._id.toString(),
+      name: req.settingsUser.name,
+      email: req.settingsUser.email,
+      avatar: req.settingsUser.avatar || null
+    };
+
+    res.json({ success: true, message: "Profile updated successfully." });
+  } catch (error) {
+    console.error("[Settings] Profile update error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Could not save your profile."
+    });
+  }
+});
+
+// Update preferences
+app.put("/api/settings/preferences", requireSettingsAuth, async (req, res) => {
+  try {
+    const { country, language, currency, notifications } = req.body;
+
+    const allowedCountries = ["it", "de", "fr", "es", "gb", "us", "in"];
+    const allowedLanguages = ["en", "it", "de", "fr", "es"];
+    const allowedCurrencies = ["EUR", "USD", "GBP", "INR"];
+    const allowedNotifications = ["on", "off"];
+
+    if (
+      !allowedCountries.includes(country) ||
+      !allowedLanguages.includes(language) ||
+      !allowedCurrencies.includes(currency) ||
+      !allowedNotifications.includes(notifications)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "One or more preference values are invalid."
+      });
+    }
+
+    Object.assign(req.settingsUser, {
+      country,
+      language,
+      currency,
+      notifications
+    });
+
+    await req.settingsUser.save();
+
+    res.json({ success: true, message: "Preferences updated successfully." });
+  } catch (error) {
+    console.error("[Settings] Preferences update error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Could not save your preferences."
+    });
+  }
+});
+
+// Update or remove profile picture
+app.put("/api/settings/avatar", requireSettingsAuth, async (req, res) => {
+  try {
+    const { avatar } = req.body;
+
+    if (avatar !== null && (
+      typeof avatar !== "string" ||
+      !/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/.test(avatar)
+    )) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid profile picture format."
+      });
+    }
+
+    if (avatar) {
+      const base64Data = avatar.split(",")[1];
+      const imageSize = Buffer.from(base64Data, "base64").length;
+
+      if (imageSize > 2 * 1024 * 1024) {
+        return res.status(413).json({
+          success: false,
+          message: "Profile picture must be smaller than 2 MB."
+        });
+      }
+    }
+
+    req.settingsUser.avatar = avatar;
+    await req.settingsUser.save();
+
+    req.session.user = {
+      ...req.session.user,
+      id: req.settingsUser._id.toString(),
+      name: req.settingsUser.name,
+      email: req.settingsUser.email,
+      avatar: req.settingsUser.avatar || null
+    };
+
+    res.json({ success: true, message: "Profile picture updated." });
+  } catch (error) {
+    console.error("[Settings] Avatar update error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Could not update your profile picture."
+    });
+  }
+});
+
+// Change account password
+app.put("/api/settings/password", requireSettingsAuth, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!req.settingsUser.password) {
+      return res.status(400).json({
+        success: false,
+        message: "This account does not currently have a password. Use your social login."
+      });
+    }
+
+    if (typeof currentPassword !== "string" || typeof newPassword !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Enter your current and new passwords."
+      });
+    }
+
+    const passwordMatches = await bcrypt.compare(
+      currentPassword,
+      req.settingsUser.password
+    );
+
+    if (!passwordMatches) {
+      return res.status(400).json({
+        success: false,
+        message: "Your current password is incorrect."
+      });
+    }
+
+    if (newPassword.length < 8 || newPassword.length > 128) {
+      return res.status(400).json({
+        success: false,
+        message: "Your new password must be between 8 and 128 characters."
+      });
+    }
+
+    req.settingsUser.password = await bcrypt.hash(newPassword, 10);
+    await req.settingsUser.save();
+
+    res.json({ success: true, message: "Password changed successfully." });
+  } catch (error) {
+    console.error("[Settings] Password update error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Could not change your password."
+    });
+  }
+});
+
+// ------------------- END ACCOUNT SETTINGS API -------------------
 
 // Logout
 app.post("/logout", (req, res) => {

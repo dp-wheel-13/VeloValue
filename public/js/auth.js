@@ -21,12 +21,18 @@ document.addEventListener('DOMContentLoaded', () => {
       .avatar-btn:hover { border-color: #1db954; }
       .avatar-btn:focus-visible { outline: 2px solid #1db954; outline-offset: 2px; }
       .user-dropdown {
-        position: absolute; right: 0; top: calc(100% + 10px);
-        width: 260px; background: rgba(255,255,255,.03);
-        border: 1px solid rgba(255,255,255,.12);
-        border-radius: 12px; backdrop-filter: blur(8px);
-        box-shadow: 0 18px 50px rgba(0,0,0,.55);
-        overflow: hidden; z-index: 1001;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      width: 260px;
+      background: rgba(10, 14, 12, 0.97);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.75);
+      overflow: hidden;
+      z-index: 1001;
       }
       .user-dropdown[hidden] { display: none; }
       .user-head { padding: 10px; border-bottom: 1px solid rgba(255,255,255,.1); }
@@ -111,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <a class="menu-item" id="wishlistOpen">Wishlist</a>
         <button class="menu-item" id="myDocsBtn">My Documents</button>
         <button class="menu-item" id="dlBtn">${hasDL ? 'View Driving License' : 'Upload Driving License'}</button>
+        <a class="menu-item" id="settingsOpen" href="/settings.html">Settings</a>
         <button class="menu-item logout" id="logoutBtn">Logout</button>
       </div>
     </div>
