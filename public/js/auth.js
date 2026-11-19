@@ -83,7 +83,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderLoggedOut(root) {
     setUserKey({ loggedIn: false, user: null });
     root.innerHTML = `<button id="loginBtn" class="auth-btn">Login / Register</button>`;
-    $('#loginBtn')?.addEventListener('click', () => window.location.href = LOGIN_URL);
+    $('#loginBtn')?.addEventListener('click', () => {
+  const returnTo =
+    window.location.pathname +
+    window.location.search +
+    window.location.hash;
+
+  window.location.href =
+    `${LOGIN_URL}?returnTo=${encodeURIComponent(returnTo)}`;
+});
   }
 
   function renderLoggedIn(root, data) {

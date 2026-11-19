@@ -1,99 +1,209 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sign Up – VeloValue</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="register.css" />
+  <meta name="theme-color" content="#080b09" />
+  <title>Create Account - VeloValue</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/register.css" />
+
+  <script src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
 </head>
+
 <body>
   <video autoplay muted loop playsinline id="bg-video">
-    <source src="Multimedia/login video.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
+    <source src="/Multimedia/login%20video.mp4" type="video/mp4" />
   </video>
 
-  <div class="velovalue-header" onclick="window.location.href='homepage.html'">VeloValue</div>
+  <div class="velovalue-header" onclick="window.location.href='/homepage.html'" role="link" tabindex="0">
+    VeloValue
+  </div>
 
-  <div class="login-container">
-    <form id="registerForm" class="login-form">
+  <main class="login-container">
+    <form id="registerForm" class="login-form" novalidate>
       <h2>Create Account</h2>
 
-      <!-- Social Signup Buttons -->
-      <button type="button" class="social-btn" onclick="window.location.href='/auth/google'">
-        Sign up with Google
+      <button type="button" class="social-btn" id="googleSignup">
+        Continue with Google
       </button>
+
       <button type="button" class="social-btn" disabled>
-        Sign up with Facebook (Coming Soon)
+        Continue with Facebook (Coming Soon)
       </button>
+
       <button type="button" class="social-btn" disabled>
-        Sign up with Apple (Coming Soon)
+        Continue with Apple (Coming Soon)
       </button>
 
       <div class="divider"><span>or</span></div>
 
-      <!-- Full Name -->
       <label for="fullname">Full Name</label>
-      <input type="text" id="fullname" name="fullname" placeholder="Your Full Name" required />
+      <input
+        type="text"
+        id="fullname"
+        name="fullname"
+        placeholder="Your full name"
+        autocomplete="name"
+        maxlength="100"
+        required
+      />
 
-      <!-- Email -->
       <label for="email">Email Address</label>
-      <input type="email" id="email" name="email" placeholder="you@example.com" required />
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+        maxlength="254"
+        required
+      />
 
-      <!-- Password -->
       <label for="password">Password</label>
-      <input type="password" id="password" name="password" placeholder="Create Password" required />
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Create a password"
+        autocomplete="new-password"
+        minlength="8"
+        required
+      />
 
-      <!-- Confirm Password -->
       <label for="confirmPassword">Confirm Password</label>
-      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required />
+      <input
+        type="password"
+        id="confirmPassword"
+        name="confirmPassword"
+        placeholder="Confirm your password"
+        autocomplete="new-password"
+        minlength="8"
+        required
+      />
 
-      <button type="submit">Sign Up</button>
+      <p id="formMessage" role="alert" aria-live="polite"
+         style="color:#ff7777;font-size:.85rem;margin-top:12px;min-height:20px;"></p>
+
+      <button type="submit" id="registerSubmit">Create Account</button>
 
       <p class="signup-link">
-        Already have an account? <a href="login.html">Log In</a>
+        Already have an account?
+        <a id="loginLink" href="/login.html">Log In</a>
       </p>
     </form>
-  </div>
+  </main>
 
   <script>
-    const registerForm = document.getElementById('registerForm');
+    (() => {
+      const form = document.getElementById('registerForm');
+      const submitButton = document.getElementById('registerSubmit');
+      const message = document.getElementById('formMessage');
 
-    registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+      const params = new URLSearchParams(window.location.search);
 
-      const fullname = document.getElementById('fullname').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
+      // Only allow internal paths. Never redirect to an external website.
+      function getSafeReturnUrl(value) {
+        if (!value) return '/homepage.html';
 
-      if (password !== confirmPassword) {
-        alert("❌ Passwords do not match");
-        return;
-      }
+        try {
+          const url = new URL(value, window.location.origin);
 
-      try {
-        const res = await fetch('/register', {  // <-- updated route
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: fullname, email, password }), // name field matches backend
-          credentials: 'include' // important: store session cookie
-        });
+          if (url.origin !== window.location.origin) {
+            return '/homepage.html';
+          }
 
-        const data = await res.json();
+          if (!url.pathname.startsWith('/') || url.pathname.startsWith('//')) {
+            return '/homepage.html';
+          }
 
-        if (data.loggedIn) {
-          // Redirect to main app safely
-          window.location.href = '/garageview.html';
-        } else {
-          alert(data.error || "❌ Something went wrong. Please try again.");
+          if (/^\/(login|register)\.html$/i.test(url.pathname)) {
+            return '/homepage.html';
+          }
+
+          return url.pathname + url.search + url.hash;
+        } catch {
+          return '/homepage.html';
         }
-      } catch (err) {
-        console.error(err);
-        alert("❌ Error registering user");
       }
-    });
+
+      const returnTo = getSafeReturnUrl(params.get('returnTo'));
+
+      // Keep the same destination when moving between login and registration.
+      document.getElementById('loginLink').href =
+        '/login.html?returnTo=' + encodeURIComponent(returnTo);
+
+      document.getElementById('googleSignup').addEventListener('click', () => {
+        window.location.href =
+          '/auth/google?returnTo=' + encodeURIComponent(returnTo);
+      });
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        message.textContent = '';
+
+        const name = document.getElementById('fullname').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (!name || !email || !password || !confirmPassword) {
+          message.textContent = 'Please complete all fields.';
+          return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          message.textContent = 'Please enter a valid email address.';
+          return;
+        }
+
+        if (password.length < 8) {
+          message.textContent = 'Your password must contain at least 8 characters.';
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          message.textContent = 'Your passwords do not match.';
+          return;
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = 'Creating account...';
+
+        try {
+          const response = await fetch('/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              name,
+              email,
+              password,
+              confirmPassword
+            })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.loggedIn) {
+            throw new Error(data.error || 'Unable to create your account.');
+          }
+
+          window.location.replace(returnTo);
+
+        } catch (error) {
+          message.textContent =
+            error.message || 'Something went wrong. Please try again.';
+
+          submitButton.disabled = false;
+          submitButton.textContent = 'Create Account';
+        }
+      });
+    })();
   </script>
 </body>
 </html>

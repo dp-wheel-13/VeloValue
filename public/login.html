@@ -1,90 +1,174 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#080b09" />
   <title>Login – VeloValue</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="login.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/login.css" />
+
+  <script src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
 </head>
+
 <body>
-  <!-- Background video -->
   <video autoplay muted loop playsinline id="bg-video">
-    <source src="Multimedia/login video.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
+    <source src="/Multimedia/login%20video.mp4" type="video/mp4" />
   </video>
 
-  <!-- Header -->
-  <div class="velovalue-header" onclick="window.location.href='homepage.html'">VeloValue</div>
+  <div class="velovalue-header"
+       onclick="window.location.href='/homepage.html'"
+       role="link"
+       tabindex="0">
+    VeloValue
+  </div>
 
-  <div class="login-container">
-    <form id="loginForm" class="login-form">
+  <main class="login-container">
+    <form id="loginForm" class="login-form" novalidate>
       <h2>Welcome Back</h2>
 
-      <!-- Social login buttons -->
-      <button type="button" class="social-btn" onclick="window.location.href='/auth/google'">
+      <button type="button" class="social-btn" id="googleLogin">
         Continue with Google
       </button>
-      <!-- Facebook/Apple login: implement later via Passport strategies -->
+
       <button type="button" class="social-btn" disabled>
         Continue with Facebook (Coming Soon)
       </button>
+
       <button type="button" class="social-btn" disabled>
         Continue with Apple (Coming Soon)
       </button>
 
       <div class="divider"><span>or</span></div>
 
-      <!-- Email & Password -->
       <label for="email">Email Address</label>
-      <input type="email" id="email" name="email" placeholder="you@example.com" required />
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+        required
+      />
 
       <label for="password">Password</label>
-      <input type="password" id="password" name="password" placeholder="Your Password" required />
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Your Password"
+        autocomplete="current-password"
+        required
+      />
 
-      <button type="submit">Login</button>
-
-      <p class="signup-link">
-        Don't have an account? <a href="/register.html">Sign Up</a>
+      <p style="text-align:right;margin:8px 0 14px;">
+        <a href="/forgot-password.html" id="forgotPasswordLink"
+           style="color:#1db954;text-decoration:none;font-size:.85rem;">
+          Forgot password?
+        </a>
       </p>
 
-      <p id="errorMsg" style="color:red;"></p>
+      <p id="errorMsg" role="alert" aria-live="polite"
+         style="color:#ff7777;font-size:.85rem;min-height:20px;"></p>
+
+      <button type="submit" id="loginSubmit">Login</button>
+
+      <p class="signup-link">
+        Don't have an account?
+        <a id="signupLink" href="/register.html">Sign Up</a>
+      </p>
     </form>
-  </div>
+  </main>
 
   <script>
-const loginForm = document.getElementById('loginForm');
-const errorMsg = document.getElementById('errorMsg');
+    (() => {
+      const form = document.getElementById('loginForm');
+      const errorMsg = document.getElementById('errorMsg');
+      const submitButton = document.getElementById('loginSubmit');
 
-loginForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
+      const params = new URLSearchParams(window.location.search);
 
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
+      function getSafeReturnUrl(value) {
+        if (!value) return '/homepage.html';
 
-  try {
-    const res = await fetch('/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-      credentials: 'include' // important: store session cookie
-    });
+        try {
+          const url = new URL(value, window.location.origin);
 
-    const data = await res.json();
+          if (url.origin !== window.location.origin) {
+            return '/homepage.html';
+          }
 
-    if (data.loggedIn) {
-      // Redirect to main app page safely
-      window.location.href = '/garageview.html';
-    } else {
-      errorMsg.textContent = data.error || '❌ Login failed';
-    }
-  } catch (err) {
-    console.error(err);
-    errorMsg.textContent = '❌ Something went wrong. Please try again.';
-  }
-});
-</script>
+          if (!url.pathname.startsWith('/') || url.pathname.startsWith('//')) {
+            return '/homepage.html';
+          }
 
+          if (/^\/(login|register)\.html$/i.test(url.pathname)) {
+            return '/homepage.html';
+          }
+
+          return url.pathname + url.search + url.hash;
+        } catch {
+          return '/homepage.html';
+        }
+      }
+
+      const returnTo = getSafeReturnUrl(params.get('returnTo'));
+
+      document.getElementById('signupLink').href =
+        '/register.html?returnTo=' + encodeURIComponent(returnTo);
+
+      document.getElementById('forgotPasswordLink').href =
+        '/forgot-password.html?returnTo=' + encodeURIComponent(returnTo);
+
+      document.getElementById('googleLogin').addEventListener('click', () => {
+        window.location.href =
+          '/auth/google?returnTo=' + encodeURIComponent(returnTo);
+      });
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorMsg.textContent = '';
+
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (!email || !password) {
+          errorMsg.textContent = 'Please enter your email and password.';
+          return;
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = 'Logging in…';
+
+        try {
+          const response = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ email, password })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.loggedIn) {
+            throw new Error(data.error || 'Login failed. Please try again.');
+          }
+
+          window.location.replace(returnTo);
+
+        } catch (error) {
+          errorMsg.textContent =
+            error.message || 'Unable to connect. Please try again.';
+
+          submitButton.disabled = false;
+          submitButton.textContent = 'Login';
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

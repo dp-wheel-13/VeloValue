@@ -129,8 +129,28 @@ app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: false 
 app.use(express.json({ limit: "4mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from public folder
-app.use(express.static(path.join(__dirname, "../public")));
+// Serve public assets before session initialization.
+// HTML pages are deliberately skipped so access control can run first.
+const publicAssets = express.static(path.join(__dirname, "../public"));
+
+app.use((req, res, next) => {
+  const pathname = req.path.toLowerCase();
+
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    return next();
+  }
+
+  if (
+    pathname === "/" ||
+    pathname.startsWith("/api/") ||
+    pathname.endsWith(".html") ||
+    !path.extname(pathname)
+  ) {
+    return next();
+  }
+
+  return publicAssets(req, res, next);
+});
 // Serve local vehicle manufacturer logos
 app.use("/assets/car-logos/custom", express.static(path.join(__dirname, "../car-logos-dataset/local-logos")));
 app.use("/assets/car-logos", express.static(path.join(__dirname, "../car-logos-dataset/logos/optimized")));
@@ -172,6 +192,48 @@ app.use(async (req, res, next) => {
 // Passport authentication
 app.use(passport.initialize());
 app.use(passport.session());
+
+// ------------------- CENTRAL PAGE ACCESS CONTROL -------------------
+
+const protectedPagePaths = new Set([
+  "/explore-smart-garage-beta/smartgarage.html",
+  "/explore-smart-garage-beta/garageview.html",
+  "/explore-smart-garage-beta/garagedetails.html",
+  "/explore-smart-garage-beta/garagesearch.html",
+  "/explore-smart-garage-beta/manual-upload.html",
+  "/explore-smart-garage-beta/car-details.html",
+  "/explore-smart-garage-beta/cardetailsview.html",
+  "/settings.html",
+  "/smartreminders.html",
+  "/smartsearch.html"
+]);
+
+app.use((req, res, next) => {
+  const requestedPath = req.path.toLowerCase();
+
+  // Only protect the specified HTML pages.
+  if (
+    req.method !== "GET" ||
+    !protectedPagePaths.has(requestedPath)
+  ) {
+    return next();
+  }
+
+  // Allow authenticated users.
+  if (req.session?.user?.id) {
+    return next();
+  }
+
+  // Preserve the requested page so login can return the user there.
+  return res.redirect(
+    `/login.html?returnTo=${encodeURIComponent(req.originalUrl)}`
+  );
+});
+
+// ------------------- END CENTRAL PAGE ACCESS CONTROL -------------------
+
+// Serve HTML pages only after the central access-control check.
+app.use(express.static(path.join(__dirname, "../public")));
 
 // ------------------- ROUTES -------------------
 // InfoTarga routes -> /api/infotarga/:plate  and /api/lookup/:plate
