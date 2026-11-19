@@ -134,8 +134,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 // Serve local vehicle manufacturer logos
 app.use("/assets/car-logos/custom", express.static(path.join(__dirname, "../car-logos-dataset/local-logos")));
 app.use("/assets/car-logos", express.static(path.join(__dirname, "../car-logos-dataset/logos/optimized")));
-
- // Persistent MongoDB sessions — initialized through shared connection
+ // Persistent MongoDB sessions - initialized through shared connection
 app.use(async (req, res, next) => {
   try {
     await initializeMongo();
@@ -193,34 +192,75 @@ const translationSchema = new mongoose.Schema({
   targetLang: String,
   translatedText: String
 });
+translationSchema.index({ text: 1, targetLang: 1 }, { unique: true });
 const Translation = mongoose.model("Translation", translationSchema);
 
 // ------------------- API ROUTES -------------------
-
-// Translation route
+// Translation route - MongoDB cache + batched DeepL requests
 app.post("/api/translate", async (req, res) => {
   try {
-    const { texts, targetLang } = req.body;
+    const { texts, targetLang } = req.body || {};
 
-    if (!texts || !Array.isArray(texts) || texts.length === 0) {
+    if (!Array.isArray(texts) || texts.length === 0) {
       return res.status(400).json({ error: "Missing texts array" });
+    }
+
+    if (texts.length > 200) {
+      return res.status(400).json({
+        error: "Maximum 200 texts per request"
+      });
+    }
+
+    const lang = String(targetLang || "").toLowerCase();
+
+    if (!["it", "de"].includes(lang)) {
+      return res.status(400).json({ error: "Unsupported target language" });
+    }
+
+    const uniqueTexts = [...new Set(
+      texts.filter(text =>
+        typeof text === "string" &&
+        text.trim().length > 0 &&
+        text.length <= 5000
+      )
+    )];
+
+    if (uniqueTexts.length === 0) {
+      return res.json({ translations: {} });
     }
 
     const translations = {};
 
-    for (const text of texts) {
-      const cached = await Translation.findOne({ text, targetLang });
-      if (cached) {
-        translations[text] = cached.translatedText;
-        continue;
+    const cachedEntries = await Translation.find({
+      text: { $in: uniqueTexts },
+      targetLang: lang
+    }).lean();
+
+    for (const entry of cachedEntries) {
+      translations[entry.text] = entry.translatedText;
+    }
+
+    const missingTexts = uniqueTexts.filter(
+      text => !Object.prototype.hasOwnProperty.call(translations, text)
+    );
+
+    console.log(
+      `[Translation Cache] Language: ${lang} | Found: ${cachedEntries.length} | Missing: ${missingTexts.length}`
+    );
+
+    for (let i = 0; i < missingTexts.length; i += 50) {
+      const batch = missingTexts.slice(i, i + 50);
+      const params = new URLSearchParams();
+
+      for (const text of batch) {
+        params.append("text", text);
       }
 
-            const deeplRes = await axios.post(
+      params.append("target_lang", lang.toUpperCase());
+
+      const deeplRes = await axios.post(
         "https://api-free.deepl.com/v2/translate",
-        new URLSearchParams({
-          text,
-          target_lang: targetLang.toUpperCase()
-        }),
+        params,
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -229,16 +269,56 @@ app.post("/api/translate", async (req, res) => {
         }
       );
 
-      const translatedText = deeplRes.data.translations[0].text;
-      translations[text] = translatedText;
+      const results = deeplRes.data.translations;
 
-      await Translation.create({ text, targetLang, translatedText });
+      if (!Array.isArray(results) || results.length !== batch.length) {
+        throw new Error("DeepL returned an unexpected number of translations");
+      }
+
+      const operations = batch.map((text, index) => {
+        const translatedText = results[index].text;
+
+        if (typeof translatedText !== "string") {
+          throw new Error("DeepL returned an invalid translation");
+        }
+
+        translations[text] = translatedText;
+
+        return {
+          updateOne: {
+            filter: { text, targetLang: lang },
+            update: {
+              $set: { translatedText }
+            },
+            upsert: true
+          }
+        };
+      });
+
+      try {
+        await Translation.bulkWrite(operations);
+      } catch (dbError) {
+        if (dbError.code !== 11000 && dbError.code !== 11001) {
+          throw dbError;
+        }
+
+        // Another request inserted the same translations concurrently.
+        const savedEntries = await Translation.find({
+          text: { $in: batch },
+          targetLang: lang
+        }).lean();
+
+        for (const entry of savedEntries) {
+          translations[entry.text] = entry.translatedText;
+        }
+      }
     }
 
     return res.json({ translations });
+
   } catch (err) {
-    console.error("Translation error:", err);
-    res.status(500).json({ translations: {} });
+    console.error("Translation error:", err.response?.data || err.message);
+    return res.status(500).json({ translations: {} });
   }
 });
 

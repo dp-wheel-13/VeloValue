@@ -3,7 +3,7 @@
   <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
     <meta charset="utf-8" />
-    <title>VeloValue â€¢ VeloCharge: Real Stations Near Me</title>
+    <title>VeloValue &bull; VeloCharge: Real Stations Near Me</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -24,116 +24,235 @@
 
       /* ===== HEADER ===== */
       header {
-        position: fixed; top: 0; left: 0; width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         padding: 1rem 2rem;
+        position: fixed;
+        width: 100%;
+        top: 0;
         background: rgba(0,0,0,0.6);
-        display: flex; justify-content: space-between; align-items: center;
-        z-index: 1000;
-        -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+        z-index: 2000;
         border-bottom: 1px solid #333;
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
       }
-      .header-left { display: flex; align-items: center; gap: 12px; }
-      .header-right { display: flex; align-items: center; gap: 16px; }
-      header h1 { font-size: 24px; font-weight: 800; margin: 0; }
-      header h1 a { color: white; text-decoration: none; }
 
-      nav.desktop-nav { display: flex; align-items: center; gap: 20px; }
+      .header-left { display: flex; align-items: center; gap: 15px; }
+      .header-right { display: flex; align-items: center; gap: 15px; }
+
+      header h1 { margin: 0; }
+      header h1 a {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #fff;
+        text-decoration: none;
+      }
+
+      /* Desktop navigation */
+      nav.desktop-nav { display: flex; gap: 20px; }
       nav.desktop-nav a {
-        color: #fff; text-decoration: none; font-size: 16px;
-        font-weight: 600; white-space: nowrap;
+        color: #fff;
+        font-weight: 600;
+        font-size: 16px;
+        text-decoration: none;
+        white-space: nowrap;
       }
       nav.desktop-nav a:hover { text-decoration: underline; }
 
+      /* Language selector */
       .language-select { position: relative; }
       .language-select select {
-        -webkit-appearance: none; -moz-appearance: none; appearance: none;
-        background: #111; color: #fff; border: 1px solid #fff; border-radius: 6px;
-        padding: 4px 8px; font-size: 14px; cursor: pointer;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background: #111;
+        color: #fff;
+        border: 1px solid #333;
+        border-radius: 6px;
+        padding: 6px 30px 6px 10px;
+        font-size: 0.9rem;
+        cursor: pointer;
       }
 
+      /* Authentication button */
       #authSection .text-btn {
-        display: inline-flex; align-items: center; justify-content: center;
-        background: #fff; color: #111;
-        border: 1px solid #333; border-radius: 20px;
-        padding: 6px 12px; font-weight: 600; cursor: pointer;
-        transition: all 0.3s ease;
+        display: inline-flex;
+        background: #fff;
+        color: #000;
+        border: none;
+        border-radius: 999px;
+        padding: 8px 16px;
+        font-weight: 600;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
       }
-      #authSection .text-btn:hover { background: #444; color: #fff; }
       #authSection .icon-btn { display: none; }
 
+      /* Hamburger */
       .hamburger {
-        font-size: 1.8rem; background: none; border: none; color: #fff;
-        cursor: pointer; display: none; align-items: center;
-        justify-content: center; width: 40px; height: 40px;
+        font-size: 1.8rem;
+        background: none;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2200;
       }
 
-      /* ===== MOBILE DRAWER ===== */
+      /* Mobile drawer */
       .menu {
-        position: fixed; top: 0; left: -300px;
-        width: 300px; height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100vh;
         background: rgba(17,17,17,0.95);
         border-right: 1px solid rgba(255,255,255,0.12);
         padding: 5.5rem 2rem 2rem;
-        display: flex; flex-direction: column; gap: 2rem;
-        transition: left 0.3s ease; z-index: 2100;
-        -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        transition: left 0.3s ease;
+        z-index: 2100;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
         border-radius: 0 1rem 1rem 0;
       }
       .menu.active { left: 0; }
-      .menu a { color: #fff; font-size: 1.4rem; font-weight: 800; text-decoration: none; }
-      .menu .menu-close {
-        position: absolute; top: 1rem; right: 1rem;
-        width: 2.25rem; height: 2.25rem;
-        background: none; border: 0; color: #fff; cursor: pointer;
+      .menu a {
+        color: #fff;
+        font-size: 1.6rem;
+        font-weight: 800;
+        text-decoration: none;
       }
-      .menu .menu-close::before, .menu .menu-close::after {
-        content: ""; position: absolute; top: 50%; left: 50%;
-        width: 22px; height: 2px; background: currentColor; transform-origin: center;
+
+      .menu .menu-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 2.25rem;
+        height: 2.25rem;
+        background: none;
+        border: 0;
+        color: #fff;
+        cursor: pointer;
+      }
+      .menu .menu-close::before,
+      .menu .menu-close::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 22px;
+        height: 2px;
+        background: currentColor;
+        transform-origin: center;
       }
       .menu .menu-close::before { transform: translate(-50%, -50%) rotate(45deg); }
-      .menu .menu-close::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+      .menu .menu-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
 
       .menu-overlay {
-        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-        opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 2050;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 2050;
       }
       .menu-overlay.active { opacity: 1; pointer-events: auto; }
 
+      /* Mobile hamburger animation */
       @media (max-width: 1024px) {
         nav.desktop-nav { display: none; }
-        .hamburger { display: flex; position: relative; font-size: 0; }
-        .hamburger::before, .hamburger::after {
-          content: ""; position: absolute; left: 50%;
-          width: 22px; height: 2px; background: currentColor;
+
+        .hamburger {
+          display: flex;
+          width: 40px;
+          height: 40px;
+          position: relative;
+          font-size: 0;
+        }
+        .hamburger::before,
+        .hamburger::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          width: 22px;
+          height: 2px;
+          background: currentColor;
           transform: translateX(-50%);
-          transition: transform .25s ease, top .25s ease;
+          transition: transform .25s ease, top .25s ease, opacity .2s ease;
         }
         .hamburger::before { top: calc(50% - 6px); }
-        .hamburger::after  { top: calc(50% + 6px); }
+        .hamburger::after { top: calc(50% + 6px); }
         .hamburger {
           background-image: linear-gradient(currentColor, currentColor);
-          background-repeat: no-repeat; background-position: center; background-size: 22px 2px;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 22px 2px;
         }
         .hamburger.is-active { background-size: 0 0; }
-        .hamburger.is-active::before { top: 50%; transform: translateX(-50%) rotate(45deg); }
-        .hamburger.is-active::after  { top: 50%; transform: translateX(-50%) rotate(-45deg); }
-
-        #authSection .text-btn { display: none; }
-        #authSection .icon-btn {
-          display: inline-flex; align-items: center; justify-content: center;
-          width: 40px; height: 40px; border-radius: 50%;
-          font-size: 1.2rem; background: #fff; color: #000; border: none; cursor: pointer;
+        .hamburger.is-active::before {
+          top: 50%;
+          transform: translateX(-50%) rotate(45deg);
         }
-        .language-select {
-          width: 40px; height: 40px; border-radius: 50%;
-          background: #111; border: 1px solid #fff;
-          display: flex; align-items: center; justify-content: center;
-          position: relative;
+        .hamburger.is-active::after {
+          top: 50%;
+          transform: translateX(-50%) rotate(-45deg);
         }
-        .language-select::before { content: "\1F310"; font-size: 1.2rem; color: #fff; position: absolute; }
-        .language-select select { opacity: 0; position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; }
       }
 
+      /* Phone-sized header controls */
+      @media (max-width: 768px) {
+        #authSection .text-btn { display: none; }
+
+        #authSection .icon-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          font-size: 1.2rem;
+          background: #fff;
+          color: #000;
+          border: none;
+          cursor: pointer;
+          transition: transform 0.2s ease;
+        }
+        #authSection .icon-btn:active { transform: scale(0.95); }
+
+        .language-select {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: #111;
+          border: 1px solid #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+        }
+        .language-select::before {
+          content: "\1F310";
+          font-size: 1.2rem;
+          color: #fff;
+          position: absolute;
+        }
+        .language-select select {
+          opacity: 0;
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          cursor: pointer;
+        }
+      }
       /* ===== MAP ===== */
       #map { position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0; }
 
@@ -420,8 +539,8 @@
         <nav class="desktop-nav" aria-label="Primary">
           <a href="/homepage.html" data-i18n="nav_home">HOME</a>
           <a href="/explore-new-cars-beta/explorenewcars.html" data-i18n="nav_cars">EXPLORE NEW CARS</a>
-          <a href="/explore-smart-garage-beta/smartgarage.html" data-i18n="nav_garage">EXPLORE SMART GARAGE</a>
-          <a href="#about" data-i18n="nav_about">ABOUT US</a>
+          <a href="/explore-smart-garage-beta/smartgarage.html" data-i18n="nav_garage">SMART GARAGE</a>
+          <a href="/velocharge-beta/velocharge.html" data-i18n="nav_charge">VELOCHARGE</a>
         </nav>
         <div class="language-select">
           <select id="languageSelect" aria-label="Language">
@@ -431,7 +550,7 @@
           </select>
         </div>
         <div id="authSection">
-          <button class="text-btn" onclick="window.location.href='login.html'" data-i18n="nav_login">Login / Register</button>
+          <button class="text-btn" onclick="window.location.href='/login.html'" data-i18n="nav_login">Login / Register</button>
         </div>
       </div>
     </header>
@@ -441,11 +560,12 @@
       <button class="menu-close" aria-label="Close menu"></button>
       <a href="/homepage.html" data-i18n="nav_home">HOME</a>
       <a href="/explore-new-cars-beta/explorenewcars.html" data-i18n="nav_cars">EXPLORE NEW CARS</a>
-      <a href="/explore-smart-garage-beta/smartgarage.html" data-i18n="nav_garage">EXPLORE SMART GARAGE</a>
-      <a href="#about" data-i18n="nav_about">ABOUT US</a>
+      <a href="/explore-smart-garage-beta/smartgarage.html" data-i18n="nav_garage">SMART GARAGE</a>
+      <a href="/velocharge-beta/velocharge.html" data-i18n="nav_charge">DISCOVER VELOCHARGE</a>
+      <a href="/homepage.html#careers" data-i18n="nav_work">WORK WITH US</a>
+      <a href="/homepage.html#about" data-i18n="nav_about">ABOUT US</a>
     </nav>
     <div class="menu-overlay"></div>
-
     <!-- ===== LEFT PANEL / BOTTOM SHEET ===== -->
     <aside class="left-panel">
       <button class="sheet-handle" id="sheetHandle" aria-label="Expand filters" aria-expanded="false"></button>
@@ -497,7 +617,7 @@
         <div class="accordion" id="payAccordion">
           <div class="accordion-header" data-i18n="acc_pay">Pay with VeloValue</div>
           <div class="accordion-content">
-            <p class="section-text" data-i18n="pay_desc">Start a charging session directly from VeloValue. No cards, no apps from each network â€” just tap and charge.</p>
+            <p class="section-text" data-i18n="pay_desc">Start a charging session directly from VeloValue. No cards, no apps from each network Ã¢â‚¬â€ just tap and charge.</p>
             <div class="section-divider"></div>
             <p class="section-text"><strong data-i18n="pay_how">How it works:</strong></p>
             <p class="section-text" style="margin-top:4px;" data-i18n="pay_steps">1. Tap any station on the map<br>2. Check connector availability<br>3. Hit "Start Charge" and pay via your VeloValue wallet</p>
@@ -649,12 +769,12 @@
           <div class="accordion-header" data-i18n="acc_store">VeloValue Store</div>
           <div class="accordion-content">
             <div class="store-card">
-              <div class="store-card-title" data-i18n="store_1_title">Charging Bundle â€” 50 kWh</div>
+              <div class="store-card-title" data-i18n="store_1_title">Charging Bundle Ã¢â‚¬â€ 50 kWh</div>
               <div class="store-card-desc" data-i18n="store_1_desc">Pre-paid credit for any network station on VeloCharge.</div>
               <div class="store-card-price" data-i18n="store_1_price">Coming soon</div>
             </div>
             <div class="store-card">
-              <div class="store-card-title" data-i18n="store_2_title">Charging Bundle â€” 200 kWh</div>
+              <div class="store-card-title" data-i18n="store_2_title">Charging Bundle Ã¢â‚¬â€ 200 kWh</div>
               <div class="store-card-desc" data-i18n="store_2_desc">Best value for frequent drivers. No expiry for 12 months.</div>
               <div class="store-card-price" data-i18n="store_2_price">Coming soon</div>
             </div>
@@ -707,13 +827,13 @@
 
     <script>
     /* ==============================================================
-       I18N â€” Simple translation system
+       I18N Ã¢â‚¬â€ Simple translation system
        ============================================================== */
     var i18n = (function() {
       var strings = {
         en: {
-          nav_home: 'HOME', nav_cars: 'EXPLORE NEW CARS', nav_garage: 'EXPLORE SMART GARAGE',
-          nav_about: 'ABOUT US', nav_login: 'Login / Register',
+          nav_home: 'HOME', nav_cars: 'EXPLORE NEW CARS', nav_garage: 'SMART GARAGE',
+          nav_charge: 'DISCOVER VELOCHARGE', nav_work: 'WORK WITH US', nav_about: 'ABOUT US', nav_login: 'Login / Register',
           panel_title: 'Welcome to VeloCharge',
           acc_filters: 'Filters', acc_legend: 'Legend', acc_pay: 'Pay with VeloValue',
           acc_add: 'Add Station', acc_trip: 'Trip Planner', acc_recent: 'Recent Activity',
@@ -760,8 +880,8 @@
           coming_soon: 'Coming Soon'
         },
         it: {
-          nav_home: 'HOME', nav_cars: 'ESPLORA AUTO NUOVE', nav_garage: 'ESPLORA SMART GARAGE',
-          nav_about: 'CHI SIAMO', nav_login: 'Accedi / Registrati',
+          nav_home: 'HOME', nav_cars: 'ESPLORA AUTO NUOVE', nav_garage: 'SMART GARAGE',
+          nav_charge: 'SCOPRI VELOCHARGE', nav_work: 'LAVORA CON NOI', nav_about: 'CHI SIAMO', nav_login: 'Accedi / Registrati',
           panel_title: 'Benvenuto su VeloCharge',
           acc_filters: 'Filtri', acc_legend: 'Legenda', acc_pay: 'Paga con VeloValue',
           acc_add: 'Aggiungi Stazione', acc_trip: 'Pianifica Viaggio', acc_recent: 'Attivit\u00E0 Recente',
@@ -808,8 +928,8 @@
           coming_soon: 'In arrivo'
         },
         de: {
-          nav_home: 'HOME', nav_cars: 'NEUE AUTOS ENTDECKEN', nav_garage: 'SMART GARAGE ENTDECKEN',
-          nav_about: '\u00DCBER UNS', nav_login: 'Anmelden / Registrieren',
+          nav_home: 'HOME', nav_cars: 'NEUE AUTOS ENTDECKEN', nav_garage: 'SMART GARAGE',
+          nav_charge: 'VELOCHARGE ENTDECKEN', nav_work: 'ARBEITE MIT UNS', nav_about: '\u00DCBER UNS', nav_login: 'Anmelden / Registrieren',
           panel_title: 'Willkommen bei VeloCharge',
           acc_filters: 'Filter', acc_legend: 'Legende', acc_pay: 'Mit VeloValue bezahlen',
           acc_add: 'Station hinzuf\u00FCgen', acc_trip: 'Routenplaner', acc_recent: 'Letzte Aktivit\u00E4t',
@@ -857,7 +977,8 @@
         }
       };
 
-      var currentLang = 'en';
+      var savedLang = localStorage.getItem('language') || 'en';
+      var currentLang = strings[savedLang] ? savedLang : 'en';
 
       function t(key) {
         return (strings[currentLang] && strings[currentLang][key]) || strings['en'][key] || key;
@@ -925,11 +1046,12 @@
 
     function updateAuthButton() {
       if (window.innerWidth <= 768) {
-        authSection.innerHTML = '<button class="icon-btn" onclick="window.location.href=\'login.html\'">&#128100;</button>';
+        authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='/login.html'">👤</button>`;
       } else {
-        authSection.innerHTML = '<button class="text-btn" onclick="window.location.href=\'login.html\'">' + i18n.t('nav_login') + '</button>';
+        authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='/login.html'">Login / Register</button>`;
       }
     }
+
     updateAuthButton();
 
     window.addEventListener('resize', function() {
@@ -986,7 +1108,7 @@
        MAP + OCM API + FILTERS + MARKERS
        ============================================================== */
 
-    // â”€â”€ CONFIG â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ CONFIG Ã¢â€â‚¬Ã¢â€â‚¬
 if (!window.VELOCHARGE_CONFIG?.mapboxToken) {
   throw new Error('Mapbox public token is not configured.');
 }
@@ -1030,7 +1152,7 @@ map.addControl(geolocate, 'top-right');
     var errorEl = document.getElementById('errorToast');
     var stationCountEl = document.getElementById('stationCount');
 
-    // â”€â”€ STATE â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ STATE Ã¢â€â‚¬Ã¢â€â‚¬
     var allStationsGeoJSON = { type: 'FeatureCollection', features: [] };
     var filteredCount = 0;
     var filterState = {
@@ -1040,7 +1162,7 @@ map.addControl(geolocate, 'top-right');
     var initialLoadDone = false;
     var errorTimer = null;
 
-    // â”€â”€ HELPERS â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ HELPERS Ã¢â€â‚¬Ã¢â€â‚¬
     function emptyGeoJSON() { return { type: 'FeatureCollection', features: [] }; }
     function clamp(x, min, max) { return Math.max(min, Math.min(max, x)); }
     function showLoading() { loadingEl.classList.add('visible'); }
@@ -1061,7 +1183,7 @@ map.addControl(geolocate, 'top-right');
       return 2 * R * Math.asin(Math.sqrt(Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLng/2)**2)) / 2;
     }
 
-    // â”€â”€ MAP ON LOAD â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ MAP ON LOAD Ã¢â€â‚¬Ã¢â€â‚¬
     map.on('load', function() {
       addStationsLayers();
       initAccordions();
@@ -1096,7 +1218,7 @@ map.addControl(geolocate, 'top-right');
       searchBtn.style.display = 'none';
     });
 
-    // â”€â”€ MAP LAYERS â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ MAP LAYERS Ã¢â€â‚¬Ã¢â€â‚¬
     function escapePopupHTML(value) {
       return String(value ?? '').replace(/[&<>"']/g, function(char) {
         return {
@@ -1116,7 +1238,7 @@ map.addControl(geolocate, 'top-right');
         });
       }
 
-      // â”€â”€ Load your custom icon â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬ Load your custom icon Ã¢â€â‚¬Ã¢â€â‚¬
       // Change this path to match your actual file, e.g. 'icon/marker.svg', 'icon/pin.png', etc.
       var ICON_PATH = '/icons/location.png';
 
@@ -1133,7 +1255,7 @@ map.addControl(geolocate, 'top-right');
           map.addImage('station-icon', image);
         }
 
-        // â”€â”€ Cluster circle layer (unchanged) â”€â”€
+        // Ã¢â€â‚¬Ã¢â€â‚¬ Cluster circle layer (unchanged) Ã¢â€â‚¬Ã¢â€â‚¬
         if (!map.getLayer('clusters')) {
           map.addLayer({
             id: 'clusters', type: 'circle', source: 'stations',
@@ -1153,14 +1275,14 @@ map.addControl(geolocate, 'top-right');
           });
         }
 
-        // â”€â”€ Custom icon layer (replaces unclustered-ring + unclustered-dot) â”€â”€
+        // Ã¢â€â‚¬Ã¢â€â‚¬ Custom icon layer (replaces unclustered-ring + unclustered-dot) Ã¢â€â‚¬Ã¢â€â‚¬
         if (!map.getLayer('unclustered-icon')) {
           map.addLayer({
             id: 'unclustered-icon', type: 'symbol', source: 'stations',
             filter: ['!', ['has', 'point_count']],
             layout: {
               'icon-image': 'station-icon',
-              'icon-size': 0.15,          // Adjust scale (0.1 â€“ 1+)
+              'icon-size': 0.15,          // Adjust scale (0.1 Ã¢â‚¬â€œ 1+)
               'icon-allow-overlap': true,
               'icon-anchor': 'bottom',
               'icon-pitch-alignment': 'map'
@@ -1172,7 +1294,7 @@ map.addControl(geolocate, 'top-right');
           });
         }
 
-        // â”€â”€ Interactions â”€â”€
+        // Ã¢â€â‚¬Ã¢â€â‚¬ Interactions Ã¢â€â‚¬Ã¢â€â‚¬
         map.on('click', 'clusters', function(e) {
           var f = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
           if (!f.length) return;
@@ -1189,7 +1311,8 @@ map.addControl(geolocate, 'top-right');
             '<div>' + escapePopupHTML(p.network || '\u2014') + ' \u2022 ' + (p.max_power ? escapePopupHTML(p.max_power) + ' kW' : '? kW') +
             ' \u2022 ' + escapePopupHTML(p.total_connectors || '?') + ' ports</div>' +
             '<div>' + (p.has_available?'\u2705':'\u26A0\uFE0F') +
-            (p.usage_cost ? ' \u2022 ' + escapePopupHTML(p.usage_cost) : '') + '</div>' +
+            (p.usage_cost ? ' \u2022 ' + escapePopupHTML(p.usage_cost) : '') + '</div>' +
+
             '<a href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(e.features[0].geometry.coordinates[1] + ',' + e.features[0].geometry.coordinates[0]) + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:8px;color:#1db954;font-weight:600;text-decoration:none">&#128205; Get Directions</a>' +
             (cl.length?'<div style="margin-top:6px;font-size:12px;color:#333">'+cl.map(escapePopupHTML).join(', ')+'</div>':'') +
             '</div>';
@@ -1203,7 +1326,7 @@ map.addControl(geolocate, 'top-right');
       });
     }
 
-    // Fallback if icon fails to load â€” keeps the old green/amber circles
+    // Fallback if icon fails to load Ã¢â‚¬â€ keeps the old green/amber circles
     function addFallbackCircleLayers() {
       if (!map.getLayer('clusters')) {
         map.addLayer({
@@ -1257,7 +1380,8 @@ map.addControl(geolocate, 'top-right');
           '<div>' + escapePopupHTML(p.network || '\u2014') + ' \u2022 ' + (p.max_power ? escapePopupHTML(p.max_power) + ' kW' : '? kW') +
           ' \u2022 ' + escapePopupHTML(p.total_connectors || '?') + ' ports</div>' +
           '<div>' + (p.has_available?'\u2705':'\u26A0\uFE0F') +
-          (p.usage_cost ? ' \u2022 ' + escapePopupHTML(p.usage_cost) : '') + '</div>' +
+          (p.usage_cost ? ' \u2022 ' + escapePopupHTML(p.usage_cost) : '') + '</div>' +
+
           '<a href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(e.features[0].geometry.coordinates[1] + ',' + e.features[0].geometry.coordinates[0]) + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:8px;color:#1db954;font-weight:600;text-decoration:none">&#128205; Get Directions</a>' +
           (cl.length?'<div style="margin-top:6px;font-size:12px;color:#333">'+cl.map(escapePopupHTML).join(', ')+'</div>':'') +
           '</div>';
@@ -1269,7 +1393,7 @@ map.addControl(geolocate, 'top-right');
       });
     }
 
-    // â”€â”€ FETCH STATIONS â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ FETCH STATIONS Ã¢â€â‚¬Ã¢â€â‚¬
     async function refreshStations() {
       showLoading();
       var c = map.getCenter(), r = 25;
@@ -1342,7 +1466,7 @@ async function fetchOCM(lng, lat, dist, max) {
       return { type: 'FeatureCollection', features: feats };
     }
 
-    // â”€â”€ ACCORDIONS â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ ACCORDIONS Ã¢â€â‚¬Ã¢â€â‚¬
     function initAccordions() {
       var headers = document.querySelectorAll('.accordion .accordion-header');
       for (var i = 0; i < headers.length; i++) {
@@ -1352,7 +1476,7 @@ async function fetchOCM(lng, lat, dist, max) {
       }
     }
 
-    // â”€â”€ FILTERS UI â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ FILTERS UI Ã¢â€â‚¬Ã¢â€â‚¬
     function initFiltersUI() {
       var minKw = document.getElementById('filterMinKw');
       var minKwVal = document.getElementById('minKwValue');
@@ -1445,7 +1569,7 @@ async function fetchOCM(lng, lat, dist, max) {
       updateStationCountDisplay();
     }
 
-    // â”€â”€ SETTINGS UI â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ SETTINGS UI Ã¢â€â‚¬Ã¢â€â‚¬
     function initSettingsUI() {
       document.getElementById('mapStyleSelect').addEventListener('change', function(e) {
         var style = MAP_STYLES[e.target.value];
@@ -1456,15 +1580,28 @@ async function fetchOCM(lng, lat, dist, max) {
       });
     }
 
-    // â”€â”€ LANGUAGE UI â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ LANGUAGE UI Ã¢â€â‚¬Ã¢â€â‚¬
     function initLanguageUI() {
-      document.getElementById('languageSelect').addEventListener('change', function(e) {
-        i18n.setLang(e.target.value);
+      var languageSelect = document.getElementById('languageSelect');
+      var savedLang = localStorage.getItem('language') || 'en';
+      var initialLang = ['en', 'it', 'de'].includes(savedLang) ? savedLang : 'en';
+
+      languageSelect.value = initialLang;
+      i18n.setLang(initialLang);
+      document.documentElement.lang = initialLang;
+
+      languageSelect.addEventListener('change', function(e) {
+        var selectedLang = e.target.value;
+        if (!['en', 'it', 'de'].includes(selectedLang)) return;
+
+        localStorage.setItem('language', selectedLang);
+        document.documentElement.lang = selectedLang;
+        i18n.setLang(selectedLang);
         updateAuthButton();
       });
     }
 
-    // â”€â”€ FORM SUBMISSIONS (client-side only, show success) â”€â”€
+    // Ã¢â€â‚¬Ã¢â€â‚¬ FORM SUBMISSIONS (client-side only, show success) Ã¢â€â‚¬Ã¢â€â‚¬
     function submitNewStation() {
       var name = document.getElementById('newStationName').value.trim();
       var addr = document.getElementById('newStationAddress').value.trim();
@@ -1494,3 +1631,6 @@ async function fetchOCM(lng, lat, dist, max) {
     <script src="/js/auth.js"></script>
   </body>
 </html>
+
+
+
