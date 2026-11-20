@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg: #000;
   --text: #fff;
   --accent: #1db954;
@@ -42,7 +42,7 @@ header {
   position: relative;
   width: 3rem;
   height: 3rem;
-  font-size: 0; /* hide ☰ text */
+  font-size: 0; /* hide â˜° text */
   cursor: pointer;
   background: none;
   border: none;
@@ -105,7 +105,7 @@ header {
 }
 
 .language-select::after {
-  content: "▾";
+  content: "â–¾";
   position: absolute;
   right: 10px;
   top: 50%;
@@ -260,7 +260,7 @@ body.menu-lock {
     text-indent: -9999px; /* hide text */
   }
   .language-select::before {
-    content: "🌐";
+    content: "ðŸŒ";
     position: absolute;
     left: 50%;
     top: 50%;
@@ -442,16 +442,6 @@ section {
   object-fit: cover;
   border-radius: 0;
   filter: drop-shadow(0 8px 20px rgba(255, 76, 0, 0.4));
-}
-
-/* Footer */
-footer {
-  margin-top: 10rem;
-  padding: 3rem 2rem;
-  text-align: center;
-  color: #777;
-  font-size: 0.9rem;
-  border-top: 1px solid #333;
 }
 
 /* Keyboard focus styles (accessibility) */

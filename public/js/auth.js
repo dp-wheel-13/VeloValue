@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderLoggedOut(root) {
     setUserKey({ loggedIn: false, user: null });
-    root.innerHTML = `<button id="loginBtn" class="auth-btn">Login / Register</button>`;
+    root.innerHTML = `<button id="loginBtn" class="auth-btn" aria-label="Login / Register" title="Login / Register"><img src="/icons/user.png" alt="" /></button>`;
     $('#loginBtn')?.addEventListener('click', () => {
   const returnTo =
     window.location.pathname +
@@ -121,10 +121,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="welcome">Welcome, <span class="name" id="vvUserName"></span></div>
           <div class="email" id="vvUserEmail"></div>
         </div>
-        <a class="menu-item" id="smartGarage">My Smart Garage</a>
+        <a class="menu-item" id="smartGarage" href="/explore-smart-garage-beta/smartgarage.html">My Smart Garage</a>
         <a class="menu-item" id="wishlistOpen">Wishlist</a>
-        <button class="menu-item" id="myDocsBtn">My Documents</button>
-        <button class="menu-item" id="dlBtn">${hasDL ? 'View Driving License' : 'Upload Driving License'}</button>
+        <span class="menu-item">My Documents (Coming Soon)</span>
+        <span class="menu-item">Upload Driving License (Coming Soon)</span>
         <a class="menu-item" id="settingsOpen" href="/settings.html">Settings</a>
         <button class="menu-item logout" id="logoutBtn">Logout</button>
       </div>
@@ -145,11 +145,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Actions
     $('#smartGarage', root)?.addEventListener('click', () => location.href = 'garageview.html');
+        // Actions
     $('#wishlistOpen', root)?.addEventListener('click', () => {
       const wrap = document.getElementById('wishlist');
       const wBtn = document.getElementById('wishlistBtn');
-      if (wrap && wBtn) { wrap.classList.add('open'); wBtn.setAttribute('aria-expanded','true'); closeDD(); }
-      else { alert('Wishlist is available on pages with the heart icon.'); }
+      if (wrap && wBtn) {
+        wrap.classList.add('open');
+        wBtn.setAttribute('aria-expanded', 'true');
+        closeDD();
+      } else {
+        alert('Wishlist is available on pages with the heart icon.');
+      }
     });
     $('#myDocsBtn', root)?.addEventListener('click', () => { alert('My Documents: coming soon.'); closeDD(); });
     const dlBtn = $('#dlBtn', root);

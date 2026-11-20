@@ -1,11 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Garage – VeloValue</title>
+<title>Smart Garage â€“ VeloValue</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/footer.css"/>
 <style>
   body {
     margin: 0;
@@ -120,7 +121,7 @@
       background: #111; border: 1px solid #fff;
       display: flex; align-items: center; justify-content: center; position: relative;
     }
-    .language-select::before { content:"🌐"; font-size:1.2rem; color:#fff; position:absolute; }
+    .language-select::before { content:"ðŸŒ"; font-size:1.2rem; color:#fff; position:absolute; }
     .language-select select { opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer; }
 
     #authSection .text-btn { display: none; }
@@ -181,7 +182,7 @@
 <body>
   <header>
     <div class="header-left">
-      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
       <h1><a href="/homepage.html">VeloValue</a></h1>
     </div>
     <div class="header-right">
@@ -193,9 +194,9 @@
       </nav>
       <div class="language-select">
         <select id="languageSelect" aria-label="Language">
-          <option value="en">🇬🇧 English</option>
-          <option value="it">🇮🇹 Italiano</option>
-          <option value="de">🇩🇪 Deutsch</option>
+          <option value="en">ðŸ‡¬ðŸ‡§ English</option>
+          <option value="it">ðŸ‡®ðŸ‡¹ Italiano</option>
+          <option value="de">ðŸ‡©ðŸ‡ª Deutsch</option>
         </select>
       </div>
       <div id="authSection">
@@ -222,7 +223,7 @@
       <input type="text" id="numberPlateInput" placeholder="AA 123 AA" maxlength="10" />
       <div class="plate-right">EU</div>
     </div>
-    <button class="proceed-btn" id="proceedBtn">Proceed →</button>
+    <button class="proceed-btn" id="proceedBtn">Proceed â†’</button>
   </main>
 
   <!-- Hamburger JS -->
@@ -234,13 +235,13 @@
     const closeBtn = document.querySelector(".menu-close");
     const authSection = document.getElementById("authSection");
 
-    function openMenu() { hamburger.setAttribute("aria-expanded","true"); hamburger.classList.add("is-active"); menu.classList.add("active"); overlay.classList.add("active"); menu.setAttribute("aria-hidden","false"); if(window.innerWidth>1024) hamburger.textContent="✕"; }
-    function closeMenu() { hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); if(window.innerWidth>1024) hamburger.textContent="☰"; }
+    function openMenu() { hamburger.setAttribute("aria-expanded","true"); hamburger.classList.add("is-active"); menu.classList.add("active"); overlay.classList.add("active"); menu.setAttribute("aria-hidden","false"); if(window.innerWidth>1024) hamburger.textContent="âœ•"; }
+    function closeMenu() { hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); if(window.innerWidth>1024) hamburger.textContent="â˜°"; }
     function toggleMenu() { if(menu.classList.contains("active")) closeMenu(); else openMenu(); }
     hamburger.addEventListener("click",toggleMenu); overlay.addEventListener("click",closeMenu); if(closeBtn) closeBtn.addEventListener("click",closeMenu);
 
     function updateAuthButton() {
-      if(window.innerWidth<=768) authSection.innerHTML='<button class="icon-btn" onclick="window.location.href=\'/login.html\'">👤</button>';
+      if(window.innerWidth<=768) authSection.innerHTML='<button class="icon-btn" onclick="window.location.href=\'/login.html\'">ðŸ‘¤</button>';
       else authSection.innerHTML='<button class="text-btn" onclick="window.location.href=\'/login.html\'">Login / Register</button>';
     }
     updateAuthButton();
@@ -451,3 +452,37 @@ proceedBtn.addEventListener("click", async () => {
 
 <script src="/js/auth.js"></script>
 <script src="/js/translate.js"></script>
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-fleet">
+      <h3>Managing vehicles for your company?</h3>
+      <p>Discover intelligent fleet management with VeloValue.</p>
+      <a href="/velovaluefleetmvp.html">Explore VeloValue Fleet &rarr;</a>
+    </div>
+    <div class="footer-contact">
+      <h3>Contact</h3>
+      <p>
+        <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2"/>
+          <path d="m3 7 9 6 9-6"/>
+        </svg>
+        General enquiries:
+        <a href="mailto:info@velovalue.it">info@velovalue.it</a>
+      </p>
+      <p>
+        <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2a9 9 0 0 0-9 9v3a3 3 0 0 0 3 3h2v-7H6a6 6 0 0 1 12 0h-2v7h2a3 3 0 0 0 3-3v-3a9 9 0 0 0-9-9Z"/>
+          <path d="M16 20c-.8.7-2.1 1-4 1"/>
+        </svg>
+        Customer support:
+        <a href="mailto:support@velovalue.it">support@velovalue.it</a>
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>

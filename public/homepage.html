@@ -7,6 +7,7 @@
   <title>VeloValue – Discover Your Drive</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="homepage.css">
+  <link rel="stylesheet" href="/footer.css">
 </head>
 <body>
 
@@ -27,16 +28,15 @@
   </header>
 
   <!-- Hamburger menu -->
-  <nav class="menu" id="hamburgerMenu" aria-hidden="true">
-    <button class="menu-close" aria-label="Close menu"></button>
-    <a href="homepage.html">HOME</a>
-    <a href="explore-new-cars-beta/explorenewcarsnew.html">EXPLORE NEW CARS</a>
-    <a href="explore-smart-garage-beta/smartgarage.html">EXPLORE SMART GARAGE</a>
-    <a href="velocharge-beta/velocharge.html">DISCOVER VELOCHARGE</a>
-    <a href="smartsearch.html">SMART SEARCH</a>
-    <a href="#careers">WORK WITH US</a>
-    <a href="#about">ABOUT US</a>
-  </nav>
+<nav class="menu" id="hamburgerMenu" aria-hidden="true">
+  <button class="menu-close" aria-label="Close menu"></button>
+  <a href="homepage.html">HOME</a>
+  <a href="explore-new-cars-beta/explorenewcars.html">EXPLORE NEW CARS</a>
+  <a href="explore-smart-garage-beta/smartgarage.html">EXPLORE SMART GARAGE</a>
+  <a href="velocharge-beta/velocharge.html">DISCOVER VELOCHARGE</a>
+  <a href="#careers">WORK WITH US</a>
+  <a href="#about">ABOUT US</a>
+</nav>
   <div class="menu-overlay"></div>
 
   <!-- Hero Sections -->
@@ -92,20 +92,57 @@
   </section>
 
   <!-- Footer -->
-  <footer>
-  <p><strong>Managing vehicles for your company?</strong></p>
   
-  <p>
-    Explore <a href="velovaluefleetmvp.html">VeloValue Fleet &rarr;</a>
-  </p>
-  
-  <p>
-    &copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.
-  </p>
-  
-  <p>
-    Contact: <a href="mailto:debanjan.pal@community.unipa.it">debanjan.pal@community.unipa.it</a>
-  </p>
+<footer class="site-footer">
+  <div class="footer-main">
+
+    <!-- Fleet promotion: left -->
+    <div class="footer-fleet">
+      <h3>Managing vehicles for your company?</h3>
+      <p>Discover intelligent fleet management with VeloValue.</p>
+      <a href="velovaluefleetmvp.html">
+        Explore VeloValue Fleet &rarr;
+      </a>
+    </div>
+
+    <!-- Contact: right -->
+    <div class="footer-contact">
+      <h3>Contact</h3>
+
+      <p>
+        <svg class="footer-icon" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor"
+             stroke-width="1.7" stroke-linecap="round"
+             stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2"/>
+          <path d="m3 7 9 6 9-6"/>
+        </svg>
+        General enquiries:
+        <a href="mailto:info@velovalue.it">info@velovalue.it</a>
+      </p>
+
+      <p>
+        <svg class="footer-icon" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor"
+             stroke-width="1.7" stroke-linecap="round"
+             stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2a9 9 0 0 0-9 9v3a3 3 0 0 0 3 3h2v-7H6a6 6 0 0 1 12 0h-2v7h2a3 3 0 0 0 3-3v-3a9 9 0 0 0-9-9Z"/>
+          <path d="M16 20c-.8.7-2.1 1-4 1"/>
+        </svg>
+        Customer support:
+        <a href="mailto:support@velovalue.it">support@velovalue.it</a>
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Copyright: centered underneath -->
+  <div class="footer-bottom">
+    <p>
+      &copy; 2025 VeloValue. Crafted with precision in Italy.
+      All rights reserved.
+    </p>
+  </div>
 </footer>
 
   <!-- Scripts -->
@@ -163,11 +200,26 @@
   menuLinks.forEach(link => {
     link.addEventListener('click', (e) => {
       const href = link.getAttribute('href') || '';
+
       if (href.startsWith('#')) {
         e.preventDefault();
+
         const target = document.getElementById(href.slice(1));
-        if (target) target.scrollIntoView({ behavior: 'smooth' });
+
+        closeMenu();
+
+        if (target) {
+          requestAnimationFrame(() => {
+            window.scrollTo({
+              top: target.getBoundingClientRect().top + window.scrollY,
+              behavior: 'smooth'
+            });
+          });
+        }
+
+        return;
       }
+
       closeMenu();
     });
   });

@@ -4,7 +4,7 @@
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeloValue – Explore Electric Cars</title>
+  <title>VeloValue â€“ Explore Electric Cars</title>
   <!-- Tailwind CSS via CDN (v4 browser build) -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
@@ -1184,7 +1184,7 @@
   <!-- Unified Header -->
   <header>
     <div class="header-left">
-      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
       <h1><a href="#home">VeloValue</a></h1>
     </div>
 
@@ -1197,12 +1197,12 @@
       </nav>
 
       <div class="language-select">
-        <select id="languageSelect" aria-label="Language selector">
-          <option value="en">🇬🇧 English</option>
-          <option value="it">🇮🇹 Italiano</option>
-          <option value="de">🇩🇪 Deutsch</option>
-        </select>
-      </div>
+  <select id="languageSelect" aria-label="Select language">
+    <option value="en">EN - English</option>
+    <option value="it">IT - Italiano</option>
+    <option value="de">DE - Deutsch</option>
+  </select>
+</div>
 
       <!-- Wishlist dropdown -->
       <div class="wishlist" id="wishlist">
@@ -1307,7 +1307,7 @@
             <span class="f-label">Price (EUR)</span>
             <div class="range">
               <input type="range" id="priceRange" min="20000" max="120000" value="120000" step="1000" />
-              <span id="priceOut" class="muted">≤ €120,000</span>
+              <span id="priceOut" class="muted">â‰¤ â‚¬120,000</span>
             </div>
           </div>
           <button class="apply-btn" id="applyFilters" type="button">Done</button>
@@ -1322,8 +1322,8 @@
             <label class="sr-only" for="sortSel">Sort</label>
             <select id="sortSel" aria-label="Sort">
               <option value="relevance">Sort: Relevance</option>
-              <option value="price_asc">Price: Low → High</option>
-              <option value="price_desc">Price: High → Low</option>
+              <option value="price_asc">Price: Low â†’ High</option>
+              <option value="price_desc">Price: High â†’ Low</option>
               <option value="rating_desc">Rating</option>
             </select>
             <button id="clearFiltersBtn" class="clear-filters" type="button" title="Clear all filters">Clear filters</button>
@@ -1362,9 +1362,9 @@
   <!-- Compare modal -->
   <div id="compareModal" class="compare-modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="compare-modal-inner">
-      <button id="compareModalClose" class="modal-close" type="button" aria-label="Close">×</button>
+      <button id="compareModalClose" class="modal-close" type="button" aria-label="Close">Ã—</button>
       <h2>Compare cars</h2>
-      <p class="muted small">Quick, side‑by‑side overview of cars you've added to compare.</p>
+      <p class="muted small">Quick, sideâ€‘byâ€‘side overview of cars you've added to compare.</p>
       <div id="compareModalGrid" class="compare-modal-grid"></div>
     </div>
   </div>
@@ -1381,15 +1381,15 @@
         <h3 style="font-size:0.85rem; margin:0.3rem 0 0.2rem;">What you can do</h3>
         <ul>
           <li>Browse a curated sample of popular EVs sold in Europe.</li>
-          <li>Filter with multi‑select chips and live price range.</li>
+          <li>Filter with multiâ€‘select chips and live price range.</li>
           <li>Wishlist favourites to revisit later.</li>
-          <li>Compare up to four cars side‑by‑side.</li>
+          <li>Compare up to four cars sideâ€‘byâ€‘side.</li>
         </ul>
       </div>
       <div>
         <h3 style="font-size:0.85rem; margin:0.3rem 0 0.2rem;">Demo only</h3>
         <p>
-          This is a front‑end demo running entirely in a single HTML file. Car data is fetched from your own backend
+          This is a frontâ€‘end demo running entirely in a single HTML file. Car data is fetched from your own backend
           that aggregates specifications from Wikipedia; if the backend is unavailable, it falls back to a small static
           demo dataset. Authentication is still simulated.
         </p>
@@ -1398,7 +1398,7 @@
   </section>
 
   <footer>
-    © <span id="yearSpan"></span> VeloValue. Demo experience only – no real offers.
+    Â© <span id="yearSpan"></span> VeloValue. Demo experience only â€“ no real offers.
   </footer>
 
   <script type="module">
@@ -1478,7 +1478,7 @@
       },
       {
         brand: "Renault",
-        model: "Mégane E-Tech",
+        model: "MÃ©gane E-Tech",
         year: 2023,
         body: "Hatchback",
         fuel: "Electric",
@@ -1529,12 +1529,18 @@
     // === Helpers ===
     const $ = (sel, root = document) => root.querySelector(sel);
     const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-    const toEUR = n => `€${Number(n).toLocaleString("it-IT", { maximumFractionDigits: 0 })}`;
+    const toEUR = n => {
+      const value = Number(n);
+      return Number.isFinite(value) && value > 0
+        ? `EUR ${value.toLocaleString("it-IT", { maximumFractionDigits: 0 })}`
+        : "Price unavailable";
+    };
     const parsePrice = v => {
-      if (v == null) return 0;
-      if (typeof v === "number") return v;
+      if (v == null || v === "") return null;
+      if (typeof v === "number") return Number.isFinite(v) && v > 0 ? v : null;
       const digits = String(v).replace(/[^0-9]/g, "");
-      return digits ? Number(digits) : 0;
+      const value = digits ? Number(digits) : NaN;
+      return Number.isFinite(value) && value > 0 ? value : null;
     };
     const debounce = (fn, wait = 280) => {
       let t;
@@ -1543,12 +1549,12 @@
         t = setTimeout(() => fn(...args), wait);
       };
     };
-    const carId = c => `${c.brand}-${c.model}`.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const carId = c => c.code ? `cv-${String(c.code).toLowerCase()}` : `${c.brand}-${c.model}`.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
     let cars = [];
     let carsById = new Map();
 
-    const BACKEND = "http://localhost:3000";
+    const BACKEND = "";
 
     async function loadCarsFromBackend() {
       let arr = [];
@@ -1672,7 +1678,7 @@
               <img src="${img}" alt="${c.brand} ${c.model}">
               <div class="wish-meta">
                 <div class="wish-title">${c.brand} ${c.model}</div>
-                <div class="wish-sub">${c.body} • ${toEUR(c.price)}</div>
+                <div class="wish-sub">${c.body} â€¢ ${toEUR(c.price)}</div>
               </div>
               <button class="remove-btn" data-remove="${id}">Remove</button>
             </div>`;
@@ -1804,7 +1810,7 @@
           const img = m.img || "https://via.placeholder.com/64x40?text=Car";
           const sub = [m.body || "", m.price != null ? toEUR(m.price) : ""]
             .filter(Boolean)
-            .join(" • ");
+            .join(" â€¢ ");
           return `
             <div class="wish-item" data-id="${id}">
               <img src="${img}" alt="${name}">
@@ -1833,7 +1839,7 @@
         .map(id => {
           const m = meta[id] || {};
           const name = `${m.brand || ""} ${m.model || ""}`.trim() || id;
-          return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">×</button></span>`;
+          return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">Ã—</button></span>`;
         })
         .join("");
       bar.classList.toggle("show", ids.length >= 2);
@@ -1868,6 +1874,10 @@
       const id = carId(c);
       const cls = variant === "popular" ? "car-card compact" : "car-card";
       const img = c.img || "https://via.placeholder.com/320x200?text=Car";
+      const generationInfo = c.generation
+        ? `${c.generation}${c.year_start ? ` • ${c.year_start}–${c.year_end || c.year_start}` : ""}`
+        : `${c.body} • ${toEUR(c.price)}`;
+      const rating = Number.isFinite(Number(c.rating)) ? Number(c.rating).toFixed(1) : "—";
       return `
         <article class="${cls}" data-id="${id}" role="link" tabindex="0" aria-label="${c.brand} ${c.model}">
           ${heartButtonHTML(id)}
@@ -1876,9 +1886,9 @@
           <div class="meta">
             <div>
               <div class="name">${c.brand} ${c.model}</div>
-              <div class="muted" style="font-size:12px">${c.body} • ${toEUR(c.price)}</div>
+              <div class="muted" style="font-size:12px">${generationInfo}</div>
             </div>
-            <div class="pill">★ ${c.rating.toFixed(1)}</div>
+            <div class="pill">★ ${rating}</div>
           </div>
         </article>`;
     }
@@ -2005,13 +2015,13 @@
     function updateActiveFiltersUI(q) {
       const chips = [];
       if (q) chips.push({ group: "q", value: q, label: `Search: ${q}` });
-      if (selected.maxPrice < 120000) chips.push({ group: "price", value: String(selected.maxPrice), label: `≤ ${toEUR(selected.maxPrice)}` });
+      if (selected.maxPrice < 120000) chips.push({ group: "price", value: String(selected.maxPrice), label: `â‰¤ ${toEUR(selected.maxPrice)}` });
       selected.brands.forEach(v => chips.push({ group: "brands", value: v, label: `Brand: ${v}` }));
       selected.body.forEach(v => chips.push({ group: "body", value: v, label: v }));
       selected.fuel.forEach(v => chips.push({ group: "fuel", value: v, label: v }));
       selected.gear.forEach(v => chips.push({ group: "gear", value: v, label: v }));
       els.activeFilters.innerHTML = chips
-        .map(c => `<span class="af-chip" data-group="${c.group}" data-value="${c.value}">${c.label} <button class="x" aria-label="Remove ${c.label}">×</button></span>`)
+        .map(c => `<span class="af-chip" data-group="${c.group}" data-value="${c.value}">${c.label} <button class="x" aria-label="Remove ${c.label}">Ã—</button></span>`)
         .join("");
     }
 
@@ -2047,22 +2057,30 @@
 
     function applyFiltersNow(scroll) {
       const q = els.searchInput.value.trim();
-      let list = cars.filter(c => c.price <= selected.maxPrice);
+      let list = cars.filter(c => c.price == null ? selected.maxPrice === 120000 : c.price <= selected.maxPrice);
       if (selected.brands.size) list = list.filter(c => selected.brands.has(c.brand));
       if (selected.body.size) list = list.filter(c => selected.body.has(c.body));
       if (selected.fuel.size) list = list.filter(c => selected.fuel.has(c.fuel));
       if (selected.gear.size) list = list.filter(c => selected.gear.has(c.gear));
       if (q) {
         const qLower = q.toLowerCase();
-        list = list.filter(c => `${c.brand} ${c.model} ${c.body}`.toLowerCase().includes(qLower));
+        list = list.filter(c => `${c.brand} ${c.model} ${c.generation || ""} ${c.body} ${c.year_start || c.year || ""} ${c.year_end || ""}`.toLowerCase().includes(qLower));
       }
 
       switch (els.sortSel.value) {
         case "price_asc":
-          list.sort((a, b) => a.price - b.price);
+          list.sort((a, b) => {
+            if (a.price == null) return b.price == null ? 0 : 1;
+            if (b.price == null) return -1;
+            return a.price - b.price;
+          });
           break;
         case "price_desc":
-          list.sort((a, b) => b.price - a.price);
+          list.sort((a, b) => {
+            if (a.price == null) return b.price == null ? 0 : 1;
+            if (b.price == null) return -1;
+            return b.price - a.price;
+          });
           break;
         case "rating_desc":
           list.sort((a, b) => b.rating - a.rating);
@@ -2082,7 +2100,7 @@
     function openCarById(id) {
       const car = carsById.get(id);
       if (!car) return;
-      const msg = `${car.brand} ${car.model}\n${car.body} • ${toEUR(car.price)}\n\nThis is a demo detail view inside the single page.`;
+      const msg = `${car.brand} ${car.model}\n${car.body} â€¢ ${toEUR(car.price)}\n\nThis is a demo detail view inside the single page.`;
       alert(msg);
     }
 
@@ -2291,11 +2309,18 @@
     function wireLanguageSelector() {
       const sel = document.getElementById("languageSelect");
       if (!sel) return;
-      sel.addEventListener("change", e => {
+
+      sel.addEventListener("change", async e => {
         const val = e.target.value || "en";
-        document.documentElement.lang = val;
         const label = e.target.selectedOptions[0]?.textContent?.trim() || val;
-        showToast(`Language set to ${label}`);
+
+        if (typeof window.setLanguage === "function") {
+          await window.setLanguage(val);
+          showToast(`Language set to ${label}`);
+        } else {
+          console.error("VeloValue translator is not loaded.");
+          showToast("Translation service is unavailable.");
+        }
       });
     }
 
@@ -2307,7 +2332,7 @@
       selected.maxPrice = 120000;
       els.searchInput.value = "";
       els.priceRange.value = "120000";
-      els.priceOut.textContent = `≤ ${toEUR(selected.maxPrice)}`;
+      els.priceOut.textContent = `â‰¤ ${toEUR(selected.maxPrice)}`;
       ["body", "fuel", "gear"].forEach(g => {
         chipMap[g].forEach(el => el.classList.remove("active"));
       });
@@ -2327,7 +2352,7 @@
       } else if (group === "price") {
         selected.maxPrice = 120000;
         els.priceRange.value = "120000";
-        els.priceOut.textContent = `≤ ${toEUR(selected.maxPrice)}`;
+        els.priceOut.textContent = `â‰¤ ${toEUR(selected.maxPrice)}`;
       } else if (group === "brands") {
         selected.brands.delete(value);
         const tile = brandTileMap.get(value);
@@ -2382,56 +2407,75 @@
       // Remote search + filters
       async function handleSearchSubmit(scroll) {
         const q = els.searchInput.value.trim();
-        const parts = q.split(/\s+/).filter(Boolean);
 
-        // If no query or not "brand model" format, just filter existing list
-        if (!q || parts.length < 2) {
+        if (!q) {
           applyFiltersNow(scroll);
           return;
         }
 
-        const brandQuery = parts[0];
-        const modelQuery = parts.slice(1).join(" ");
-
         try {
-          // Call the same backend as your working demo page
-          const url = `${BACKEND}/api/explore?brand=${encodeURIComponent(brandQuery)}&model=${encodeURIComponent(modelQuery)}`;
+          const url = `${BACKEND}/api/explore/search?q=${encodeURIComponent(q)}&page=1&per=50`;
           const res = await fetch(url);
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
-          const raw = Array.isArray(data) ? data[0] : data;
 
-          if (raw) {
-            const brand = raw.brand || raw.make || raw.manufacturer || "";
+          const response = await res.json();
+          const results = response?.success && Array.isArray(response.data?.results)
+            ? response.data.results
+            : [];
+
+          results.forEach(raw => {
+            const brand = raw.make?.name || raw.brand || "";
             const model = raw.model || raw.name || "";
-            if (brand && model) {
-              const body = raw.body || raw.bodyStyle || raw.segment || "Unknown";
-              const fuel = raw.fuel || raw.fuelType || raw.powertrain || "Electric";
-              const gear = raw.gear || raw.transmission || "Auto";
-              const price = parsePrice(raw.price ?? raw.priceFromEur ?? raw.price_from_eur);
-              const rating = Number(raw.rating ?? 4.5);
-              const year = Number(raw.year || new Date().getFullYear());
-              const popularIn = raw.popularIn || ["IT"];
-              const img = raw.image || raw.img || raw.thumbnail || "";
 
-              const car = { brand, model, year, body, fuel, gear, price, rating, popularIn, img };
-              const id = carId(car);
+            if (!brand || !model || !raw.code) return;
 
-              // Merge into in-memory dataset backing filters/search
-              carsById.set(id, car);
-              const existingIndex = cars.findIndex(c => carId(c) === id);
-              if (existingIndex !== -1) {
-                cars[existingIndex] = car;
-              } else {
-                cars.push(car);
-              }
+            const variants = Array.isArray(raw.variants) ? raw.variants : [];
+            const transmissions = variants
+              .map(v => String(v.transmission || "").toLowerCase());
+
+            const gear = transmissions.length
+              ? transmissions.some(t => t.includes("manual")) ? "Manual" : "Auto"
+              : "Unknown";
+
+            const car = {
+              code: String(raw.code),
+              brand,
+              model,
+              generation: raw.generation || raw.name || model,
+              year: Number(raw.year_start) || null,
+              year_start: Number(raw.year_start) || null,
+              year_end: Number(raw.year_end) || null,
+              body: raw.body?.label || raw.body?.style || raw.body?.type || "Unknown",
+              fuel: variants[0]?.fuel_type || raw.fuels?.[0] || "Unknown",
+              gear,
+              price: null,
+              rating: null,
+              popularIn: [],
+              img: raw.image_url || "",
+              variants,
+              variantCount: Number(raw.variant_count) || variants.length,
+              powerHp: raw.power_hp || null,
+              torqueNm: raw.torque_nm || null,
+              zeroTo100: raw.zero_to_100_s || null,
+              topSpeed: raw.top_speed_kmh || null
+            };
+
+            const id = carId(car);
+            carsById.set(id, car);
+
+            const existingIndex = cars.findIndex(c => carId(c) === id);
+            if (existingIndex !== -1) {
+              cars[existingIndex] = car;
+            } else {
+              cars.push(car);
             }
-          }
+          });
+
+          console.log(`CarVariables search: ${results.length} generations returned for "${q}"`);
         } catch (err) {
-          console.warn("Search backend failed, using local filter only", err);
+          console.warn("CarVariables search failed; using local results", err);
         }
 
-        // Always run the normal filter / sort pipeline afterwards
         applyFiltersNow(scroll);
       }
 
@@ -2446,7 +2490,7 @@
 
       els.priceRange.addEventListener("input", e => {
         selected.maxPrice = Number(e.target.value);
-        els.priceOut.textContent = `≤ ${toEUR(selected.maxPrice)}`;
+        els.priceOut.textContent = `â‰¤ ${toEUR(selected.maxPrice)}`;
       });
 
       document.getElementById("filtersToggle").addEventListener("click", () => {
@@ -2521,5 +2565,6 @@
 
     document.addEventListener("DOMContentLoaded", initApp);
   </script>
+  <script src="/js/translate.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
@@ -8,6 +8,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/footer.css"/>
 
 <style>
 /* ===== Global ===== */
@@ -117,7 +118,7 @@ nav.desktop-nav a:hover { text-decoration:underline; }
     width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff;
     display:flex; align-items:center; justify-content:center; position: relative;
   }
-  .language-select::before{content:"🌐"; font-size:1.2rem; color:#fff; position:absolute;}
+  .language-select::before{content:"ðŸŒ"; font-size:1.2rem; color:#fff; position:absolute;}
   .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
 }
 
@@ -550,7 +551,7 @@ nav.desktop-nav a:hover { text-decoration:underline; }
 <!-- Header -->
 <header>
   <div class="header-left">
-    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
     <h1><a href="/homepage.html">VeloValue</a></h1>
   </div>
   <div class="header-right">
@@ -563,9 +564,9 @@ nav.desktop-nav a:hover { text-decoration:underline; }
     </nav>
     <div class="language-select">
       <select id="languageSelect">
-        <option value="en">🇬🇧 English</option>
-        <option value="it">🇮🇹 Italiano</option>
-        <option value="de">🇩🇪 Deutsch</option>
+        <option value="en">ðŸ‡¬ðŸ‡§ English</option>
+        <option value="it">ðŸ‡®ðŸ‡¹ Italiano</option>
+        <option value="de">ðŸ‡©ðŸ‡ª Deutsch</option>
       </select>
     </div>
     <div id="authSection">
@@ -615,7 +616,7 @@ const overlayEl = document.querySelector(".menu-overlay");
 function openMenu(){
   hamburger.setAttribute("aria-expanded","true");
   hamburger.classList.add("is-active");
-  if (window.innerWidth > 1024) hamburger.textContent = "✕";
+  if (window.innerWidth > 1024) hamburger.textContent = "âœ•";
   menu.classList.add("active");
   overlayEl.classList.add("active");
   menu.setAttribute("aria-hidden","false");
@@ -623,7 +624,7 @@ function openMenu(){
 function closeMenu(){
   hamburger.setAttribute("aria-expanded","false");
   hamburger.classList.remove("is-active");
-  if (window.innerWidth > 1024) hamburger.textContent = "☰";
+  if (window.innerWidth > 1024) hamburger.textContent = "â˜°";
   menu.classList.remove("active");
   overlayEl.classList.remove("active");
   menu.setAttribute("aria-hidden","true");
@@ -641,7 +642,7 @@ window.addEventListener("resize", () => {
 const authSection = document.getElementById("authSection");
 function updateAuthButton() {
   if(window.innerWidth <= 768) {
-    authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+    authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">ðŸ‘¤</button>`;
   } else {
     authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
   }
@@ -761,7 +762,7 @@ function showLoading() {
   mainPanel.innerHTML = `
     <div class="loading-state">
       <div class="spinner"></div>
-      <div class="loading-text">Loading your vehicles…</div>
+      <div class="loading-text">Loading your vehiclesâ€¦</div>
     </div>
   `;
   document.getElementById('remindersContent').innerHTML = '';
@@ -771,7 +772,7 @@ function showLoginRequired() {
   const mainPanel = document.getElementById('mainPanel');
   mainPanel.className = "status-state";
   mainPanel.innerHTML = `
-    <div class="status-icon">🔒</div>
+    <div class="status-icon">ðŸ”’</div>
     <div class="status-title">Login Required</div>
     <div class="status-desc">Please login to view your Smart Reminders.</div>
     <button class="status-btn primary" onclick="window.location.href='/login.html'">Login</button>
@@ -783,7 +784,7 @@ function showNoCars() {
   const mainPanel = document.getElementById('mainPanel');
   mainPanel.className = "status-state";
   mainPanel.innerHTML = `
-    <div class="status-icon">🚗</div>
+    <div class="status-icon">ðŸš—</div>
     <div class="status-title">No Cars Yet</div>
     <div class="status-desc">Add vehicles to your Smart Garage to see personalized reminders here.</div>
     <button class="status-btn green" onclick="window.location.href='/explore-smart-garage-beta/garagesearch.html'">Add Your First Car</button>
@@ -800,7 +801,7 @@ function showError(errMsg) {
   const mainPanel = document.getElementById('mainPanel');
   mainPanel.className = "status-state";
   mainPanel.innerHTML = `
-    <div class="status-icon">⚠️</div>
+    <div class="status-icon">âš ï¸</div>
     <div class="status-title">Connection Error</div>
     <div class="status-desc">Could not load: ${errMsg}</div>
     <button class="status-btn primary" onclick="location.reload()">Refresh Page</button>
@@ -813,8 +814,8 @@ function renderCarouselUI() {
   const totalCards = carsData.length + 1;
   
   let html = `
-    <div class="carousel-arrow left hidden" id="leftArrow">‹</div>
-    <div class="carousel-arrow right ${totalCards > 1 ? '' : 'hidden'}" id="rightArrow">›</div>
+    <div class="carousel-arrow left hidden" id="leftArrow">â€¹</div>
+    <div class="carousel-arrow right ${totalCards > 1 ? '' : 'hidden'}" id="rightArrow">â€º</div>
     
     <div class="carousel-container">
       <div class="carousel-track" id="carouselTrack">
@@ -907,7 +908,7 @@ function attachEventListeners() {
   }
 }
 
-// ✅ FIXED: Added missing closing brace!
+// âœ… FIXED: Added missing closing brace!
 function updateCarouselPosition() {
   const track = document.getElementById('carouselTrack');
   const leftArrow = document.getElementById('leftArrow');
@@ -931,7 +932,7 @@ function updateCarouselPosition() {
   } else {
     updateRemindersForNewCar();
   }
-} // ✅ THIS WAS THE MISSING BRACE!
+} // âœ… THIS WAS THE MISSING BRACE!
 
 function updateReminders(reminders) {
   const remindersContent = document.getElementById('remindersContent');
@@ -973,7 +974,7 @@ function getStatusText(status) {
 
 function handleViewReminder(title, type) {
   console.log(`Viewing details for: ${title}`);
-  alert(`${title}\n\nHere you can:\n• View full details\n• Make payments\n• Download documents\n• Schedule appointments`);
+  alert(`${title}\n\nHere you can:\nâ€¢ View full details\nâ€¢ Make payments\nâ€¢ Download documents\nâ€¢ Schedule appointments`);
 }
 
 // =============================================
@@ -986,5 +987,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script src="/js/auth.js"></script>
 <script src="js/translate.js"></script>
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-fleet">
+      <h3>Managing vehicles for your company?</h3>
+      <p>Discover intelligent fleet management with VeloValue.</p>
+      <a href="/velovaluefleetmvp.html">Explore VeloValue Fleet &rarr;</a>
+    </div>
+    <div class="footer-contact">
+      <h3>Contact</h3>
+      <p>
+        <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2"/>
+          <path d="m3 7 9 6 9-6"/>
+        </svg>
+        General enquiries:
+        <a href="mailto:info@velovalue.it">info@velovalue.it</a>
+      </p>
+      <p>
+        <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2a9 9 0 0 0-9 9v3a3 3 0 0 0 3 3h2v-7H6a6 6 0 0 1 12 0h-2v7h2a3 3 0 0 0 3-3v-3a9 9 0 0 0-9-9Z"/>
+          <path d="M16 20c-.8.7-2.1 1-4 1"/>
+        </svg>
+        Customer support:
+        <a href="mailto:support@velovalue.it">support@velovalue.it</a>
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.</p>
+  </div>
+</footer>
 </body>
 </html>
+

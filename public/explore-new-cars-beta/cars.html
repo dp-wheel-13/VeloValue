@@ -1,11 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VeloValue – Car Details</title>
+  <title>VeloValue â€“ Car Details</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/footer.css"/>
   <style>
     /* ===========================================================
        ROOT VARIABLES & RESET
@@ -623,7 +624,7 @@
         overflow: hidden;
       }
       .language-select::before {
-        content: "ðŸŒ";
+        content: "Ã°Å¸Å’Â";
         font-size: 1.1rem;
         position: absolute;
         pointer-events: none;
@@ -739,9 +740,9 @@
       <div class="car-header">
         <img class="car-logo" id="carLogo" alt="Brand logo" onerror="this.style.display='none'"/>
         <div class="title-stack">
-          <div class="brand" id="brand">—</div>
-          <div class="model" id="model">—</div>
-          <div class="pill" id="fuelPill">Fuel: —</div>
+          <div class="brand" id="brand">â€”</div>
+          <div class="model" id="model">â€”</div>
+          <div class="pill" id="fuelPill">Fuel: â€”</div>
         </div>
       </div>
 
@@ -761,7 +762,7 @@
         </button>
       </div>
 
-      <div class="price-box" id="priceBadge">Price from: —</div>
+      <div class="price-box" id="priceBadge">Price from: â€”</div>
     </section>
 
     <aside class="panel right">
@@ -811,7 +812,7 @@
     // DATA & STATE
     // ===========================================================
     const FALLBACK_CARS = [
-      { id:'lamborghini-revuelto-2024', brand:'Lamborghini', model:'Revuelto', year:2024, body:'Coupé', doors:2, seats:2, fuel:'PHEV', transmission:'Automatic', drivetrain:'AWD', powerKw:747, powerPs:1015, torqueNm:725, zeroTo100KmhS:2.5, topSpeedKmh:350, lengthMm:4947, widthMm:2033, heightMm:1160, wheelbaseMm:2779, bootVolumeSeatsUpL:132, kerbWeightKg:1772, batteryCapacityNetKwh:3.8, chargeAcMaxKw:7, connector:'Type 2', warrantyYears:3, warrantyKm:100000, priceFromEur:500000, image:'https://images.unsplash.com/photo-1606663301623-c7e98de94e02?q=80&w=1400&auto=format&fit=crop', logo:'https://upload.wikimedia.org/wikipedia/commons/0/0c/Lamborghini_Logo.svg' },
+      { id:'lamborghini-revuelto-2024', brand:'Lamborghini', model:'Revuelto', year:2024, body:'CoupÃ©', doors:2, seats:2, fuel:'PHEV', transmission:'Automatic', drivetrain:'AWD', powerKw:747, powerPs:1015, torqueNm:725, zeroTo100KmhS:2.5, topSpeedKmh:350, lengthMm:4947, widthMm:2033, heightMm:1160, wheelbaseMm:2779, bootVolumeSeatsUpL:132, kerbWeightKg:1772, batteryCapacityNetKwh:3.8, chargeAcMaxKw:7, connector:'Type 2', warrantyYears:3, warrantyKm:100000, priceFromEur:500000, image:'https://images.unsplash.com/photo-1606663301623-c7e98de94e02?q=80&w=1400&auto=format&fit=crop', logo:'https://upload.wikimedia.org/wikipedia/commons/0/0c/Lamborghini_Logo.svg' },
       { id:'tesla-model-3-2024', brand:'Tesla', model:'Model 3', year:2024, body:'Sedan', doors:4, seats:5, fuel:'BEV', transmission:'Single-speed', drivetrain:'RWD', powerKw:208, powerPs:283, torqueNm:340, zeroTo100KmhS:6.1, topSpeedKmh:201, energyConsumptionKwhPer100km:14.5, co2GPerKm:0, lengthMm:4720, widthMm:1849, heightMm:1441, wheelbaseMm:2875, bootVolumeSeatsUpL:594, kerbWeightKg:1760, rangeWltpKm:513, batteryCapacityNetKwh:57, chargeAcMaxKw:11, chargeDcMaxKw:170, chargeDc10To80Min:27, connector:'Type 2 / CCS2', ncapStars:5, ncapYear:2019, warrantyYears:4, warrantyKm:80000, priceFromEur:38990, image:'https://images.unsplash.com/photo-1553440569-bcc63803a83d?q=80&w=1400&auto=format&fit=crop', logo:'https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg' }
     ];
     const carsById = new Map(FALLBACK_CARS.map(c => [c.id, c]));
@@ -841,9 +842,9 @@
     // ===========================================================
     const $ = (s, r = document) => r.querySelector(s);
     const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-    const nd = v => (v === null || v === undefined || v === '') ? '—' : v;
-    const toEUR = n => n == null ? '—' : `€${Number(n).toLocaleString()}`;
-    const kwps = (kw, ps) => (kw || ps) ? `${kw ? kw+' kW' : ''}${kw && ps ? ' / ' : ''}${ps ? ps+' PS' : ''}` : '—';
+    const nd = v => (v === null || v === undefined || v === '') ? 'â€”' : v;
+    const toEUR = n => n == null ? 'â€”' : `â‚¬${Number(n).toLocaleString()}`;
+    const kwps = (kw, ps) => (kw || ps) ? `${kw ? kw+' kW' : ''}${kw && ps ? ' / ' : ''}${ps ? ps+' PS' : ''}` : 'â€”';
 
     function escapeHtml(s) {
       if (s == null) return "";
@@ -893,7 +894,7 @@
       const authSection = $("#authSection");
       function updateAuthUI() {
         if (window.innerWidth <= 768) {
-          authSection.innerHTML = `<button class="icon-btn" onclick="location.href='login.html'" aria-label="Login">ðŸ‘¤</button>`;
+          authSection.innerHTML = `<button class="icon-btn" onclick="location.href='login.html'" aria-label="Login">Ã°Å¸â€˜Â¤</button>`;
         } else {
           authSection.innerHTML = `<button class="text-btn" onclick="location.href='login.html'">Login</button>`;
         }
@@ -934,11 +935,11 @@
         const c = carsById.get(id) || {};
         const generationMeta = getObj(GEN_META_KEY)[id] || {};
         const title = c.brand ? `${c.brand} ${c.model}` : (generationMeta.title || id);
-        const sub = c.body ? `${c.body} · ${toEUR(c.priceFromEur)}` : (generationMeta.subtitle || '');
+        const sub = c.body ? `${c.body} Â· ${toEUR(c.priceFromEur)}` : (generationMeta.subtitle || '');
         const image = c.image || generationMeta.image || '';
         return `<div class="wish-item" data-id="${escapeHtml(id)}">
           ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}">` : '<div style="width:48px;height:48px;background:#1a1a1a;border-radius:8px;"></div>'}          <div class="wish-meta"><div class="wish-title">${escapeHtml(title)}</div><div class="wish-sub">${escapeHtml(sub)}</div></div>
-          <button class="remove-btn" data-remove="${escapeHtml(id)}">✕</button>
+          <button class="remove-btn" data-remove="${escapeHtml(id)}">âœ•</button>
         </div>`;
       }).join('');
     }
@@ -988,11 +989,11 @@
       list.innerHTML = [...set].map(id => {
         const m = meta[id] || {};
         const name = [m.brand, m.model, m.variantName].filter(Boolean).join(' ') || id;
-        const sub = [m.body, (m.price != null ? '€'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' • ');
+        const sub = [m.body, (m.price != null ? 'â‚¬'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' â€¢ ');
         return `<div class="wish-item" data-id="${escapeHtml(id)}">
           ${m.img ? `<img src="${escapeHtml(m.img)}" alt="${escapeHtml(name)}">` : '<div style="width:48px;height:48px;background:#1a1a1a;border-radius:8px;"></div>'}
           <div class="wish-meta"><div class="wish-title">${escapeHtml(name)}</div><div class="wish-sub">${escapeHtml(sub)}</div></div>
-          <button class="remove-btn" data-remove="${escapeHtml(id)}">✕</button>
+          <button class="remove-btn" data-remove="${escapeHtml(id)}">âœ•</button>
         </div>`;
       }).join('');
     }
@@ -1088,21 +1089,21 @@
         return;
       }
 
-      const makeName = generation.make?.name || generation.make || '—';
-      const modelName = generation.model || generation.name || '—';
+      const makeName = generation.make?.name || generation.make || 'â€”';
+      const modelName = generation.model || generation.name || 'â€”';
       const generationName = generation.generation || generation.name || modelName;
       const yearStart = generation.year_start;
       const yearEnd = generation.year_end;
       const yearLabel = yearStart
-        ? `${yearStart}${yearEnd && yearEnd !== yearStart ? `–${yearEnd}` : ''}`
+        ? `${yearStart}${yearEnd && yearEnd !== yearStart ? `â€“${yearEnd}` : ''}`
         : '';
-      const bodyName = generation.body?.label || generation.body || '—';
+      const bodyName = generation.body?.label || generation.body || 'â€”';
       const imageUrl = generation.image_url || '';
 
-      document.title = `VeloValue – ${makeName} ${modelName} ${yearLabel}`.trim();
+      document.title = `VeloValue â€“ ${makeName} ${modelName} ${yearLabel}`.trim();
       $('#brand').textContent = makeName;
       setCarVariablesBrandLogo(makeName);
-      $('#model').textContent = `${modelName}${yearLabel ? ` · ${yearLabel}` : ''}`;
+      $('#model').textContent = `${modelName}${yearLabel ? ` Â· ${yearLabel}` : ''}`;
       $('#fuelPill').textContent = 'Fuel: Select a version';
       $('#priceBadge').hidden = true;
 
@@ -1125,7 +1126,7 @@
         selector.add(option);
       });
 
-      const display = value => escapeHtml(String(value ?? '—'));
+      const display = value => escapeHtml(String(value ?? 'â€”'));
       const buildRows = rows => rows.map(([key, value]) =>
         `<div class="item"><span class="k">${display(key)}</span><span class="v">${display(value)}</span></div>`
       ).join('');
@@ -1138,7 +1139,7 @@
         const hp = variant?.power_hp;
         const powerPs = hp != null ? Math.round(Number(hp)) : null;
         const powerKw = hp != null ? Math.round(Number(hp) * 0.7355) : null;
-        const fuel = variant ? (variant.fuel_type || variant.fuel || '—') : '—';
+        const fuel = variant ? (variant.fuel_type || variant.fuel || 'â€”') : 'â€”';
 
         const car = {
           body: bodyName,
@@ -1165,10 +1166,10 @@
           ['Drivetrain', car.drivetrain],
           ['Transmission', car.transmission],
           ['Power', kwps(car.powerKw, car.powerPs)],
-          ['Torque', car.torqueNm != null ? `${car.torqueNm} Nm` : '—'],
-          ['0–100 km/h', car.zeroTo100KmhS != null ? `${car.zeroTo100KmhS} s` : '—'],
-          ['Top speed', car.topSpeedKmh != null ? `${car.topSpeedKmh} km/h` : '—'],
-          ['Seats / Doors', '—']
+          ['Torque', car.torqueNm != null ? `${car.torqueNm} Nm` : 'â€”'],
+          ['0â€“100 km/h', car.zeroTo100KmhS != null ? `${car.zeroTo100KmhS} s` : 'â€”'],
+          ['Top speed', car.topSpeedKmh != null ? `${car.topSpeedKmh} km/h` : 'â€”'],
+          ['Seats / Doors', 'â€”']
         ];
 
         $('#summaryGrid').innerHTML = summary.map(([key, value]) =>
@@ -1180,39 +1181,39 @@
           ['Transmission', car.transmission],
           ['Drivetrain', car.drivetrain],
           ['Power', kwps(car.powerKw, car.powerPs)],
-          ['Torque', car.torqueNm != null ? `${car.torqueNm} Nm` : '—']
+          ['Torque', car.torqueNm != null ? `${car.torqueNm} Nm` : 'â€”']
         ])}</div>`;
 
         $('#panel-perf').innerHTML = `<div class="kv">${buildRows([
-          ['0–100 km/h', car.zeroTo100KmhS != null ? `${car.zeroTo100KmhS} s` : '—'],
-          ['Top speed', car.topSpeedKmh != null ? `${car.topSpeedKmh} km/h` : '—'],
-          ['Fuel cons.', car.fuelConsumptionLPer100km != null ? `${car.fuelConsumptionLPer100km} L/100km` : '—'],
-          ['Energy cons.', '—'],
-          ['CO₂ WLTP', '—'],
-          ['Euro standard', '—']
+          ['0â€“100 km/h', car.zeroTo100KmhS != null ? `${car.zeroTo100KmhS} s` : 'â€”'],
+          ['Top speed', car.topSpeedKmh != null ? `${car.topSpeedKmh} km/h` : 'â€”'],
+          ['Fuel cons.', car.fuelConsumptionLPer100km != null ? `${car.fuelConsumptionLPer100km} L/100km` : 'â€”'],
+          ['Energy cons.', 'â€”'],
+          ['COâ‚‚ WLTP', 'â€”'],
+          ['Euro standard', 'â€”']
         ])}</div>`;
 
         $('#panel-dim').innerHTML = `<div class="kv">${buildRows([
-          ['Length', car.lengthMm != null ? `${car.lengthMm} mm` : '—'],
-          ['Width', car.widthMm != null ? `${car.widthMm} mm` : '—'],
-          ['Height', car.heightMm != null ? `${car.heightMm} mm` : '—'],
-          ['Wheelbase', car.wheelbaseMm != null ? `${car.wheelbaseMm} mm` : '—'],
-          ['Boot volume', '—'],
-          ['Kerb weight', car.kerbWeightKg != null ? `${car.kerbWeightKg} kg` : '—']
+          ['Length', car.lengthMm != null ? `${car.lengthMm} mm` : 'â€”'],
+          ['Width', car.widthMm != null ? `${car.widthMm} mm` : 'â€”'],
+          ['Height', car.heightMm != null ? `${car.heightMm} mm` : 'â€”'],
+          ['Wheelbase', car.wheelbaseMm != null ? `${car.wheelbaseMm} mm` : 'â€”'],
+          ['Boot volume', 'â€”'],
+          ['Kerb weight', car.kerbWeightKg != null ? `${car.kerbWeightKg} kg` : 'â€”']
         ])}</div>`;
 
         $('#panel-charge').innerHTML = `<div class="kv">${buildRows([
-          ['WLTP range', '—'],
-          ['Battery (net)', '—'],
-          ['AC max', '—'],
-          ['DC max', '—'],
-          ['DC 10–80%', '—'],
-          ['Connector', '—']
+          ['WLTP range', 'â€”'],
+          ['Battery (net)', 'â€”'],
+          ['AC max', 'â€”'],
+          ['DC max', 'â€”'],
+          ['DC 10â€“80%', 'â€”'],
+          ['Connector', 'â€”']
         ])}</div>`;
 
         $('#panel-warranty').innerHTML = `<div class="kv">${buildRows([
-          ['Warranty', '—'],
-          ['Euro NCAP', '—']
+          ['Warranty', 'â€”'],
+          ['Euro NCAP', 'â€”']
         ])}</div>`;
       }
 
@@ -1239,7 +1240,7 @@
       const currentTitle = `${makeName} ${modelName}`.trim();
       const generationMeta = {
         title: currentTitle,
-        subtitle: `${bodyName}${yearLabel ? ` · ${yearLabel}` : ''}`,
+        subtitle: `${bodyName}${yearLabel ? ` Â· ${yearLabel}` : ''}`,
         image: imageUrl
       };
 
@@ -1371,9 +1372,9 @@
       }
 
       // 6. Populate DOM
-      document.title = `VeloValue – ${[car.brand, car.model, car.year].filter(Boolean).join(' ')}`;
-      $('#brand').textContent = car.brand || '—';
-      $('#model').textContent = [car.model, car.year].filter(Boolean).join(' ') || '—';
+      document.title = `VeloValue â€“ ${[car.brand, car.model, car.year].filter(Boolean).join(' ')}`;
+      $('#brand').textContent = car.brand || 'â€”';
+      $('#model').textContent = [car.model, car.year].filter(Boolean).join(' ') || 'â€”';
       $('#fuelPill').textContent = `Fuel: ${nd(car.fuel)}`;
       $('#priceBadge').textContent = `Price from: ${toEUR(car.priceFromEur)}`;
       setCarVariablesBrandLogo(car.brand);
@@ -1382,8 +1383,8 @@
       const summary = [
         ['Body', nd(car.body)], ['Drivetrain', nd(car.drivetrain)],
         ['Transmission', nd(car.transmission)], ['Power', kwps(car.powerKw, car.powerPs)],
-        ['Torque', car.torqueNm ? `${car.torqueNm} Nm` : '—'], ['0–100 km/h', car.zeroTo100KmhS ? `${car.zeroTo100KmhS} s` : '—'],
-        ['Top speed', car.topSpeedKmh ? `${car.topSpeedKmh} km/h` : '—'], ['Seats / Doors', `${nd(car.seats)} / ${nd(car.doors)}`]
+        ['Torque', car.torqueNm ? `${car.torqueNm} Nm` : 'â€”'], ['0â€“100 km/h', car.zeroTo100KmhS ? `${car.zeroTo100KmhS} s` : 'â€”'],
+        ['Top speed', car.topSpeedKmh ? `${car.topSpeedKmh} km/h` : 'â€”'], ['Seats / Doors', `${nd(car.seats)} / ${nd(car.doors)}`]
       ];
       $('#summaryGrid').innerHTML = summary.map(([k, v]) => `<div class="row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
 
@@ -1392,30 +1393,30 @@
       $('#panel-tech').innerHTML = `<div class="kv">${buildKvHtml([
         ['Fuel', nd(car.fuel)], ['Transmission', nd(car.transmission)],
         ['Drivetrain', nd(car.drivetrain)], ['Power', kwps(car.powerKw, car.powerPs)],
-        ['Torque', car.torqueNm ? `${car.torqueNm} Nm` : '—']
+        ['Torque', car.torqueNm ? `${car.torqueNm} Nm` : 'â€”']
       ])}</div>`;
 
       $('#panel-perf').innerHTML = `<div class="kv">${buildKvHtml([
-        ['0–100 km/h', car.zeroTo100KmhS ? `${car.zeroTo100KmhS} s` : '—'], ['Top speed', car.topSpeedKmh ? `${car.topSpeedKmh} km/h` : '—'],
-        ['Fuel cons.', car.fuelConsumptionLPer100km ? `${car.fuelConsumptionLPer100km} L/100km` : '—'], ['Energy cons.', car.energyConsumptionKwhPer100km ? `${car.energyConsumptionKwhPer100km} kWh/100km` : '—'],
-        ['CO₂ WLTP', car.co2GPerKm != null ? `${car.co2GPerKm} g/km` : '—'], ['Euro standard', nd(car.euroStandard)]
+        ['0â€“100 km/h', car.zeroTo100KmhS ? `${car.zeroTo100KmhS} s` : 'â€”'], ['Top speed', car.topSpeedKmh ? `${car.topSpeedKmh} km/h` : 'â€”'],
+        ['Fuel cons.', car.fuelConsumptionLPer100km ? `${car.fuelConsumptionLPer100km} L/100km` : 'â€”'], ['Energy cons.', car.energyConsumptionKwhPer100km ? `${car.energyConsumptionKwhPer100km} kWh/100km` : 'â€”'],
+        ['COâ‚‚ WLTP', car.co2GPerKm != null ? `${car.co2GPerKm} g/km` : 'â€”'], ['Euro standard', nd(car.euroStandard)]
       ])}</div>`;
 
       $('#panel-dim').innerHTML = `<div class="kv">${buildKvHtml([
-        ['Length', car.lengthMm ? `${car.lengthMm} mm` : '—'], ['Width', car.widthMm ? `${car.widthMm} mm` : '—'],
-        ['Height', car.heightMm ? `${car.heightMm} mm` : '—'], ['Wheelbase', car.wheelbaseMm ? `${car.wheelbaseMm} mm` : '—'],
-        ['Boot volume', car.bootVolumeSeatsUpL ? `${car.bootVolumeSeatsUpL} L` : '—'], ['Kerb weight', car.kerbWeightKg ? `${car.kerbWeightKg} kg` : '—']
+        ['Length', car.lengthMm ? `${car.lengthMm} mm` : 'â€”'], ['Width', car.widthMm ? `${car.widthMm} mm` : 'â€”'],
+        ['Height', car.heightMm ? `${car.heightMm} mm` : 'â€”'], ['Wheelbase', car.wheelbaseMm ? `${car.wheelbaseMm} mm` : 'â€”'],
+        ['Boot volume', car.bootVolumeSeatsUpL ? `${car.bootVolumeSeatsUpL} L` : 'â€”'], ['Kerb weight', car.kerbWeightKg ? `${car.kerbWeightKg} kg` : 'â€”']
       ])}</div>`;
 
       $('#panel-charge').innerHTML = `<div class="kv">${buildKvHtml([
-        ['WLTP range', car.rangeWltpKm ? `${car.rangeWltpKm} km` : '—'], ['Battery (net)', car.batteryCapacityNetKwh ? `${car.batteryCapacityNetKwh} kWh` : '—'],
-        ['AC max', car.chargeAcMaxKw ? `${car.chargeAcMaxKw} kW` : '—'], ['DC max', car.chargeDcMaxKw ? `${car.chargeDcMaxKw} kW` : '—'],
-        ['DC 10–80%', car.chargeDc10To80Min ? `${car.chargeDc10To80Min} min` : '—'], ['Connector', nd(car.connector)]
+        ['WLTP range', car.rangeWltpKm ? `${car.rangeWltpKm} km` : 'â€”'], ['Battery (net)', car.batteryCapacityNetKwh ? `${car.batteryCapacityNetKwh} kWh` : 'â€”'],
+        ['AC max', car.chargeAcMaxKw ? `${car.chargeAcMaxKw} kW` : 'â€”'], ['DC max', car.chargeDcMaxKw ? `${car.chargeDcMaxKw} kW` : 'â€”'],
+        ['DC 10â€“80%', car.chargeDc10To80Min ? `${car.chargeDc10To80Min} min` : 'â€”'], ['Connector', nd(car.connector)]
       ])}</div>`;
 
       $('#panel-warranty').innerHTML = `<div class="kv">${buildKvHtml([
-        ['Warranty', (car.warrantyYears || car.warrantyKm) ? `${nd(car.warrantyYears)} yrs / ${car.warrantyKm ? car.warrantyKm.toLocaleString()+' km' : '—'}` : '—'],
-        ['Euro NCAP', (car.ncapStars || car.ncapYear) ? `${nd(car.ncapStars)} ★ (${nd(car.ncapYear)})` : '—']
+        ['Warranty', (car.warrantyYears || car.warrantyKm) ? `${nd(car.warrantyYears)} yrs / ${car.warrantyKm ? car.warrantyKm.toLocaleString()+' km' : 'â€”'}` : 'â€”'],
+        ['Euro NCAP', (car.ncapStars || car.ncapYear) ? `${nd(car.ncapStars)} â˜… (${nd(car.ncapYear)})` : 'â€”']
       ])}</div>`;
 
       // Open first accordion
@@ -1521,5 +1522,38 @@
   </script>
   <script src="/js/auth.js"></script>
   <script src="js/translate.js"></script>
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-fleet">
+      <h3>Managing vehicles for your company?</h3>
+      <p>Discover intelligent fleet management with VeloValue.</p>
+      <a href="/velovaluefleetmvp.html">Explore VeloValue Fleet &rarr;</a>
+    </div>
+    <div class="footer-contact">
+      <h3>Contact</h3>
+      <p>
+        <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2"/>
+          <path d="m3 7 9 6 9-6"/>
+        </svg>
+        General enquiries:
+        <a href="mailto:info@velovalue.it">info@velovalue.it</a>
+      </p>
+      <p>
+        <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2a9 9 0 0 0-9 9v3a3 3 0 0 0 3 3h2v-7H6a6 6 0 0 1 12 0h-2v7h2a3 3 0 0 0 3-3v-3a9 9 0 0 0-9-9Z"/>
+          <path d="M16 20c-.8.7-2.1 1-4 1"/>
+        </svg>
+        Customer support:
+        <a href="mailto:support@velovalue.it">support@velovalue.it</a>
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.</p>
+  </div>
+</footer>
 </body>
 </html>
+
+

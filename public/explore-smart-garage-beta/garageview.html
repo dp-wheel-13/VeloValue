@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>VeloValue - Garage</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/footer.css"/>
 <style>
 :root {
   --bg: #000;
@@ -94,7 +95,7 @@ nav.desktop-nav a:hover { text-decoration:underline; }
     width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff;
     display:flex; align-items:center; justify-content:center;
   }
-  .language-select::before{content:"🌐"; font-size:1.2rem; color:#fff; position:absolute;}
+  .language-select::before{content:"ðŸŒ"; font-size:1.2rem; color:#fff; position:absolute;}
   .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
 }
 
@@ -438,7 +439,7 @@ nav.desktop-nav a:hover { text-decoration:underline; }
 
 <header>
   <div class="header-left">
-    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
     <h1><a href="/homepage.html">VeloValue</a></h1>
   </div>
   <div class="header-right">
@@ -450,9 +451,9 @@ nav.desktop-nav a:hover { text-decoration:underline; }
     </nav>
     <div class="language-select">
       <select id="languageSelect">
-        <option value="en">🇬🇧 English</option>
-        <option value="it">🇮🇹 Italiano</option>
-        <option value="de">🇩🇪 Deutsch</option>
+        <option value="en">ðŸ‡¬ðŸ‡§ English</option>
+        <option value="it">ðŸ‡®ðŸ‡¹ Italiano</option>
+        <option value="de">ðŸ‡©ðŸ‡ª Deutsch</option>
       </select>
     </div>
     <div id="authSection">
@@ -473,7 +474,7 @@ nav.desktop-nav a:hover { text-decoration:underline; }
 
 <div class="garage-header">
   <div class="garage-left">
-    <input type="text" placeholder="Search for your car…" class="capsule-search" id="searchBox"/>
+    <input type="text" placeholder="Search for your carâ€¦" class="capsule-search" id="searchBox"/>
     <div class="add-car-pill" id="addCarBtn">+ Add a new car</div>
   </div>
   <div id="garageDisplay"></div>
@@ -532,14 +533,14 @@ addCarBtn.onclick = () => window.location.href = "garagesearch.html";
 
 function showLoading() {
   garageDisplay.className = "loading-state";
-  garageDisplay.innerHTML = '<div class="spinner"></div><div class="loading-text">Loading your garage…</div>';
-  garageLevelEl.textContent = "Garage Level - …";
+  garageDisplay.innerHTML = '<div class="spinner"></div><div class="loading-text">Loading your garageâ€¦</div>';
+  garageLevelEl.textContent = "Garage Level - â€¦";
 }
 
 function showLoginRequired() {
   garageDisplay.className = "status-state";
   garageDisplay.innerHTML =
-    '<div class="status-icon">🔒</div>' +
+    '<div class="status-icon">ðŸ”’</div>' +
     '<div class="status-title">Login Required</div>' +
     '<div class="status-desc">You need to be logged in to view your garage.</div>' +
     '<button class="status-btn primary" id="loginFromGarage">Login</button>';
@@ -552,7 +553,7 @@ function showLoginRequired() {
 function showNoCars() {
   garageDisplay.className = "status-state";
   garageDisplay.innerHTML =
-    '<div class="status-icon">🅿️</div>' +
+    '<div class="status-icon">ðŸ…¿ï¸</div>' +
     '<div class="status-title">Your Garage is Empty</div>' +
     '<div class="status-desc">You don\'t have any cars yet. Add your first vehicle to get started.</div>' +
     '<button class="status-btn green" id="addFirstCar">Add Your First Car</button>';
@@ -565,7 +566,7 @@ function showNoCars() {
 function showError(errMsg) {
   garageDisplay.className = "status-state";
   garageDisplay.innerHTML =
-    '<div class="status-icon">⚠️</div>' +
+    '<div class="status-icon">âš ï¸</div>' +
     '<div class="status-title">Connection Error</div>' +
     '<div class="status-desc">Could not load cars: ' + errMsg + '</div>' +
     '<button class="status-btn primary" onclick="location.reload()">Refresh Page</button>';
@@ -573,7 +574,7 @@ function showError(errMsg) {
 }
 
 /* =============================================
-   INIT — REAL BACKEND INTEGRATION
+   INIT â€” REAL BACKEND INTEGRATION
    ============================================= */
 (async function initGarage() {
   showLoading();
@@ -679,7 +680,7 @@ function openDetails(car) {
 
   const closeBtn = document.createElement("button");
   closeBtn.className = "car-details-close";
-  closeBtn.textContent = "×";
+  closeBtn.textContent = "Ã—";
   closeBtn.setAttribute("aria-label", "Close vehicle details");
   closeBtn.onclick = () => modal.remove();
   panel.appendChild(closeBtn);
@@ -797,7 +798,7 @@ function renderCardSlider() {
 
   if (actual.length === 0) {
     garageDisplay.className = "status-state";
-    garageDisplay.innerHTML = '<div class="status-icon">🔍</div><div class="status-title">No cars found</div><div class="status-desc">Try a different search term.</div>';
+    garageDisplay.innerHTML = '<div class="status-icon">ðŸ”</div><div class="status-title">No cars found</div><div class="status-desc">Try a different search term.</div>';
     garageLevelEl.textContent = "Garage Level - 0";
     return;
   }
@@ -819,14 +820,14 @@ function renderCardSlider() {
 
   var btnLeft = document.createElement("button");
   btnLeft.className = "carousel-btn left";
-  btnLeft.innerHTML = "‹";
+  btnLeft.innerHTML = "â€¹";
   btnLeft.setAttribute("aria-label", "Previous car");
   btnLeft.addEventListener("click", navigatePrev);
   garageDisplay.appendChild(btnLeft);
 
   var btnRight = document.createElement("button");
   btnRight.className = "carousel-btn right";
-  btnRight.innerHTML = "›";
+  btnRight.innerHTML = "â€º";
   btnRight.setAttribute("aria-label", "Next car");
   btnRight.addEventListener("click", navigateNext);
   garageDisplay.appendChild(btnRight);
@@ -1054,5 +1055,37 @@ function renderList() {
 
 <script src="/js/auth.js"></script>
 <script src="/js/translate.js"></script>
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-fleet">
+      <h3>Managing vehicles for your company?</h3>
+      <p>Discover intelligent fleet management with VeloValue.</p>
+      <a href="/velovaluefleetmvp.html">Explore VeloValue Fleet &rarr;</a>
+    </div>
+    <div class="footer-contact">
+      <h3>Contact</h3>
+      <p>
+        <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2"/>
+          <path d="m3 7 9 6 9-6"/>
+        </svg>
+        General enquiries:
+        <a href="mailto:info@velovalue.it">info@velovalue.it</a>
+      </p>
+      <p>
+        <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2a9 9 0 0 0-9 9v3a3 3 0 0 0 3 3h2v-7H6a6 6 0 0 1 12 0h-2v7h2a3 3 0 0 0 3-3v-3a9 9 0 0 0-9-9Z"/>
+          <path d="M16 20c-.8.7-2.1 1-4 1"/>
+        </svg>
+        Customer support:
+        <a href="mailto:support@velovalue.it">support@velovalue.it</a>
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.</p>
+  </div>
+</footer>
 </body>
 </html>
+
