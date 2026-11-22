@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
@@ -118,7 +118,7 @@ nav.desktop-nav a:hover { text-decoration:underline; }
     width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff;
     display:flex; align-items:center; justify-content:center; position: relative;
   }
-  .language-select::before{content:"ðŸŒ"; font-size:1.2rem; color:#fff; position:absolute;}
+  .language-select::before{content:"🌐"; font-size:1.2rem; color:#fff; position:absolute;}
   .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
 }
 
@@ -545,13 +545,15 @@ nav.desktop-nav a:hover { text-decoration:underline; }
   .carousel-arrow.right { right: -15px; }
 }
 </style>
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="/css/typography.css">
 </head>
 <body>
 
 <!-- Header -->
 <header>
   <div class="header-left">
-    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
     <h1><a href="/homepage.html">VeloValue</a></h1>
   </div>
   <div class="header-right">
@@ -563,12 +565,12 @@ nav.desktop-nav a:hover { text-decoration:underline; }
       <a href="/smart-reminder.html">SMART REMINDER</a>
     </nav>
     <div class="language-select">
-      <select id="languageSelect">
-        <option value="en">ðŸ‡¬ðŸ‡§ English</option>
-        <option value="it">ðŸ‡®ðŸ‡¹ Italiano</option>
-        <option value="de">ðŸ‡©ðŸ‡ª Deutsch</option>
-      </select>
-    </div>
+  <select id="languageSelect" aria-label="Language">
+    <option value="en">English</option>
+    <option value="it">Italiano</option>
+    <option value="de">Deutsch</option>
+  </select>
+</div>
     <div id="authSection">
       <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
     </div>
@@ -616,7 +618,7 @@ const overlayEl = document.querySelector(".menu-overlay");
 function openMenu(){
   hamburger.setAttribute("aria-expanded","true");
   hamburger.classList.add("is-active");
-  if (window.innerWidth > 1024) hamburger.textContent = "âœ•";
+  if (window.innerWidth > 1024) hamburger.textContent = "✕";
   menu.classList.add("active");
   overlayEl.classList.add("active");
   menu.setAttribute("aria-hidden","false");
@@ -624,7 +626,7 @@ function openMenu(){
 function closeMenu(){
   hamburger.setAttribute("aria-expanded","false");
   hamburger.classList.remove("is-active");
-  if (window.innerWidth > 1024) hamburger.textContent = "â˜°";
+  if (window.innerWidth > 1024) hamburger.textContent = "☰";
   menu.classList.remove("active");
   overlayEl.classList.remove("active");
   menu.setAttribute("aria-hidden","true");
@@ -642,7 +644,7 @@ window.addEventListener("resize", () => {
 const authSection = document.getElementById("authSection");
 function updateAuthButton() {
   if(window.innerWidth <= 768) {
-    authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">ðŸ‘¤</button>`;
+    authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
   } else {
     authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
   }
@@ -762,7 +764,7 @@ function showLoading() {
   mainPanel.innerHTML = `
     <div class="loading-state">
       <div class="spinner"></div>
-      <div class="loading-text">Loading your vehiclesâ€¦</div>
+      <div class="loading-text">Loading your vehicles…</div>
     </div>
   `;
   document.getElementById('remindersContent').innerHTML = '';
@@ -772,7 +774,7 @@ function showLoginRequired() {
   const mainPanel = document.getElementById('mainPanel');
   mainPanel.className = "status-state";
   mainPanel.innerHTML = `
-    <div class="status-icon">ðŸ”’</div>
+    <div class="status-icon">🔒</div>
     <div class="status-title">Login Required</div>
     <div class="status-desc">Please login to view your Smart Reminders.</div>
     <button class="status-btn primary" onclick="window.location.href='/login.html'">Login</button>
@@ -784,7 +786,7 @@ function showNoCars() {
   const mainPanel = document.getElementById('mainPanel');
   mainPanel.className = "status-state";
   mainPanel.innerHTML = `
-    <div class="status-icon">ðŸš—</div>
+    <div class="status-icon">🚗</div>
     <div class="status-title">No Cars Yet</div>
     <div class="status-desc">Add vehicles to your Smart Garage to see personalized reminders here.</div>
     <button class="status-btn green" onclick="window.location.href='/explore-smart-garage-beta/garagesearch.html'">Add Your First Car</button>
@@ -801,7 +803,7 @@ function showError(errMsg) {
   const mainPanel = document.getElementById('mainPanel');
   mainPanel.className = "status-state";
   mainPanel.innerHTML = `
-    <div class="status-icon">âš ï¸</div>
+    <div class="status-icon">⚠️</div>
     <div class="status-title">Connection Error</div>
     <div class="status-desc">Could not load: ${errMsg}</div>
     <button class="status-btn primary" onclick="location.reload()">Refresh Page</button>
@@ -814,8 +816,8 @@ function renderCarouselUI() {
   const totalCards = carsData.length + 1;
   
   let html = `
-    <div class="carousel-arrow left hidden" id="leftArrow">â€¹</div>
-    <div class="carousel-arrow right ${totalCards > 1 ? '' : 'hidden'}" id="rightArrow">â€º</div>
+    <div class="carousel-arrow left hidden" id="leftArrow">‹</div>
+    <div class="carousel-arrow right ${totalCards > 1 ? '' : 'hidden'}" id="rightArrow">›</div>
     
     <div class="carousel-container">
       <div class="carousel-track" id="carouselTrack">
@@ -908,7 +910,7 @@ function attachEventListeners() {
   }
 }
 
-// âœ… FIXED: Added missing closing brace!
+// ✅ FIXED: Added missing closing brace!
 function updateCarouselPosition() {
   const track = document.getElementById('carouselTrack');
   const leftArrow = document.getElementById('leftArrow');
@@ -932,7 +934,7 @@ function updateCarouselPosition() {
   } else {
     updateRemindersForNewCar();
   }
-} // âœ… THIS WAS THE MISSING BRACE!
+} // ✅ THIS WAS THE MISSING BRACE!
 
 function updateReminders(reminders) {
   const remindersContent = document.getElementById('remindersContent');
@@ -974,7 +976,7 @@ function getStatusText(status) {
 
 function handleViewReminder(title, type) {
   console.log(`Viewing details for: ${title}`);
-  alert(`${title}\n\nHere you can:\nâ€¢ View full details\nâ€¢ Make payments\nâ€¢ Download documents\nâ€¢ Schedule appointments`);
+  alert(`${title}\n\nHere you can:\n• View full details\n• Make payments\n• Download documents\n• Schedule appointments`);
 }
 
 // =============================================
@@ -1018,6 +1020,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <p>&copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.</p>
   </div>
 </footer>
+<script src="/js/app-navigation.js"></script>
 </body>
 </html>
 

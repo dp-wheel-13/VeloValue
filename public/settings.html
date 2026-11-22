@@ -1,4 +1,4 @@
-﻿
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +6,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#050706"/>
-  <title>VeloValue â€“ Settings</title>
+  <title>VeloValue – Settings</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/footer.css"/>
 
@@ -716,6 +716,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="/css/typography.css">
 </head>
 
 <body>
@@ -772,22 +773,22 @@
 
       <nav class="side-links" aria-label="Settings sections">
         <a class="side-link active" href="#personal">
-          <span class="nav-icon">â—‰</span>
+          <span class="nav-icon">◉</span>
           <span>Personal info</span>
         </a>
 
         <a class="side-link" href="#preferences">
-          <span class="nav-icon">âŒ˜</span>
+          <span class="nav-icon">⌘</span>
           <span>Preferences</span>
         </a>
 
         <a class="side-link" href="#security">
-          <span class="nav-icon">â—‡</span>
+          <span class="nav-icon">◇</span>
           <span>Security</span>
         </a>
 
         <a class="side-link" href="#picture">
-          <span class="nav-icon">â–§</span>
+          <span class="nav-icon">▧</span>
           <span>Picture</span>
         </a>
       </nav>
@@ -812,7 +813,7 @@
             <h2>Personal information</h2>
             <p>Keep your profile details accurate and up to date.</p>
           </div>
-          <div class="section-symbol">â—‰</div>
+          <div class="section-symbol">◉</div>
         </div>
 
         <div class="fields">
@@ -860,7 +861,7 @@
             <h2>Experience preferences</h2>
             <p>Set the region, language and display currency for your experience.</p>
           </div>
-          <div class="section-symbol">âŒ˜</div>
+          <div class="section-symbol">⌘</div>
         </div>
 
         <div class="fields">
@@ -883,10 +884,10 @@
           <div class="field">
             <label for="currency">Currency</label>
             <select id="currency">
-              <option value="EUR">EUR (â‚¬)</option>
+              <option value="EUR">EUR (€)</option>
               <option value="USD">USD ($)</option>
-              <option value="GBP">GBP (Â£)</option>
-              <option value="INR">INR (â‚¹)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="INR">INR (₹)</option>
             </select>
           </div>
 
@@ -915,7 +916,7 @@
             <h2>Password &amp; security</h2>
             <p>Manage your account password securely.</p>
           </div>
-          <div class="section-symbol">â—‡</div>
+          <div class="section-symbol">◇</div>
         </div>
 
         <div class="fields">
@@ -948,7 +949,7 @@
         </div>
 
         <div class="security-note">
-          <span>â“˜</span>
+          <span>ⓘ</span>
           <div>
             <strong>Password protection.</strong><br/>
             Your current password is verified before a password change.
@@ -964,7 +965,7 @@
             <h2>Profile picture</h2>
             <p>Personalise your account with a profile image.</p>
           </div>
-          <div class="section-symbol">â–§</div>
+          <div class="section-symbol">▧</div>
         </div>
 
         <div class="avatar-editor">
@@ -1333,7 +1334,7 @@
     }
 
     if (newPassword.length < 8 || newPassword.length > 128) {
-      toast('Your new password must contain 8â€“128 characters.');
+      toast('Your new password must contain 8–128 characters.');
       return;
     }
 
@@ -1385,6 +1386,7 @@
 
 <script src="/js/auth.js"></script>
 
+<script src="/js/app-navigation.js"></script>
 </body>
 </html>
 

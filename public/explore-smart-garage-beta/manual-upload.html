@@ -7,6 +7,8 @@
   <title>Manual Car Upload – Smart Garage</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/manualupload.css">
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="/css/typography.css">
 </head>
 <body>
 
@@ -20,12 +22,12 @@
     <a href="#about">ABOUT US</a>
 
     <div class="language-select">
-      <select id="languageSelect">
-        <option value="en">🇬🇧 English</option>
-        <option value="it">🇮🇹 Italiano</option>
-        <option value="de">🇩🇪 Deutsch</option>
-      </select>
-    </div>
+  <select id="languageSelect" aria-label="Language">
+    <option value="en">English</option>
+    <option value="it">Italiano</option>
+    <option value="de">Deutsch</option>
+  </select>
+</div>
 
     <div id="authSection">
       <button onclick="window.location.href='login.html'">Login / Register</button>
@@ -90,5 +92,6 @@
   <script src="/js/auth.js"></script>
   <script src="js/translate.js"></script>
 
+<script src="/js/app-navigation.js"></script>
 </body>
 </html>

@@ -1,11 +1,11 @@
-﻿
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#080b09" />
-  <title>Login â€“ VeloValue</title>
+  <title>Login – VeloValue</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="/login.css" />
 
   
+  <link rel="stylesheet" href="/css/typography.css">
 </head>
 
 <body>
@@ -92,27 +93,30 @@
 
       const params = new URLSearchParams(window.location.search);
 
+      const isNativeApp = Boolean(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
+      const defaultReturnUrl = isNativeApp ? '/explore-new-cars-beta/explorenewcars.html' : '/homepage.html';
+
       function getSafeReturnUrl(value) {
-        if (!value) return '/homepage.html';
+        if (!value) return defaultReturnUrl;
 
         try {
           const url = new URL(value, window.location.origin);
 
           if (url.origin !== window.location.origin) {
-            return '/homepage.html';
+            return defaultReturnUrl;
           }
 
           if (!url.pathname.startsWith('/') || url.pathname.startsWith('//')) {
-            return '/homepage.html';
+            return defaultReturnUrl;
           }
 
           if (/^\/(login|register)\.html$/i.test(url.pathname)) {
-            return '/homepage.html';
+            return defaultReturnUrl;
           }
 
           return url.pathname + url.search + url.hash;
         } catch {
-          return '/homepage.html';
+          return defaultReturnUrl;
         }
       }
 
@@ -142,7 +146,7 @@
         }
 
         submitButton.disabled = true;
-        submitButton.textContent = 'Logging inâ€¦';
+        submitButton.textContent = 'Logging in…';
 
         try {
           const response = await fetch('/login', {

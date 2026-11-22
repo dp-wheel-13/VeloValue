@@ -527,7 +527,9 @@
         .left-panel.sheet-open .panel-scroll { max-height: calc(100vh - var(--header-h) - 80px); overflow: auto; }
       }
     </style>
-  </head>
+    <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="/css/typography.css">
+</head>
   <body>
     <!-- ===== HEADER ===== -->
     <header>
@@ -543,12 +545,12 @@
           <a href="/velocharge-beta/velocharge.html" data-i18n="nav_charge">VELOCHARGE</a>
         </nav>
         <div class="language-select">
-          <select id="languageSelect" aria-label="Language">
-            <option value="en">&#127468;&#127463; English</option>
-            <option value="it">&#127470;&#127481; Italiano</option>
-            <option value="de">&#127465;&#127466; Deutsch</option>
-          </select>
-        </div>
+  <select id="languageSelect" aria-label="Language">
+    <option value="en">English</option>
+    <option value="it">Italiano</option>
+    <option value="de">Deutsch</option>
+  </select>
+</div>
         <div id="authSection">
           <button class="text-btn" onclick="window.location.href='/login.html'" data-i18n="nav_login">Login / Register</button>
         </div>
@@ -1629,7 +1631,8 @@ async function fetchOCM(lng, lat, dist, max) {
 
     <!-- Remove this line if /js/auth.js doesn't exist on your server -->
     <script src="/js/auth.js"></script>
-  </body>
+  <script src="/js/app-navigation.js"></script>
+</body>
 </html>
 
 

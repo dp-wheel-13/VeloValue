@@ -4,16 +4,18 @@
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VeloValue – Discover Your Drive</title>
+  <title>VeloValue â€“ Discover Your Drive</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="homepage.css">
   <link rel="stylesheet" href="/footer.css">
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="/css/typography.css">
 </head>
 <body>
 
   <!-- Header -->
   <header>
-    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
     <h1 class="logo">VeloValue</h1>
     <div class="right-section">
       <div class="language-select">
@@ -61,14 +63,14 @@
   <!-- Features Section -->
   <section id="features" class="features">
     <a href="smartsearch.html" class="feature">
-      <h3>🔍 Smart Search</h3>
+      <h3>ðŸ” Smart Search</h3>
       <p>Locate vehicles by license plate number or photograph using advanced AI technology.</p>
     </a>
 
     <div id="smartReminderBox" class="feature smart-reminder-dynamic">
   <!-- Content injected dynamically by JavaScript -->
   <div class="reminder-loading">
-    <span>⏳</span>
+    <span>â³</span>
     <p>Loading...</p>
   </div>
 </div>
@@ -228,7 +230,7 @@
   const authSection = document.getElementById('authSection');
   function updateAuthButton() {
     if (window.innerWidth <= 768) {
-      authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+      authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">ðŸ‘¤</button>`;
     } else {
       authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
     }
@@ -273,7 +275,7 @@
         return;
       }
 
-      // STATE 3: Logged In + Has Cars → Ready!
+      // STATE 3: Logged In + Has Cars â†’ Ready!
       const carCount = vehData.vehicles.length;
       renderReady(box, carCount);
 
@@ -286,33 +288,33 @@
   function renderLoginRequired(container) {
     container.className = 'feature smart-reminder-dynamic state-login';
     container.innerHTML = `
-      <span class="reminder-icon">🔒</span>
+      <span class="reminder-icon">ðŸ”’</span>
       <h3>Smart Reminders</h3>
       <p class="reminder-desc">Never miss a vehicle deadline again!</p>
       <div class="reminder-status status-login-required">Login Required</div>
-      <a href="login.html" class="reminder-btn primary">🔐 Login to Access</a>
+      <a href="login.html" class="reminder-btn primary">ðŸ” Login to Access</a>
     `;
   }
 
   function renderNoCars(container) {
     container.className = 'feature smart-reminder-dynamic state-no-cars';
     container.innerHTML = `
-      <span class="reminder-icon">🚗</span>
+      <span class="reminder-icon">ðŸš—</span>
       <h3>Smart Reminders</h3>
       <p class="reminder-desc">You're logged in! Add vehicles to get reminders.</p>
       <div class="reminder-status status-no-cars">No Cars Yet</div>
-      <a href="explore-smart-garage-beta/garagesearch.html" class="reminder-btn primary">➕ Add Your First Car</a>
+      <a href="explore-smart-garage-beta/garagesearch.html" class="reminder-btn primary">âž• Add Your First Car</a>
     `;
   }
 
   function renderReady(container, carCount) {
     container.className = 'feature smart-reminder-dynamic state-ready';
     container.innerHTML = `
-      <span class="reminder-icon">🔔</span>
+      <span class="reminder-icon">ðŸ””</span>
       <h3>Smart Reminders</h3>
       <p class="reminder-desc">You have <strong>${carCount}</strong> vehicle${carCount > 1 ? 's' : ''} with active reminders!</p>
-      <div class="reminder-status status-ready">✅ Ready</div>
-      <a href="smartreminders.html" class="reminder-btn primary">📅 View Reminders</a>
+      <div class="reminder-status status-ready">âœ… Ready</div>
+      <a href="smartreminders.html" class="reminder-btn primary">ðŸ“… View Reminders</a>
       <div style="margin-top: 12px;">
         <a href="explore-smart-garage-beta/smartgarage.html" class="reminder-btn secondary">Manage Garage</a>
       </div>

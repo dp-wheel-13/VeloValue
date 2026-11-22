@@ -2,3 +2,5 @@ node_modules/
 .tmp.driveupload/
 .env
 .env.before-dev-prod-20261113-071625
+
+.idea/

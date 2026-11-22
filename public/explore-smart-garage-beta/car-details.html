@@ -163,6 +163,8 @@
       .language-select select { opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer; }
     }
   </style>
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="/css/typography.css">
 </head>
 <body>
 
@@ -181,12 +183,12 @@
         <a href="/velocharge-beta/velocharge.html">VELOCHARGE</a>
       </nav>
       <div class="language-select">
-        <select id="languageSelect">
-          <option value="en">🇬🇧 English</option>
-          <option value="it">🇮🇹 Italiano</option>
-          <option value="de">🇩🇪 Deutsch</option>
-        </select>
-      </div>
+  <select id="languageSelect" aria-label="Language">
+    <option value="en">English</option>
+    <option value="it">Italiano</option>
+    <option value="de">Deutsch</option>
+  </select>
+</div>
       <div id="authSection">
         <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
       </div>

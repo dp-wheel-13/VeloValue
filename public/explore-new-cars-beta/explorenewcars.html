@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
@@ -201,20 +201,19 @@
     }
     @media(max-width:768px){
       #authSection .text-btn{display:none;} #authSection .icon-btn{display:inline-flex; align-items:center; justify-content:center; width:auto; height:auto; padding:8px 16px; border-radius:999px; font-size:0.9rem; font-weight:600; background:#fff; color:#000; border:none; cursor:pointer;}
-      .language-select{ width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff; display:flex; align-items:center; justify-content:center; position:relative; }
-      .language-select::before{content:"";}
       header { padding:0.5rem 0.8rem !important; height:60px; gap:10px; }
       .header-left, .header-right { gap:10px !important; }
       .hamburger { width:30px !important; height:30px !important; } .hamburger::before, .hamburger::after { width:16px !important; } .hamburger { background-size:16px 2px !important; }
       header h1 a { font-size:1.3rem !important; }
       #authSection .icon-btn { width:30px !important; height:30px !important; font-size:1rem !important; }
-      .language-select { width:30px !important; height:30px !important; }
-      .language-select::before{content:"";}
       .wishlist .icon-btn { width:30px !important; height:30px !important; } .wishlist .icon-btn svg { width:14px !important; height:14px !important; }
       .wishlist .badge { top:-4px !important; right:-4px !important; min-width:14px !important; height:14px !important; font-size:9px !important; }
       .header-right { overflow:visible; flex-shrink:1; }
     }
   </style>
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="/css/typography.css">
+  <script src="/js/app-preloader.js"></script>
 </head>
 <body>
 
@@ -231,7 +230,11 @@
         <a href="#about">ABOUT US</a>
       </nav>
       <div class="language-select">
-        <select id="languageSelect"><option value="en">EN â€” English</option><option value="it">IT â€” Italiano</option><option value="de">DE â€” Deutsch</option></select>
+        <select id="languageSelect" aria-label="Language">
+          <option value="en">English</option>
+          <option value="it">Italiano</option>
+          <option value="de">Deutsch</option>
+        </select>
       </div>
       <div class="wishlist" id="wishlist">
         <button id="wishlistBtn" class="icon-btn" aria-label="Wishlist" aria-expanded="false" aria-controls="wishlistMenu">
@@ -1201,6 +1204,7 @@ async function clearWishlistFromApi() {
     <p>&copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.</p>
   </div>
 </footer>
+<script src="/js/app-navigation.js"></script>
 </body>
 </html>
 

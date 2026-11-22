@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">VeloValue</string>
+    <string name="title_activity_main">VeloValue</string>
+    <string name="package_name">it.velovalue.app</string>
+    <string name="custom_url_scheme">it.velovalue.app</string>
+</resources>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
@@ -95,7 +95,7 @@ nav.desktop-nav a:hover { text-decoration:underline; }
     width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff;
     display:flex; align-items:center; justify-content:center;
   }
-  .language-select::before{content:"ðŸŒ"; font-size:1.2rem; color:#fff; position:absolute;}
+  .language-select::before{content:"🌐"; font-size:1.2rem; color:#fff; position:absolute;}
   .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
 }
 
@@ -434,12 +434,14 @@ nav.desktop-nav a:hover { text-decoration:underline; }
 }
 
 </style>
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="/css/typography.css">
 </head>
 <body>
 
 <header>
   <div class="header-left">
-    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
     <h1><a href="/homepage.html">VeloValue</a></h1>
   </div>
   <div class="header-right">
@@ -450,12 +452,12 @@ nav.desktop-nav a:hover { text-decoration:underline; }
       <a href="/velocharge-beta/velocharge.html">VELOCHARGE</a>
     </nav>
     <div class="language-select">
-      <select id="languageSelect">
-        <option value="en">ðŸ‡¬ðŸ‡§ English</option>
-        <option value="it">ðŸ‡®ðŸ‡¹ Italiano</option>
-        <option value="de">ðŸ‡©ðŸ‡ª Deutsch</option>
-      </select>
-    </div>
+  <select id="languageSelect" aria-label="Language">
+    <option value="en">English</option>
+    <option value="it">Italiano</option>
+    <option value="de">Deutsch</option>
+  </select>
+</div>
     <div id="authSection">
       <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
     </div>
@@ -474,7 +476,7 @@ nav.desktop-nav a:hover { text-decoration:underline; }
 
 <div class="garage-header">
   <div class="garage-left">
-    <input type="text" placeholder="Search for your carâ€¦" class="capsule-search" id="searchBox"/>
+    <input type="text" placeholder="Search for your car…" class="capsule-search" id="searchBox"/>
     <div class="add-car-pill" id="addCarBtn">+ Add a new car</div>
   </div>
   <div id="garageDisplay"></div>
@@ -533,14 +535,14 @@ addCarBtn.onclick = () => window.location.href = "garagesearch.html";
 
 function showLoading() {
   garageDisplay.className = "loading-state";
-  garageDisplay.innerHTML = '<div class="spinner"></div><div class="loading-text">Loading your garageâ€¦</div>';
-  garageLevelEl.textContent = "Garage Level - â€¦";
+  garageDisplay.innerHTML = '<div class="spinner"></div><div class="loading-text">Loading your garage…</div>';
+  garageLevelEl.textContent = "Garage Level - …";
 }
 
 function showLoginRequired() {
   garageDisplay.className = "status-state";
   garageDisplay.innerHTML =
-    '<div class="status-icon">ðŸ”’</div>' +
+    '<div class="status-icon">🔒</div>' +
     '<div class="status-title">Login Required</div>' +
     '<div class="status-desc">You need to be logged in to view your garage.</div>' +
     '<button class="status-btn primary" id="loginFromGarage">Login</button>';
@@ -553,7 +555,7 @@ function showLoginRequired() {
 function showNoCars() {
   garageDisplay.className = "status-state";
   garageDisplay.innerHTML =
-    '<div class="status-icon">ðŸ…¿ï¸</div>' +
+    '<div class="status-icon">🅿️</div>' +
     '<div class="status-title">Your Garage is Empty</div>' +
     '<div class="status-desc">You don\'t have any cars yet. Add your first vehicle to get started.</div>' +
     '<button class="status-btn green" id="addFirstCar">Add Your First Car</button>';
@@ -566,7 +568,7 @@ function showNoCars() {
 function showError(errMsg) {
   garageDisplay.className = "status-state";
   garageDisplay.innerHTML =
-    '<div class="status-icon">âš ï¸</div>' +
+    '<div class="status-icon">⚠️</div>' +
     '<div class="status-title">Connection Error</div>' +
     '<div class="status-desc">Could not load cars: ' + errMsg + '</div>' +
     '<button class="status-btn primary" onclick="location.reload()">Refresh Page</button>';
@@ -574,7 +576,7 @@ function showError(errMsg) {
 }
 
 /* =============================================
-   INIT â€” REAL BACKEND INTEGRATION
+   INIT — REAL BACKEND INTEGRATION
    ============================================= */
 (async function initGarage() {
   showLoading();
@@ -680,7 +682,7 @@ function openDetails(car) {
 
   const closeBtn = document.createElement("button");
   closeBtn.className = "car-details-close";
-  closeBtn.textContent = "Ã—";
+  closeBtn.textContent = "×";
   closeBtn.setAttribute("aria-label", "Close vehicle details");
   closeBtn.onclick = () => modal.remove();
   panel.appendChild(closeBtn);
@@ -798,7 +800,7 @@ function renderCardSlider() {
 
   if (actual.length === 0) {
     garageDisplay.className = "status-state";
-    garageDisplay.innerHTML = '<div class="status-icon">ðŸ”</div><div class="status-title">No cars found</div><div class="status-desc">Try a different search term.</div>';
+    garageDisplay.innerHTML = '<div class="status-icon">🔍</div><div class="status-title">No cars found</div><div class="status-desc">Try a different search term.</div>';
     garageLevelEl.textContent = "Garage Level - 0";
     return;
   }
@@ -820,14 +822,14 @@ function renderCardSlider() {
 
   var btnLeft = document.createElement("button");
   btnLeft.className = "carousel-btn left";
-  btnLeft.innerHTML = "â€¹";
+  btnLeft.innerHTML = "‹";
   btnLeft.setAttribute("aria-label", "Previous car");
   btnLeft.addEventListener("click", navigatePrev);
   garageDisplay.appendChild(btnLeft);
 
   var btnRight = document.createElement("button");
   btnRight.className = "carousel-btn right";
-  btnRight.innerHTML = "â€º";
+  btnRight.innerHTML = "›";
   btnRight.setAttribute("aria-label", "Next car");
   btnRight.addEventListener("click", navigateNext);
   garageDisplay.appendChild(btnRight);
@@ -1086,6 +1088,7 @@ function renderList() {
     <p>&copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.</p>
   </div>
 </footer>
+<script src="/js/app-navigation.js"></script>
 </body>
 </html>
 

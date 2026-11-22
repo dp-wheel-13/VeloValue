@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VeloValue â€“ Compare Cars</title>
+  <title>VeloValue – Compare Cars</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
 <style>
   :root { --bg:#000; --text:#fff; --accent:#1db954; --radius-xl:18px; --radius-lg:14px; --radius-md:10px; --shadow-1:0 8px 24px rgba(0,0,0,.45); --shadow-2:0 18px 50px rgba(0,0,0,.55); --header-offset:0px; }
@@ -50,7 +50,7 @@
   @keyframes toast-in{ to{ transform:translateY(0); opacity:1; } }
 </style>
 
-<!-- âœ… FULL VERSION A â€” FINAL RESPONSIVE HEADER -->
+<!-- ✅ FULL VERSION A — FINAL RESPONSIVE HEADER -->
 <style>
   header, header * {
     font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -299,7 +299,7 @@
       position: relative;
     }
     .language-select::before{
-      content:"ðŸŒ";
+      content:"🌐";
       font-size:1.2rem;
       color:#fff;
       position:absolute;
@@ -313,7 +313,7 @@
     }
   }
 
-  /* âœ… FINAL MOBILE SHRINK FIX */
+  /* ✅ FINAL MOBILE SHRINK FIX */
   @media (max-width: 768px) {
     header {
       padding: 0.5rem 0.8rem !important;
@@ -379,7 +379,7 @@
     }
   }
 
-  /* âœ… TAB-VIEW GRID OVERRIDE */
+  /* ✅ TAB-VIEW GRID OVERRIDE */
   @media (max-width: 700px) {
     .grid {
       grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -394,13 +394,15 @@
     }
   }
 </style>
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="/css/typography.css">
 </head>
 <body>
 
   <!-- Unified Header -->
   <header>
     <div class="header-left">
-      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
       <h1><a href="/homepage.html">VeloValue</a></h1>
     </div>
     <div class="header-right">
@@ -412,8 +414,12 @@
       </nav>
 
       <div class="language-select">
-        System.Text.RegularExpressions.MatchEvaluator
-      </div>
+  <select id="languageSelect" aria-label="Language">
+    <option value="en">English</option>
+    <option value="it">Italiano</option>
+    <option value="de">Deutsch</option>
+  </select>
+</div>
 
       <!-- Wishlist dropdown (header) -->
       <div class="wishlist" id="wishlist">
@@ -453,7 +459,7 @@
     <div class="title-row">
       <div>
         <div class="title">Compare Cars</div>
-        <div class="muted" id="countLine">Loadingâ€¦</div>
+        <div class="muted" id="countLine">Loading…</div>
       </div>
       <div style="display:flex; gap:8px;">
         <button class="btn" id="backBtn">Back to Explore</button>
@@ -505,7 +511,7 @@
     }
     function saveMeta(meta){ localStorage.setItem(META_KEY, JSON.stringify(meta)); }
 
-    function formatEUR(n){ return n==null ? 'â€”' : 'â‚¬'+Number(n).toLocaleString(); }
+    function formatEUR(n){ return n==null ? '—' : '€'+Number(n).toLocaleString(); }
 
     function removeId(id){
       const ids = loadIds().filter(x => x !== id);
@@ -521,7 +527,7 @@
 
     function chipHTML(id, meta){
       const name = meta?.brand ? `${meta.brand} ${meta.model||''}`.trim() : id;
-      return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">Ã—</button></span>`;
+      return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">×</button></span>`;
     }
 
     function escapeHTML(value) {
@@ -535,17 +541,17 @@
     }
 
     function colHTML(meta, id){
-      const safe = value => escapeHTML(value == null || value === '' ? 'â€”' : value);
+      const safe = value => escapeHTML(value == null || value === '' ? '—' : value);
       const name = `${meta.brand||''} ${meta.model||''}`.trim() || id;
-      const title = meta.variantName ? `${name} â€” ${meta.variantName}` : name;
-      const sub = [meta.body, meta.fuel].filter(Boolean).join(' â€¢ ');
-      const t = meta.gear ? (meta.gear === 'Auto' ? 'Automatic' : meta.gear) : 'â€”';
+      const title = meta.variantName ? `${name} — ${meta.variantName}` : name;
+      const sub = [meta.body, meta.fuel].filter(Boolean).join(' • ');
+      const t = meta.gear ? (meta.gear === 'Auto' ? 'Automatic' : meta.gear) : '—';
       const power = meta.powerHp != null
         ? `${meta.powerHp} HP${meta.powerKw != null ? ` / ${meta.powerKw} kW` : ''}`
-        : 'â€”';
-      const acceleration = meta.zeroTo100 != null ? `${meta.zeroTo100} s` : 'â€”';
-      const topSpeed = meta.topSpeed != null ? `${meta.topSpeed} km/h` : 'â€”';
-      const consumption = meta.fuelConsumption != null ? `${meta.fuelConsumption} L/100 km` : 'â€”';
+        : '—';
+      const acceleration = meta.zeroTo100 != null ? `${meta.zeroTo100} s` : '—';
+      const topSpeed = meta.topSpeed != null ? `${meta.topSpeed} km/h` : '—';
+      const consumption = meta.fuelConsumption != null ? `${meta.fuelConsumption} L/100 km` : '—';
       const viewUrl = meta.generationId
         ? `cars.html?code=${encodeURIComponent(meta.generationId)}&variant=${encodeURIComponent(meta.variantIndex ?? "")}`
         : `cars.html?id=${encodeURIComponent(id)}`;
@@ -557,28 +563,28 @@
           <div class="head">
             ${meta.img ? `<img class="img" src="${escapeHTML(meta.img)}" alt="${escapeHTML(title)}">` : `<div class="img" style="display:grid;place-items:center;opacity:.6">No image</div>`}
             <div class="name">${escapeHTML(title)}</div>
-            <div class="sub">${escapeHTML(sub || 'â€”')}</div>
+            <div class="sub">${escapeHTML(sub || '—')}</div>
             <div class="actions">
               <a class="btn" href="${viewUrl}">View</a>
               <button class="btn" data-remove="${escapeHTML(id)}">Remove</button>
             </div>
           </div>
           ${row('Variant', meta.variantName)}
-          ${row('Price', meta.price == null ? 'â€”' : formatEUR(meta.price))}
+          ${row('Price', meta.price == null ? '—' : formatEUR(meta.price))}
           ${row('Body', meta.body)}
           ${row('Fuel', meta.fuel)}
           ${row('Power', power)}
-          ${row('Torque', meta.torqueNm != null ? `${meta.torqueNm} Nm` : 'â€”')}
+          ${row('Torque', meta.torqueNm != null ? `${meta.torqueNm} Nm` : '—')}
           ${row('Transmission', t)}
           ${row('Drivetrain', meta.drivetrain)}
-          ${row('0â€“100 km/h', acceleration)}
+          ${row('0–100 km/h', acceleration)}
           ${row('Top speed', topSpeed)}
           ${row('Fuel consumption', consumption)}
-          ${row('Length', meta.lengthMm != null ? `${meta.lengthMm} mm` : 'â€”')}
-          ${row('Width', meta.widthMm != null ? `${meta.widthMm} mm` : 'â€”')}
-          ${row('Height', meta.heightMm != null ? `${meta.heightMm} mm` : 'â€”')}
-          ${row('Wheelbase', meta.wheelbaseMm != null ? `${meta.wheelbaseMm} mm` : 'â€”')}
-          ${row('Kerb weight', meta.kerbWeightKg != null ? `${meta.kerbWeightKg} kg` : 'â€”')}
+          ${row('Length', meta.lengthMm != null ? `${meta.lengthMm} mm` : '—')}
+          ${row('Width', meta.widthMm != null ? `${meta.widthMm} mm` : '—')}
+          ${row('Height', meta.heightMm != null ? `${meta.heightMm} mm` : '—')}
+          ${row('Wheelbase', meta.wheelbaseMm != null ? `${meta.wheelbaseMm} mm` : '—')}
+          ${row('Kerb weight', meta.kerbWeightKg != null ? `${meta.kerbWeightKg} kg` : '—')}
           ${row('Rating', meta.rating)}
         </div>`;
     }
@@ -635,8 +641,8 @@
       const menu = $("#hamburgerMenu");
       const overlay = document.querySelector(".menu-overlay");
 
-      function openMenu(){ hamburger.setAttribute("aria-expanded","true"); hamburger.classList.add("is-active"); if (window.innerWidth>1024) hamburger.textContent="âœ•"; menu.classList.add("active"); overlay.classList.add("active"); menu.setAttribute("aria-hidden","false"); }
-      function closeMenu(){ hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); if (window.innerWidth>1024) hamburger.textContent="â˜°"; menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); }
+      function openMenu(){ hamburger.setAttribute("aria-expanded","true"); hamburger.classList.add("is-active"); if (window.innerWidth>1024) hamburger.textContent="✕"; menu.classList.add("active"); overlay.classList.add("active"); menu.setAttribute("aria-hidden","false"); }
+      function closeMenu(){ hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); if (window.innerWidth>1024) hamburger.textContent="☰"; menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); }
       function toggleMenu(){ menu.classList.contains("active") ? closeMenu() : openMenu(); }
       if (hamburger){ hamburger.addEventListener("click", toggleMenu); }
       if (overlay){ overlay.addEventListener("click", closeMenu); }
@@ -647,7 +653,7 @@
       function updateAuthButton(){
         if(!authSection) return;
         if(window.innerWidth <= 768){
-          authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">ðŸ‘¤</button>`;
+          authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
         } else {
           authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
         }
@@ -725,7 +731,7 @@
 
             details.textContent = [car.generation || car.body, priceText]
               .filter(Boolean)
-              .join(' • ');
+              .join(' � ');
 
             info.appendChild(name);
             info.appendChild(details);
@@ -875,6 +881,7 @@
 
   <script src="/js/auth.js"></script>
   <script src="js/translate.js"></script>
+<script src="/js/app-navigation.js"></script>
 </body>
 </html>
 

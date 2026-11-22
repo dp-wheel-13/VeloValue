@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
@@ -110,7 +110,7 @@
       width: 40px; height: 40px; border-radius: 50%; background: #111; border: 1px solid #fff;
       display: flex; align-items: center; justify-content: center;
     }
-    .language-select::before { content:"ðŸŒ"; font-size:1.2rem; color:#fff; position:absolute; }
+    .language-select::before { content:"🌐"; font-size:1.2rem; color:#fff; position:absolute; }
     .language-select select { opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer; }
   }
 
@@ -253,12 +253,14 @@
     .enter-garage-container a, .sg-btn { transition: none !important; }
   }
 </style>
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="/css/typography.css">
 </head>
 <body>
 
 <header>
   <div class="header-left">
-    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
     <h1><a href="/homepage.html">VeloValue</a></h1>
   </div>
 
@@ -270,12 +272,12 @@
       <a href="/velocharge-beta/velocharge.html">VELOCHARGE</a>
     </nav>
     <div class="language-select">
-      <select id="languageSelect">
-        <option value="en">ðŸ‡¬ðŸ‡§ English</option>
-        <option value="it">ðŸ‡®ðŸ‡¹ Italiano</option>
-        <option value="de">ðŸ‡©ðŸ‡ª Deutsch</option>
-      </select>
-    </div>
+  <select id="languageSelect" aria-label="Language">
+    <option value="en">English</option>
+    <option value="it">Italiano</option>
+    <option value="de">Deutsch</option>
+  </select>
+</div>
     <div id="authSection">
       <button class="text-btn" onclick="window.location.href='/login.html'">Login / Register</button>
     </div>
@@ -332,7 +334,7 @@
       <div class="sg-eyebrow sg-reveal" data-sg-reveal>Smart Garage</div>
       <h2 id="sgHeroTitle" class="sg-hero-title sg-reveal" data-sg-reveal>Give your car a premium digital home</h2>
       <p class="sg-lead sg-reveal" data-sg-reveal>
-        Upload documents once, get timely reminders, and keep your vehicleâ€™s full history at your fingertips.
+        Upload documents once, get timely reminders, and keep your vehicle’s full history at your fingertips.
       </p>
 
       <div class="sg-cta-row sg-reveal" data-sg-reveal>
@@ -354,7 +356,7 @@
         </div>
         <div class="sg-card">
           <h4>Privacy first</h4>
-          <p>GDPR-aware and encrypted at rest. We store only what you choose â€” nothing is shared without consent.</p>
+          <p>GDPR-aware and encrypted at rest. We store only what you choose — nothing is shared without consent.</p>
         </div>
       </div>
     </div>
@@ -483,7 +485,7 @@
   const authSection = document.getElementById("authSection");
   function updateAuthButton() {
     if(window.innerWidth <= 768) {
-      authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='/login.html'">ðŸ‘¤</button>`;
+      authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='/login.html'">👤</button>`;
     } else {
       authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='/login.html'">Login / Register</button>`;
     }
@@ -615,5 +617,6 @@
 
 <script src="/js/auth.js"></script>
 <script src="/js/translate.js"></script>
+<script src="/js/app-navigation.js"></script>
 </body>
 </html>

@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Garage â€“ VeloValue</title>
+<title>Smart Garage – VeloValue</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/footer.css"/>
 <style>
@@ -121,7 +121,7 @@
       background: #111; border: 1px solid #fff;
       display: flex; align-items: center; justify-content: center; position: relative;
     }
-    .language-select::before { content:"ðŸŒ"; font-size:1.2rem; color:#fff; position:absolute; }
+    .language-select::before { content:"🌐"; font-size:1.2rem; color:#fff; position:absolute; }
     .language-select select { opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer; }
 
     #authSection .text-btn { display: none; }
@@ -178,11 +178,13 @@
   }
   .proceed-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
 </style>
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="/css/typography.css">
 </head>
 <body>
   <header>
     <div class="header-left">
-      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
       <h1><a href="/homepage.html">VeloValue</a></h1>
     </div>
     <div class="header-right">
@@ -193,12 +195,12 @@
         <a href="#about">ABOUT US</a>
       </nav>
       <div class="language-select">
-        <select id="languageSelect" aria-label="Language">
-          <option value="en">ðŸ‡¬ðŸ‡§ English</option>
-          <option value="it">ðŸ‡®ðŸ‡¹ Italiano</option>
-          <option value="de">ðŸ‡©ðŸ‡ª Deutsch</option>
-        </select>
-      </div>
+  <select id="languageSelect" aria-label="Language">
+    <option value="en">English</option>
+    <option value="it">Italiano</option>
+    <option value="de">Deutsch</option>
+  </select>
+</div>
       <div id="authSection">
         <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
       </div>
@@ -223,7 +225,7 @@
       <input type="text" id="numberPlateInput" placeholder="AA 123 AA" maxlength="10" />
       <div class="plate-right">EU</div>
     </div>
-    <button class="proceed-btn" id="proceedBtn">Proceed â†’</button>
+    <button class="proceed-btn" id="proceedBtn">Proceed →</button>
   </main>
 
   <!-- Hamburger JS -->
@@ -235,13 +237,13 @@
     const closeBtn = document.querySelector(".menu-close");
     const authSection = document.getElementById("authSection");
 
-    function openMenu() { hamburger.setAttribute("aria-expanded","true"); hamburger.classList.add("is-active"); menu.classList.add("active"); overlay.classList.add("active"); menu.setAttribute("aria-hidden","false"); if(window.innerWidth>1024) hamburger.textContent="âœ•"; }
-    function closeMenu() { hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); if(window.innerWidth>1024) hamburger.textContent="â˜°"; }
+    function openMenu() { hamburger.setAttribute("aria-expanded","true"); hamburger.classList.add("is-active"); menu.classList.add("active"); overlay.classList.add("active"); menu.setAttribute("aria-hidden","false"); if(window.innerWidth>1024) hamburger.textContent="✕"; }
+    function closeMenu() { hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); if(window.innerWidth>1024) hamburger.textContent="☰"; }
     function toggleMenu() { if(menu.classList.contains("active")) closeMenu(); else openMenu(); }
     hamburger.addEventListener("click",toggleMenu); overlay.addEventListener("click",closeMenu); if(closeBtn) closeBtn.addEventListener("click",closeMenu);
 
     function updateAuthButton() {
-      if(window.innerWidth<=768) authSection.innerHTML='<button class="icon-btn" onclick="window.location.href=\'/login.html\'">ðŸ‘¤</button>';
+      if(window.innerWidth<=768) authSection.innerHTML='<button class="icon-btn" onclick="window.location.href=\'/login.html\'">👤</button>';
       else authSection.innerHTML='<button class="text-btn" onclick="window.location.href=\'/login.html\'">Login / Register</button>';
     }
     updateAuthButton();
@@ -484,5 +486,6 @@ proceedBtn.addEventListener("click", async () => {
   </div>
 </footer>
 
+<script src="/js/app-navigation.js"></script>
 </body>
 </html>

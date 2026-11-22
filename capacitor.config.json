@@ -1,0 +1,9 @@
+{
+    "appId":  "it.velovalue.app",
+    "appName":  "VeloValue",
+    "webDir":  "www",
+    "server":  {
+                   "url":  "http://10.0.2.2:3000/explore-new-cars-beta/explorenewcars.html",
+                   "cleartext":  true
+               }
+}

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
@@ -94,7 +94,7 @@ nav.desktop-nav a:hover { text-decoration:underline; }
   .hamburger{display:flex;}
 
   /* Morph hamburger to X */
-  .hamburger { position: relative; font-size: 0; } /* hide the â˜° glyph */
+  .hamburger { position: relative; font-size: 0; } /* hide the ☰ glyph */
   .hamburger::before,
   .hamburger::after {
     content: "";
@@ -132,7 +132,7 @@ nav.desktop-nav a:hover { text-decoration:underline; }
     width:40px; height:40px; border-radius:50%; background:#111; border:1px solid #fff;
     display:flex; align-items:center; justify-content:center; position: relative;
   }
-  .language-select::before{content:"ðŸŒ"; font-size:1.2rem; color:#fff; position:absolute;}
+  .language-select::before{content:"🌐"; font-size:1.2rem; color:#fff; position:absolute;}
   .language-select select{opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;}
 }
 
@@ -228,13 +228,15 @@ nav.desktop-nav a:hover { text-decoration:underline; }
   .insurance-box { width: 100%; justify-content: space-between; }
 }
 </style>
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="/css/typography.css">
 </head>
 <body>
 
 <!-- Responsive, fixed header -->
 <header>
   <div class="header-left">
-    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
+    <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
     <h1><a href="/homepage.html">VeloValue</a></h1>
   </div>
   <div class="header-right">
@@ -245,12 +247,12 @@ nav.desktop-nav a:hover { text-decoration:underline; }
       <a href="/velocharge-beta/velocharge.html">VELOCHARGE</a>
     </nav>
     <div class="language-select">
-      <select id="languageSelect">
-        <option value="en">ðŸ‡¬ðŸ‡§ English</option>
-        <option value="it">ðŸ‡®ðŸ‡¹ Italiano</option>
-        <option value="de">ðŸ‡©ðŸ‡ª Deutsch</option>
-      </select>
-    </div>
+  <select id="languageSelect" aria-label="Language">
+    <option value="en">English</option>
+    <option value="it">Italiano</option>
+    <option value="de">Deutsch</option>
+  </select>
+</div>
     <div id="authSection">
       <button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>
     </div>
@@ -274,64 +276,64 @@ nav.desktop-nav a:hover { text-decoration:underline; }
     <div class="car-header">
       <img src="" alt="Brand Logo" class="car-logo" id="carLogo">
       <div class="car-info">
-        <div class="car-name" id="brand">â€”</div>
-        <div class="car-model" id="model">â€”</div>
-        <div class="fuel-type" id="fuelPill" style="display:none">â€”</div>
+        <div class="car-name" id="brand">—</div>
+        <div class="car-model" id="model">—</div>
+        <div class="fuel-type" id="fuelPill" style="display:none">—</div>
       </div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header">Registration Details <span class="accordion-arrow"></span></div>
       <div class="accordion-content">
-        <p>â€¢ Name: John Doe</p>
-        <p>â€¢ Fiscal Code: ABC123XYZ</p>
-        <p>â€¢ Issue Date: 01 Jan 2022</p>
-        <p>â€¢ Expiry Date: 01 Jan 2032</p>
-        <p>â€¢ Authority: Rome DMV</p>
+        <p>• Name: John Doe</p>
+        <p>• Fiscal Code: ABC123XYZ</p>
+        <p>• Issue Date: 01 Jan 2022</p>
+        <p>• Expiry Date: 01 Jan 2032</p>
+        <p>• Authority: Rome DMV</p>
       </div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header">Documents & Compliance <span class="accordion-arrow"></span></div>
       <div class="accordion-content">
-        <p>â€¢ Insurance Policy</p>
-        <p>â€¢ Pollution Certificate</p>
-        <p>â€¢ Road Tax</p>
-        <p>â€¢ Fitness Certificate</p>
-        <p>â€¢ Others</p>
+        <p>• Insurance Policy</p>
+        <p>• Pollution Certificate</p>
+        <p>• Road Tax</p>
+        <p>• Fitness Certificate</p>
+        <p>• Others</p>
       </div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header">Finance & Services <span class="accordion-arrow"></span></div>
       <div class="accordion-content">
-        <p>â€¢ EMI Status</p>
-        <p>â€¢ Bank Details</p>
-        <p>â€¢ Service Package</p>
-        <p>â€¢ Warranty</p>
-        <p>â€¢ Roadside Assistance</p>
+        <p>• EMI Status</p>
+        <p>• Bank Details</p>
+        <p>• Service Package</p>
+        <p>• Warranty</p>
+        <p>• Roadside Assistance</p>
       </div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header">Specifications <span class="accordion-arrow"></span></div>
       <div class="accordion-content" id="specsBlock">
-        <p>â€¢ Engine: â€”</p>
-        <p>â€¢ Horsepower: â€”</p>
-        <p>â€¢ Top Speed: â€”</p>
-        <p>â€¢ 0-100: â€”</p>
-        <p>â€¢ Drive: â€”</p>
+        <p>• Engine: —</p>
+        <p>• Horsepower: —</p>
+        <p>• Top Speed: —</p>
+        <p>• 0-100: —</p>
+        <p>• Drive: —</p>
       </div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header">Under the Hood <span class="accordion-arrow"></span></div>
       <div class="accordion-content">
-        <p>â€¢ Engine Oil</p>
-        <p>â€¢ Coolant</p>
-        <p>â€¢ Battery</p>
-        <p>â€¢ Transmission</p>
-        <p>â€¢ Exhaust System</p>
+        <p>• Engine Oil</p>
+        <p>• Coolant</p>
+        <p>• Battery</p>
+        <p>• Transmission</p>
+        <p>• Exhaust System</p>
       </div>
     </div>
   </div>
@@ -355,7 +357,7 @@ const overlay = document.querySelector(".menu-overlay");
 function openMenu(){
   hamburger.setAttribute("aria-expanded","true");
   hamburger.classList.add("is-active");
-  if (window.innerWidth > 1024) hamburger.textContent = "âœ•";
+  if (window.innerWidth > 1024) hamburger.textContent = "✕";
   menu.classList.add("active");
   overlay.classList.add("active");
   menu.setAttribute("aria-hidden","false");
@@ -363,7 +365,7 @@ function openMenu(){
 function closeMenu(){
   hamburger.setAttribute("aria-expanded","false");
   hamburger.classList.remove("is-active");
-  if (window.innerWidth > 1024) hamburger.textContent = "â˜°";
+  if (window.innerWidth > 1024) hamburger.textContent = "☰";
   menu.classList.remove("active");
   overlay.classList.remove("active");
   menu.setAttribute("aria-hidden","true");
@@ -382,7 +384,7 @@ window.addEventListener("resize", () => {
 const authSection = document.getElementById("authSection");
 function updateAuthButton() {
   if(window.innerWidth <= 768) {
-    authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">ðŸ‘¤</button>`;
+    authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
   } else {
     authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
   }
@@ -446,7 +448,7 @@ document.querySelectorAll(".accordion-header").forEach(header => {
       const parts = id.split('-');
       car = {
         id,
-        brand: parts[0] ? cap(parts[0]) : 'â€”',
+        brand: parts[0] ? cap(parts[0]) : '—',
         model: parts.slice(1).map(cap).join(' '),
         fuel: null,
         image: '',
@@ -468,8 +470,8 @@ document.querySelectorAll(".accordion-header").forEach(header => {
   const logoEl  = document.getElementById('carLogo');
   const imgEl   = document.getElementById('heroImg');
 
-  brandEl.textContent = car.brand || 'â€”';
-  modelEl.textContent = car.model || 'â€”';
+  brandEl.textContent = car.brand || '—';
+  modelEl.textContent = car.model || '—';
 
   if (car.fuel) { fuelEl.style.display = 'inline-block'; fuelEl.textContent = car.fuel; }
   else { fuelEl.style.display = 'none'; }
@@ -502,10 +504,10 @@ document.querySelectorAll(".accordion-header").forEach(header => {
 
   // Optionally populate simple specs if your garage sent any extras
   const specs = [];
-  if (car.powerPs || car.powerKw) specs.push(`â€¢ Power: ${car.powerKw?car.powerKw+' kW':''}${car.powerKw&&car.powerPs?' / ':''}${car.powerPs?car.powerPs+' PS':''}`);
-  if (car.topSpeedKmh)            specs.push(`â€¢ Top Speed: ${car.topSpeedKmh} km/h`);
-  if (car.zeroTo100KmhS)          specs.push(`â€¢ 0-100: ${car.zeroTo100KmhS}s`);
-  if (car.drivetrain)             specs.push(`â€¢ Drive: ${car.drivetrain}`);
+  if (car.powerPs || car.powerKw) specs.push(`• Power: ${car.powerKw?car.powerKw+' kW':''}${car.powerKw&&car.powerPs?' / ':''}${car.powerPs?car.powerPs+' PS':''}`);
+  if (car.topSpeedKmh)            specs.push(`• Top Speed: ${car.topSpeedKmh} km/h`);
+  if (car.zeroTo100KmhS)          specs.push(`• 0-100: ${car.zeroTo100KmhS}s`);
+  if (car.drivetrain)             specs.push(`• Drive: ${car.drivetrain}`);
   if (specs.length) {
     const blk = document.getElementById('specsBlock');
     blk.innerHTML = specs.map(s=>`<p>${s}</p>`).join('');
@@ -566,6 +568,7 @@ if (expiryDate < today) {
     <p>&copy; 2025 VeloValue. Crafted with precision in Italy. All rights reserved.</p>
   </div>
 </footer>
+<script src="/js/app-navigation.js"></script>
 </body>
 </html>
 
