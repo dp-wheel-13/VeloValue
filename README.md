@@ -60,7 +60,7 @@ Fork the repo and create a pull request with your changes.
 
 👤 **Developer**: Debanjan Pal (DP)
 📧 Email: debanjan.pal@community.unipa.it  
-🌐 Website (soon): [VeloValue official site link]
+🌐 Website: velovalue.it
 
 ---
 Thank you a lot _/|\_
