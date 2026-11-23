@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
@@ -656,7 +656,268 @@
         scroll-behavior: auto !important;
       }
     }
-  </style>
+  
+
+/* MASTER EXPLORE HEADER STANDARDIZATION */
+header, header * {
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(0,0,0,0.6);
+  border-bottom: 1px solid #333;
+  z-index: 2000;
+  backdrop-filter: blur(6px);
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+header h1 a {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  text-decoration: none;
+}
+nav.desktop-nav {
+  display: flex;
+  gap: 20px;
+}
+nav.desktop-nav a {
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+nav.desktop-nav a:hover {
+  text-decoration: underline;
+}
+.language-select {
+  position: relative;
+}
+.language-select select {
+  appearance: none;
+  background: #111;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 6px 30px 6px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+#authSection .text-btn {
+  display: inline-flex;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+#authSection .icon-btn {
+  display: none;
+}
+.hamburger {
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2200;
+  width: 40px;
+  height: 40px;
+}
+.hamburger span {
+  display: none;
+}
+.menu {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 300px;
+  height: 100vh;
+  background: rgba(17,17,17,0.95);
+  border-right: 1px solid rgba(255,255,255,0.12);
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  transition: left 0.3s ease;
+  z-index: 2100;
+  backdrop-filter: blur(10px);
+  border-radius: 0 1rem 1rem 0;
+}
+.menu.active {
+  left: 0;
+}
+.menu a {
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 2050;
+}
+.menu-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (max-width: 1024px) {
+  nav.desktop-nav {
+    display: none;
+  }
+  .hamburger {
+    display: flex;
+  }
+  .hamburger {
+    position: relative;
+    font-size: 0;
+  }
+  .hamburger::before,
+  .hamburger::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    width: 22px;
+    height: 2px;
+    background: currentColor;
+    transform: translateX(-50%);
+    transition: transform .25s ease, top .25s ease, opacity .2s ease;
+  }
+  .hamburger::before {
+    top: calc(50% - 6px);
+  }
+  .hamburger::after {
+    top: calc(50% + 6px);
+  }
+  .hamburger {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 22px 2px;
+  }
+  .hamburger.is-active {
+    background-size: 0 0;
+  }
+  .hamburger.is-active::before {
+    top: 50%;
+    transform: translateX(-50%) rotate(45deg);
+  }
+  .hamburger.is-active::after {
+    top: 50%;
+    transform: translateX(-50%) rotate(-45deg);
+  }
+}
+@media (max-width: 768px) {
+  #authSection .text-btn {
+    display: none;
+  }
+  #authSection .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px !important;
+    height: 30px !important;
+    padding: 0 !important;
+    border-radius: 999px;
+    font-size: 1rem !important;
+    font-weight: 600;
+    background: #fff;
+    color: #000;
+    border: none;
+    cursor: pointer;
+  }
+  header {
+    padding: 0.5rem 0.8rem !important;
+    height: 60px;
+    gap: 10px;
+  }
+  .header-left,
+  .header-right {
+    gap: 10px !important;
+  }
+  .hamburger {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  .hamburger::before,
+  .hamburger::after {
+    width: 16px !important;
+  }
+  .hamburger {
+    background-size: 16px 2px !important;
+  }
+  header h1 a {
+    font-size: 1.3rem !important;
+  }
+  .wishlist .icon-btn {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  .wishlist .icon-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  .wishlist .badge {
+    top: -4px !important;
+    right: -4px !important;
+    min-width: 14px !important;
+    height: 14px !important;
+    font-size: 9px !important;
+  }
+  .header-right {
+    overflow: visible;
+    flex-shrink: 1;
+  }
+}
+
+
+/* RESTORE MASTER LANGUAGE SELECTOR ON MOBILE */
+@media (max-width: 768px) {
+  header .header-right .language-select {
+    width: auto;
+    height: auto;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    overflow: visible;
+  }
+  header .header-right .language-select select {
+    opacity: 1;
+    position: static;
+    inset: auto;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+}
+</style>
   <link rel="stylesheet" href="/css/language-selector.css">
   <link rel="stylesheet" href="/css/typography.css">
 </head>
@@ -1272,8 +1533,10 @@
         renderVariant(index === '' ? null : variants[Number(index)] || null);
       });
 
-      // Wishlist uses the generation code as its stable identifier.
-      const currentId = generation.code || code;
+      // Match the Wishlist ID format used by Explore New Cars.
+      const currentId = generation.code
+        ? `cv-${String(generation.code).trim().toLowerCase()}`
+        : `cv-${String(code).trim().toLowerCase()}`;
       const currentTitle = `${makeName} ${modelName}`.trim();
       const generationMeta = {
         title: currentTitle,

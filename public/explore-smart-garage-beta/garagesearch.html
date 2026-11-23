@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Garage – VeloValue</title>
+<title>Smart Garage â€“ VeloValue</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/footer.css"/>
 <style>
@@ -121,7 +121,7 @@
       background: #111; border: 1px solid #fff;
       display: flex; align-items: center; justify-content: center; position: relative;
     }
-    .language-select::before { content:"🌐"; font-size:1.2rem; color:#fff; position:absolute; }
+    .language-select::before { content:"ðŸŒ"; font-size:1.2rem; color:#fff; position:absolute; }
     .language-select select { opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer; }
 
     #authSection .text-btn { display: none; }
@@ -149,7 +149,27 @@
     .hamburger.is-active::after  { top: 50%; transform: translateX(-50%) rotate(-45deg); }
   }
 
-  .garage-container { max-width: 600px; margin: 140px auto 0; text-align: center; }
+  .garage-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: clamp(84px, 10vh, 96px) 40px 60px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .garage-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .garage-container {
+    padding-top: 80px;
+  }
+}
   #welcomeText { font-weight: 800; font-size: 26px; line-height: 1.5; margin-bottom: 15px; }
   .instruction { font-size: 18px; color: #ddd; margin-bottom: 30px; }
 
@@ -177,6 +197,11 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.6); transition: transform 0.3s, box-shadow 0.3s;
   }
   .proceed-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 1.8rem;
+  }
+}
 </style>
   <link rel="stylesheet" href="/css/language-selector.css">
   <link rel="stylesheet" href="/css/typography.css">
@@ -184,7 +209,7 @@
 <body>
   <header>
     <div class="header-left">
-      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">â˜°</button>
       <h1><a href="/homepage.html">VeloValue</a></h1>
     </div>
     <div class="header-right">
@@ -225,7 +250,7 @@
       <input type="text" id="numberPlateInput" placeholder="AA 123 AA" maxlength="10" />
       <div class="plate-right">EU</div>
     </div>
-    <button class="proceed-btn" id="proceedBtn">Proceed →</button>
+    <button class="proceed-btn" id="proceedBtn">Proceed â†’</button>
   </main>
 
   <!-- Hamburger JS -->
@@ -237,8 +262,8 @@
     const closeBtn = document.querySelector(".menu-close");
     const authSection = document.getElementById("authSection");
 
-    function openMenu() { hamburger.setAttribute("aria-expanded","true"); hamburger.classList.add("is-active"); menu.classList.add("active"); overlay.classList.add("active"); menu.setAttribute("aria-hidden","false"); if(window.innerWidth>1024) hamburger.textContent="✕"; }
-    function closeMenu() { hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); if(window.innerWidth>1024) hamburger.textContent="☰"; }
+    function openMenu() { hamburger.setAttribute("aria-expanded","true"); hamburger.classList.add("is-active"); menu.classList.add("active"); overlay.classList.add("active"); menu.setAttribute("aria-hidden","false"); if(window.innerWidth>1024) hamburger.textContent="âœ•"; }
+    function closeMenu() { hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); if(window.innerWidth>1024) hamburger.textContent="â˜°"; }
     function toggleMenu() { if(menu.classList.contains("active")) closeMenu(); else openMenu(); }
     hamburger.addEventListener("click",toggleMenu); overlay.addEventListener("click",closeMenu); if(closeBtn) closeBtn.addEventListener("click",closeMenu);
 
@@ -250,21 +275,31 @@
     window.addEventListener("resize",()=>{ if(window.innerWidth>1024&&menu.classList.contains("active")) closeMenu(); updateAuthButton(); });
   })();
 
-  // Fetch user login status from backend
+    // Fetch user login status from backend
   window.__vvUserKey = window.__vvUserKey || 'guest';
-  fetch('/api/user-status', { method: 'POST', credentials: 'include' })
-    .then(res => res.json())
+
+  fetch('/api/user-status', { method: 'GET', credentials: 'include' })
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+      return res.json();
+    })
     .then(data => {
       console.log('User status response:', data);
+
       if (data.loggedIn && data.user) {
         window.__vvUserKey = data.user.id || 'guest';
+
+        const welcomeText = document.getElementById('welcomeText');
+        if (welcomeText && data.user.name) {
+          welcomeText.firstChild.textContent = `Hello ${data.user.name},`;
+        }
+
         console.log('User logged in:', window.__vvUserKey);
       } else {
         console.log('User not logged in');
       }
     })
-    .catch(err => console.error('Failed to fetch user status:', err));
-  </script>
+    .catch(err => console.error('Failed to fetch user status:', err));  </script>
 
   <!-- Load welcome username & redirect if user has cars -->
   <script>
@@ -489,3 +524,4 @@ proceedBtn.addEventListener("click", async () => {
 <script src="/js/app-navigation.js"></script>
 </body>
 </html>
+

@@ -531,16 +531,86 @@ nav.desktop-nav a:hover { text-decoration:underline; }
   .container { flex-direction: column; align-items: center; }
   .main-panel, .reminders-panel { width: 100%; max-width: 650px; }
   .car-image { width: 550px; height: 367px; }
+  .main-panel,
+  .reminders-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex-shrink: 1;
+    padding: 20px 16px;
+  }
+
+  .car-image {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 550 / 367;
+  }
+
+  .italian-plate {
+    max-width: 100%;
+  }
+
+  .reminder-card {
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
 }
 
 @media (max-width: 768px) {
-  .container { padding: 20px; }
-  .car-header { flex-direction: column; gap: 16px; text-align: center; }
-  .car-info { text-align: center; }
-  .italian-plate { width: 280px; height: 50px; font-size: 22px; letter-spacing: 4px; }
-  .italian-plate::before, .italian-plate::after { width: 32px; font-size: 16px; }
-  .car-image { width: 100%; max-width: 400px; height: 267px; }
-  .carousel-arrow { width: 35px; height: 35px; font-size: 16px; }
+  .container {
+    padding: 85px 20px 20px;
+    margin-top: 0;
+    justify-content: flex-start;
+  }
+
+  .site-footer {
+    margin-top: 1.5rem;
+  }
+
+  .car-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .car-info {
+    text-align: center;
+  }
+
+  .italian-plate {
+    width: 280px;
+    height: 50px;
+    font-size: 22px;
+    letter-spacing: 4px;
+  }
+
+  .italian-plate::before,
+  .italian-plate::after {
+    width: 32px;
+    font-size: 16px;
+  }
+
+  .car-image {
+    width: 100%;
+    max-width: 400px;
+    height: 267px;
+  }
+
+  .carousel-arrow {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+
   .carousel-arrow.left { left: -15px; }
   .carousel-arrow.right { right: -15px; }
 }
