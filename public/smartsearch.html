@@ -451,6 +451,288 @@ html, body {
     transition: all 0.3s ease;
 }
 .mode-toggle:hover { background: rgba(255,255,255,0.15); }
+
+/* Mobile layout refinement */
+@media (max-width: 768px) {
+    .header {
+        margin-top: max(0.75rem, env(safe-area-inset-top));
+        padding: 0 0.75rem;
+    }
+
+    .header-card {
+        max-width: 100%;
+        padding: 0.85rem 1rem;
+        border-radius: 16px;
+    }
+
+    .brand-logo {
+        gap: 0.5rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .brand-logo i {
+        font-size: 1.5rem;
+    }
+
+    .brand-logo h1 {
+        font-size: 1.5rem;
+    }
+
+    .footer {
+        margin-bottom: max(0.75rem, env(safe-area-inset-bottom));
+        padding: 0 0.75rem;
+    }
+
+    .footer-card {
+        width: 100%;
+        max-width: 100%;
+        padding: 0.85rem 1rem;
+        border-radius: 16px;
+    }
+
+    .button-row {
+        width: 100%;
+        gap: 0.65rem;
+    }
+
+    .capture-btn {
+        flex: 1;
+        min-width: 0;
+        padding: 0.85rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .flash-btn {
+        flex: 0 0 46px;
+        width: 46px;
+        height: 46px;
+    }
+
+    .start-camera-btn {
+        padding: 0.85rem 1.25rem;
+        font-size: 0.95rem;
+    }
+
+    .guide-overlay {
+        width: 82%;
+        height: 42%;
+    }
+
+    .result-header {
+        padding: 1rem;
+    }
+
+    .result-title {
+        font-size: 1.2rem;
+    }
+
+    .result-content {
+        padding: 1rem;
+    }
+
+    .car-image {
+        height: auto;
+        max-height: 260px;
+        margin-bottom: 1rem;
+    }
+
+    .car-info {
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .car-title {
+        font-size: 1.5rem;
+    }
+
+    .info-grid {
+        grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .info-value {
+        font-size: 1rem;
+        overflow-wrap: anywhere;
+    }
+
+    .action-buttons {
+        gap: 0.65rem;
+    }
+
+    .action-btn {
+        justify-content: center;
+        padding: 0.7rem 1rem;
+    }
+
+    .saved-cars {
+        right: 0.75rem;
+        bottom: max(0.75rem, env(safe-area-inset-bottom));
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .header-card {
+        padding: 0.7rem 0.8rem;
+    }
+
+    .footer-card {
+        padding: 0.7rem 0.8rem;
+    }
+
+    .capture-btn {
+        font-size: 0.82rem;
+        padding: 0.8rem 0.65rem;
+    }
+
+    .result-content {
+        padding: 0.75rem;
+    }
+
+    .car-info {
+        padding: 1rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* SMART_SEARCH_PREMIUM_V1 */
+/* Clean automotive camera interface */
+#api-status,
+#mode-toggle,
+.tips-section,
+#camera-resolution {
+    display: none !important;
+}
+
+.header-card {
+    background: rgba(10, 14, 18, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 18px;
+    padding: 1rem 1.4rem;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(18px);
+}
+
+.brand-logo {
+    gap: 0.65rem;
+    margin-bottom: 0.25rem;
+}
+
+.brand-logo i {
+    background: none;
+    color: #1db954;
+    -webkit-text-fill-color: #1db954;
+}
+
+.brand-logo h1 {
+    font-family: Inter, sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: -0.04em;
+    background: none;
+    color: #ffffff;
+    -webkit-text-fill-color: #ffffff;
+}
+
+.header-card > p {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.88rem;
+    letter-spacing: 0.02em;
+}
+
+.footer-card {
+    background: rgba(10, 14, 18, 0.86);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.32);
+    backdrop-filter: blur(20px);
+}
+
+.capture-btn {
+    background: #1db954;
+    color: #07140b;
+    border: 1px solid #1db954;
+    border-radius: 14px;
+    font-weight: 700;
+    box-shadow: 0 5px 20px rgba(29, 185, 84, 0.22);
+}
+
+.capture-btn:hover:not(:disabled) {
+    background: #25cf61;
+    transform: translateY(-1px);
+}
+
+.flash-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+}
+
+.flash-btn.active {
+    background: rgba(29, 185, 84, 0.2);
+    border-color: #1db954;
+    color: #1db954;
+}
+
+.start-camera-btn {
+    background: #1db954;
+    color: #07140b;
+    border-radius: 14px;
+    font-weight: 700;
+}
+
+.guide-overlay {
+    border-color: rgba(29, 185, 84, 0.75);
+}
+
+.camera-placeholder i {
+    color: rgba(29, 185, 84, 0.75);
+}
+
+@media (max-width: 768px) {
+    .header-card {
+        padding: 0.8rem 1rem;
+    }
+
+    .brand-logo h1 {
+        font-size: 1.5rem;
+    }
+
+    .footer-card {
+        padding: 0.8rem 0.9rem;
+    }
+}
+/* END SMART_SEARCH_PREMIUM_V1 */
+
+
+/* SMART_SEARCH_UI_CLEANUP_V1 */
+.saved-cars {
+    display: none !important;
+}
+#flash-btn {
+    font-size: 1.35rem;
+}
+#capture-btn {
+    width: 68px;
+    height: 68px;
+    min-width: 68px;
+    min-height: 68px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.65rem;
+}
+#capture-btn i {
+    margin: 0;
+}
+/* END SMART_SEARCH_UI_CLEANUP_V1 */
+
 </style>
   <link rel="stylesheet" href="/css/typography.css">
 </head>
@@ -460,8 +742,8 @@ html, body {
 
 <div id="camera-placeholder" class="camera-placeholder">
     <i class="fas fa-video-slash"></i>
-    <p>Camera is currently off</p>
-    <p style="font-size: 0.875rem; margin-top: 0.5rem;">Click "Start Camera" below to begin</p>
+    <p>Camera access needed</p>
+    <p style="font-size: 0.875rem; margin-top: 0.5rem;">Allow camera access or tap Start Camera to try again</p>
 </div>
 
 <div id="flash-effect" class="flash-effect"></div>
@@ -469,11 +751,8 @@ html, body {
 <div class="overlay">
   <div class="header">
     <div class="header-card">
-      <div class="brand-logo">
-        <i class="fas fa-car"></i>
-        <h1>VeloValue</h1>
-      </div>
-      <p class="text-sm text-gray-300">Instant Car Recognition & Valuation</p>
+      <div class="brand-logo"><h1>VeloValue</h1></div>
+      <p class="text-sm text-gray-300">Instant Car Recognition</p>
       
       <div id="api-status" class="api-status disconnected">
         <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
@@ -507,17 +786,17 @@ html, body {
           <i class="fas fa-power-off"></i> Start Camera
         </button>
         <p style="color: rgba(255,255,255,0.5); font-size: 0.75rem; margin-top: 0.75rem;">
-          Camera permission required
+          Camera access is needed to identify a vehicle
         </p>
       </div>
       
       <div id="camera-on-controls" style="display: none;">
         <div class="button-row">
           <button id="flash-btn" class="flash-btn" title="Toggle Flashlight">
-            <i class="fas fa-bolt"></i>
+            &#x1F526;
           </button>
           <button id="capture-btn" class="capture-btn" disabled>
-            <i class="fas fa-camera"></i> Identify Vehicle
+            <i class="fas fa-camera"></i>
           </button>
         </div>
         <p style="color: rgba(255,255,255,0.5); font-size: 0.75rem; margin-top: 0.75rem;" id="camera-resolution">Loading...</p>
@@ -589,8 +868,6 @@ html, body {
 // ==========================================
 // CONFIGURATION
 // ==========================================
-const GOOGLE_AI_API_KEY = 'AIzaSyBWN20Kp8Pe5IVkVL8-tGSXf0B0lv_Sxzw';
-
 let analysisMode = 'gemini_ai'; // 'gemini_ai' or 'demo'
 
 // ==========================================
@@ -777,44 +1054,32 @@ function triggerFlashEffect() {
 // ==========================================
 
 async function analyzeWithGemini(imageBase64) {
-  addDebugLog('📡 Calling Gemini 1.5 Flash API...');
-  
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}`;
-  
-  const body = {
-    contents: [{
-      parts: [
-        { 
-          text: `Analyze this image. Is it a 4-wheeler passenger car? 
-          If it is NOT a 4-wheeler car (e.g., motorcycle, bicycle, bus, semi-truck, boat, airplane, person, tree, etc), return exactly: {"isCar": false, "detectedAs": "what it actually is", "make": "N/A", "model": "N/A", "year": "N/A", "bodyType": "N/A", "confidence": 0}
-          If it IS a 4-wheeler car, identify it and return a JSON object exactly like this format:
-          {"isCar": true, "make": "Brand Name", "model": "Specific Model Name", "year": "Estimated Year or Unknown", "bodyType": "Sedan/SUV/Coupe/Pickup etc", "confidence": 85}
-          Return ONLY valid JSON. No markdown formatting, no explanation, just the JSON object.` 
+    addDebugLog('Sending vehicle image to Gemini...');
+
+    const response = await fetch('/api/smartsearch/analyze', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
-        { inline_data: { mime_type: 'image/jpeg', data: imageBase64 } }
-      ]
-    }]
-  };
+        body: JSON.stringify({
+            imageBase64: imageBase64,
+            mimeType: 'image/jpeg'
+        })
+    });
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+    const data = await response.json();
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(`Gemini Error (${response.status}): ${errorData.error?.message || response.statusText}`);
-  }
+    if (!response.ok) {
+        throw new Error(data.error || `Recognition failed (${response.status})`);
+    }
 
-  const data = await response.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-  const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
-  
-  addDebugLog(`✅ Success with Gemini!`);
-  return JSON.parse(cleanText);
+    if (!data || typeof data.isCar !== 'boolean') {
+        throw new Error('Gemini returned an invalid vehicle analysis.');
+    }
+
+    addDebugLog('Gemini vehicle recognition completed.');
+    return data;
 }
-
 function analyzeWithDemo() {
   addDebugLog('🎲 Using DEMO mode (random results)');
   const demoCars = [
@@ -829,19 +1094,16 @@ function analyzeWithDemo() {
 }
 
 async function analyzeImage(imageBase64) {
-  if (analysisMode === 'demo') {
-    return analyzeWithDemo();
-  }
+    if (analysisMode === 'demo') return analyzeWithDemo();
 
-  try {
-    const geminiResult = await analyzeWithGemini(imageBase64);
-    if (geminiResult) return geminiResult;
-    throw new Error('Empty Gemini result');
-  } catch (geminiError) {
-    addDebugLog(`❌ Gemini failed: ${geminiError.message}. Auto-switching to Demo Mode for this scan.`);
-    // GRACEFUL FALLBACK: If API fails, just use Demo mode so the app doesn't break
-    return analyzeWithDemo();
-  }
+    try {
+        const geminiResult = await analyzeWithGemini(imageBase64);
+        if (!geminiResult) throw new Error('Gemini returned an empty result.');
+        return geminiResult;
+    } catch (error) {
+        addDebugLog(`Gemini recognition failed: ${error.message}`);
+        throw error;
+    }
 }
 
 // ==========================================
@@ -932,6 +1194,72 @@ function displayResults(r) {
   document.getElementById('car-body').textContent = db.body;
   document.getElementById('car-value').textContent = db.value;
   
+  // Display technical specifications returned by Gemini.
+  const specs = r.technicalSpecs || {};
+  let specsPanel = document.getElementById('technical-specs');
+
+  if (!specsPanel) {
+    specsPanel = document.createElement('div');
+    specsPanel.id = 'technical-specs';
+    specsPanel.style.marginTop = '20px';
+    specsPanel.style.padding = '16px';
+    specsPanel.style.borderRadius = '12px';
+    specsPanel.style.background = 'rgba(255,255,255,0.04)';
+    document.querySelector('.car-info').appendChild(specsPanel);
+  }
+
+  specsPanel.replaceChildren();
+
+  const specsTitle = document.createElement('h3');
+  specsTitle.textContent = 'Technical Specifications';
+  specsTitle.style.marginBottom = '14px';
+  specsPanel.appendChild(specsTitle);
+
+  const specLabels = {
+    engine: 'Engine',
+    fuelType: 'Fuel Type',
+    displacement: 'Displacement',
+    power: 'Power',
+    torque: 'Torque',
+    transmission: 'Transmission',
+    drivetrain: 'Drivetrain',
+    seats: 'Seats',
+    length: 'Length',
+    width: 'Width',
+    height: 'Height',
+    bootCapacity: 'Boot Capacity',
+    fuelConsumption: 'Fuel Consumption',
+    CO2Emissions: 'CO2 Emissions'
+  };
+
+  const specsGrid = document.createElement('div');
+  specsGrid.className = 'info-grid';
+
+  Object.entries(specLabels).forEach(([key, label]) => {
+    const value = specs[key];
+    if (value === null || value === undefined || value === '') return;
+
+    const item = document.createElement('div');
+    item.className = 'info-item';
+
+    const name = document.createElement('div');
+    name.className = 'info-label';
+    name.textContent = label;
+
+    const detail = document.createElement('div');
+    detail.className = 'info-value';
+    detail.textContent = String(value);
+
+    item.append(name, detail);
+    specsGrid.appendChild(item);
+  });
+
+  if (specsGrid.children.length) {
+    specsPanel.appendChild(specsGrid);
+  } else {
+    specsPanel.style.display = 'none';
+  }
+
   const confScore = r.confidence || 0;
   const badge = confScore >= 85 ? 'high' : confScore >= 70 ? 'medium' : 'low';
   document.getElementById('car-confidence').innerHTML = `<span class="confidence-badge ${badge}">${confScore}%</span>`;
@@ -1013,8 +1341,13 @@ window.addEventListener('beforeunload', () => {
 // ==========================================
 console.log('%c🚗 VeloValue v12.0 - GRACEFUL FALLBACK', 'font-size: 24px; font-weight: bold; color: #667eea;');
 
-showCameraOffState();
 updateSavedCount();
+
+// Automatically request camera access when Smart Search opens.
+startCamera().catch(error => {
+  console.error("Automatic camera startup failed:", error);
+  showCameraOffState();
+});
 </script>
 <script src="/js/app-navigation.js"></script>
 </body>

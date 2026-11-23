@@ -619,7 +619,7 @@
         <div class="accordion" id="payAccordion">
           <div class="accordion-header" data-i18n="acc_pay">Pay with VeloValue</div>
           <div class="accordion-content">
-            <p class="section-text" data-i18n="pay_desc">Start a charging session directly from VeloValue. No cards, no apps from each network Ã¢â‚¬â€ just tap and charge.</p>
+            <p class="section-text" data-i18n="pay_desc">Start a charging session directly from VeloValue. No cards, no apps from each network - just tap and charge.</p>
             <div class="section-divider"></div>
             <p class="section-text"><strong data-i18n="pay_how">How it works:</strong></p>
             <p class="section-text" style="margin-top:4px;" data-i18n="pay_steps">1. Tap any station on the map<br>2. Check connector availability<br>3. Hit "Start Charge" and pay via your VeloValue wallet</p>
@@ -771,12 +771,12 @@
           <div class="accordion-header" data-i18n="acc_store">VeloValue Store</div>
           <div class="accordion-content">
             <div class="store-card">
-              <div class="store-card-title" data-i18n="store_1_title">Charging Bundle Ã¢â‚¬â€ 50 kWh</div>
+              <div class="store-card-title" data-i18n="store_1_title">Charging Bundle - 50 kWh</div>
               <div class="store-card-desc" data-i18n="store_1_desc">Pre-paid credit for any network station on VeloCharge.</div>
               <div class="store-card-price" data-i18n="store_1_price">Coming soon</div>
             </div>
             <div class="store-card">
-              <div class="store-card-title" data-i18n="store_2_title">Charging Bundle Ã¢â‚¬â€ 200 kWh</div>
+              <div class="store-card-title" data-i18n="store_2_title">Charging Bundle - 200 kWh</div>
               <div class="store-card-desc" data-i18n="store_2_desc">Best value for frequent drivers. No expiry for 12 months.</div>
               <div class="store-card-price" data-i18n="store_2_price">Coming soon</div>
             </div>
@@ -829,7 +829,7 @@
 
     <script>
     /* ==============================================================
-       I18N Ã¢â‚¬â€ Simple translation system
+       I18N
        ============================================================== */
     var i18n = (function() {
       var strings = {
@@ -1048,7 +1048,7 @@
 
     function updateAuthButton() {
       if (window.innerWidth <= 768) {
-        authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='/login.html'">👤</button>`;
+        authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='/login.html'"><img src="/icons/user.png" alt="" class="user-icon"></button>`;
       } else {
         authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='/login.html'">Login / Register</button>`;
       }
@@ -1110,7 +1110,7 @@
        MAP + OCM API + FILTERS + MARKERS
        ============================================================== */
 
-    // Ã¢â€â‚¬Ã¢â€â‚¬ CONFIG Ã¢â€â‚¬Ã¢â€â‚¬
+    // MAP + OCM API
 if (!window.VELOCHARGE_CONFIG?.mapboxToken) {
   throw new Error('Mapbox public token is not configured.');
 }
@@ -1154,7 +1154,7 @@ map.addControl(geolocate, 'top-right');
     var errorEl = document.getElementById('errorToast');
     var stationCountEl = document.getElementById('stationCount');
 
-    // Ã¢â€â‚¬Ã¢â€â‚¬ STATE Ã¢â€â‚¬Ã¢â€â‚¬
+    // Station data
     var allStationsGeoJSON = { type: 'FeatureCollection', features: [] };
     var filteredCount = 0;
     var filterState = {
@@ -1164,7 +1164,7 @@ map.addControl(geolocate, 'top-right');
     var initialLoadDone = false;
     var errorTimer = null;
 
-    // Ã¢â€â‚¬Ã¢â€â‚¬ HELPERS Ã¢â€â‚¬Ã¢â€â‚¬
+    // Initialisation
     function emptyGeoJSON() { return { type: 'FeatureCollection', features: [] }; }
     function clamp(x, min, max) { return Math.max(min, Math.min(max, x)); }
     function showLoading() { loadingEl.classList.add('visible'); }
@@ -1185,7 +1185,7 @@ map.addControl(geolocate, 'top-right');
       return 2 * R * Math.asin(Math.sqrt(Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLng/2)**2)) / 2;
     }
 
-    // Ã¢â€â‚¬Ã¢â€â‚¬ MAP ON LOAD Ã¢â€â‚¬Ã¢â€â‚¬
+    //
     map.on('load', function() {
       addStationsLayers();
       initAccordions();
@@ -1220,7 +1220,7 @@ map.addControl(geolocate, 'top-right');
       searchBtn.style.display = 'none';
     });
 
-    // Ã¢â€â‚¬Ã¢â€â‚¬ MAP LAYERS Ã¢â€â‚¬Ã¢â€â‚¬
+    //
     function escapePopupHTML(value) {
       return String(value ?? '').replace(/[&<>"']/g, function(char) {
         return {
@@ -1240,7 +1240,7 @@ map.addControl(geolocate, 'top-right');
         });
       }
 
-      // Ã¢â€â‚¬Ã¢â€â‚¬ Load your custom icon Ã¢â€â‚¬Ã¢â€â‚¬
+      //
       // Change this path to match your actual file, e.g. 'icon/marker.svg', 'icon/pin.png', etc.
       var ICON_PATH = '/icons/location.png';
 
@@ -1257,7 +1257,7 @@ map.addControl(geolocate, 'top-right');
           map.addImage('station-icon', image);
         }
 
-        // Ã¢â€â‚¬Ã¢â€â‚¬ Cluster circle layer (unchanged) Ã¢â€â‚¬Ã¢â€â‚¬
+        //
         if (!map.getLayer('clusters')) {
           map.addLayer({
             id: 'clusters', type: 'circle', source: 'stations',
@@ -1277,14 +1277,14 @@ map.addControl(geolocate, 'top-right');
           });
         }
 
-        // Ã¢â€â‚¬Ã¢â€â‚¬ Custom icon layer (replaces unclustered-ring + unclustered-dot) Ã¢â€â‚¬Ã¢â€â‚¬
+        //
         if (!map.getLayer('unclustered-icon')) {
           map.addLayer({
             id: 'unclustered-icon', type: 'symbol', source: 'stations',
             filter: ['!', ['has', 'point_count']],
             layout: {
               'icon-image': 'station-icon',
-              'icon-size': 0.15,          // Adjust scale (0.1 Ã¢â‚¬â€œ 1+)
+          'icon-size': 0.15,          // Adjust scale (0.1 - 1+)
               'icon-allow-overlap': true,
               'icon-anchor': 'bottom',
               'icon-pitch-alignment': 'map'
@@ -1296,7 +1296,7 @@ map.addControl(geolocate, 'top-right');
           });
         }
 
-        // Ã¢â€â‚¬Ã¢â€â‚¬ Interactions Ã¢â€â‚¬Ã¢â€â‚¬
+        //
         map.on('click', 'clusters', function(e) {
           var f = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
           if (!f.length) return;
@@ -1328,7 +1328,7 @@ map.addControl(geolocate, 'top-right');
       });
     }
 
-    // Fallback if icon fails to load Ã¢â‚¬â€ keeps the old green/amber circles
+    // Fallback if icon fails to load
     function addFallbackCircleLayers() {
       if (!map.getLayer('clusters')) {
         map.addLayer({
@@ -1395,7 +1395,7 @@ map.addControl(geolocate, 'top-right');
       });
     }
 
-    // Ã¢â€â‚¬Ã¢â€â‚¬ FETCH STATIONS Ã¢â€â‚¬Ã¢â€â‚¬
+    //
     async function refreshStations() {
       showLoading();
       var c = map.getCenter(), r = 25;
@@ -1468,7 +1468,7 @@ async function fetchOCM(lng, lat, dist, max) {
       return { type: 'FeatureCollection', features: feats };
     }
 
-    // Ã¢â€â‚¬Ã¢â€â‚¬ ACCORDIONS Ã¢â€â‚¬Ã¢â€â‚¬
+    //
     function initAccordions() {
       var headers = document.querySelectorAll('.accordion .accordion-header');
       for (var i = 0; i < headers.length; i++) {
@@ -1478,7 +1478,7 @@ async function fetchOCM(lng, lat, dist, max) {
       }
     }
 
-    // Ã¢â€â‚¬Ã¢â€â‚¬ FILTERS UI Ã¢â€â‚¬Ã¢â€â‚¬
+    //
     function initFiltersUI() {
       var minKw = document.getElementById('filterMinKw');
       var minKwVal = document.getElementById('minKwValue');
@@ -1571,7 +1571,7 @@ async function fetchOCM(lng, lat, dist, max) {
       updateStationCountDisplay();
     }
 
-    // Ã¢â€â‚¬Ã¢â€â‚¬ SETTINGS UI Ã¢â€â‚¬Ã¢â€â‚¬
+    //
     function initSettingsUI() {
       document.getElementById('mapStyleSelect').addEventListener('change', function(e) {
         var style = MAP_STYLES[e.target.value];
@@ -1582,7 +1582,7 @@ async function fetchOCM(lng, lat, dist, max) {
       });
     }
 
-    // Ã¢â€â‚¬Ã¢â€â‚¬ LANGUAGE UI Ã¢â€â‚¬Ã¢â€â‚¬
+    //
     function initLanguageUI() {
       var languageSelect = document.getElementById('languageSelect');
       var savedLang = localStorage.getItem('language') || 'en';
@@ -1603,7 +1603,7 @@ async function fetchOCM(lng, lat, dist, max) {
       });
     }
 
-    // Ã¢â€â‚¬Ã¢â€â‚¬ FORM SUBMISSIONS (client-side only, show success) Ã¢â€â‚¬Ã¢â€â‚¬
+    //
     function submitNewStation() {
       var name = document.getElementById('newStationName').value.trim();
       var addr = document.getElementById('newStationAddress').value.trim();
@@ -1634,6 +1634,3 @@ async function fetchOCM(lng, lat, dist, max) {
   <script src="/js/app-navigation.js"></script>
 </body>
 </html>
-
-
-

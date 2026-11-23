@@ -644,7 +644,7 @@ window.addEventListener("resize", () => {
 const authSection = document.getElementById("authSection");
 function updateAuthButton() {
   if(window.innerWidth <= 768) {
-    authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+    authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'"><img src="/icons/user.png" alt="" class="user-icon"></button>`;
   } else {
     authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
   }
@@ -777,7 +777,7 @@ function showLoginRequired() {
     <div class="status-icon">🔒</div>
     <div class="status-title">Login Required</div>
     <div class="status-desc">Please login to view your Smart Reminders.</div>
-    <button class="status-btn primary" onclick="window.location.href='/login.html'">Login</button>
+    <button class="status-btn primary" onclick="window.location.href='/login.html'"><img src="/icons/user.png" alt="" class="user-icon"></button>
   `;
   document.getElementById('remindersContent').innerHTML = '';
 }

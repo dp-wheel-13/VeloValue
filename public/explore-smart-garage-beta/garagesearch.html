@@ -243,7 +243,7 @@
     hamburger.addEventListener("click",toggleMenu); overlay.addEventListener("click",closeMenu); if(closeBtn) closeBtn.addEventListener("click",closeMenu);
 
     function updateAuthButton() {
-      if(window.innerWidth<=768) authSection.innerHTML='<button class="icon-btn" onclick="window.location.href=\'/login.html\'">👤</button>';
+      if(window.innerWidth<=768) authSection.innerHTML='<button class="icon-btn" onclick="window.location.href=\'/login.html\'"><img src="/icons/user.png" alt="" class="user-icon"></button>';
       else authSection.innerHTML='<button class="text-btn" onclick="window.location.href=\'/login.html\'">Login / Register</button>';
     }
     updateAuthButton();

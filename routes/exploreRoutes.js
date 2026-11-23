@@ -1,8 +1,9 @@
-
+﻿
 const express = require("express");
 const router = express.Router();
 
 const CarCache = require("../models/CarCache");
+const CarPrice = require("../models/CarPrice");
 const { getCarData } = require("../services/WikiCarService");
 const {
   searchCars,
@@ -287,7 +288,7 @@ router.get("/explore/generation/:code", async (req, res) => {
 });
 
 // ------------------------------------------------------------
-// LEGACY ROUTES — TEMPORARILY RETAINED
+// LEGACY ROUTES â€” TEMPORARILY RETAINED
 // ------------------------------------------------------------
 
 router.get("/cachedCars", async (req, res) => {
@@ -351,5 +352,62 @@ router.get("/explore", async (req, res) => {
     });
   }
 });
+// Get cached starting prices for multiple cars
+router.post("/explore/prices", async (req, res) => {
+  try {
+    const { cars } = req.body;
 
+    if (!Array.isArray(cars)) {
+      return res.status(400).json({
+        success: false,
+        message: "Cars must be an array."
+      });
+    }
+
+    const { getStartingPrice } = require("../services/CarPriceService");
+
+    const results = await Promise.all(
+      cars.map(async car => {
+        const make = car.brand || car.make;
+        const model = car.model;
+
+        if (!make || !model) return null;
+
+        const modelYear =
+          car.modelYear !== null &&
+          car.modelYear !== undefined &&
+          car.modelYear !== "" &&
+          Number.isInteger(Number(car.modelYear))
+            ? Number(car.modelYear)
+            : null;
+
+        const generation = car.generation || null;
+        const startingPrice = await getStartingPrice(make, model, modelYear, generation);
+
+        return {
+          brand: make,
+          model,
+          generation,
+          modelYear,
+          startingPrice,
+          verified: startingPrice !== null
+        };
+      })
+    );
+
+    res.json({
+      success: true,
+      prices: results.filter(Boolean)
+    });
+  } catch (error) {
+    console.error("[Explore Prices] Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Unable to retrieve starting prices."
+    });
+  }
+});
 module.exports = router;
+
+
+

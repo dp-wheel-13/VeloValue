@@ -38,6 +38,7 @@ const User = require("../models/User");
 const garageRoutes = require("../routes/garageRoutes");
 const wishlistRoutes = require("../routes/wishlistRoutes");
 const exploreRoutes = require("../routes/exploreRoutes");
+const smartSearchRoutes = require("../routes/smartSearchRoutes");
 const infotargaRoutes = require("../routes/infotarga"); // InfoTarga routes
 const authSocialRoutes = require("../routes/authSocial");
 const app = express();
@@ -243,6 +244,7 @@ app.use("/api", infotargaRoutes);
 app.use("/", garageRoutes);
 app.use("/", wishlistRoutes);
 app.use("/api", exploreRoutes);
+app.use("/api", smartSearchRoutes);
 
 // Google and Facebook authentication
 app.use("/", authSocialRoutes);

@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <script type="text/javascript" src="https://embeds.iubenda.com/widgets/2a4fd3b9-c13e-4d27-977b-c7dc1f33c094.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VeloValue Ã¢â‚¬â€œ Explore Cars</title>
+  <title>VeloValue - Explore Cars</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/footer.css"/>
   <style>
@@ -78,6 +78,7 @@
     .car-card .thumb{ aspect-ratio:16/10; width:100%; object-fit:cover; background:#111; }
     .car-card .meta{ padding:12px 12px 14px; display:flex; justify-content:space-between; align-items:center; }
     .car-card .name{ font-weight:700; }
+
 
     .heart-btn{ position:absolute; top:10px; right:10px; width:36px; height:36px; border-radius:999px; display:grid; place-items:center; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.25); backdrop-filter:blur(4px); color:var(--text); cursor:pointer; transition:transform .12s, border-color .2s, background .2s, color .2s; z-index:2; }
     .heart-btn:hover{ border-color:var(--accent); } .heart-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
@@ -219,7 +220,7 @@
 
   <header>
     <div class="header-left">
-      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">Ã¢ËœÂ°</button>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
       <h1><a href="/homepage.html">VeloValue</a></h1>
     </div>
     <div class="header-right">
@@ -288,7 +289,7 @@
         </button>
         <div id="filtersContent">
           <div class="f-group"><span class="f-label">Body Style</span><div class="chip-row" id="bodyChips"></div></div>
-          <div class="f-group"><span class="f-label">Price (EUR)</span><div class="range"><input type="range" id="priceRange" min="10000" max="200000" value="200000" step="1000"/><span id="priceOut" class="muted">Ã¢â€°Â¤ Ã¢â€šÂ¬200,000</span></div></div>
+          <div class="f-group"><span class="f-label">Price (EUR)</span><div class="range"><input type="range" id="priceRange" min="10000" max="200000" value="200000" step="1000"/><span id="priceOut" class="muted">≤ €200,000</span></div></div>
           <button class="apply-btn" id="applyFilters">Done</button>
         </div>
       </aside>
@@ -299,8 +300,8 @@
             <label class="sr-only" for="sortSel">Sort</label>
             <select id="sortSel" aria-label="Sort">
               <option value="relevance">Sort: Relevance</option>
-              <option value="price_asc">Price: Low Ã¢â€ â€™ High</option>
-              <option value="price_desc">Price: High Ã¢â€ â€™ Low</option>
+              <option value="price_asc">Price: Low - High</option>
+              <option value="price_desc">Price: High - Low</option>
             </select>
             <button id="clearFiltersBtn" class="clear-filters" title="Clear all filters">Clear filters</button>
           </div>
@@ -341,7 +342,7 @@
       function closeMenu(){ hamburger.setAttribute("aria-expanded","false"); hamburger.classList.remove("is-active"); menu.classList.remove("active"); overlay.classList.remove("active"); menu.setAttribute("aria-hidden","true"); }
       hamburger.addEventListener("click", ()=>{ menu.classList.contains("active") ? closeMenu() : openMenu(); });
       overlay.addEventListener("click", closeMenu); window.addEventListener("resize", ()=>{ if(window.innerWidth > 1024 && menu.classList.contains("active")) closeMenu(); });
-      const authSection = document.getElementById("authSection"); function updateAuthButton(){ if(window.innerWidth <= 768){ authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">Login</button>`; } else { authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`; } }
+      const authSection = document.getElementById("authSection"); function updateAuthButton(){ if(window.innerWidth <= 768){ authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'"><img src="/icons/user.png" alt="" class="user-icon"></button>`; } else { authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`; } }
       updateAuthButton(); window.addEventListener("resize", updateAuthButton); function syncHeaderOffset(){ const header = document.querySelector('header'); if(!header) return; document.documentElement.style.setProperty('--header-offset', header.offsetHeight + 'px'); }
       window.addEventListener('load', syncHeaderOffset); window.addEventListener('resize', syncHeaderOffset);
     })();
@@ -351,7 +352,7 @@
     const $ = (s, r=document) => r.querySelector(s);
     const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
     const API_BASE_URL = location.port === '5501' ? 'http://localhost:3000' : '';
-    const toEUR = n => `Ã¢â€šÂ¬${Number(n).toLocaleString()}`;
+    const toEUR = n => `€${Number(n).toLocaleString()}`;
     
     // Helper to convert FERRARI -> Ferrari for Wikipedia compatibility
     function toTitleCase(str) {
@@ -411,7 +412,7 @@
 
     /* UI Helpers */
     function updateCompareBadge(){ const n = loadCompare().size; const b = document.getElementById('compareBadge'); if(!b) return; b.style.display = n > 0 ? 'grid' : 'none'; if(n) b.textContent = n; }
-    function buildCompareMenu(){ const listEl = document.getElementById('compareItems'); if(!listEl) return; const ids = [...loadCompare()]; const meta = loadMeta(); if(!ids.length){ listEl.innerHTML = `<div class="dropdown-empty" style="padding:20px;text-align:center;opacity:.75;">Nothing to compare.</div>`; return; } listEl.innerHTML = ids.map(id=>{ const m = meta[id]||{}; const name = [m.brand, m.model].filter(Boolean).join(' ') || id; const sub = [m.body, (m.price!=null ? 'Ã¢â€šÂ¬'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' Ã¢â‚¬Â¢ '); const img = m.img || ''; return `<div class="wish-item" data-id="${id}">${img ? `<img src="${img}" alt="${name}">` : `<div style="width:44px;height:44px;border-radius:8px;background:#111;display:grid;place-items:center;opacity:.6">Ã¢â‚¬â€</div>`}<div class="wish-meta"><div class="wish-title">${name}</div><div class="wish-sub">${sub||''}</div></div><button class="remove-btn" data-remove="${id}">Remove</button></div>`; }).join(''); }
+    function buildCompareMenu(){ const listEl = document.getElementById('compareItems'); if(!listEl) return; const ids = [...loadCompare()]; const meta = loadMeta(); if(!ids.length){ listEl.innerHTML = `<div class="dropdown-empty" style="padding:20px;text-align:center;opacity:.75;">Nothing to compare.</div>`; return; } listEl.innerHTML = ids.map(id=>{ const m = meta[id]||{}; const name = [m.brand, m.model].filter(Boolean).join(' ') || id; const sub = [m.body, (m.price!=null ? '€'+Number(m.price).toLocaleString() : '')].filter(Boolean).join(' • '); const img = m.img || ''; return `<div class="wish-item" data-id="${id}">${img ? `<img src="${img}" alt="${name}">` : `<div style="width:44px;height:44px;border-radius:8px;background:#111;display:grid;place-items:center;opacity:.6">-</div>`}<div class="wish-meta"><div class="wish-title">${name}</div><div class="wish-sub">${sub||''}</div></div><button class="remove-btn" data-remove="${id}">Remove</button></div>`; }).join(''); }
     (function wireCompareDropdown(){ const wrap = document.getElementById('compare'); const btn = document.getElementById('compareBtn'); const menu = document.getElementById('compareMenu'); if(!wrap||!btn||!menu) return; btn.addEventListener('click', ()=>{ const open = wrap.classList.toggle('open'); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }); document.addEventListener('click', e=>{ if(!wrap.contains(e.target)){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); } }); document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); } }); document.getElementById('compareItems').addEventListener('click', e=>{ const rm = e.target.closest('[data-remove]'); if(!rm) return; removeFromCompare(rm.getAttribute('data-remove')); updateCompareBadge(); buildCompareMenu(); syncCompareButtons(); }); document.getElementById('clearCompare').addEventListener('click', ()=>{ saveCompare(new Set()); saveMeta({}); updateCompareBadge(); buildCompareMenu(); syncCompareButtons(); }); document.getElementById('viewCompare').addEventListener('click', ()=>{ if(loadCompare().size < 2){ showToast('Add at least 2 cars to compare'); return; } location.href = buildCompareUrl(); }); })();
 
     const WIRE_KEY = 'vv_selected_car'; const DETAILS_PATH = 'cars.html';
@@ -677,13 +678,13 @@ async function clearWishlistFromApi() {
     function syncCompareButtons(){ const set = loadCompare(); document.querySelectorAll('.compare-btn').forEach(btn=>{ const id = btn.getAttribute('data-compare'); const active = set.has(id); btn.classList.toggle('active', active); btn.setAttribute('aria-pressed', active?'true':'false'); btn.setAttribute('aria-label', active?'Remove from compare':'Add to compare'); }); updateCompareBar(); updateCompareBadge(); buildCompareMenu(); }
     function updateCompareBar(){ const bar = document.getElementById('compareBar'); const chips = document.getElementById('compareChips'); const ids = [...loadCompare()]; const meta = loadMeta(); chips.innerHTML = ids.map(id=>{ const m = meta[id]; const name = m ? `${m.brand} ${m.model}`.trim() : id; return `<span class="chip" data-id="${id}">${name} <button class="x" aria-label="Remove">Remove</button></span>`; }).join(''); bar.classList.toggle('show', ids.length >= 2); }
     function heartButtonHTML(id){ return `<button class="heart-btn" data-id="${id}" aria-label="Add to wishlist" aria-pressed="false" title="Wishlist"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.1 8.64l-.1.1-.1-.1c-1.68-1.79-4.53-1.79-6.21 0-1.8 1.92-1.8 5.02 0 6.94L12 22l6.31-6.42c1.8-1.92 1.8-5.02 0-6.94-1.68-1.79-4.53-1.79-6.21 0z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>`; }
-    function extractCardMetadata(card){ const name = card?.querySelector('.name')?.textContent || ''; const parts = name.split(' '); const priceText = card?.querySelector('.muted')?.textContent || ''; return { brand: parts[0]||'', model: parts.slice(1).join(' ')||'', price: (()=>{ const m=priceText.match(/Ã¢â€šÂ¬([\d.,]+)/); return m ? Number(m[1].replace(/[.,](?=\d{3})/g,'').replace(',','.')) : null; })(), img: card?.querySelector('img.thumb')?.getAttribute('src')||'', body: priceText.split('Ã¢â‚¬Â¢')[0]?.trim()||'', fuel:'', gear:'' }; }
+    function extractCardMetadata(card){ const name = card?.querySelector('.name')?.textContent || ''; const parts = name.split(' '); const priceText = card?.querySelector('.muted')?.textContent || ''; return { brand: parts[0]||'', model: parts.slice(1).join(' ')||'', price: (()=>{ const m=priceText.match(/€([\d.,]+)/); return m ? Number(m[1].replace(/[.,](?=\d{3})/g,'').replace(',','.')) : null; })(), img: card?.querySelector('img.thumb')?.getAttribute('src')||'', body: priceText.split('•')[0]?.trim()||'', fuel:'', gear:'' }; }
 
     const els = { track: $('#popularTrack'), bodyChips: $('#bodyChips'), priceRange: $('#priceRange'), priceOut: $('#priceOut'), brandGrid: $('#brandGrid'), alphaRow: $('#alphaRow'), grid: $('#resultsGrid'), resultCount: $('#resultCount'), sortSel: $('#sortSel'), brandDropdown: $('#brand_name_dropdwn'), modelDropdown: $('#model_name_dropdwn'), applyBtn: $('#applyFilters'), searchBtn: $('#searchBtn'), activeFilters: $('#activeFilters'), clearFiltersBtn: $('#clearFiltersBtn'), wishlistItems: $('#wishlistItems'), clearWishlist: $('#clearWishlist') };
 
-    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+    /* ---------------------------------------
        OPEN-VEHICLE-DB INTEGRATION
-    Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+    --------------------------------------- */
     function populateSearchSuggestions() {
       const brands = [...new Set(
         window.cars.map(car => String(car.brand || '').trim()).filter(Boolean)
@@ -738,7 +739,7 @@ async function clearWishlistFromApi() {
 
     function buildPopularSlider(){
       const popularCars = window.cars.slice(0, 15); 
-      const slideHTML = c => { const id=carId(c); return `<article class="car-card" data-id="${id}" role="link" tabindex="0" aria-label="${c.brand} ${c.model}">${heartButtonHTML(id)} ${compareButtonHTML(id)}<img class="thumb" src="${c.img || 'https://via.placeholder.com/400x250?text=No+Image'}" alt="${c.brand} ${c.model}"><div class="meta"><div><div class="name">${c.brand} ${c.model}</div><div class="muted" style="font-size:12px">${c.body} Ã¢â‚¬Â¢ ${toEUR(c.price)}</div></div></div></article>`; };
+      const slideHTML = c => { const id=carId(c); return `<article class="car-card" data-id="${id}" role="link" tabindex="0" aria-label="${c.brand} ${c.model}">${heartButtonHTML(id)} ${compareButtonHTML(id)}<img class="thumb" src="${c.img || 'https://via.placeholder.com/400x250?text=No+Image'}" alt="${c.brand} ${c.model}"><div class="meta"><div><div class="name">${c.brand} ${c.model}</div><div class="muted" style="font-size:12px">${c.body} • ${toEUR(c.price)}</div></div></div></article>`; };
       els.track.innerHTML = popularCars.map(slideHTML).join('') + popularCars.map(slideHTML).join('');
     }
 
@@ -764,13 +765,13 @@ async function clearWishlistFromApi() {
       });
     }
 
-    els.priceRange.addEventListener('input', e=>{ selected.maxPrice=Number(e.target.value); els.priceOut.textContent=`Ã¢â€°Â¤ ${toEUR(selected.maxPrice)}`; });
+    els.priceRange.addEventListener('input', e=>{ selected.maxPrice=Number(e.target.value); els.priceOut.textContent=`≤ ${toEUR(selected.maxPrice)}`; });
 
     function updateActiveFiltersUI(searchBrand, searchModel){
       const chips=[];
       if(searchBrand) chips.push({group:'searchBrand', value:searchBrand, label:`Brand: ${searchBrand}`});
       if(searchModel) chips.push({group:'searchModel', value:searchModel, label:`Model: ${searchModel}`});
-      if(selected.maxPrice<200000) chips.push({group:'price', value:String(selected.maxPrice), label:`Ã¢â€°Â¤ ${toEUR(selected.maxPrice)}`});
+      if(selected.maxPrice<200000) chips.push({group:'price', value:String(selected.maxPrice), label:`≤ ${toEUR(selected.maxPrice)}`});
       selected.brands.forEach(v=>chips.push({group:'brands', value:v, label:`Brand: ${v}`}));
       selected.body.forEach(v=>chips.push({group:'body', value:v, label:v}));
       els.activeFilters.innerHTML = chips.map(c=>`<span class="af-chip" data-group="${c.group}" data-value="${c.value}">${c.label} <button class="x" aria-label="Remove ${c.label}">Remove</button></span>`).join('');
@@ -781,7 +782,7 @@ async function clearWishlistFromApi() {
       const chip=x.closest('.af-chip'); const group=chip.dataset.group, value=chip.dataset.value;
       if(group==='searchBrand'){ els.brandDropdown.value=''; }
       else if(group==='searchModel'){ els.modelDropdown.value=''; }
-      else if(group==='price'){ selected.maxPrice=200000; els.priceRange.value='200000'; els.priceOut.textContent='Ã¢â€°Â¤ Ã¢â€šÂ¬200,000'; }
+      else if(group==='price'){ selected.maxPrice=200000; els.priceRange.value='200000'; els.priceOut.textContent='≤ €200,000'; }
       else if(group==='brands'){ selected.brands.delete(value); const tile=brandTileMap.get(value); if(tile) tile.classList.remove('active'); }
       else { selected[group].delete(value); const el=chipMap[group].get(value); if(el) el.classList.remove('active'); }
       applyFiltersNow();
@@ -839,7 +840,7 @@ async function clearWishlistFromApi() {
       els.grid.innerHTML = list.map(c=>{
         const id=carId(c);
         const priceText = c.price == null || !Number.isFinite(Number(c.price)) ? 'Price unavailable' : toEUR(c.price);
-        return `<article class="car-card" data-id="${escapeHtml(id)}" role="link" tabindex="0" aria-label="${escapeHtml(c.brand)} ${escapeHtml(c.model)}">${heartButtonHTML(id)} ${compareButtonHTML(id)}<img class="thumb" loading="lazy" src="${escapeHtml(c.img || 'https://via.placeholder.com/400x250?text=No+Image')}" alt="${escapeHtml(c.brand)} ${escapeHtml(c.model)}"><div class="meta"><div><div class="name">${escapeHtml(c.brand)} ${escapeHtml(c.model)}</div><div class="muted" style="font-size:12px">${escapeHtml(c.body || '')} Ã¢â‚¬Â¢ ${escapeHtml(priceText)}</div></div></div></article>`;
+        return `<article class="car-card" data-id="${escapeHtml(id)}" role="link" tabindex="0" aria-label="${escapeHtml(c.brand)} ${escapeHtml(c.model)}">${heartButtonHTML(id)} ${compareButtonHTML(id)}<img class="thumb" loading="lazy" src="${escapeHtml(c.img || 'https://via.placeholder.com/400x250?text=No+Image')}" alt="${escapeHtml(c.brand)} ${escapeHtml(c.model)}"><div class="meta"><div><div class="name">${escapeHtml(c.brand)} ${escapeHtml(c.model)}</div><div class="muted" style="font-size:12px">${escapeHtml(c.body || '')} • ${escapeHtml(priceText)}</div></div></div></article>`;
       }).join('');
       els.resultCount.textContent = `${list.length} result${list.length!==1?'s':''}`;
       syncHeartButtons(); syncCompareButtons();
@@ -1045,10 +1046,9 @@ async function clearWishlistFromApi() {
       card.setAttribute('role', 'link');
       card.setAttribute('aria-label', `${brand} ${model}`);
 
-      const detailText = [generation, body, priceText].filter(Boolean).join(' \u2022 ');
+      const detailText = [generation, body].filter(Boolean).join(' \u2022 ');
 
-      card.innerHTML = `${heartButtonHTML(id)} ${compareButtonHTML(id)} <img class="thumb" src="${escapeHtml(img)}" alt="${escapeHtml(brand)} ${escapeHtml(model)}"><div class="meta"><div><div class="name">${escapeHtml(brand)} ${escapeHtml(model)}</div><div class="muted" style="font-size:12px">${escapeHtml(detailText)}</div></div></div>`;
-
+      card.innerHTML = `${heartButtonHTML(id)} ${compareButtonHTML(id)} <img class="thumb" src="${escapeHtml(img)}" alt="${escapeHtml(brand)} ${escapeHtml(model)}"><div class="muted" style="font-size:13px; padding:0 12px 10px">${priceNum === null ? "Price unavailable" : "Price from: " + priceText}</div><div class="meta"><div><div class="name">${escapeHtml(brand)} ${escapeHtml(model)}</div><div class="muted" style="font-size:12px">${escapeHtml(detailText)}</div></div></div>`;
       container.prepend(card);
 
       const countEl = document.getElementById("resultCount");
@@ -1115,6 +1115,8 @@ async function clearWishlistFromApi() {
         }
 
         const normalized = normalizeCarVariablesResults(results);
+
+
         const legacyCars = window.cars.filter(car => car.source !== 'carvariables');
 
         window.cars = legacyCars;
@@ -1207,4 +1209,5 @@ async function clearWishlistFromApi() {
 <script src="/js/app-navigation.js"></script>
 </body>
 </html>
+
 

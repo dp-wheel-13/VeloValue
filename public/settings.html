@@ -93,10 +93,11 @@
     }
 
     .eyebrow:before {
-      content:"";
-      width:22px;
-      height:1px;
-      background:var(--accent);
+      content:"-";
+      width:auto;
+      height:auto;
+      background:none;
+      font-size:14px;
     }
 
     .page-heading {
@@ -387,6 +388,49 @@
       border:1px solid rgba(29,185,84,.2);
       flex:0 0 auto;
       font-size:16px;
+    }
+
+
+    .section-accordion {
+      width:100%;
+    }
+
+    .section-accordion > summary {
+      display:flex;
+      list-style:none;
+      cursor:pointer;
+      align-items:center;
+      user-select:none;
+    }
+
+    .section-accordion > summary::-webkit-details-marker {
+      display:none;
+    }
+
+    .section-accordion > summary:focus-visible {
+      outline:2px solid var(--accent);
+      outline-offset:5px;
+      border-radius:8px;
+    }
+
+    .section-chevron {
+      width:11px;
+      height:11px;
+      border-right:2px solid #aaf0bf;
+      border-bottom:2px solid #aaf0bf;
+      transform:rotate(45deg);
+      transition:transform .2s ease;
+      margin:0 7px 5px auto;
+      flex:0 0 auto;
+    }
+
+    .section-accordion[open] .section-chevron {
+      transform:rotate(225deg);
+      margin-bottom:0;
+    }
+
+    .section-body {
+      padding-top:2px;
     }
 
     .fields {
@@ -773,22 +817,22 @@
 
       <nav class="side-links" aria-label="Settings sections">
         <a class="side-link active" href="#personal">
-          <span class="nav-icon">◉</span>
+          <span class="nav-icon">01</span>
           <span>Personal info</span>
         </a>
 
         <a class="side-link" href="#preferences">
-          <span class="nav-icon">⌘</span>
+          <span class="nav-icon">02</span>
           <span>Preferences</span>
         </a>
 
         <a class="side-link" href="#security">
-          <span class="nav-icon">◇</span>
+          <span class="nav-icon">03</span>
           <span>Security</span>
         </a>
 
         <a class="side-link" href="#picture">
-          <span class="nav-icon">▧</span>
+          <span class="nav-icon">04</span>
           <span>Picture</span>
         </a>
       </nav>
@@ -808,13 +852,16 @@
 
       <!-- PERSONAL INFORMATION -->
       <section class="glass section" id="personal">
-        <div class="section-head">
+        <details class="section-accordion">
+        <summary class="section-head">
           <div>
             <h2>Personal information</h2>
             <p>Keep your profile details accurate and up to date.</p>
           </div>
-          <div class="section-symbol">◉</div>
-        </div>
+          <div class="section-symbol">01</div>
+          <span class="section-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="section-body">
 
         <div class="fields">
           <div class="field">
@@ -852,17 +899,23 @@
           <button class="btn primary" id="saveProfileBtn">Save changes</button>
           <span class="status" id="profileStatus" aria-live="polite"></span>
         </div>
-      </section>
+      
+        </div>
+      </details>
+    </section>
 
       <!-- PREFERENCES -->
       <section class="glass section" id="preferences">
-        <div class="section-head">
+        <details class="section-accordion">
+        <summary class="section-head">
           <div>
             <h2>Experience preferences</h2>
             <p>Set the region, language and display currency for your experience.</p>
           </div>
-          <div class="section-symbol">⌘</div>
-        </div>
+          <div class="section-symbol">02</div>
+          <span class="section-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="section-body">
 
         <div class="fields">
           <div class="field">
@@ -907,17 +960,23 @@
           <button class="btn primary" id="savePrefsBtn">Save preferences</button>
           <span class="status" id="prefsStatus" aria-live="polite"></span>
         </div>
-      </section>
+      
+        </div>
+      </details>
+    </section>
 
       <!-- SECURITY -->
       <section class="glass section" id="security">
-        <div class="section-head">
+        <details class="section-accordion">
+        <summary class="section-head">
           <div>
             <h2>Password &amp; security</h2>
             <p>Manage your account password securely.</p>
           </div>
-          <div class="section-symbol">◇</div>
-        </div>
+          <div class="section-symbol">03</div>
+          <span class="section-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="section-body">
 
         <div class="fields">
           <div class="field">
@@ -956,17 +1015,23 @@
             New passwords are securely hashed before being stored.
           </div>
         </div>
-      </section>
+      
+        </div>
+      </details>
+    </section>
 
       <!-- PROFILE PICTURE -->
       <section class="glass section" id="picture">
-        <div class="section-head">
+        <details class="section-accordion">
+        <summary class="section-head">
           <div>
             <h2>Profile picture</h2>
             <p>Personalise your account with a profile image.</p>
           </div>
-          <div class="section-symbol">▧</div>
-        </div>
+          <div class="section-symbol">04</div>
+          <span class="section-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="section-body">
 
         <div class="avatar-editor">
           <div class="avatar" id="avatarPreview" aria-label="Profile avatar">U</div>
@@ -989,7 +1054,10 @@
             </div>
           </div>
         </div>
-      </section>
+      
+        </div>
+      </details>
+    </section>
 
     </div>
   </div>

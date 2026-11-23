@@ -653,7 +653,7 @@
       function updateAuthButton(){
         if(!authSection) return;
         if(window.innerWidth <= 768){
-          authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'">👤</button>`;
+          authSection.innerHTML = `<button class="icon-btn" onclick="window.location.href='login.html'"><img src="/icons/user.png" alt="" class="user-icon"></button>`;
         } else {
           authSection.innerHTML = `<button class="text-btn" onclick="window.location.href='login.html'">Login / Register</button>`;
         }

@@ -1,4 +1,4 @@
-﻿/* VeloValue Global Translator - Persistent Cache */
+/* VeloValue Global Translator - Persistent Cache */
 
 const translationCache = {};
 const originalTextNodes = new WeakMap();
@@ -72,7 +72,7 @@ async function translatePage(targetLang) {
 
   elements.forEach(el => {
     if (
-      el.closest(".language-select") ||
+      el.closest(".language-select, [data-no-translate], .notranslate") ||
       el.dataset.noTranslate !== undefined
     ) return;
 
